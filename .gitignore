@@ -17,8 +17,8 @@
 **/macos/SourcePackages/
 
 # Local house configuration and signing credentials
-apps/*/config/houses/*.json
-!apps/*/config/houses/*.example.json
+apps/*/env/*.json
+!apps/*/env/example.json
 apps/*/android/key.properties
 apps/*/android/oms-app-release-key.jks
 

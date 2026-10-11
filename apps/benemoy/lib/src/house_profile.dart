@@ -1,8 +1,8 @@
 import 'package:oms_shared/oms_shared.dart';
 
-/// Benemoy Securities company details shown in the app (contact page, share
-/// text, store links). Environment endpoints live in `config/houses/*.json`.
-const benemoyProfile = HouseProfile(
+/// Company details shown in the app: contact page, share text, store links.
+/// Server URLs, app name and colors live in `env/uat.json` / `env/prod.json`.
+const houseProfile = HouseProfile(
   houseId: 'benemoy',
   legalName: 'Benemoy Securities Ltd',
   companyName: 'Benemoy Securities',

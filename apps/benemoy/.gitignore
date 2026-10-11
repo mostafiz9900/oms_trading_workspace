@@ -26,8 +26,8 @@ migrate_working_dir/
 # Flutter/Dart/Pub related
 env/.env.dev
 env/.env.prod
-config/houses/*.json
-!config/houses/*.example.json
+env/*.json
+!env/example.json
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/

@@ -61,7 +61,7 @@ jobs:
       - run: flutter pub get
       - run: dart test
         working-directory: packages/core/broker_config
-      - run: dart run tool/validate_house_profiles.dart
+      - run: dart run tool/validate_apps.dart
 
   build:
     name: build ${{ matrix.platform }} (benemoy uat)
@@ -99,9 +99,9 @@ jobs:
             echo "::error::Set the BENEMOY_UAT_PROFILE_JSON repository secret"
             exit 1
           fi
-          printf '%s' "$PROFILE" > config/houses/benemoy-uat.json
+          printf '%s' "$PROFILE" > env/uat.json
       - run: flutter pub get
       - run: >-
           ${{ matrix.command }} -t lib/main_uat.dart
-          --dart-define-from-file=config/houses/benemoy-uat.json
+          --dart-define-from-file=env/uat.json
         working-directory: apps/benemoy

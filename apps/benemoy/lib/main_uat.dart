@@ -1,7 +1,6 @@
-// fvm flutter run -t lib/main_uat.dart \
-//   --dart-define-from-file=config/houses/benemoy-uat.json
+// Run with: make run   (from the workspace root)
 import 'package:oms_shared/oms_shared.dart';
 
 import 'src/run.dart';
 
-void main() => runBenemoy(OmsEnvironment.uat);
+void main() => bootstrap(OmsEnvironment.uat);

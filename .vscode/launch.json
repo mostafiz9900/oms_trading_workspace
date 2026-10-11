@@ -7,7 +7,7 @@
       "type": "dart",
       "cwd": "${workspaceFolder}/apps/benemoy",
       "program": "${workspaceFolder}/apps/benemoy/lib/main_uat.dart",
-      "args": ["--dart-define-from-file=config/houses/benemoy-uat.json"]
+      "args": ["--dart-define-from-file=env/uat.json"]
     },
     {
       "name": "Benemoy Prod",
@@ -15,7 +15,7 @@
       "type": "dart",
       "cwd": "${workspaceFolder}/apps/benemoy",
       "program": "${workspaceFolder}/apps/benemoy/lib/main_prod.dart",
-      "args": ["--dart-define-from-file=config/houses/benemoy-prod.json"]
+      "args": ["--dart-define-from-file=env/prod.json"]
     }
   ]
 }

@@ -1,5 +1,3 @@
 bricks:
-  house_profile:
-    path: bricks/house_profile
   feature_package:
     path: bricks/feature_package

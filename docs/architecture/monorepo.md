@@ -84,21 +84,20 @@ adapters for behavior that is genuinely different.
   remains responsible for authorizing every trading operation.
 - Local profiles and signing credentials must not be committed.
 
-### House branding configuration
+### Broker-house app layout
 
-The `house_profile` Mason brick emits an environment Dart-define JSON and a
-branding manifest at `config/houses/brands/<house>/manifest.json`. Runtime
-defines are consumed by `broker_config` for app title, logos/splashes, locale,
-theme colors, endpoints, and an optional contract URL. The manifest remains a
-catalog/scaffold for support details and optional client capabilities; those
-capability flags are not yet consumed by the live UI. Contract page routing,
-native launcher icons, and per-house iOS schemes still need integration.
-Client capability flags must never replace server-side authorization.
+Every app under `apps/<house>/` has the same shape, created by `make new-app`:
 
-Run `fvm dart run tool/validate_house_profiles.dart` or
-`fvm dart run melos run validate:houses` before adding a house profile. The
-validator checks manifest structure, locale defaults, capability types,
-unique Android application IDs, and every locally available environment JSON
-for matching house identity, environment, locale, asset/color fields, and URL
-schemes. It never prints profile values. Profiles may be absent in a clean
-checkout because local/CI profile JSON is git-ignored.
+| Path | Contents |
+|---|---|
+| `env/uat.json`, `env/prod.json` | Server URLs, `OMS_HOUSE_ID`, `OMS_HOUSE_NAME`, locale, colors, optional contract URL (git-ignored; `env/example.json` is the template) |
+| `assets/brand/` | `logo_light.svg`, `logo_dark.svg`, `splash_light.svg`, `splash_dark.svg`, `onboarding_first.png`, `onboarding_second.png` (fixed names, no config needed; an `OMS_BRAND_*_ASSET` key can override one) |
+| `lib/src/house_profile.dart` | Contact page, share text, store ids; `houseId` must equal `OMS_HOUSE_ID` |
+| `lib/src/app.dart`, `lib/src/routing/` | GetMaterialApp and the route table |
+| `lib/main_uat.dart`, `lib/main_prod.dart` | Entry points; `make run ENV=...` pairs each with its env file |
+| `lib/firebase_options.dart`, `android/`, `ios/` | Firebase, app id, bundle id, icons, signing, entitlements |
+
+`make validate` (`tool/validate_apps.dart`) checks every app: env files match
+their environment and the house id, URLs and colors are valid, brand assets
+exist, Firebase files are present, and Android/iOS ids are unique across apps.
+It never prints env values. Env files may be absent in a clean checkout.

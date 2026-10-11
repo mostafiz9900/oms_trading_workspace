@@ -1,102 +1,94 @@
 # OMS Trading Flutter workspace
 
-White-label monorepo for OMS broker-house trading apps. `apps/` holds only
-deployable broker apps (thin orchestrators); `packages/` holds all common code.
-Dart workspace + Melos 8, Flutter 3.47.6 pinned through FVM. State, routing and
-storage stay on GetX/GetStorage exactly as in the live app.
+White-label monorepo for OMS broker-house trading apps. Each broker house is a
+small app in `apps/`; every screen and all logic live in `packages/` and are
+shared. Dart workspace + Melos 8, Flutter 3.47.6 pinned through FVM. State,
+routing and storage stay on GetX/GetStorage exactly as in the live app.
+
+## Quick start
+
+```sh
+make setup              # once: install dependencies
+make run                # Benemoy on UAT (pick the device when asked)
+```
+
+Everything else:
+
+```sh
+make run ENV=prod       # production servers
+make run APP=fakhrul    # another broker house
+make appbundle          # Play Store release   (defaults to prod)
+make ipa                # App Store release    (defaults to prod)
+make check              # analyze + test + validate
+make                    # list all commands
+```
+
+In VS Code, pick **Benemoy UAT** or **Benemoy Prod** in Run and Debug and press F5.
+
+A run needs `apps/<app>/env/<env>.json`. These files hold server URLs and are
+git-ignored; copy `env/example.json` to create them. Never put passwords or
+signing keys in them, since their values are compiled into the app.
 
 ## Layout
 
 ```text
 oms_trading_workspace/
-├── .github/workflows/ci.yml     Parallel analyze matrix, tests, Android + iOS builds
-├── apps/
-│   ├── benemoy/                 Live Benemoy app (no business logic)
-│   │   ├── lib/
-│   │   │   ├── main_uat.dart    Flavor entry points
-│   │   │   ├── main_prod.dart
-│   │   │   ├── firebase_options.dart
-│   │   │   └── src/
-│   │   │       ├── app.dart           GetMaterialApp wrapper
-│   │   │       ├── routing/           Route table stitching the features
-│   │   │       ├── house_profile.dart Contact page, share text, store ids
-│   │   │       └── run.dart           Shared startup for both entry points
-│   │   ├── assets/houses/benemoy/     Logo, splash, onboarding images
-│   │   ├── config/houses/             uat/prod env JSON, Android flavor, brand manifest
-│   │   └── android/ ios/              Copied from the live project (app id, icons,
-│   │                                  Firebase, signing, entitlements)
-│   └── app_fakhrul/             Starter app, not yet converted
+├── apps/                        One folder per broker house
+│   └── benemoy/
+│       ├── env/                 uat.json, prod.json (git-ignored), example.json
+│       ├── assets/brand/        Logo, splash, onboarding images
+│       ├── lib/
+│       │   ├── main_uat.dart    Entry points
+│       │   ├── main_prod.dart
+│       │   └── src/
+│       │       ├── house_profile.dart   Contact page, share text, store ids
+│       │       ├── app.dart             GetMaterialApp
+│       │       └── routing/             Route table
+│       └── android/ ios/        Native projects (copied from the live app)
 ├── packages/
 │   ├── core/                    trading_core, trading_ui, broker_config
 │   ├── shared/
-│   │   ├── localization/        Translations and locale handling
-│   │   └── oms_shared/          Screens, controllers, services (transitional, see below)
+│   │   ├── localization/        Translations
+│   │   └── oms_shared/          Screens, controllers, services (transitional)
 │   └── features/                auth, market, orders, portfolio, notifications,
 │                                research, withdrawals, limits
-├── bricks/                      Mason generators
-├── tool/validate_house_profiles.dart
-└── pubspec.yaml                 Workspace root + Melos config (scripts, versioning)
+├── tool/                        new_app.dart, validate_apps.dart
+├── Makefile                     Day-to-day commands
+└── pubspec.yaml                 Workspace root + Melos config
 ```
 
 Dependencies only point downward: `apps` → `shared` → `features` → `core`.
 Nothing in `packages/` may import an app.
 
-## Running
+## Adding a broker house
 
 ```sh
-fvm dart run melos bootstrap
-
-cd apps/benemoy
-fvm flutter run -t lib/main_uat.dart \
-  --dart-define-from-file=config/houses/benemoy-uat.json
-fvm flutter build appbundle -t lib/main_prod.dart \
-  --dart-define-from-file=config/houses/benemoy-prod.json
+make new-app ID=fakhrul NAME="Fakhrul Securities" \
+  ANDROID_ID=com.fakhrulsecurities.app IOS_ID=com.fakhrulsecurities.app
 ```
 
-The entry point and the env JSON must agree: `main_uat.dart` with a profile
-whose `OMS_ENV` is `uat`, otherwise startup fails immediately. Env JSON files
-are git-ignored; `broker.example.json` documents every key. Dart defines are
-compiled into the binary, so never put passwords or signing credentials in them.
+This copies Benemoy's app (never its env files, Firebase files or signing
+keys), sets the new app id, bundle id and name everywhere, and prints the
+remaining checklist: env files, brand images, contact details, `flutterfire
+configure`, launcher icons and signing. `make validate` reports whatever is
+still missing.
 
-## What a broker house owns
+## CI
 
-| Concern | Where |
-|---|---|
-| API / socket URLs per environment | `config/houses/<house>-uat.json`, `-prod.json` |
-| App name, logo, splash, onboarding, colors | `OMS_HOUSE_NAME`, `OMS_BRAND_*` keys + `assets/houses/<house>/` |
-| Contact page, share text, store links | `lib/src/house_profile.dart` |
-| Which screens exist and their routes | `lib/src/routing/app_pages.dart` |
-| App id, bundle id, icon, Firebase, signing, entitlements | `android/`, `ios/` (one native project per house app), `lib/firebase_options.dart` |
-
-## Workspace commands
-
-```sh
-fvm dart run melos run analyze
-fvm dart run melos run test
-fvm dart run melos run validate:houses
-fvm dart run melos version        # bump versions + CHANGELOGs from conventional commits
-```
-
-Each house app has its own plain Flutter `android/` and `ios/` folders (no
-Gradle flavors). Benemoy's were copied from the live project; the only edits
-are the minimums Flutter 3.47.6 requires: Gradle wrapper 8.13 → 8.14, Kotlin
-plugin 2.1.0 → 2.2.20, and two `gradle.properties` flags added by Flutter's
-migrator. `config/houses/android/<house>.properties` is metadata that
-`validate:houses` checks against the real Gradle `applicationId`.
-
-CI needs one repository secret, `BENEMOY_UAT_PROFILE_JSON`, containing the
-UAT env JSON.
+`.github/workflows/ci.yml` analyzes every package in parallel, runs tests and
+`make validate`, then builds Benemoy for Android and iOS. It needs one
+repository secret, `BENEMOY_UAT_PROFILE_JSON`, with the contents of
+`apps/benemoy/env/uat.json`.
 
 ## Migration status
 
 | Phase | Scope | Status |
 |---|---|---|
-| 1 | App rename, flavor entries, app wrapper + routing in app, CI, localization package | Done |
-| 2 | Split `core` (network, storage, theme, utils) and `shared/design_system` out of `oms_shared`; remove the `app_pkg.dart` barrel and controller dependencies from services | Planned |
-| 3 | Move small modules into `features/*/lib/src/{data,domain,presentation}` (auth, onboarding, splash, contact_us, withdrawals, limits, order_alert, top_share) | Planned |
-| 4 | Split the `home` module (~30k LOC, incl. `home_controller.dart`) into market, orders, portfolio, watchlist and notifications | Planned |
+| 1 | App layout, entry points, routing in app, CI, localization package, live native projects | Done |
+| 2 | Split `core` (network, storage, theme, utils) and `shared/design_system` out of `oms_shared`; remove the `app_pkg.dart` barrel | Planned |
+| 3 | Move small modules into `features/*/lib/src/{data,domain,presentation}` | Planned |
+| 4 | Split the `home` module (~30k LOC) into market, orders, portfolio, watchlist, notifications | Planned |
 
-`oms_shared` is transitional: it empties out phase by phase into `core`,
-`design_system` and the feature packages. No compile errors; it still carries
-~590 legacy analyzer warnings/info inherited from the original app. Only
+`oms_shared` empties out phase by phase. It has no compile errors but still
+carries ~590 legacy analyzer warnings/info from the original app. Only
 `broker_config` has unit tests.

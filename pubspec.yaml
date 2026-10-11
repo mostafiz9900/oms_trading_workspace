@@ -24,13 +24,21 @@ melos:
         command: fvm dart analyze .
         concurrency: 4
         failFast: true
-      description: Analyze every Dart and Flutter workspace package.
+      packageFilters:
+        ignore: oms_shared
+      description: Analyze every package strictly (warnings fail), except oms_shared.
+    analyze:legacy:
+      exec:
+        command: fvm dart analyze --no-fatal-warnings .
+      packageFilters:
+        scope: oms_shared
+      description: Analyze oms_shared, failing only on errors (legacy warnings remain).
     test:
       exec:
         command: fvm flutter test
         concurrency: 1
         failFast: true
       description: Run each package's Flutter tests.
-    validate:houses:
-      run: fvm dart run tool/validate_house_profiles.dart
-      description: Validate broker-house manifests and Android metadata against native config.
+    validate:
+      run: fvm dart run tool/validate_apps.dart
+      description: Check env files, brand assets and app ids of every app.

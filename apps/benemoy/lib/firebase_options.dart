@@ -47,52 +47,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: String.fromEnvironment(
-      'OMS_FIREBASE_ANDROID_API_KEY',
-      defaultValue: 'AIzaSyD407FioNzAEHUsItbk8Uaq-IkhbuVsxgQ',
-    ),
-    appId: String.fromEnvironment(
-      'OMS_FIREBASE_ANDROID_APP_ID',
-      defaultValue: '1:498276884869:android:0beb527285436f29b3e4ec',
-    ),
-    messagingSenderId: String.fromEnvironment(
-      'OMS_FIREBASE_MESSAGING_SENDER_ID',
-      defaultValue: '498276884869',
-    ),
-    projectId: String.fromEnvironment(
-      'OMS_FIREBASE_PROJECT_ID',
-      defaultValue: 'benemoy-c5dae',
-    ),
-    storageBucket: String.fromEnvironment(
-      'OMS_FIREBASE_STORAGE_BUCKET',
-      defaultValue: 'benemoy-c5dae.firebasestorage.app',
-    ),
+    apiKey: 'AIzaSyD407FioNzAEHUsItbk8Uaq-IkhbuVsxgQ',
+    appId: '1:498276884869:android:0beb527285436f29b3e4ec',
+    messagingSenderId: '498276884869',
+    projectId: 'benemoy-c5dae',
+    storageBucket: 'benemoy-c5dae.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: String.fromEnvironment(
-      'OMS_FIREBASE_IOS_API_KEY',
-      defaultValue: 'AIzaSyCOohsLGtSgNK8XMtjNMVJekK1p-Gs81Us',
-    ),
-    appId: String.fromEnvironment(
-      'OMS_FIREBASE_IOS_APP_ID',
-      defaultValue: '1:498276884869:ios:d460b68d015067c4b3e4ec',
-    ),
-    messagingSenderId: String.fromEnvironment(
-      'OMS_FIREBASE_MESSAGING_SENDER_ID',
-      defaultValue: '498276884869',
-    ),
-    projectId: String.fromEnvironment(
-      'OMS_FIREBASE_PROJECT_ID',
-      defaultValue: 'benemoy-c5dae',
-    ),
-    storageBucket: String.fromEnvironment(
-      'OMS_FIREBASE_STORAGE_BUCKET',
-      defaultValue: 'benemoy-c5dae.firebasestorage.app',
-    ),
-    iosBundleId: String.fromEnvironment(
-      'OMS_IOS_BUNDLE_ID',
-      defaultValue: 'com.benemoysecurities.app',
-    ),
+    apiKey: 'AIzaSyCOohsLGtSgNK8XMtjNMVJekK1p-Gs81Us',
+    appId: '1:498276884869:ios:d460b68d015067c4b3e4ec',
+    messagingSenderId: '498276884869',
+    projectId: 'benemoy-c5dae',
+    storageBucket: 'benemoy-c5dae.firebasestorage.app',
+    iosBundleId: 'com.benemoysecurities.app',
   );
 }
