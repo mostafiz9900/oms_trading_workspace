@@ -1,0 +1,30 @@
+name: oms_trading_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.13.5
+
+workspace:
+  - apps/*
+  - packages/*/*
+
+dev_dependencies:
+  melos: ^8.9.0
+
+melos:
+  scripts:
+    analyze:
+      exec:
+        command: fvm dart analyze .
+        concurrency: 4
+        failFast: true
+      description: Analyze every Dart and Flutter workspace package.
+    test:
+      exec:
+        command: fvm flutter test
+        concurrency: 1
+        failFast: true
+      description: Run each package's Flutter tests.
+    validate:houses:
+      run: fvm dart run tool/validate_house_profiles.dart
+      description: Validate broker-house manifests and Android flavor metadata.

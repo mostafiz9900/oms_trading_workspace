@@ -1,0 +1,17 @@
+name: trading_ui
+description: Shared UI primitives for OMS broker-house Flutter apps.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.13.5
+  flutter: ">=3.38.0"
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_lints: ^6.0.0

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "houseId": "benemoy",
+  "appName": "Benemoy",
+  "branding": {
+    "logoLight": "assets/svg_image/logoSvg.svg",
+    "logoDark": "assets/svg_image/logoSvgWhite.svg",
+    "appIcon": "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+    "primaryColor": "#184A94",
+    "secondaryColor": "#177DFF"
+  },
+  "locales": {
+    "default": "en_US",
+    "supported": ["en_US", "bn_BD"]
+  },
+  "documents": {
+    "contractTermsUrl": null,
+    "privacyPolicyUrl": null
+  },
+  "support": {
+    "phone": null,
+    "email": null,
+    "websiteUrl": null
+  },
+  "capabilities": {
+    "marketDepth": true,
+    "timeAndSales": true,
+    "ipo": false,
+    "marginTrading": false
+  }
+}

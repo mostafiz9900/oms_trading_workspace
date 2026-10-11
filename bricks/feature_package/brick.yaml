@@ -1,0 +1,15 @@
+name: feature_package
+description: Scaffold a workspace feature package with clean architecture folders.
+version: 1.0.0
+environment:
+  mason: ^0.1.3
+vars:
+  package_name:
+    type: string
+    description: Dart package name in lower_snake_case
+    prompt: Feature package name?
+  description:
+    type: string
+    description: Short package description
+    default: OMS trading feature package
+    prompt: Package description?

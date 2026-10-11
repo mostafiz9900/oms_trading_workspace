@@ -1,0 +1,37 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+
+class NetworkManager extends GetxController {
+  // ইন্টারনেট আছে কি নেই তা ট্র্যাক করবে
+  var isConnected = true;
+
+  @override
+  void onInit() {
+    super.onInit();
+    // ইন্টারনেট চেক করা শুরু করুন
+    Connectivity().onConnectivityChanged.listen(_updateConnectionStatus);
+  }
+
+  void _updateConnectionStatus(List<ConnectivityResult> connectivityResult) {
+    if (connectivityResult.contains(ConnectivityResult.none)) {
+      isConnected = false;
+      // ইন্টারনেট চলে গেলে মেসেজ
+      Get.rawSnackbar(
+        message: "No internet connection. Please check your network.",
+        backgroundColor: Colors.red,
+        duration: const Duration(days: 1), // যতক্ষণ না ইন্টারনেট আসে ততক্ষণ দেখাবে
+        isDismissible: false,
+      );
+    } else {
+      if (isConnected == false) {
+        // ইন্টারনেট আসার সাথে সাথে আগের রেড স্নাকবারটি সরিয়ে দিন
+        Get.closeCurrentSnackbar();
+        // ইন্টারনেট ফিরে আসার মেসেজ
+        Get.rawSnackbar(message: "Back online!", backgroundColor: Colors.green, duration: const Duration(seconds: 3));
+      }
+      isConnected = true;
+    }
+    update(); // UI আপডেট করার জন্য
+  }
+}

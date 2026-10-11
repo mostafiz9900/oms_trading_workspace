@@ -1,0 +1,32 @@
+# FVM local SDK link and generated workspace metadata
+.fvm/
+.mason/
+/.masonrc
+/mason-lock.json
+**/.dart_tool/
+**/.flutter-plugins-dependencies
+**/.packages
+
+# Flutter, Android, and Apple build outputs
+**/build/
+**/ios/Pods/
+**/ios/Flutter/ephemeral/
+**/ios/SourcePackages/
+**/macos/Pods/
+**/macos/Flutter/ephemeral/
+**/macos/SourcePackages/
+
+# Local house configuration and signing credentials
+apps/app_benemoy/config/houses/*.json
+!apps/app_benemoy/config/houses/*.example.json
+apps/app_benemoy/android/key.properties
+apps/app_benemoy/android/oms-app-release-key.jks
+
+# Legacy dotenv files, local SDK paths, and any signing material
+**/env/.env*
+**/local.properties
+**/*.jks
+**/*.keystore
+**/key.properties
+**/*.p12
+**/*.mobileprovision
