@@ -20,10 +20,6 @@ class ContactUsController extends GetxController {
   String get androidLink => AppConfig.profile.store.playStoreShareUrl;
   String get iosLink => AppConfig.profile.store.appStoreShareUrl;
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
   Future<void> makePhoneCall(String phoneNumber) async {
     final Uri launchUri = Uri(scheme: 'tel', path: phoneNumber);
@@ -110,8 +106,4 @@ class ContactUsController extends GetxController {
     );
   }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../../../app_pkg.dart';
 import '../../../../global_widgets/empty_widget.dart';

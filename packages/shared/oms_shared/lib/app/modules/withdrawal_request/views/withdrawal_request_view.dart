@@ -162,7 +162,6 @@ class WithdrawalRequestView extends GetView<WithdrawalRequestController> {
     controller.clearForm();
 
     // 🚀 Controller থেকে ডেটা নেওয়া হচ্ছে
-    var investorCode = controller.homeController.userInfo.userDetail?.investorCode ?? 'N/A';
     double rawAvailableAmount = controller.userBalance?.amount ?? 0.0; // 🚀 ভ্যালিডেশনের জন্য রিয়েল ডাটা
     var formattedAvailableAmount = rawAvailableAmount.toStringAsFixed(2);
 

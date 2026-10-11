@@ -19,8 +19,6 @@ import 'package:uuid/uuid.dart';
 
 import '../../../app_pkg.dart';
 
-enum EncryptMode { ENCRYPT, DECRYPT }
-
 final uuid = Uuid();
 
 class Helpers {
@@ -1448,25 +1446,6 @@ extension StringExtension on String {
     return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
   }
 }
-
-Widget titleTextWidget({required String text}) {
-  return Text(text.tr, style: Get.textTheme.bodySmall!);
-}
-
-Widget insideBodyText({required String text}) {
-  return Text(
-    text,
-    style: Get.textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w400, fontSize: 14, color: HexColor('#505050')),
-  );
-}
-
-ButtonStyle elevatedButtonStyleCustom() => ElevatedButton.styleFrom(
-  backgroundColor: Get.theme.primaryColor,
-  minimumSize: Size(Get.width, 40),
-  padding: const .symmetric(horizontal: 2),
-  textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-);
 
 class HexColor extends Color {
   HexColor(String hexColor) : super(_getColorFromHex(hexColor));

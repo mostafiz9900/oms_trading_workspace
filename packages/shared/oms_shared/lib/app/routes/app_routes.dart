@@ -1,5 +1,6 @@
 /// Route names shared by every feature. Each app builds its own route table
 /// (GetPage list) from these in `lib/src/routing/`.
+library;
 
 abstract class Routes {
   Routes._();

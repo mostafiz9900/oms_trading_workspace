@@ -6,8 +6,6 @@ import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
 
-import '../../controllers/historical_volume_controller.dart';
-import 'historical/price_table_tab_widget.dart';
 
 // FastLineChart widget
 class FastLineChart extends StatefulWidget {
@@ -205,8 +203,7 @@ class _ChartPoint {
     required this.xDate,
     required this.y,
     required this.volume,
-    this.id,
-  });
+  }) : id = null;
 }
 
 // Make sure TimeAndSalesModel and HomeController are imported/defined in your project.

@@ -266,7 +266,7 @@ class CommonLimitItemWidget extends StatelessWidget {
 
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Divider(height: 1, color: context.dividerColor ?? Colors.grey.withOpacity(0.2)),
+            child: Divider(height: 1, color: context.dividerColor),
           ),
 
           _buildInfoRow(context, "Market Type:", item['market'] ?? 'N/A'),
@@ -275,7 +275,7 @@ class CommonLimitItemWidget extends StatelessWidget {
 
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Divider(height: 1, color: context.dividerColor ?? Colors.grey.withOpacity(0.2)),
+            child: Divider(height: 1, color: context.dividerColor),
           ),
 
           Row(

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:oms_shared/app/app_pkg.dart';
 import 'package:get/get.dart';
 
-import '../data.dart';
 
 class AuthProvider extends BaseProvider {
   Future<Response> login(String path, LoginRequest data) {

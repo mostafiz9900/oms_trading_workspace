@@ -12,16 +12,6 @@ FutureOr<dynamic> responseInterceptor(Request request, Response response) async 
   return response;
 }
 
-void handleErrorStatus(Response response) {
-  switch (response.statusCode) {
-    case 400:
-      break;
-    default:
-  }
-
-  return;
-}
-
 void responseLogger(Response response) {
   debugPrint('Status Code: ${response.statusCode}\n');
   debugPrint('Data: ${response.bodyString?.toString() ?? ''}');

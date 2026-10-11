@@ -2,8 +2,6 @@ import 'package:oms_shared/app/app_pkg.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../data/models/response/position_response.dart';
-
 class OrderDetailsView extends StatelessWidget {
   const OrderDetailsView({super.key, required this.userOrder});
   final UserOrder userOrder;
@@ -28,27 +26,6 @@ class OrderDetailsView extends StatelessWidget {
   }
 
   // 🚀 টাইম ফরম্যাটিং লজিক
-  String _formatTime(String? rawTime) {
-    if (rawTime == null || rawTime.isEmpty) return "";
-    try {
-      final parts = rawTime.split('-');
-      if (parts.length == 2) {
-        String datePart = parts[0]; // 20260906
-        String timePart = parts[1].split('.')[0]; // 04:15:23
-
-        if (datePart.length == 8) {
-          String year = datePart.substring(0, 4);
-          String month = datePart.substring(4, 6);
-          String day = datePart.substring(6, 8);
-          return "$day-$month-$year   $timePart";
-        }
-        return "${parts[0]}  $timePart";
-      }
-    } catch (e) {
-      // ফেইল করলে অন্তত র-টাইমটা দেখাবে
-    }
-    return rawTime;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +135,6 @@ class OrderDetailsView extends StatelessWidget {
 
 class _TitleAndValueRowWidget extends StatelessWidget {
   const _TitleAndValueRowWidget({
-    super.key,
     required this.title,
     required this.value,
     this.valueColor,

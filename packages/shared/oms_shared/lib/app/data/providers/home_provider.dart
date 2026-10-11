@@ -5,6 +5,9 @@ import '../../app_pkg.dart';
 import '../models/request/withdraw_request.dart';
 
 class HomeProvider extends BaseProvider {
+  // Plain client (no base URL or interceptors), reused across calls.
+  final GetConnect _plainClient = GetConnect();
+
   Future<Response> createFavCategory(String path, data) {
     var body = {"device_type": "mobile", "name": data};
     return post(path, body);
@@ -55,7 +58,6 @@ class HomeProvider extends BaseProvider {
   }
 
   Future<Response> logout(String path) async {
-    var isToken = await StorageService.read(StorageConstants.token);
     var refreshToken = await StorageService.read(StorageConstants.refreshToken);
     return post(path, {"refresh_token": refreshToken});
   }
@@ -65,8 +67,6 @@ class HomeProvider extends BaseProvider {
     required String oldPassword,
     required String newPassword,
   }) async {
-    var isToken = await StorageService.read(StorageConstants.token);
-    var refreshToken = await StorageService.read(StorageConstants.refreshToken);
     var body = {
       "old_password": oldPassword,
       "new_password": newPassword,
@@ -84,14 +84,14 @@ class HomeProvider extends BaseProvider {
     String tickerName,
     int orderBook,
   ) {
-    return GetConnect().post(path, {
+    return _plainClient.post(path, {
       "ticker_name": tickerName,
       "order_book": orderBook,
     });
   }
 
   Future<Response> getIndexChart(String path) {
-    return GetConnect().get(path);
+    return _plainClient.get(path);
   }
 
   Future<Response> fetchIndexChartData({
@@ -100,7 +100,7 @@ class HomeProvider extends BaseProvider {
     required int fromTs,
     required int toTs,
   }) {
-    return GetConnect().get(
+    return _plainClient.get(
       'https://uat-itchservice.skytrade.us/api/get_index_chart_data',
       query: {
         'fsym': fsym,

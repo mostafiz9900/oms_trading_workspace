@@ -140,7 +140,6 @@ class AuthController extends GetxController {
           await StorageService.save(StorageConstants.token, res.data!.token?.access);
           await StorageService.save(StorageConstants.refreshToken, res.data!.token?.refresh);
           await StorageService.saveMap(StorageConstants.userInfo, res.data!.toJson());
-          var token = await StorageService.read(StorageConstants.token);
           isLoading = true;
           update();
           Get.delete<HomeController>(force: true);
@@ -187,12 +186,6 @@ class AuthController extends GetxController {
     // 2. Get Device ID
     final decureDeviceId = await Helpers.getSecureDeviceIdLogin();
     printLog('decureDeviceId ::::::::: $decureDeviceId');
-
-    // ignore: dead_code
-    if (decureDeviceId == null) {
-      Helpers.snackbarForErorr2(bodyText: "Could not retrieve Device ID.");
-      return false;
-    }
 
     // 3. Authenticate with backend
     // Assuming loginBiometric returns a boolean indicating success!
@@ -556,6 +549,9 @@ class AuthController extends GetxController {
     registerBoIdController.dispose();
     loginUserNameController.dispose();
     loginPasswordController.dispose();
+    inputMediaEmailOrPhone.dispose();
+    otpVerifyEditController.dispose();
+    forgotPassEditController.dispose();
   }
 }
 

@@ -6,9 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../../../generated/assets.dart';
-import 'otp_verify_screen.dart';
 import 'send_otp_screen.dart';
-import 'signup_verify_otp.dart';
 
 class LoginView extends GetView<AuthController> {
   const LoginView({super.key});

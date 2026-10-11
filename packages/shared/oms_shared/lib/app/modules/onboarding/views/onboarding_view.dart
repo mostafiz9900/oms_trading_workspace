@@ -1,12 +1,9 @@
 import 'package:oms_shared/app/app_pkg.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 
 import '../controllers/onboarding_controller.dart';
-import 'local_widget/create_new_account.dart';
 
 class OnboardingView extends GetView<OnboardingController> {
   const OnboardingView({super.key});
@@ -131,39 +128,3 @@ class AnimatedDot extends StatelessWidget {
   }
 }
 
-class OnboardContent extends StatelessWidget {
-  const OnboardContent({
-    super.key,
-    required this.illustration,
-    required this.title,
-    required this.text,
-  });
-
-  final String illustration, title, text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: SvgPicture.asset(illustration),
-          ),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleLarge!
-              .copyWith(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          text,
-          style: Theme.of(context).textTheme.bodyMedium,
-          textAlign: TextAlign.center,
-        ),
-      ],
-    );
-  }
-}

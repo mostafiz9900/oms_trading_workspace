@@ -99,7 +99,7 @@ class OrderStatusDetailsView extends StatelessWidget {
 }
 
 class _TitleAndValueRowWidget extends StatelessWidget {
-  const _TitleAndValueRowWidget({required this.title, required this.value, this.valueColor});
+  const _TitleAndValueRowWidget({required this.title, required this.value}) : valueColor = null;
   final String title;
   final String value;
   final Color? valueColor;

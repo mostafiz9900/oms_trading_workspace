@@ -3,8 +3,6 @@ import 'package:get/get.dart';
 
 import '../../../app_pkg.dart';
 import '../../../data/services/recent_search_service.dart';
-import '../views/global_search_view.dart';
-import 'home_controller.dart';
 
 class GlobalSearchController extends GetxController {
   List<MarketModel> filteredItems = [];

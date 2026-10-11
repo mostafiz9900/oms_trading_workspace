@@ -46,7 +46,7 @@ class SearchWatchListView extends GetView<SearchWatchListController> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
-                                '${model ?? ""}   ',
+                                '$model   ',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(color: ColorConstants.textColorLight),
                               ),
@@ -119,7 +119,7 @@ class SearchWatchListView extends GetView<SearchWatchListController> {
 }
 
 class _WitchListItemWidget extends StatelessWidget {
-  const _WitchListItemWidget({super.key, required this.model});
+  const _WitchListItemWidget({required this.model});
   final MarketModel model;
 
   @override

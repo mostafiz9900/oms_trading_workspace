@@ -25,35 +25,3 @@ class EmptyWidget extends StatelessWidget {
   }
 }
 
-class EmptyWidget2 extends StatelessWidget {
-  final String message;
-  final String? buttonText;
-  final VoidCallback? onButtonPressed;
-
-  const EmptyWidget2({super.key, required this.message, this.buttonText, this.onButtonPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const .all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.list_alt, size: 60, color: Colors.grey),
-            const SizedBox(height: 12),
-            Text(
-              message,
-              style: const TextStyle(fontSize: 16, color: Colors.black54),
-              textAlign: TextAlign.center,
-            ),
-            if (buttonText != null && onButtonPressed != null) ...[
-              const SizedBox(height: 16),
-              ElevatedButton(onPressed: onButtonPressed, child: Text(buttonText!)),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}

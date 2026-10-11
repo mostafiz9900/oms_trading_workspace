@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter_hooks/flutter_hooks.dart';
 
 import '/app/app_pkg.dart';
 
@@ -19,7 +18,7 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final homeCon = Get.find<HomeController>();
+    Get.find<HomeController>();
     final ThemeServices themeController = Get.find();
     bool isDark = Get.isDarkMode;
     Widget customDivider = Divider(color: Colors.grey.shade300, height: 1, thickness: 1, indent: 1, endIndent: 1);

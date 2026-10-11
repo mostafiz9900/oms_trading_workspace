@@ -10,7 +10,7 @@ class PositionTabWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(PositionController());
+    if (!Get.isRegistered<PositionController>()) Get.put(PositionController());
 
     return GetBuilder<HomeController>(
       builder: (homeController) {
@@ -357,7 +357,6 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
     double intSellAvgPrice = model.intradaySellPriceAvg ?? 0.0;
 
     //  2. JS Logic: closeOrSettle and Last
-    double closeOrSettle = marketData.closeOrSettle;
     double activeLast = marketData.activeLast;
 
     double marketValue = remQty * activeLast;

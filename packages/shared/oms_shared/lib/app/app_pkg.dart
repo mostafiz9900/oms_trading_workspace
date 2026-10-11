@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'core/values/app_config.dart';
 
 export '../app/core/core.dart';
@@ -11,7 +12,8 @@ export 'routes/routes.dart';
 export 'global_provider.dart';
 
 String get kLOGTAG => "[${AppConfig.houseId}]";
-const kLOGENABLE = true;
+// Logs only in debug builds; release builds skip formatting and printing.
+const kLOGENABLE = kDebugMode;
 
 void printLog(dynamic data) {
   if (kLOGENABLE) {

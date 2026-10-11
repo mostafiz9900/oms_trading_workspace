@@ -1,59 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ui';
 
 import 'package:get/get.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../../app_pkg.dart';
 import '../../modules/top_share/controllers/top_share_controller.dart';
-
-class MarketSocketService2 extends GetxService {
-  late WebSocketChannel _channel;
-  final RxList<MarketModel> marketFeedList = <MarketModel>[].obs;
-  final RxBool loadingMarketFeed = false.obs;
-  final Map<int, MarketModel> _marketMap = {};
-
-  Future<MarketSocketService2> init() async {
-    await _connect();
-    return this;
-  }
-
-  Future<void> _connect() async {
-    final wsUrl = Uri.parse(AppConfig.marketUrl);
-    _channel = WebSocketChannel.connect(wsUrl);
-    await _channel.ready;
-    _channel.stream.listen(
-      _onMessage,
-      onError: (e) => print("WebSocket Error: $e"),
-      onDone: () => print("WebSocket closed."),
-    );
-  }
-
-  void _onMessage(event) {
-    if (event != null) {
-      final jsonResponse = jsonDecode(event);
-      if (jsonResponse['ob'] != null) {
-        final incoming = MarketModel.fromJson(jsonResponse);
-        _marketMap.update(
-          incoming.orderBook!,
-          (existing) => existing.mergePartialUpdate(jsonResponse),
-          ifAbsent: () => incoming,
-        );
-
-        final filtered = _marketMap.values.where((m) => m.group == "PUBLIC" && m.board == "Main Board").toList();
-
-        marketFeedList.assignAll(filtered);
-      }
-    } else if (event == null) {
-      print('⚠️ Null message received from ${event.id}');
-    }
-  }
-
-  void close() {
-    _channel.sink.close();
-  }
-}
 
 class MarketSocketService extends GetxService {
   WebSocketChannel? _channel;

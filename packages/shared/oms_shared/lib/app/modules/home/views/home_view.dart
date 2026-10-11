@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -22,7 +21,9 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final homeController = Get.find<HomeController>();
-    final UpdateController updateController = Get.put(UpdateController());
+    final UpdateController updateController = Get.isRegistered<UpdateController>()
+        ? Get.find<UpdateController>()
+        : Get.put(UpdateController());
     return GetBuilder<UpdateController>(
       builder: (_) {
         // Show alert dialog if app is outdated

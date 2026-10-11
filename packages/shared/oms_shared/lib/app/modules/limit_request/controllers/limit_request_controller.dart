@@ -114,6 +114,7 @@ class LimitRequestController extends GetxController {
   @override
   void onClose() {
     scrollController.dispose();
+    amountController.dispose();
     super.onClose();
   }
 

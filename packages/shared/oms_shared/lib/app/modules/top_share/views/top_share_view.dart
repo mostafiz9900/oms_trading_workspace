@@ -1,14 +1,10 @@
 import 'package:oms_shared/app/app_pkg.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-import '../../../core/utils/helpers/formatter_helper.dart';
 import '../../home/views/local_widgets/appbar_right_search_tap.dart';
 import '../../home/views/local_widgets/index_value_loader.dart';
-import '../../home/views/local_widgets/watch_list_widget.dart';
 import '../controllers/top_share_controller.dart';
-import 'live_value_blinker.dart';
 
 class TopShareView extends GetView<TopShareController> {
   const TopShareView({super.key});
@@ -127,7 +123,7 @@ class TopShareView extends GetView<TopShareController> {
 }
 
 class _DurationFilterWidget extends StatelessWidget {
-  const _DurationFilterWidget({super.key});
+  const _DurationFilterWidget();
 
   @override
   Widget build(BuildContext context) {
@@ -389,173 +385,3 @@ class _ShareSituationWidget extends StatelessWidget {
   }
 }
 
-class _MarketItemWidget extends StatelessWidget {
-  const _MarketItemWidget({required this.model, required this.index, required this.activeDuration});
-
-  final MarketModel model;
-  final int index;
-  final String activeDuration;
-
-  String _mapDuration(String duration) {
-    switch (duration) {
-      case "Weekly":
-        return "1W";
-      case "15 Day":
-        return "2W";
-      case "Monthly":
-        return "1M";
-      case "6 Month":
-        return "6M";
-      case "Yearly":
-        return "1Y";
-      case "Daily":
-      default:
-        return "1D";
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final homeCon = Get.find<HomeController>();
-    var favList = homeCon.isFav(model.orderBook!);
-
-    double percentageChange = model.getChangeByDuration(_mapDuration(activeDuration));
-    double absoluteChange = model.absoluteChange;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 8,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: model.displayName,
-                              style: Get.textTheme.titleMedium?.copyWith(
-                                color: context.textColor,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                                letterSpacing: 0.8,
-                              ),
-                            ),
-                            if (model.shareType != null) ...[
-                              TextSpan(
-                                text: ' [${model.shareType ?? ""}]',
-                                style: Get.textTheme.bodySmall?.copyWith(
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.w400,
-                                  color: context.textColor,
-                                  fontFeatures: [const FontFeature.superscripts()],
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ),
-                    LiveProBlinker(
-                      trackValue: absoluteChange,
-                      child: Text(
-                        NumberHelper.formatSigned(absoluteChange),
-                        style: Get.textTheme.titleSmall!.copyWith(
-                          color: NumberHelper.getColor(absoluteChange),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                AppSpace.spaceH2,
-                Row(
-                  children: [
-                    LiveProBlinker(
-                      trackValue: (model.volume ?? 0).toDouble(),
-                      child: Text(
-                        "${index + 1} | Vol:${NumberFormatter.fixedDecimal2(model.volume ?? 0.0, decimal: 0)}, ",
-                        style: Get.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300, fontSize: 12),
-                      ),
-                    ),
-                    LiveProBlinker(
-                      trackValue: model.val ?? 0.0,
-                      child: Text(
-                        "Val:${NumberFormatter.croreFormat(model.val ?? 0.0)}, ",
-                        style: Get.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300, fontSize: 12),
-                      ),
-                    ),
-                    Flexible(
-                      child: LiveProBlinker(
-                        trackValue: (model.trades ?? 0).toDouble(),
-                        child: Text(
-                          'Trd:${(model.trades ?? 0).toStringAsFixed(0)}',
-                          maxLines: 1,
-                          style: Get.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300, fontSize: 12),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          AppSpace.spaceW6,
-          Expanded(
-            flex: 2,
-            child: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                homeCon.changeShortName(model.shortName!);
-                favouriteBottomSheet(context, model);
-              },
-              child: favList
-                  ? const Icon(Icons.favorite, color: Colors.red, size: 20)
-                  : SvgPicture.asset(AssetsConstants.loveIconSvg, width: 16, height: 16),
-            ),
-          ),
-          AppSpace.spaceW6,
-          SizedBox(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                LiveProBlinker(
-                  trackValue: model.activePrice,
-                  child: Text(
-                    model.activePrice.toStringAsFixed(2),
-                    style: Get.textTheme.titleSmall!.copyWith(fontSize: 12, fontWeight: FontWeight.w600),
-                  ),
-                ),
-                AppSpace.spaceH2,
-                LiveProBlinker(
-                  trackValue: percentageChange,
-                  defaultColor: NumberHelper.getColor(percentageChange),
-                  borderRadius: BorderRadius.circular(6),
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                  child: Text(
-                    // 🚀 Percentage এর বদলে Absolute Change দেখানো হলো
-                    NumberHelper.formatSigned(percentageChange),
-                    style: Get.textTheme.titleSmall!.copyWith(
-                      color: ColorConstants.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

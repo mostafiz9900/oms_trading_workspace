@@ -23,13 +23,10 @@ class SearchWatchListController extends GetxController {
     update();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
   @override
   void onClose() {
+    textController.dispose();
     super.onClose();
   }
 

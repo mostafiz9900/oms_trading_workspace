@@ -1,4 +1,3 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -16,7 +15,7 @@ class WatchListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final watchCon = Get.put(WatchListController());
+    if (!Get.isRegistered<WatchListController>()) Get.put(WatchListController());
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
     final dividerWidget = Divider(height: 1, color: context.dividerColor);
 
@@ -462,136 +461,6 @@ class WatchListWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildMinimalDropdown({
-    required WatchListController controller,
-    required String id,
-    required String currentValue,
-    required List<String> items,
-    required Function(String) onSelected,
-    required BuildContext ctx,
-    required double widthDropdown,
-  }) {
-    return GetBuilder<WatchListController>(
-      id: id,
-      builder: (ctrl) {
-        final isDark = ctx.isDark;
-
-        return DropdownButtonHideUnderline(
-          child: DropdownButton2<String>(
-            customButton: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-              decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.white.withOpacity(0.05)
-                    : Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: isDark
-                      ? Colors.white.withOpacity(0.08)
-                      : Colors.grey.shade200,
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    currentValue,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: ctx.textColor,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    size: 16,
-                    color: Colors.grey[600],
-                  ),
-                ],
-              ),
-            ),
-            items: items.map((item) {
-              final isSelected = currentValue == item;
-              final isLast = item == items.last;
-
-              return DropdownItem<String>(
-                value: item,
-                child: Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    border: isLast
-                        ? null
-                        : Border(
-                            bottom: BorderSide(
-                              color: isDark
-                                  ? Colors.white.withOpacity(0.05)
-                                  : Colors.grey.shade200,
-                              width: 1,
-                            ),
-                          ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        item,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: isSelected ? Colors.blueAccent : ctx.textColor,
-                          fontWeight: isSelected
-                              ? FontWeight.w600
-                              : FontWeight.w400,
-                        ),
-                      ),
-                      if (isSelected)
-                        const Icon(
-                          Icons.check_rounded,
-                          color: Colors.blueAccent,
-                          size: 16,
-                        ),
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
-            onChanged: (value) {
-              if (value != null) onSelected(value);
-            },
-            dropdownStyleData: DropdownStyleData(
-              width: widthDropdown,
-              padding: EdgeInsets.zero,
-              offset: const Offset(0, -4),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: ctx.cardColor,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(isDark ? 0.2 : 0.08),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-            ),
-            menuItemStyleData: MenuItemStyleData(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-              overlayColor: WidgetStateProperty.resolveWith<Color?>((states) {
-                if (states.contains(WidgetState.hovered) ||
-                    states.contains(WidgetState.pressed)) {
-                  return isDark
-                      ? Colors.white.withOpacity(0.05)
-                      : Colors.grey.shade100;
-                }
-                return Colors.transparent;
-              }),
-            ),
-          ),
-        );
-      },
-    );
-  }
 }
 
 class _WatchListSearchBar extends StatelessWidget {

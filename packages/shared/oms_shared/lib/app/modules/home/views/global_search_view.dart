@@ -10,33 +10,6 @@ import 'local_widgets/index_value_loader.dart';
 class GlobalSearchScreen extends HookWidget {
   const GlobalSearchScreen({super.key});
 
-  List<TextSpan> _buildHighlightText(String text, String query, BuildContext context, {double fontSize = 14}) {
-    final defaultStyle =
-        Get.textTheme.titleMedium?.copyWith(
-          color: context.textColor,
-          fontWeight: FontWeight.w500,
-          fontSize: fontSize,
-          letterSpacing: 0.5,
-        ) ??
-        const TextStyle();
-
-    final highlightStyle = defaultStyle.copyWith(color: context.buttonColor, fontWeight: FontWeight.w900);
-
-    if (query.isEmpty) return [TextSpan(text: text, style: defaultStyle)];
-
-    final String lowerText = text.toLowerCase();
-    final String lowerQuery = query.toLowerCase();
-    final int startIndex = lowerText.indexOf(lowerQuery);
-
-    if (startIndex == -1) return [TextSpan(text: text, style: defaultStyle)];
-
-    return [
-      TextSpan(text: text.substring(0, startIndex), style: defaultStyle),
-      TextSpan(text: text.substring(startIndex, startIndex + query.length), style: highlightStyle),
-      TextSpan(text: text.substring(startIndex + query.length), style: defaultStyle),
-    ];
-  }
-
   Widget _buildMinimalDropdown({
     required GlobalSearchController controller,
     required String id,

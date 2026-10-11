@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:ui';
 
 import '../../../data/models/response/order_alert_model.dart';
@@ -28,7 +27,6 @@ import 'package:market/market.dart'
         MarketTickStore,
         TradingChartModel;
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '/app/data/models/request/update_order_holder.dart';
 import '../../../app_pkg.dart';
@@ -45,7 +43,6 @@ import '../../auth/controllers/token_controller.dart';
 import '../views/order_status_details_view.dart';
 import 'candle_chart_controller.dart';
 import 'companies_controller.dart';
-import 'global_search_controller.dart';
 import 'market_index_controller.dart';
 import 'watchlist_controller.dart';
 
@@ -57,21 +54,6 @@ final userInfoProvider = Provider<UserProfile>((ref) {
   printLog('user profile:: ');
   return user;
 });
-final userNotifierProvider = NotifierProvider<UserNotifier, UserProfile>(
-  () => UserNotifier(),
-);
-
-class UserNotifier extends Notifier<UserProfile> {
-  @override
-  UserProfile build() {
-    printLog('user profile:: ');
-    var res = StorageService.getMap(StorageConstants.userInfo);
-    UserProfile? user = UserProfile.fromJson(res!);
-    printLog(user.toJson());
-    printLog('user profile:: ');
-    return user;
-  }
-}
 
 final watchListOnProvider = NotifierProvider<WatchListOnNotifier, bool>(
   () => WatchListOnNotifier(),
@@ -86,11 +68,9 @@ class WatchListOnNotifier extends Notifier<bool> {
   void changeValue(bool value) => state = value;
 }
 
-final timeAndSalesProvider = FutureProvider<dynamic>((ref) async {
-  return;
-});
-
 class HomeController extends SuperController {
+  final GetConnect _chartClient = GetConnect(timeout: const Duration(seconds: 30));
+
   final MarketSocketService marketService = Get.find<MarketSocketService>();
   final CompaniesController companiesController =
       Get.find<CompaniesController>();
@@ -268,6 +248,9 @@ class HomeController extends SuperController {
 
   @override
   void onClose() {
+    _chartClient.dispose();
+    _marketUpdateTimer?.cancel();
+    _indexUpdateTimer?.cancel();
     disconnect();
     Future.delayed(const Duration(milliseconds: 100), () {
       _disconnectAll();
@@ -278,6 +261,9 @@ class HomeController extends SuperController {
       minQtyTextEditField.dispose();
       tradPriceTextEditField.dispose();
       tradePriceFocusNode.dispose();
+      scrollController.dispose();
+      searchTextEditCont.dispose();
+      watchlistTextEditField.dispose();
     });
 
     super.onClose();
@@ -333,21 +319,6 @@ class HomeController extends SuperController {
         _handleSocketError2(socketId, error);
       },
     );
-  }
-
-  void _initializeSSE({
-    required String socketId,
-    required String url,
-    required Function(String) messageHandler,
-  }) {
-    if (url.isEmpty || url == 'null') {
-      printLog('URL not available for: $socketId');
-      return;
-    }
-
-    _socketUrls[socketId] = url;
-    _socketData[socketId] = '';
-    _socketStatus[socketId] = false;
   }
 
   void _handleSocketMessage(
@@ -441,17 +412,6 @@ class HomeController extends SuperController {
   }
 
   void _initializeNewsWebSocket() {
-  }
-
-  void _initializeIndexWebSocket() {
-    indexList = [];
-    newArr = IndexModel(sn: "DSEX");
-    update(['indexList']);
-    _initializeSocket(
-      socketId: AppConfig.indexSocketId,
-      url: AppConfig.indexUrl,
-      messageHandler: _handleIndexMessage,
-    );
   }
 
   void _initializeMarketDepthWebSocket() {
@@ -675,31 +635,6 @@ class HomeController extends SuperController {
 
   // =================================================================================
   // =================================================================================
-  List<Map<String, dynamic>> _calculateVolumeLeaders(List<MarketModel> list) {
-    var filteredList = list.where((m) {
-      //  StockNow Filters
-      if ((m.volume ?? 0) <= 0 && (m.trades ?? 0) <= 0 && (m.val ?? 0) <= 0)
-        return false;
-      if (m.board != "Main Board" && m.board != "Small Cap Board") return false;
-      if (m.instrumentType != "EQ" && m.instrumentType != "MF") return false;
-      return true;
-    }).toList();
-
-    filteredList.sort((a, b) => (b.val ?? 0.0).compareTo(a.val ?? 0.0));
-
-    return filteredList.take(10).map((m) {
-      //  MAGIC FIX: ভ্যালুকে ১০ লক্ষ (1 Million) দিয়ে ভাগ!
-      double stockValue = m.val ?? 0.0;
-      if (stockValue.isNaN || stockValue.isInfinite) stockValue = 0.0;
-      double valueInMillions = stockValue / 1000000;
-
-      return {
-        'sn': m.shortName ?? '',
-        'val': valueInMillions, // এখন ডেটা মিলিয়নে আছে (যেমন 15.5)
-        'vol': (m.volume ?? 0).toDouble(),
-      };
-    }).toList();
-  }
 
   List<MarketModel> getRelatedAssets(
     MarketModel selectedItem,
@@ -738,14 +673,6 @@ class HomeController extends SuperController {
   }
 
   //  সেফটি হেল্পার: ডুপ্লিকেট এড়ানোর জন্য লিস্টে টিক আপডেট বা ইনসার্ট করা
-  void _updateOrAddToList(List<MarketModel> list, MarketModel incoming) {
-    final index = list.indexWhere((e) => e.orderBook == incoming.orderBook);
-    if (index != -1) {
-      list[index] = incoming; // ডুপ্লিকেট না করে আপডেট করা হলো (Memory Safe)
-    } else {
-      list.add(incoming);
-    }
-  }
 
   // call this after you update _marketMap and marketList
   //  ১. O(1) স্পিড এবং জিরো-ল্যাগের জন্য Map এবং ValueNotifier
@@ -790,62 +717,6 @@ class HomeController extends SuperController {
   // Share Type (Category) চার্টের ডেটা
 
   // সরাসরি marketList থেকে Share Type ডেটা জেনারেট করার ফাংশন
-  List<Map<String, dynamic>> _calculateSectorShareTypeData(
-    List<MarketModel> marketList,
-  ) {
-    final Map<String, Map<String, int>> sectorStats = {};
-
-    for (final MarketModel model in marketList) {
-      String? sectorName = model.sector; //[cite: 1]
-      String? shareType = model.shareType?.toUpperCase(); //[cite: 1]
-
-      // অবৈধ সেক্টর বা শেয়ার টাইপ বাদ দেওয়া হচ্ছে
-      if (sectorName == null || sectorName.isEmpty || sectorName == "TBond")
-        continue;
-      if (shareType == null || !["A", "B", "N", "Z"].contains(shareType))
-        continue;
-
-      // Small Cap Board এর নাম পরিবর্তন
-      if (model.board == "Small Cap Board") {
-        sectorName = "SME";
-      }
-
-      // সেক্টর ম্যাপে না থাকলে ডিফল্ট ভ্যালু দিয়ে ইনিশিয়ালাইজ করা
-      sectorStats.putIfAbsent(
-        sectorName,
-        () => {"A": 0, "B": 0, "N": 0, "Z": 0},
-      );
-
-      // শেয়ার টাইপ অনুযায়ী কাউন্ট বাড়ানো
-      sectorStats[sectorName]![shareType] =
-          sectorStats[sectorName]![shareType]! + 1;
-    }
-
-    // Chart-এর ফরম্যাটে কনভার্ট এবং টোটাল হিসাব করা
-    final List<Map<String, dynamic>> formattedData = sectorStats.entries.map((
-      entry,
-    ) {
-      final int aCount = entry.value["A"]!;
-      final int bCount = entry.value["B"]!;
-      final int nCount = entry.value["N"]!;
-      final int zCount = entry.value["Z"]!;
-      final int totalCount = aCount + bCount + nCount + zCount;
-
-      return {
-        "sector": entry.key,
-        "A": aCount.toDouble(),
-        "B": bCount.toDouble(),
-        "N": nCount.toDouble(),
-        "Z": zCount.toDouble(),
-        "total": totalCount.toDouble(),
-      };
-    }).toList();
-
-    // Total অনুযায়ী Descending অর্ডারে সর্ট করা
-    formattedData.sort((a, b) => b["total"].compareTo(a["total"]));
-
-    return formattedData;
-  }
 
   void _updateSectorFilters(Map<String, dynamic> jsonResponse) {
     final marketDataObj = MarketModel.fromJson(jsonResponse);
@@ -1472,8 +1343,7 @@ class HomeController extends SuperController {
     printLog("to  '$toTimestamp");
     printLog("symbole  '$sortName");
     try {
-      final connect = GetConnect();
-      connect.timeout = const Duration(seconds: 30);
+      final connect = _chartClient;
       final url = 'https://itch-chart.skytrade.us/history';
       final response = await connect.get(
         url,
@@ -2757,7 +2627,6 @@ class HomeController extends SuperController {
     List<MarketOrderModel> orders,
   ) {
     Map<double, List<MarketOrderModel>> priceMap = {};
-    for (var order in orders) {}
 
     // Remove entries with only one product (no duplicates)
     for (var item in priceMap.values) {
@@ -2793,33 +2662,6 @@ class HomeController extends SuperController {
 
   String? getBoId() {
     return userInfo.userDetail?.boId;
-  }
-
-  Future<AppExitResponse> _onExitRequested() async {
-    final response = await showDialog<AppExitResponse>(
-      context: Get.overlayContext!,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog.adaptive(
-        title: const Text('Are you sure you want to quit this app?'),
-        content: const Text('All unsaved progress will be lost.'),
-        actions: [
-          TextButton(
-            child: const Text('Cancel'),
-            onPressed: () {
-              Navigator.of(context).pop(AppExitResponse.cancel);
-            },
-          ),
-          TextButton(
-            child: const Text('Ok'),
-            onPressed: () {
-              Navigator.of(context).pop(AppExitResponse.exit);
-            },
-          ),
-        ],
-      ),
-    );
-
-    return response ?? AppExitResponse.exit;
   }
 
   Future<bool> showExitDialog(BuildContext context) async {
@@ -3810,7 +3652,6 @@ class HomeController extends SuperController {
 
     var traderCode = userInfo.userDetail?.traderCode ?? '';
     var boId = userInfo.userDetail?.boId ?? '';
-    var clientCode = userInfo.userDetail?.investorCode ?? '';
 
     //  ২. Symbol (shortName) বের করা হচ্ছে
     final shortName =

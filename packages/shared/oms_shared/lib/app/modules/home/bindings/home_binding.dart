@@ -16,11 +16,9 @@ class HomeBinding extends Bindings {
       fenix: true,
     );
     //লাইভ ইনডেক্স কন্ট্রোলারকে permanent করে দেওয়া হলো, যেন ট্যাব পাল্টালে ডিসপোজ না হয়
-    Get.put<LiveIndexController>(LiveIndexController(), permanent: true);
-    Get.lazyPut<HomeController>(
-      () => HomeController(homeRepository: Get.find()),
-      tag: 'orderModifiy',
-    );
+    if (!Get.isRegistered<LiveIndexController>()) {
+      Get.put<LiveIndexController>(LiveIndexController(), permanent: true);
+    }
     Get.lazyPut<PasswordResetController>(
       () => PasswordResetController(Get.find()),
     );

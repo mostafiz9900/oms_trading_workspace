@@ -1,11 +1,5 @@
 // To parse this JSON data, do
 
-import 'dart:convert';
-
-ShareSituation shareSituationFromJson(String str) =>
-    ShareSituation.fromJson(json.decode(str));
-
-String shareSituationToJson(ShareSituation data) => json.encode(data.toJson());
 
 class ShareSituation {
   final int? id;

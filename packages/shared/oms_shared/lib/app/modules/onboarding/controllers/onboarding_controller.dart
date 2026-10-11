@@ -12,13 +12,10 @@ class OnboardingController extends GetxController {
     pageController = PageController(initialPage: selectedIndex);
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
   @override
   void onClose() {
+    pageController.dispose();
     super.onClose();
   }
 

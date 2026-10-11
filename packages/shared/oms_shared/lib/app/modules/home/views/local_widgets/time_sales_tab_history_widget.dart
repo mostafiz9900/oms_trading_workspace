@@ -1,4 +1,3 @@
-import '/app/core/utils/helpers/formatter_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -101,7 +100,7 @@ class TimeSalesTabHistoryWidget extends StatelessWidget {
 }
 
 class _TableTitleTextWidget extends StatelessWidget {
-  const _TableTitleTextWidget({super.key, required this.title, this.textAlign});
+  const _TableTitleTextWidget({required this.title, this.textAlign});
   final String title;
   final TextAlign? textAlign;
   @override

@@ -18,10 +18,6 @@ import '../models/response/withdraw_model.dart';
 final homeProvider = Provider<HomeProvider>((ref) {
   return HomeProvider();
 });
-final homeRepoProvider = Provider<HomeRepository>((ref) {
-  return HomeRepository(homeProvider: ref.read(homeProvider));
-});
-
 class HomeRepository
     implements MarketFavoritesRepository, MarketChartRepository {
   HomeRepository({required this.homeProvider})

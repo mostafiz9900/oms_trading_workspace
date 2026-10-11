@@ -1,7 +1,5 @@
-enum AppThemeEnum { light, dark }
 
 // Order types
-enum EmitType { order, replaceOrder, cancelOrder }
 
 // Side types
 enum SideType { buy, sell }
@@ -17,23 +15,6 @@ final Map<OrderType, String> orderTypeMap = {
   OrderType.MARKET_AT_BEST: 'Z',
   OrderType.LIMIT: '2',
 };
-
-enum SecuritySubtype {
-  PUBLIC,
-  BLOCK,
-  DEBT,
-  BUYIN,
-  INDEX,
-  SPUBLIC,
-  SBLOCK,
-  SDEBT,
-  SBUYIN,
-  SCPX,
-  ATBPUB,
-  ATBDEBT,
-  ATBBUYIN,
-  ATBX,
-}
 
 enum TimeInForce { DAY, SESSION, IMMEDIATE_OR_CANCEL, FILL_OR_KILL, GOOD_TILL_CANCEL, GOOD_TILL_DATE }
 

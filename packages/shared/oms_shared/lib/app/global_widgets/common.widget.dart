@@ -5,26 +5,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
-import '../modules/auth/controllers/token_controller.dart';
-
-class DividerWidget {
-  static Widget divider({
-    BuildContext? context,
-    double height = 1,
-    double thickness = 0.7,
-    Color? color,
-    double indent = 0,
-    double endIndent = 0,
-  }) {
-    return Divider(
-      height: height,
-      thickness: thickness,
-      indent: indent,
-      endIndent: endIndent,
-      color: color ?? (context != null ? Theme.of(context).dividerColor : Colors.grey),
-    );
-  }
-}
 
 class CommonWidget {
   static AppBar appBar(
@@ -205,39 +185,3 @@ void showLogoutDialog(BuildContext context) {
   );
 }
 
-final logoutProvider = NotifierProvider<LogoutNotifier, void>(() => LogoutNotifier());
-
-class LogoutNotifier extends Notifier<void> {
-  @override
-  void build() {}
-
-  Future<void> logout(BuildContext context) async {
-    final refreshToken = await StorageService.read(StorageConstants.refreshToken);
-    if (refreshToken == null) {
-      _clearLocal(context);
-      return;
-    }
-    try {
-      var response = await ref.read(homeRepoProvider).logout();
-
-      if (response.success) {
-        _clearLocal(context);
-      } else {
-        throw Exception('Logout failed');
-      }
-    } catch (e) {
-      print('Logout error: $e');
-      _clearLocal(context); // still logout locally on error
-    }
-  }
-
-  void _clearLocal(BuildContext context) {
-    StorageService.remove(StorageConstants.token);
-    StorageService.remove(StorageConstants.refreshToken);
-    StorageService.remove(StorageConstants.userInfo);
-    StorageService.remove(StorageConstants.orderBookId);
-    Get.offAllNamed(Routes.HOME);
-    Get.delete<TokenController>();
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Logged out")));
-  }
-}

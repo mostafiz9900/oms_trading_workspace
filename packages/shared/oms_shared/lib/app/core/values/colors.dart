@@ -82,21 +82,6 @@ Color hexToColor(String hex) {
   );
 }
 
-class ColorUtils {
-  /// Convert opacity (0.0 – 1.0) to Color alpha (0 – 255)
-  static Color applyAlpha(Color color, double opacity) {
-    final alpha = (opacity * 255).round();
-    return color.withAlpha(alpha);
-  }
-
-  /// Safe version for nullable colors
-  static Color? applyAlphaSafe(Color? color, double opacity) {
-    if (color == null) return null;
-    final alpha = (opacity * 255).round();
-    return color.withAlpha(alpha);
-  }
-}
-
 /// ------------------------------------------------------------
 /// COLOR EXTENSION — Cleanest way to apply alpha on any Color
 /// ------------------------------------------------------------

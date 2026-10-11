@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'appbar_right_search_tap.dart';
-import 'candle_series_charts.dart';
 import 'historical/price_table_tab_widget.dart';
 import 'time_sales_tab_widget.dart';
 
@@ -99,39 +98,3 @@ class _CustomTabWidget extends StatelessWidget {
   }
 }
 
-class LabeledCheckbox extends StatelessWidget {
-  const LabeledCheckbox({super.key, required this.label, required this.value, required this.onChanged});
-
-  final String label;
-  final bool value;
-  final Function onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        onChanged(!value);
-      },
-      child: Row(
-        children: <Widget>[
-          Transform.scale(
-            scale: 1.3,
-            child: Checkbox(
-              value: value,
-              onChanged: (bool? newValue) {
-                onChanged(newValue);
-              },
-              activeColor: hexToColor('#FF708A'),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-              side: BorderSide(color: hexToColor('#FF708A'), width: 1.25),
-            ),
-          ),
-          Text(
-            label,
-            style: TextStyle(color: hexToColor('#000000'), fontWeight: FontWeight.w400, fontSize: 15),
-          ),
-        ],
-      ),
-    );
-  }
-}

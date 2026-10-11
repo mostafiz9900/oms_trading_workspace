@@ -64,12 +64,12 @@ class ContactUsView extends GetView<ContactUsController> {
               icon: Icons.wechat_rounded,
               iconColor: const Color(0xFF25D366),
               title: "WhatsApp",
-              subtitle: controller.contactWhatsApp ?? controller.contactNumber, //  Variable
+              subtitle: controller.contactWhatsApp, //  Variable
               actionText: "Chat",
               isDark: isDark,
-              onTap: () => controller.launchWhatsApp(controller.contactWhatsApp ?? controller.contactNumber),
+              onTap: () => controller.launchWhatsApp(controller.contactWhatsApp),
               onCopy: () =>
-                  controller.copyToClipboard(controller.contactWhatsApp ?? controller.contactNumber, 'WhatsApp number'),
+                  controller.copyToClipboard(controller.contactWhatsApp, 'WhatsApp number'),
             ),
             const SizedBox(height: 8),
 

@@ -4,69 +4,6 @@ import 'package:get/get.dart';
 
 import '../app_pkg.dart';
 
-class CustomAppBar2 extends StatelessWidget implements PreferredSizeWidget {
-  final bool? isBackButtonIcon;
-  final VoidCallback? backButtonOnClick;
-  final VoidCallback? searchButtonOnClick;
-  final String? titleText;
-  final double height;
-  final Widget? right;
-
-  const CustomAppBar2({
-    super.key,
-    this.isBackButtonIcon,
-    this.backButtonOnClick,
-    this.searchButtonOnClick,
-    this.titleText,
-    this.height = kToolbarHeight,
-    this.right,
-  });
-
-  @override
-  Size get preferredSize => Size.fromHeight(height);
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      child: AppBar(
-        titleSpacing: 15.0,
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        surfaceTintColor: Colors.transparent,
-        title: Row(
-          mainAxisAlignment: .spaceBetween,
-          crossAxisAlignment: .center,
-          children: [
-            InkWell(
-              onTap: backButtonOnClick,
-              child: Container(
-                padding: const .only(bottom: 5),
-                alignment: Alignment.center,
-                child: isBackButtonIcon == true
-                    ? SvgPicture.asset(AssetsConstants.backIconSvg, width: 20, height: 16)
-                    : SvgPicture.asset(AssetsConstants.moreIconSvg, width: 24, height: 24),
-              ),
-            ),
-            AppSpace.spaceW8,
-            titleText != null
-                ? Text(titleText ?? "", textAlign: TextAlign.center, style: Get.textTheme.titleMedium)
-                : SvgPicture.asset(AssetsConstants.logoSvg, width: 120, height: 30),
-            AppSpace.spaceW6,
-            Flexible(
-              child:
-                  right ??
-                  InkWell(
-                    onTap: searchButtonOnClick ?? () => Get.toNamed(Routes.SEARCH_WATCH_LIST),
-                    child: SvgPicture.asset(AssetsConstants.searchIconSvg, width: 20, height: 20),
-                  ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool? isBackButtonIcon;
   final VoidCallback? backButtonOnClick;

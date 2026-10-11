@@ -1,5 +1,4 @@
 // lib/screens/price_table_screen.dart
-import 'package:oms_shared/app/core/core.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,9 +13,9 @@ class PriceTableTabWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(
-      HistoricalVolumeController(repository: Get.find<HomeRepository>()),
-    );
+    if (!Get.isRegistered<HistoricalVolumeController>()) {
+      Get.put(HistoricalVolumeController(repository: Get.find<HomeRepository>()));
+    }
     return GetBuilder<HistoricalVolumeController>(
       builder: (controller) {
         if (controller.isLoading) {
@@ -297,7 +296,7 @@ class PriceTableTabWidget extends StatelessWidget {
     final color = item.priceChange == 0
         ? Theme.of(context).textTheme.bodyMedium?.color
         : (item.isPositive ? Colors.green : Colors.red);
-    final ctrl = Get.find<HistoricalVolumeController>();
+    Get.find<HistoricalVolumeController>();
 
     return Row(
       children: [

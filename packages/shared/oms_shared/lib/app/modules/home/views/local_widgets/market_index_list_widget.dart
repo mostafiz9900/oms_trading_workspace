@@ -224,13 +224,11 @@ class TradeSummaryGridWidget extends StatelessWidget {
 
 class _CustomCardWidget extends StatelessWidget {
   const _CustomCardWidget({
-    super.key,
     required this.color,
     required this.title,
     required this.subtitle,
-    this.active,
     this.onClick,
-  });
+  }) : active = null;
 
   final Color color;
   final String title;

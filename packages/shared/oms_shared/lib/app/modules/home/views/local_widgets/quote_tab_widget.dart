@@ -1,7 +1,6 @@
 import 'package:market/market.dart' show AddFavItemRequest;
 
 import '../../../../global_widgets/InfoTooltipIcon.dart';
-import '/app/core/utils/helpers/formatter_helper.dart';
 import '/app/modules/home/views/local_widgets/responsive_wrap_widget.dart';
 
 import 'package:flutter/material.dart';

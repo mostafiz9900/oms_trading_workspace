@@ -46,7 +46,6 @@ class ResetPasswordPage extends HookConsumerWidget {
       fontWeight: FontWeight.w400,
       fontSize: 14,
     );
-    var titleTextStyle = Get.textTheme.bodyLarge?.copyWith(color: Colors.white);
 
     return Scaffold(
       appBar: AppBar(
