@@ -109,6 +109,11 @@ void main(List<String> args) {
       RegExp('<string>${RegExp.escape(sourceName)}</string>'),
       '<string>$name</string>',
     ),
+    // Version comes from pubspec.yaml for new apps.
+    (
+      RegExp(r'(?<=<key>CFBundleShortVersionString</key>\s*<string>)[^<]*'),
+      r'$(FLUTTER_BUILD_NAME)',
+    ),
   ]);
 
   final activityDir =
