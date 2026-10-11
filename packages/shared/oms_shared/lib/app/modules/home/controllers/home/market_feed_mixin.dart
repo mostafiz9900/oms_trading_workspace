@@ -6,8 +6,14 @@ mixin MarketFeedMixin on HomeState {
 
   @override
   void _handleMarketMessage(dynamic message) async {
+    final MarketTickMessage event;
     try {
-      final event = MarketTickMessage.decode(message.toString());
+      event = MarketTickMessage.decode(message.toString());
+    } on Exception catch (e) {
+      printLog('Error processing market message: $e');
+      return;
+    }
+    try {
       final jsonResponse = event.payload;
       // Handle different message types
       if (event.kind == MarketTickKind.session) {
@@ -24,6 +30,13 @@ mixin MarketFeedMixin on HomeState {
       _updateSectorFilters(jsonResponse);
     } on Exception catch (e) {
       printLog('Error processing market message: $e');
+    }
+    // Top Stocks uses the same feed; it used to open a second socket for it.
+    // Kept separate so a failure there can never affect the home screen.
+    try {
+      marketService.onMarketPayload(event.payload);
+    } catch (e) {
+      printLog('Error in Top Stocks feed: $e');
     }
   }
 

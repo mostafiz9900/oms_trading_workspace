@@ -10,6 +10,7 @@ class DependencyInjection {
     Get.put<ThemeServices>(ThemeServices(), permanent: true);
     Get.lazyPut(() => WebSocketService());
     Get.lazyPut<TokenController>(() => TokenController(), fenix: true);
-    await Get.putAsync(() => MarketSocketService().init());
+    // Fed by HomeController's market socket; no network wait at startup.
+    Get.put(MarketSocketService());
   }
 }
