@@ -62,7 +62,8 @@ part 'home/account_mixin.dart';
 final userInfoProvider = Provider<UserProfile>((ref) {
   printLog('user profile:: ');
   var res = StorageService.getMap(StorageConstants.userInfo);
-  UserProfile? user = UserProfile.fromJson(res!);
+  // Guest mode / after logout there is no stored profile; `res!` threw.
+  UserProfile? user = res == null ? UserProfile() : UserProfile.fromJson(res);
   printLog(user.toJson());
   printLog('user profile:: ');
   return user;

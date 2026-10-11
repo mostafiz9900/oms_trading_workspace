@@ -190,9 +190,11 @@ class AuthController extends GetxController {
     // 3. Authenticate with backend
     // Assuming loginBiometric returns a boolean indicating success!
     // If it doesn't return a bool, you need to adjust this to check the response.
-    final apiSuccess = await loginBiometric(decureDeviceId);
+    // loginBiometric navigates on success and shows its own error otherwise;
+    // it returns nothing, and returning that null as a bool threw here.
+    await loginBiometric(decureDeviceId);
 
-    return apiSuccess;
+    return true;
   }
 
   /// BiometricController function to enable or disable based on current status

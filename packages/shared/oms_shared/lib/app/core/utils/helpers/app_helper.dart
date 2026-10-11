@@ -36,7 +36,8 @@ class Helpers {
   }
 
   static Future<String> getSecureDeviceIdLogin() async {
-    String deviceId = await StorageService.read(StorageConstants.deviceSecIdKey);
+    // Missing key → empty id (the server rejects it) instead of a TypeError.
+    String deviceId = await StorageService.read(StorageConstants.deviceSecIdKey) ?? '';
     printLog('shat key:: $deviceId');
     return deviceId;
   }

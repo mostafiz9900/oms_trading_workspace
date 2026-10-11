@@ -1,3 +1,5 @@
+import 'dart:ui' show PlatformDispatcher;
+
 import 'package:broker_config/broker_config.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -16,6 +18,10 @@ bool isDarkMode = Get.isDarkMode;
 int initScreen = 0;
 const _definedEnvironment = String.fromEnvironment('OMS_ENV');
 
+/// Receives every uncaught error (framework and async). Plug crash reporting
+/// in here, e.g. `FirebaseCrashlytics.instance.recordError`.
+typedef OmsErrorReporter = void Function(Object error, StackTrace? stack, {required bool fatal});
+
 /// Starts the shared OMS trading app for one broker house.
 ///
 /// [environment] comes from the app's flavor entry point; endpoints and
@@ -27,8 +33,10 @@ Future<void> runOmsApp({
   required FirebaseOptions firebaseOptions,
   required BackgroundMessageHandler firebaseBackgroundHandler,
   required Widget Function() app,
+  OmsErrorReporter? reportError,
 }) async {
   WidgetsFlutterBinding.ensureInitialized();
+  _installErrorHandlers(reportError);
   if (_definedEnvironment != environment.name) {
     throw StateError(
       'Entry point is "${environment.name}" but the --dart-define-from-file '
@@ -36,8 +44,11 @@ Future<void> runOmsApp({
     );
   }
   AppConfig.initialize(environment: environment.name, profile: profile);
-  await GetStorage.init();
-  await Firebase.initializeApp(options: firebaseOptions);
+  // Independent of each other, so they start together.
+  await Future.wait([
+    GetStorage.init(),
+    Firebase.initializeApp(options: firebaseOptions),
+  ]);
 
   await NotificationService.initialize(backgroundHandler: firebaseBackgroundHandler);
   initScreen = await StorageService.read("initScreen") ?? 0;
@@ -53,6 +64,20 @@ Future<void> runOmsApp({
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   runApp(UncontrolledProviderScope(container: providerContainer, child: app()));
   configLoading();
+}
+
+/// Errors never stop the app (Flutter keeps running either way); this makes
+/// sure each one is logged and handed to [reportError].
+void _installErrorHandlers(OmsErrorReporter? reportError) {
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details); // default behaviour: log it
+    reportError?.call(details.exception, details.stack, fatal: false);
+  };
+  PlatformDispatcher.instance.onError = (error, stack) {
+    debugPrint('Uncaught async error: $error');
+    reportError?.call(error, stack, fatal: true);
+    return true; // handled: logged and reported
+  };
 }
 
 void configLoading() {
