@@ -1,4 +1,5 @@
 import 'package:broker_config/broker_config.dart';
+import 'package:flutter/foundation.dart';
 
 class AppConfig {
   AppConfig._();
@@ -21,6 +22,16 @@ class AppConfig {
         '"${profile.houseId}". Check --dart-define-from-file.',
       );
     }
+    _current = house;
+    _profile = profile;
+  }
+
+  /// Test-only: binds a config without `--dart-define-from-file`.
+  @visibleForTesting
+  static void initializeForTesting(
+    BrokerHouseConfig house,
+    HouseProfile profile,
+  ) {
     _current = house;
     _profile = profile;
   }

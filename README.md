@@ -117,6 +117,21 @@ To add a screen, run `get create page:<name>` inside
 `packages/shared/oms_shared` (or copy an existing module), then register the
 route in `apps/<house>/lib/src/routing/`.
 
+## Tests
+
+`make test` runs every suite. `oms_shared/test/` mirrors `lib/app/` (a test
+for `lib/app/data/services/x.dart` lives in `test/data/services/x_test.dart`).
+
+Covered trading flows: the order wire format and gateway codes, placing an
+order end to end over a fake order socket (exact JSON, double-tap guard, slow
+socket, offline, 15 s no-answer timeout, server success/error), token refresh
+and forced logout, market quote maths and sector aggregation, websocket
+reconnects.
+
+Shared fakes in `test/helpers/`: `initTestStorage()` (real GetStorage in a temp
+folder), `initTestAppConfig()` (house config without dart-defines),
+`setTestNetwork('none')` (connectivity), `FakeChannel` (websocket).
+
 ## Adding a broker house
 
 ```sh
