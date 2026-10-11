@@ -32,7 +32,6 @@ mixin MarketFeedMixin on HomeState {
 
     if (incoming == null || incoming.orderBook == null) return;
 
-    update(['ITEM_${incoming.orderBook}']);
     _updateMarqueeIncremental(incoming);
 
     final now = DateTime.now();
@@ -189,16 +188,24 @@ mixin MarketFeedMixin on HomeState {
       last: incoming.last,
       d: incoming.d,
     );
-    // If marqueeList is RxList:
+    // marqueeList is kept sorted by shortName, so the marquee can index it
+    // directly instead of copying and sorting it for every item it builds.
     final idx = marqueeList.indexWhere((m) => m.shortName == holder.shortName);
     if (idx >= 0) {
       marqueeList[idx] = holder;
     } else {
-      // add new entry
-      marqueeList.add(holder);
+      final key = holder.shortName ?? '';
+      var lo = 0, hi = marqueeList.length;
+      while (lo < hi) {
+        final mid = (lo + hi) >> 1;
+        if ((marqueeList[mid].shortName ?? '').compareTo(key) < 0) {
+          lo = mid + 1;
+        } else {
+          hi = mid;
+        }
+      }
+      marqueeList.insert(lo, holder);
     }
-    // If you use GetBuilder or manual update
-    update(['indexList']); // uncomment if you rely on GetBuilder with id
   }
 
   // Share Type (Category) চার্টের ডেটা
@@ -206,8 +213,8 @@ mixin MarketFeedMixin on HomeState {
   // সরাসরি marketList থেকে Share Type ডেটা জেনারেট করার ফাংশন
 
   void _updateSectorFilters(Map<String, dynamic> jsonResponse) {
-    final marketDataObj = MarketModel.fromJson(jsonResponse);
-    if (_marketSectorFilterStore.addSector(marketDataObj.sector)) {
+    // Same field MarketModel.fromJson reads, without building a whole model.
+    if (_marketSectorFilterStore.addSector(jsonResponse['sc'] as String?)) {
       update(['sectorFilters']);
     }
   }

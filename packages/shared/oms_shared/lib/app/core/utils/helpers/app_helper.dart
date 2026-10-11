@@ -104,11 +104,12 @@ class Helpers {
   }
 
   static List<T> sortByTstDesc<T>(List<T> list, String Function(T) getTst) {
-    list.sort((a, b) {
-      final ta = parseTst(getTst(a));
-      final tb = parseTst(getTst(b));
-      return tb.compareTo(ta); // descending
-    });
+    // Parse each timestamp once, not twice per comparison.
+    final keyed = [for (final e in list) (e, parseTst(getTst(e)))];
+    keyed.sort((a, b) => b.$2.compareTo(a.$2)); // descending
+    for (var i = 0; i < list.length; i++) {
+      list[i] = keyed[i].$1;
+    }
     return list;
   }
 

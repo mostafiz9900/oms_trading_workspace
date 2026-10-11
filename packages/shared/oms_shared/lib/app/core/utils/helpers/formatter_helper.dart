@@ -3,21 +3,28 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class NumberFormatter {
+  // NumberFormat parses its pattern on construction; these run for every
+  // visible row on every live tick, so the instances are created once.
+  static final _inr2 = NumberFormat.currency(locale: 'en_IN', symbol: '', decimalDigits: 2);
+  static final _compact = NumberFormat.compact(locale: 'en');
+  static final _us2 = NumberFormat('#,##0.00', 'en_US');
+  static final _usUpTo2 = NumberFormat('#,##0.##', 'en_US');
+  static final _bdInt = NumberFormat('#,##,##0', 'en_IN');
+  static final Map<String, NumberFormat> _bdByPattern = {};
+  static final Map<int, NumberFormat> _fixed2ByDecimal = {};
+
   static String formatDouble(double value) {
-    final formatter = NumberFormat.currency(locale: 'en_IN', symbol: '', decimalDigits: 2);
-    return formatter.format(value);
+    return _inr2.format(value);
   }
 
   /// Format as Indian style: 1,22,333.90
   static String indianFormat(num value) {
-    final formatter = NumberFormat.currency(locale: 'en_IN', symbol: '', decimalDigits: 2);
-    return formatter.format(value);
+    return _inr2.format(value);
   }
 
   /// Compact format: 1.2K, 3.4M
   static String compactFormat(num value) {
-    final formatter = NumberFormat.compact(locale: 'en');
-    return formatter.format(value);
+    return _compact.format(value);
   }
 
   static String millionFormat(num value) {
@@ -41,9 +48,7 @@ class NumberFormatter {
         return "0.0cr";
       }
       final inCrore = parsedValue / 10000000;
-      final formatter = NumberFormat('#,##0.00', 'en_US');
-
-      return "${formatter.format(inCrore)}cr";
+      return "${_us2.format(inCrore)}cr";
     } catch (e) {
       return "0.0cr";
     }
@@ -68,13 +73,13 @@ class NumberFormatter {
 
       if (absValue >= 10000000) {
         final inCrore = absValue / 10000000;
-        return "$sign${NumberFormat('#,##0.00', 'en_US').format(inCrore)} Cr";
+        return "$sign${_us2.format(inCrore)} Cr";
       } else if (absValue >= 100000) {
         final inLakh = absValue / 100000;
-        return "$sign${NumberFormat('#,##0.00', 'en_US').format(inLakh)} L";
+        return "$sign${_us2.format(inLakh)} L";
       } else {
         // ছোট অ্যামাউন্ট হলে নরমাল কমা ফরম্যাট
-        return "$sign${NumberFormat('#,##0.##', 'en_US').format(absValue)}";
+        return "$sign${_usUpTo2.format(absValue)}";
       }
     } catch (e) {
       return "0.00";
@@ -87,11 +92,14 @@ class NumberFormatter {
   }
 
   static String fixedDecimal2(num value, {int decimal = 2}) {
-    final format = NumberFormat.currency(
-      locale: "en_US",
-      symbol: "", // no currency symbol
-      decimalDigits: decimal,
-      customPattern: '#,##,##0.00',
+    final format = _fixed2ByDecimal.putIfAbsent(
+      decimal,
+      () => NumberFormat.currency(
+        locale: "en_US",
+        symbol: "", // no currency symbol
+        decimalDigits: decimal,
+        customPattern: '#,##,##0.00',
+      ),
     );
 
     return format.format(value);
@@ -99,8 +107,7 @@ class NumberFormatter {
 
   /// US style comma formatting
   static String usFormat(num value) {
-    final formatter = NumberFormat('#,##0.00', 'en_US');
-    return formatter.format(value);
+    return _us2.format(value);
   }
 
   /// Bangladesh style comma formatting
@@ -121,7 +128,7 @@ class NumberFormatter {
       }
       String pattern = safeDecimal > 0 ? '#,##,##0.${'0' * safeDecimal}' : '#,##,##0';
       // 'en_IN' বাংলাদেশের ১,০০,০০০ ফরম্যাটের জন্য কাজ করবে
-      final formatter = NumberFormat(pattern, 'en_IN');
+      final formatter = _bdByPattern.putIfAbsent(pattern, () => NumberFormat(pattern, 'en_IN'));
       return formatter.format(parsedValue);
     } catch (e) {
       return fallbackValue;
@@ -129,8 +136,7 @@ class NumberFormatter {
   }
 
   static String bdFormatInt(num value) {
-    final formatter = NumberFormat('#,##,##0', 'en_IN');
-    return formatter.format(value);
+    return _bdInt.format(value);
   }
 
   /// Currency format with symbol

@@ -17,7 +17,6 @@ class TimeSalesTabWidget extends StatelessWidget {
       id: 'timeAndSales',
       builder: (homeCon) {
         final sortedList = Helpers.sortByTstDesc([...homeCon.timeAndSales], (m) => m.tst ?? "");
-        printLog(sortedList.first.toMap());
         return CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [

@@ -65,7 +65,7 @@ class _FastLineChartState extends State<FastLineChart> {
     if (raw.isEmpty) return [];
 
     // sort by time
-    raw.sort((a, b) => _parseTst(a.tst).compareTo(_parseTst(b.tst)));
+    _sortByKey(raw, (t) => _parseTst(t.tst), (a, b) => a.compareTo(b));
 
     final points = raw.map((e) {
       return _ChartPoint(xDate: _parseTst(e.tst), y: e.p ?? 0.0, index: 0, label: '', volume: null);
@@ -268,14 +268,14 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
   List<_PricePoint> _buildPricePoints() {
     final raw = List<TimeAndSalesModel>.from(homeCont.timeAndSales);
     if (raw.isEmpty) return [];
-    raw.sort((a, b) => _parseTst(a.tst).compareTo(_parseTst(b.tst)));
+    _sortByKey(raw, (t) => _parseTst(t.tst), (a, b) => a.compareTo(b));
     final pts = raw.map((e) => _PricePoint(xDate: _parseTst(e.tst), y: e.p ?? 0.0, volume: e.v ?? 0)).toList();
     return _downsampleIfNeeded(pts, threshold: 2000);
   }
 
   List<_VolBucket> _aggregateVolumeBuckets(List<TimeAndSalesModel> raw, int bucketSeconds, {int keepLast = 300}) {
     if (raw.isEmpty) return [];
-    raw.sort((a, b) => _parseTst(a.tst).compareTo(_parseTst(b.tst)));
+    _sortByKey(raw, (t) => _parseTst(t.tst), (a, b) => a.compareTo(b));
 
     final Map<int, _VolBucket> map = {};
     for (final t in raw) {
@@ -550,9 +550,7 @@ class VolumePieByDirection extends StatelessWidget {
 
   List<_VolBucket> _aggregateBuckets(List<TimeAndSalesModel> raw, int bucketSeconds, {int keepLast = 300}) {
     if (raw.isEmpty) return [];
-    raw.sort((a, b) {
-      final ta = _tryParseTst(a.tst);
-      final tb = _tryParseTst(b.tst);
+    _sortByKey<DateTime?>(raw, (t) => _tryParseTst(t.tst), (ta, tb) {
       if (ta == null && tb == null) return 0;
       if (ta == null) return -1;
       if (tb == null) return 1;
@@ -693,7 +691,7 @@ class _TimeAndSalesBarChartState extends State<TimeAndSalesBarChart> {
     if (raw.isEmpty) return [];
 
     // sort by time ascending
-    raw.sort((a, b) => _parseTstToToday(a.tst).compareTo(_parseTstToToday(b.tst)));
+    _sortByKey(raw, (t) => _parseTstToToday(t.tst), (a, b) => a.compareTo(b));
 
     final buckets = <int, _Bucket>{}; // key = epochSeconds of bucket start
     for (var tick in raw) {
@@ -886,4 +884,18 @@ class _PieSlice {
   final double value;
   final Color color;
   _PieSlice({required this.category, required this.value, required this.color});
+}
+
+/// Sorts [list] in place by a key parsed once per element, instead of
+/// re-parsing both timestamps on every comparison. Same order as before.
+void _sortByKey<K>(
+  List<TimeAndSalesModel> list,
+  K Function(TimeAndSalesModel) key,
+  int Function(K, K) compare,
+) {
+  final keyed = [for (final t in list) (t, key(t))];
+  keyed.sort((a, b) => compare(a.$2, b.$2));
+  for (var i = 0; i < list.length; i++) {
+    list[i] = keyed[i].$1;
+  }
 }

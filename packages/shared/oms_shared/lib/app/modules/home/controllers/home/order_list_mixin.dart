@@ -45,8 +45,7 @@ mixin OrderListMixin on HomeState {
           messageType != 'connection' &&
           messageType != AppConstants.alert &&
           messageType != 'alert') {
-        isOrderConfirmLoading = false;
-        update(['order_confirm_btn']);
+        _endOrderConfirmLoading();
       }
 
       //  Switch-Case Architecture
@@ -221,6 +220,7 @@ mixin OrderListMixin on HomeState {
           break;
       }
     } catch (e) {
+      _orderResponseTimer?.cancel();
       isOrderConfirmLoading = false;
       isLoadingUserOrder = false;
       update([AppConstants.orderList, 'order_confirm_btn']);

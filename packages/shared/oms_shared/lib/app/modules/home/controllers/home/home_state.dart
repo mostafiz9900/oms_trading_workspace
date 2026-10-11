@@ -296,6 +296,15 @@ abstract class HomeState extends SuperController {
 
   bool isOrderConfirmLoading = false;
 
+  /// Releases the order button if the server never answers an order.
+  Timer? _orderResponseTimer;
+
+  void _endOrderConfirmLoading() {
+    _orderResponseTimer?.cancel();
+    isOrderConfirmLoading = false;
+    update(['order_confirm_btn']);
+  }
+
   OrderStatusDetailsModel orderStatusDetails = OrderStatusDetailsModel();
 
   // Filter and Sorting state variables (No .obs needed)

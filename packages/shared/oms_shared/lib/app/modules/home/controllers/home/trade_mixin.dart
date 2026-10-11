@@ -60,7 +60,9 @@ mixin TradeMixin on HomeState {
         composing: TextRange.empty,
       );
     }
-    update();
+    // No full update(): the field repaints itself and its listener
+    // (calculateTotal) refreshes 'total_amount_update'. A bare update()
+    // here rebuilt every home tab on each +/- tap.
   }
 
   void onRowTapUpdatePrice(double? price) {
@@ -72,7 +74,7 @@ mixin TradeMixin on HomeState {
 
   void onChanged(String value) {
     tradPrice = double.tryParse(value) ?? 0.0;
-    update();
+    // No full update() per keystroke; only the total depends on the price.
     calculateTotal();
   }
 
@@ -154,18 +156,34 @@ mixin TradeMixin on HomeState {
     ActionsType action, {
     UserOrder? order,
   }) async {
-    if (!await checkInternet()) return;
-
+    // Set the in-flight flag before any await, so a second tap cannot send a
+    // second order while the first one is still being prepared.
+    if (isOrderConfirmLoading) return;
     isOrderConfirmLoading = true;
     update(['order_confirm_btn']);
+
+    if (!await checkInternet()) {
+      _endOrderConfirmLoading();
+      return;
+    }
 
     try {
       //  সেফটি চেক: যদি কোনো কারণে সকেট ডিসকানেক্ট হয়ে থাকে, তাহলে আবার কানেক্ট করে নিবে
       if (!isOrderConfirmConnected) {
         await _initializeOrderConfirmWebSocket();
-        await Future.delayed(
-          const Duration(milliseconds: 500),
-        ); // কানেকশনের জন্য আধা সেকেন্ড অপেক্ষা
+        await _waitForOrderSocket();
+      }
+
+      // A send on a closed socket is dropped silently; tell the user instead.
+      if (!isOrderConfirmConnected) {
+        _endOrderConfirmLoading();
+        Get.snackbar(
+          "Connection Failed",
+          "Unable to connect to the trading server. Please try again.",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return;
       }
 
       var marketPrice = marketData.reference;
@@ -185,11 +203,34 @@ mixin TradeMixin on HomeState {
 
       printLog('📤 Sending Order Data: ${jsonEncode(actionData)}');
       sendMessage(AppConfig.orderConfirmSocketId, jsonEncode(actionData));
+      _startOrderResponseTimeout();
     } catch (e) {
-      isOrderConfirmLoading = false;
-      update(['order_confirm_btn']);
+      _endOrderConfirmLoading();
       printLog('❌ WebSocket connection failed: $e');
     }
+  }
+
+  /// Waits up to 3 s for the order socket to report connected.
+  Future<void> _waitForOrderSocket() async {
+    for (var i = 0; i < 30 && !isOrderConfirmConnected; i++) {
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+  }
+
+  /// If the server never answers, release the button and tell the user to
+  /// check the order list. The order is never re-sent automatically.
+  void _startOrderResponseTimeout() {
+    _orderResponseTimer?.cancel();
+    _orderResponseTimer = Timer(const Duration(seconds: 15), () {
+      if (!isOrderConfirmLoading) return;
+      _endOrderConfirmLoading();
+      Get.snackbar(
+        "No Response",
+        "Order status is unknown. Please check the order list before placing it again.",
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+    });
   }
 
   @override

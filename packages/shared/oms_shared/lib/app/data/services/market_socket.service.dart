@@ -15,6 +15,7 @@ class MarketSocketService extends GetxService {
 
   bool _isReconnecting = false;
   Timer? _listUpdateTimer;
+  StreamSubscription? _subscription;
 
   Future<MarketSocketService> init() async {
     await _connect();
@@ -25,12 +26,13 @@ class MarketSocketService extends GetxService {
   Future<void> _connect() async {
     try {
       final wsUrl = Uri.parse(AppConfig.marketUrl);
+      await _subscription?.cancel();
       _channel = WebSocketChannel.connect(wsUrl);
       await _channel!.ready;
       _isReconnecting = false;
       print("WebSocket Connected Successfully!");
 
-      _channel!.stream.listen(
+      _subscription = _channel!.stream.listen(
         _onMessage,
         onError: (e) {
           print("WebSocket Error: $e");
@@ -53,6 +55,9 @@ class MarketSocketService extends GetxService {
     print("Reconnecting Socket in 3 seconds...");
 
     Future.delayed(const Duration(seconds: 3), () {
+      // Clear the flag first: if this attempt fails too, it must be able to
+      // schedule the next one (before, one failed retry stopped the feed).
+      _isReconnecting = false;
       _connect();
     });
   }
@@ -92,6 +97,7 @@ class MarketSocketService extends GetxService {
   @override
   void onClose() {
     _listUpdateTimer?.cancel();
+    _subscription?.cancel();
     _channel?.sink.close();
     super.onClose();
   }

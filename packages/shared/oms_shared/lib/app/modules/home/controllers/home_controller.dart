@@ -138,6 +138,7 @@ class HomeController extends HomeState
     selectType = types.first;
     var validity = container.read(validityProvider);
     selectValidity = validity.first;
+    container.dispose();
     marketIndexController.loadData('${newArr?.sn}');
     update();
     update(['total_amount_update']);
@@ -149,6 +150,7 @@ class HomeController extends HomeState
     _chartClient.dispose();
     _marketUpdateTimer?.cancel();
     _indexUpdateTimer?.cancel();
+    _orderResponseTimer?.cancel();
     disconnect();
     Future.delayed(const Duration(milliseconds: 100), () {
       _disconnectAll();

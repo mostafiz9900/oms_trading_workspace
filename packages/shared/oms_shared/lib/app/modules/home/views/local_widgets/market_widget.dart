@@ -962,20 +962,16 @@ class _ClickableMarqueeTextListState extends State<ClickableMarqueeTextList> wit
   Widget build(BuildContext context) {
     return widget.homeCon.marqueeList == [] || widget.homeCon.marqueeList.isEmpty
         ? SizedBox.shrink()
-        : SizedBox(
-            height: 40,
-            child: ListView.builder(
-              controller: _scrollController,
-              scrollDirection: Axis.horizontal,
-              itemCount: widget.homeCon.marqueeList.length,
-              itemBuilder: (_, index) {
-                final sortedList = List.from(widget.homeCon.marqueeList)
-                  ..sort((a, b) => (a.shortName ?? '').toString().compareTo((b.shortName ?? '').toString()));
-                // If you chose Option B or C above, use the same comparator here.
-
-                final item = sortedList[index];
-                return _buildItem(item);
-              },
+        : RepaintBoundary(
+            child: SizedBox(
+              height: 40,
+              child: ListView.builder(
+                controller: _scrollController,
+                scrollDirection: Axis.horizontal,
+                itemCount: widget.homeCon.marqueeList.length,
+                // marqueeList is kept sorted by shortName in the controller.
+                itemBuilder: (_, index) => _buildItem(widget.homeCon.marqueeList[index]),
+              ),
             ),
           );
   }
