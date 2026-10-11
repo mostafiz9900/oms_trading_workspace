@@ -5,25 +5,44 @@ small app in `apps/`; every screen and all logic live in `packages/` and are
 shared. Dart workspace + Melos 8, Flutter 3.47.6 pinned through FVM. State,
 routing and storage stay on GetX/GetStorage exactly as in the live app.
 
-## Quick start
+## Daily workflow
+
+Everything runs from the workspace root with `make`. You never need to `cd`
+into an app.
 
 ```sh
-make setup              # once: install dependencies
-make run                # Benemoy on UAT (pick the device when asked)
+make setup              # first time, and after every git pull
+make run                # develop: Benemoy on UAT
 ```
 
-Everything else:
+| I want to... | Command |
+|---|---|
+| Work on a feature / fix a bug | `make run` (always UAT while developing) |
+| Check a production-only issue | `make run ENV=prod` |
+| Test another broker house | `make run APP=fakhrul` |
+| Release to Play Store / App Store | `make appbundle` / `make ipa` (production automatically) |
+| Before pushing | `make check` |
+| iOS build complains about pods | `make pods` |
+| Strange build errors | `make clean`, then `make run` |
+| See every command | `make` |
 
-```sh
-make run ENV=prod       # production servers
-make run APP=fakhrul    # another broker house
-make appbundle          # Play Store release   (defaults to prod)
-make ipa                # App Store release    (defaults to prod)
-make check              # analyze + test + validate
-make                    # list all commands
-```
+Rules of thumb:
 
-In VS Code, pick **Benemoy UAT** or **Benemoy Prod** in Run and Debug and press F5.
+- **UAT vs prod:** develop and test on UAT. Production is only for release
+  builds (which pick it automatically) or reproducing a live issue.
+- **Benemoy vs other houses:** shared code is the same for every house, so
+  develop on Benemoy (the default). Switch `APP=` only for house-specific work.
+- **`fvm flutter ...`:** only for commands `make` does not cover, e.g.
+  `fvm flutter pub add <package>` inside a package. Always prefix with `fvm`
+  so the pinned Flutter 3.47.6 is used. VS Code uses the same SDK after
+  `make setup`.
+- **Pods:** `make run`/`make ipa` run `pod install` themselves; use
+  `make pods` only when iOS reports a pods error.
+- **Melos** runs inside `make` (multi-package analyze, `melos version`);
+  you do not call it directly.
+
+In VS Code you can also pick **Benemoy UAT** / **Benemoy Prod** in Run and
+Debug and press F5.
 
 A run needs `apps/<app>/env/<env>.json`. These files hold server URLs and are
 git-ignored; copy `env/example.json` to create them. Never put passwords or

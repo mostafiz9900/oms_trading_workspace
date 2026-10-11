@@ -15,18 +15,25 @@ FLUTTER = fvm flutter
 DART = fvm dart
 
 .DEFAULT_GOAL := help
-.PHONY: help setup apps run apk appbundle ipa check analyze test validate new-app clean
+.PHONY: help setup apps devices doctor run apk appbundle ipa pods check analyze test validate new-app clean
 
 help: ## Show available commands
 	@echo "Usage: make <command> [APP=benemoy] [ENV=uat|prod]\n"
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}'
 	@echo "\nApps: $$(ls apps | tr '\n' ' ')"
 
-setup: ## Install dependencies for the whole workspace
+setup: ## First time / after pulling: pinned Flutter for IDE + all dependencies
+	fvm use --skip-pub-get --force
 	$(DART) run melos bootstrap
 
 apps: ## List broker-house apps
 	@ls apps
+
+devices: ## List phones, emulators and simulators
+	$(FLUTTER) devices
+
+doctor: ## Check the Flutter/Xcode/Android setup
+	$(FLUTTER) doctor
 
 run: _env ## Run on a connected device (default: Benemoy, UAT)
 	cd apps/$(APP) && $(FLUTTER) run -t lib/main_$(ENV).dart --dart-define-from-file=env/$(ENV).json
@@ -58,8 +65,14 @@ validate: ## Check env files, brand assets and app ids of every app
 new-app: ## Create a broker app: make new-app ID=x NAME="X Ltd" ANDROID_ID=com.x.app IOS_ID=com.x.app
 	$(DART) run tool/new_app.dart --id "$(ID)" --name "$(NAME)" --android-id "$(ANDROID_ID)" --ios-id "$(IOS_ID)"
 
-clean: ## Remove build outputs of the selected app
+pods: ## Reinstall iOS pods when an iOS build complains about pods
+	cd apps/$(APP) && $(FLUTTER) pub get
+	cd apps/$(APP)/ios && pod install --repo-update
+
+clean: ## Fix strange build errors: wipe build outputs and iOS pods of the app
 	cd apps/$(APP) && $(FLUTTER) clean
+	rm -rf apps/$(APP)/ios/Pods
+	cd apps/$(APP) && $(FLUTTER) pub get
 
 _env:
 	@test -d apps/$(APP) || (echo "No app 'apps/$(APP)'. Apps: $$(ls apps | tr '\n' ' ')" && exit 1)
