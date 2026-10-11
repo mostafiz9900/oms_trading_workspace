@@ -34,3 +34,12 @@ apps/*/android/oms-app-release-key.jks
 # Native build caches and Finder duplicates
 **/android/app/.cxx/
 **/* 2.*
+
+# fastlane output and store credentials
+apps/*/fastlane/report.xml
+apps/*/fastlane/Preview.html
+apps/*/fastlane/screenshots/
+apps/*/fastlane/test_output/
+apps/*/fastlane/README.md
+**/*.p8
+**/*service-account*.json

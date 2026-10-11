@@ -15,11 +15,11 @@ FLUTTER = fvm flutter
 DART = fvm dart
 
 .DEFAULT_GOAL := help
-.PHONY: help setup apps devices doctor run apk appbundle ipa pods check analyze test validate new-app clean
+.PHONY: help setup apps devices doctor run apk appbundle ipa deploy-android deploy-ios pods check analyze test validate new-app clean
 
 help: ## Show available commands
 	@echo "Usage: make <command> [APP=benemoy] [ENV=uat|prod]\n"
-	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
 	@echo "\nApps: $$(ls apps | tr '\n' ' ')"
 
 setup: ## First time / after pulling: pinned Flutter for IDE + all dependencies
@@ -49,6 +49,14 @@ appbundle: ## Build the Play Store bundle (default: production)
 ipa: ## Build the App Store archive (default: production)
 	@$(MAKE) --no-print-directory _env ENV=$(RELEASE_ENV)
 	cd apps/$(APP) && $(FLUTTER) build ipa --release -t lib/main_$(RELEASE_ENV).dart --dart-define-from-file=env/$(RELEASE_ENV).json
+
+deploy-android: ## Release to Google Play from this Mac (CI does this on push to prod)
+	@$(MAKE) --no-print-directory _env ENV=prod
+	cd apps/$(APP) && fastlane android deploy
+
+deploy-ios: ## Release to TestFlight from this Mac (CI does this on push to prod)
+	@$(MAKE) --no-print-directory _env ENV=prod
+	cd apps/$(APP) && fastlane ios deploy
 
 check: analyze test validate ## Analyze, test and validate everything
 

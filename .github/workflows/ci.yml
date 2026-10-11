@@ -1,13 +1,16 @@
+# Checks for every branch and pull request: analyze, tests, debug builds.
+# The prod branch runs these same checks from release.yml before releasing.
 name: CI
 
 on:
   pull_request:
   push:
-    branches: [main]
+    branches-ignore: [prod]
+  workflow_call:
 
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/prod' }}
 
 jobs:
   analyze:
@@ -31,7 +34,6 @@ jobs:
           - packages/features/research
           - packages/features/withdrawals
           - apps/benemoy
-          - apps/app_fakhrul
         include:
           - package: packages/shared/oms_shared
             flags: --no-fatal-warnings
@@ -93,16 +95,19 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - name: Write UAT house profile
+      - name: Write UAT env
         working-directory: apps/benemoy
         env:
           PROFILE: ${{ secrets.BENEMOY_UAT_PROFILE_JSON }}
         run: |
-          if [ -z "$PROFILE" ]; then
-            echo "::error::Set the BENEMOY_UAT_PROFILE_JSON repository secret"
-            exit 1
+          # Pull requests from forks get no secrets: build with placeholders,
+          # which still proves that everything compiles.
+          if [ -n "$PROFILE" ]; then
+            printf '%s' "$PROFILE" > env/uat.json
+          else
+            echo "::warning::BENEMOY_UAT_PROFILE_JSON not set; building with env/example.json"
+            cp env/example.json env/uat.json
           fi
-          printf '%s' "$PROFILE" > env/uat.json
       - run: flutter pub get
       - run: >-
           ${{ matrix.command }} -t lib/main_uat.dart

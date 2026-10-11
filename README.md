@@ -92,12 +92,15 @@ remaining checklist: env files, brand images, contact details, `flutterfire
 configure`, launcher icons and signing. `make validate` reports whatever is
 still missing. Full step-by-step guide: [docs/new-app.md](docs/new-app.md).
 
-## CI
+## CI/CD
 
-`.github/workflows/ci.yml` analyzes every package in parallel, runs tests and
-`make validate`, then builds Benemoy for Android and iOS. It needs one
-repository secret, `BENEMOY_UAT_PROFILE_JSON`, with the contents of
-`apps/benemoy/env/uat.json`.
+- **Every branch and PR** (`.github/workflows/ci.yml`): analyze every package,
+  all tests, `make validate`, Benemoy Android + iOS debug builds.
+- **Push to `prod`** (`.github/workflows/release.yml`): the same checks, then
+  fastlane uploads Benemoy to **Google Play** (production, as a draft to roll
+  out) and **TestFlight**.
+
+Secrets, store setup and the release steps: [docs/release.md](docs/release.md).
 
 ## Migration status
 
