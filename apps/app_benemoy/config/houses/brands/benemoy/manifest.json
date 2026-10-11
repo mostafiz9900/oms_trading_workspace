@@ -3,8 +3,8 @@
   "houseId": "benemoy",
   "appName": "Benemoy",
   "branding": {
-    "logoLight": "assets/svg_image/logoSvg.svg",
-    "logoDark": "assets/svg_image/logoSvgWhite.svg",
+    "logoLight": "assets/houses/benemoy/logo_light.svg",
+    "logoDark": "assets/houses/benemoy/logo_dark.svg",
     "appIcon": "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
     "primaryColor": "#184A94",
     "secondaryColor": "#177DFF"

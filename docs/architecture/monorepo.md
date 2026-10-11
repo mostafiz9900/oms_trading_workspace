@@ -2,8 +2,18 @@
 
 ## Current boundary
 
-- `apps/app_benemoy` is the deployable live app and owns its existing screens,
-  navigation, and app startup.
+- `packages/app/oms_app` is the shared trading app: every screen, controller,
+  route, service, and common asset. It starts through `runOmsApp(...)` and must
+  not contain broker-specific values; it reads them from `AppConfig.house`
+  (env profile) and `AppConfig.profile` (`HouseProfile`).
+- `apps/app_benemoy` is a thin deployable shell: `main.dart`, its
+  `HouseProfile`, Firebase options, brand assets under `assets/houses/benemoy/`,
+  env profiles, and native Android/iOS configuration. Android application id
+  and iOS bundle id are unchanged from the live app.
+- Values that existing installs depend on are derived from `OMS_HOUSE_ID` so
+  they stay byte-identical for Benemoy: notification channel ids
+  (`<house>_channel`, `<house>_image_channel`) and the order-id salt
+  (`<house>_app`).
 - `packages/core/trading_core` owns the generic API result type and stateless
   JWT inspection; app-specific secure storage and navigation remain in each
   deployable app.
@@ -17,29 +27,30 @@
 - `packages/features/auth` owns login, profile, registration, OTP, and media
   DTOs plus the `AuthenticationRepository` contract. Benemoy keeps compatibility
   exports and implements the contract in its app-owned API adapter; auth
-  screens, state, providers, and API orchestration still live in the app.
+  screens, state, providers, and API orchestration still live in `oms_app`.
 - `packages/features/orders` owns reusable order submission/cancellation DTOs
   and order list/status/summary response models plus the `OrderRepository`
   command contract. Benemoy's websocket service implements that contract;
   controllers and UI keep importing through compatibility exports.
 - `packages/features/withdrawals` owns withdrawal request/history DTOs. The
-  existing Benemoy API, validation, controller, and UI remain app-owned.
+  existing Benemoy API, validation, controller, and UI remain in `oms_app`.
 - `packages/features/portfolio` owns cash/balance and position response DTOs;
   its position payload reuses the market security model. Benemoy's portfolio
-  controllers, API integration, calculations, and UI remain app-owned.
+  controllers, API integration, calculations, and UI remain in `oms_app`.
 - `packages/features/notifications` owns notification feed and order-alert
   DTOs. Push/local notification services, websocket lifecycle, app routing,
-  state, and screens remain in Benemoy.
+  state, and screens remain in `oms_app`.
 - `packages/features/research` owns issuer profile/fundamental, dividend, EPS,
   and issuer news DTOs. Benemoy's fetch/caching logic and research UI remain in
   the app.
 - `packages/features/limits` owns the client limit response DTO. Limit request
-  networking, pagination, form state, and presentation stay in the app.
+  networking, pagination, form state, and presentation stay in `oms_app`.
 - `trading_core` owns the generic API error DTO; `auth` owns the general user
   profile DTO alongside the authentication DTOs.
 - `packages/core/broker_config` owns the typed runtime view of broker-house
   identity, endpoints, logo/splash assets, locale, theme colors, and contract
-  URL. Benemoy resolves it from Dart defines with dotenv endpoint fallback.
+  URL. Apps supply it only through `--dart-define-from-file`; the legacy
+  dotenv fallback is no longer bundled.
 - `apps/app_fakhrul` is still a generated Flutter starter, not a broker-house
   deployment. Do not use it as the template for new houses.
 

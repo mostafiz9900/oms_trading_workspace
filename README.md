@@ -1,92 +1,73 @@
 # OMS Trading Flutter workspace
 
-This repository is a Dart workspace managed with Melos 8, pinned to Flutter
-3.47.6 through FVM. The live Benemoy app remains under `apps/app_benemoy`;
-this workspace conversion does not redesign its UI or move its Dart screens.
+White-label monorepo for OMS broker-house trading apps. One shared app
+(`packages/app/oms_app`) is shipped under each broker's identity by a thin app
+shell in `apps/`. Dart workspace + Melos 8, Flutter 3.47.6 pinned through FVM.
 
-## Workspace layout
+## Layout
 
 ```text
-apps/                  Deployable Flutter applications
-packages/core/         Shared platform-independent and visual foundations
-packages/features/     Reusable bounded feature packages
-bricks/                Mason generators for house profiles and feature packages
+apps/
+  app_benemoy/                 Live Benemoy shell (only house-specific code)
+    lib/main.dart              runOmsApp(profile, Firebase options, FCM handler)
+    lib/house_profile.dart     Company details: contact page, share text, store ids
+    lib/firebase_options.dart  House Firebase project
+    assets/houses/benemoy/     Logo, splash, onboarding images
+    config/houses/             Env profiles (uat/prod JSON), Android flavor, brand manifest
+    android/ ios/              App id, bundle id, icons, Firebase files, signing
+  app_fakhrul/                 Starter app, not yet converted to a house shell
+packages/
+  app/oms_app/                 Shared app: screens, controllers, routes, services, common assets
+  core/                        trading_core, trading_ui, broker_config (HouseProfile, env config)
+  features/                    auth, market, orders, portfolio, notifications, research,
+                               withdrawals, limits (DTOs and repository contracts)
+bricks/                        Mason generators (house_profile, feature_package)
+tool/validate_house_profiles.dart
 ```
 
-`trading_core`, `trading_ui`, and `broker_config` are shared package
-foundations. `auth` owns login and profile/onboarding DTOs, while `market` owns
-market data models, repository contracts, tick handling, and market
-calculations. `orders` owns reusable order request and response models, and
-`withdrawals` owns withdrawal request/history DTOs. Benemoy keeps compatibility
-exports for migrated types; its screens and live feature flows remain in the
-app while cohesive slices move. `portfolio` owns reusable balance and position
-response models, and `notifications` owns notification and order-alert DTOs.
-`research` owns issuer fundamentals, dividends, EPS, and issuer news models.
-`limits` owns the client limit response model.
+## What a broker house owns
 
-## FVM and Melos
+| Concern | Where |
+|---|---|
+| API / socket URLs per environment | `config/houses/<house>-uat.json`, `<house>-prod.json` via `--dart-define-from-file` |
+| App name, logo, splash, onboarding images, theme colors | Env profile keys `OMS_HOUSE_NAME`, `OMS_BRAND_*` + files in `assets/houses/<house>/` |
+| Contact page, share text, store links / update check | `lib/house_profile.dart` (`HouseProfile`) |
+| App id, bundle id, launcher icon, Firebase, signing | `android/`, `ios/`, `config/houses/android/<house>.properties`, `lib/firebase_options.dart` |
 
-Use the pinned FVM SDK for all Flutter and Dart commands:
+Everything else (UI, logic, networking, state) lives in `oms_app` and the
+feature packages and is shared by every house. `OMS_HOUSE_ID` in the env
+profile must match `HouseProfile.houseId`; startup fails fast otherwise.
+
+## Commands
 
 ```sh
-fvm flutter --version
 fvm dart run melos bootstrap
-fvm dart run melos list
 fvm dart run melos run analyze
+fvm dart run melos run validate:houses
+
+cd apps/app_benemoy
+fvm flutter run --flavor benemoy --dart-define-from-file=config/houses/benemoy-uat.json
+fvm flutter build appbundle --flavor benemoy --dart-define-from-file=config/houses/benemoy-prod.json
 ```
 
-Melos 8 configuration lives in the root `pubspec.yaml` alongside the Dart
-workspace. Workspace member globs include new apps under `apps/*` and packages
-under `packages/*/*` automatically.
+Env profile JSON files are git-ignored; `broker.example.json` documents every
+key. Provide real profiles to CI from a secret store. Dart defines are compiled
+into the binary and are not a secret store: never put passwords, private keys
+or signing credentials in them.
 
-The current full-workspace analyzer reports 605 legacy diagnostics in
-`app_benemoy` (warnings/info, including existing lint and deprecation findings).
-The other 11 workspace packages analyze clean when checked with
-`melos exec --ignore=app_benemoy -- fvm dart analyze .`; touched app compatibility
-entry points are also analyzed directly. The Benemoy UAT debug APK build is the
-integration compile gate. Unit/widget test suites have not been run.
+## Status
+
+- No compile errors. `oms_app` carries ~590 legacy analyzer warnings/info
+  inherited from the original app; the shells and other packages analyze clean.
+- The Benemoy UAT debug APK build is the integration gate. Only
+  `broker_config` has unit tests.
 
 ## Mason
 
-Mason is installed globally but should run with the workspace's FVM Dart:
-
 ```sh
 fvm exec mason get
-fvm exec mason list
-fvm exec mason make house_profile --output-dir apps/app_benemoy
+fvm exec mason make house_profile --output-dir apps/<app>
 fvm exec mason make feature_package --output-dir .
 ```
 
-`house_profile` creates local Dart define and Android flavor metadata.
-`feature_package` creates a workspace package skeleton with the standard
-data/domain/presentation folders. Add generated feature packages immediately
-with `fvm dart run melos bootstrap`.
-
-## Benemoy house profiles
-
-Local UAT/production profiles live at:
-
-```text
-apps/app_benemoy/config/houses/benemoy-uat.json
-apps/app_benemoy/config/houses/benemoy-prod.json
-```
-
-These files are git-ignored. Build with the profile for the matching
-environment:
-
-```sh
-cd apps/app_benemoy
-fvm flutter run --flavor benemoy \
-  --dart-define-from-file=config/houses/benemoy-uat.json
-```
-
-The profile also selects `OMS_ENV`. Use `benemoy-prod.json` for production builds. Dart defines
-are compiled into the app and are not a secure secret store; never put passwords,
-private keys, or signing credentials in them. Provide profiles to CI from a
-secret/configuration store. The existing Benemoy dotenv files remain as a local
-backward-compatible fallback.
-
-Android flavor identity is in
-`apps/app_benemoy/config/houses/android/benemoy.properties`. Firebase's native
-Android and iOS configuration stays platform-specific. Signing files and local
-house profiles are excluded from source control.
+Run `fvm dart run melos bootstrap` after generating a package.
