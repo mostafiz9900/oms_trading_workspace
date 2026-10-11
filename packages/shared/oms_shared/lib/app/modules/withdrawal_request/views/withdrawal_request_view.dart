@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../app_pkg.dart';
-import '../../home/views/local_widgets/index_value_loader.dart';
+import '../../../global_widgets/index_value_loader.dart';
 import '../controllers/withdrawal_request_controller.dart';
 import '../../../data/models/response/withdraw_model.dart'; //  মডেল ইম্পোর্ট করা হলো
 

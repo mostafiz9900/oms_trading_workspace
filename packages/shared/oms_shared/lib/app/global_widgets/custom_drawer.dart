@@ -9,9 +9,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../modules/home/controllers/password_reset_controller.dart';
+import '../modules/auth/controllers/password_reset_controller.dart';
 
-import '../modules/home/views/notification_view.dart';
+import '../modules/notifications/views/notification_view.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});

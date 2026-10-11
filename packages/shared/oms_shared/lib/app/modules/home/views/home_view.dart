@@ -7,12 +7,12 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app_pkg.dart';
 import '../controllers/update_controller.dart';
-import 'fav_market_view.dart';
-import 'local_widgets/market_widget.dart';
-import 'local_widgets/portfolio_widget.dart';
-import 'local_widgets/quote_widget.dart';
-import 'local_widgets/trade_widget.dart';
-import 'local_widgets/watch_list_widget.dart';
+import '../../watchlist/views/fav_market_view.dart';
+import '../../market/views/market_widget.dart';
+import '../../portfolio/views/portfolio_widget.dart';
+import '../../quote/views/quote_widget.dart';
+import '../../trade/views/trade_widget.dart';
+import '../../watchlist/views/watch_list_widget.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});

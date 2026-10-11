@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'dart:ui';
 
 import '../../../data/models/response/order_alert_model.dart';
-import '/app/modules/home/controllers/historical_volume_controller.dart';
+import '/app/modules/quote/controllers/historical_volume_controller.dart';
 
-import '/app/modules/home/controllers/position_controller.dart';
+import '/app/modules/portfolio/controllers/position_controller.dart';
 
 import 'package:flutter/material.dart' hide Actions;
 import 'package:get/get.dart';
@@ -35,10 +35,10 @@ import '../../../data/models/response/user_balance.dart';
 import '../../../data/services/market_socket_service.dart';
 import '../../auth/controllers/biometric_controller.dart';
 import '../../auth/controllers/token_controller.dart';
-import '../views/order_status_details_view.dart';
-import 'companies_controller.dart';
-import 'market_index_controller.dart';
-import 'watchlist_controller.dart';
+import '../../orders/views/order_status_details_view.dart';
+import '../../market/controllers/companies_controller.dart';
+import '../../market/controllers/market_index_controller.dart';
+import '../../watchlist/controllers/watchlist_controller.dart';
 
 part 'home/home_state.dart';
 part 'home/socket_mixin.dart';

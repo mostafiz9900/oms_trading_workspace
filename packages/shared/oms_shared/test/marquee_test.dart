@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:oms_shared/app/data/models/marquee_holder.dart';
 import 'package:oms_shared/app/modules/home/controllers/home_controller.dart';
-import 'package:oms_shared/app/modules/home/views/local_widgets/market_widget.dart';
+import 'package:oms_shared/app/modules/market/views/market_widget.dart';
 
 /// The marquee only reads [HomeController.marqueeList].
 class _FakeHome extends Fake implements HomeController {

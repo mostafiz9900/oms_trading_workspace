@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app_pkg.dart';
-import '../../home/views/local_widgets/index_value_loader.dart';
+import '../../../global_widgets/index_value_loader.dart';
 import '../controllers/limit_request_controller.dart';
 
 class LimitRequestView extends GetView<LimitRequestController> {

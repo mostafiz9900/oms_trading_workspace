@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../app_pkg.dart';
 import '../../../data/models/response/order_alert_model.dart';
-import '../../home/views/local_widgets/index_value_loader.dart';
+import '../../../global_widgets/index_value_loader.dart';
 
 // আপনার কাস্টম উইজেটগুলো ইম্পোর্ট করে নিবেন
 
