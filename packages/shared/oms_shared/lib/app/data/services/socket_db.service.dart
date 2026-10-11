@@ -1,13 +1,29 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:web_socket_channel/status.dart' as status;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+/// Opens a websocket channel; replaced in tests.
+typedef WebSocketConnector = WebSocketChannel Function(Uri uri);
 
-class WebSocketService extends GetxService {
+/// Owns every named websocket in the app.
+///
+/// A socket stays wanted from [connect] until [disconnect]. While wanted it
+/// is kept alive: after a drop or error it reconnects with a growing delay
+/// (2 s, 4 s ... capped at 30 s) and never gives up, and it reconnects at once
+/// when the network comes back or the app returns to the foreground.
+class WebSocketService extends GetxService with WidgetsBindingObserver {
+  WebSocketService({WebSocketConnector? connector, Stream<bool>? onlineChanges})
+    : _connector = connector ?? WebSocketChannel.connect,
+      _onlineChanges = onlineChanges ?? _connectivityOnline();
+
   static WebSocketService get instance => Get.find<WebSocketService>();
+
+  final WebSocketConnector _connector;
+  final Stream<bool> _onlineChanges;
 
   // ─── Private State ────────────────────────────────────────────────────────
 
@@ -15,6 +31,7 @@ class WebSocketService extends GetxService {
   final Map<String, StreamSubscription> _subscriptions = {}; // 🚀 Memory Leak রোধ করার জন্য
   final Map<String, bool> _connectionStatus = {};
   final Map<String, String> _socketUrls = {};
+  final Set<String> _connecting = {};
 
   // Callbacks — kept alive across reconnects
   final Map<String, Function(String)> _messageHandlers = {};
@@ -25,21 +42,55 @@ class WebSocketService extends GetxService {
   // Reconnect control
   final Map<String, int> _retryCount = {};
   final Map<String, Timer?> _reconnectTimers = {};
-  static const int _maxRetries = 10;
+  static const int _maxDelaySeconds = 30;
+
+  StreamSubscription<bool>? _onlineSubscription;
+  bool _online = true;
 
   // ─── Lifecycle ────────────────────────────────────────────────────────────
 
   @override
   void onInit() {
     super.onInit();
+    WidgetsBinding.instance.addObserver(this);
+    _onlineSubscription = _onlineChanges.listen(_onOnlineChanged);
     debugPrint('WebSocketService initialized');
   }
 
   @override
   void onClose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _onlineSubscription?.cancel();
     disconnectAll();
     super.onClose();
     debugPrint('WebSocketService closed');
+  }
+
+  static Stream<bool> _connectivityOnline() => Connectivity().onConnectivityChanged.map(
+    (results) => !results.contains(ConnectivityResult.none),
+  );
+
+  void _onOnlineChanged(bool online) {
+    final cameBack = online && !_online;
+    _online = online;
+    if (cameBack) {
+      debugPrint('🌐 Network is back — reconnecting dropped sockets');
+      _reconnectDropped();
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _reconnectDropped();
+  }
+
+  /// Reconnects, without waiting for the back-off timer, every socket that is
+  /// still wanted but not connected.
+  void _reconnectDropped() {
+    for (final socketId in _socketUrls.keys.toList()) {
+      if (isConnected(socketId) || _connecting.contains(socketId)) continue;
+      forceReconnect(socketId);
+    }
   }
 
   // ─── Public API ───────────────────────────────────────────────────────────
@@ -65,23 +116,24 @@ class WebSocketService extends GetxService {
     if (onError != null) _errorCallbacks[socketId] = onError;
 
     WebSocketChannel? channel;
+    _connecting.add(socketId);
     try {
       debugPrint('🔄 Attempting to connect: $socketId');
 
-      channel = WebSocketChannel.connect(Uri.parse(url));
+      channel = _connector(Uri.parse(url));
       _channels[socketId] = channel;
 
-      // 🚀 FIX: সকেট পুরোপুরি কানেক্ট হওয়া পর্যন্ত অপেক্ষা করবে
+      // 🚀 FIX: সকেট পুরোপুরি কানেক্ট হওয়া পর্যন্ত অপেক্ষা করবে
       await channel.ready;
 
-      // কানেক্ট হতে হতে যদি ইউজার disconnect কল করে দেয়, তবে আর এগোবে না
+      // কানেক্ট হতে হতে যদি ইউজার disconnect কল করে দেয়, তবে আর এগোবে না
       // ...or if a newer connect() for the same socket replaced this channel.
       if (!identical(_channels[socketId], channel)) return;
 
       _connectionStatus[socketId] = true;
       _retryCount[socketId] = 0; // Reset counter on fresh connect
 
-      // 🚀 FIX: StreamSubscription সেভ করা হচ্ছে যাতে পরে cancel করা যায়
+      // 🚀 FIX: StreamSubscription সেভ করা হচ্ছে যাতে পরে cancel করা যায়
       _subscriptions[socketId] = channel.stream.listen(
         (message) => _messageHandlers[socketId]?.call(message.toString()),
         onError: (error) => _handleError(socketId, error),
@@ -96,42 +148,52 @@ class WebSocketService extends GetxService {
       if (channel == null || identical(_channels[socketId], channel)) {
         _handleError(socketId, e);
       }
+    } finally {
+      // Only the current attempt clears the flag (a newer one may be running).
+      if (channel == null || identical(_channels[socketId], channel)) {
+        _connecting.remove(socketId);
+      }
     }
   }
 
-  /// Send a text message to a named socket.
-  void sendMessage(String socketId, String message) {
+  /// Send a text message to a named socket. Returns false when the socket is
+  /// not connected (nothing is sent).
+  bool sendMessage(String socketId, String message) {
     final connected = _connectionStatus[socketId] ?? false;
     if (_channels.containsKey(socketId) && connected) {
       try {
         _channels[socketId]!.sink.add(message);
+        return true;
       } catch (e) {
         debugPrint('❌ Error sending message to $socketId: $e');
         _handleError(socketId, e);
+        return false;
       }
-    } else {
-      debugPrint('⚠️ Cannot send — $socketId is not connected');
     }
+    debugPrint('⚠️ Cannot send — $socketId is not connected');
+    return false;
   }
 
   /// Gracefully disconnect a named socket (no auto-reconnect).
   void disconnect(String socketId) {
-    if (!_channels.containsKey(socketId)) return;
-
+    // Always drop the callbacks and timer, even if the channel is already
+    // gone, so a pending reconnect cannot bring the socket back.
+    final hadChannel = _channels.containsKey(socketId);
     _closeChannel(socketId);
     _removeCallbacks(socketId); // full cleanup — no reconnect desired
     _cancelReconnectTimer(socketId);
+    _connecting.remove(socketId);
 
-    debugPrint('🔌 Manually disconnected: $socketId');
+    if (hadChannel) debugPrint('🔌 Manually disconnected: $socketId');
   }
 
-  // 🚀 MISSING FUNCTION 1: Whether a socket is currently marked as connected.
+  /// Whether a socket is currently marked as connected.
   bool isConnected(String socketId) => _connectionStatus[socketId] ?? false;
 
-  // 🚀 MISSING FUNCTION 2: IDs of all currently connected sockets.
+  /// IDs of all currently connected sockets.
   List<String> getConnectedSockets() => _connectionStatus.entries.where((e) => e.value).map((e) => e.key).toList();
 
-  // 🚀 MISSING FUNCTION 3: Force immediate reconnect
+  /// Reconnect now instead of waiting for the back-off timer.
   void forceReconnect(String socketId) {
     debugPrint('⚡ Forcing immediate reconnect for: $socketId');
     _retryCount[socketId] = 0;
@@ -161,32 +223,26 @@ class WebSocketService extends GetxService {
   }
 
   void _scheduleReconnect(String socketId) {
-    _cancelReconnectTimer(socketId); // আগের টাইমার ক্লিয়ার করা
-
-    final retries = _retryCount[socketId] ?? 0;
-
-    // Stop retrying after max attempts
-    if (retries >= _maxRetries) {
-      debugPrint('🛑 Max retries ($retries) reached for $socketId — giving up');
-      return;
-    }
+    _cancelReconnectTimer(socketId); // আগের টাইমার ক্লিয়ার করা
 
     if (!_socketUrls.containsKey(socketId) || !_messageHandlers.containsKey(socketId)) {
       return;
     }
 
+    final retries = _retryCount[socketId] ?? 0;
     _retryCount[socketId] = retries + 1;
 
-    // Exponential back-off: 2s, 4s, 8s, 16s, 32s
+    // Back-off: 2s, 4s, 6s ... capped at 30s, retried for as long as the
+    // socket is wanted (it used to give up for good after 10 attempts).
     int delaySeconds = 2 * (retries + 1);
-    if (delaySeconds > 30) delaySeconds = 30; // Max 30 seconds delay
+    if (delaySeconds > _maxDelaySeconds) delaySeconds = _maxDelaySeconds;
 
     final delay = Duration(seconds: delaySeconds);
-    debugPrint('🔄 Reconnect attempt ${retries + 1}/$_maxRetries for $socketId in ${delay.inSeconds}s');
+    debugPrint('🔄 Reconnect attempt ${retries + 1} for $socketId in ${delay.inSeconds}s');
 
     _reconnectTimers[socketId] = Timer(delay, () {
       final stillDisconnected = (_connectionStatus[socketId] ?? false) == false;
-      if (stillDisconnected) {
+      if (stillDisconnected && _socketUrls.containsKey(socketId)) {
         connect(socketId: socketId, url: _socketUrls[socketId]!, onMessage: _messageHandlers[socketId]!);
       }
     });
@@ -199,7 +255,9 @@ class WebSocketService extends GetxService {
     if (_channels.containsKey(socketId)) {
       try {
         _channels[socketId]!.sink.close(status.normalClosure);
-      } catch (_) {}
+      } catch (_) {
+        // The channel may already be closed; nothing else to clean up.
+      }
       _channels.remove(socketId);
     }
     _connectionStatus[socketId] = false;
@@ -227,5 +285,9 @@ class WebSocketService extends GetxService {
     }
     _messageHandlers.clear();
     _socketUrls.clear();
+    _connecting.clear();
   }
+
+  @visibleForTesting
+  bool get isOnline => _online;
 }

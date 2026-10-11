@@ -298,6 +298,7 @@ mixin HomeSocketMixin on HomeState {
         news.clear();
         newsSingleItem.clear();
         printLog('🧹 Cleared time & sales data');
+        break;
       case AppConfig.orderConfirmSocketId:
         orderAlertsList.clear();
         break;
@@ -307,7 +308,9 @@ mixin HomeSocketMixin on HomeState {
 
   // Check if any socket is loading (for RefreshIndicator)
   bool get isLoading {
-    return _socketUrls.keys.any((socketId) => !_socketStatus[socketId]!);
+    // _disconnectAll clears _socketStatus but keeps _socketUrls, so a missing
+    // status means "not connected" (the `!` used to throw here).
+    return _socketUrls.keys.any((socketId) => !(_socketStatus[socketId] ?? false));
   }
 
   // Refresh all sockets
