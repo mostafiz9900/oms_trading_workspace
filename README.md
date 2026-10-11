@@ -149,8 +149,7 @@ Secrets, store setup and the release steps: [docs/release.md](docs/release.md).
 | 3 | snake_case file names; split `home` into GetX modules; one widget per file; remove the `app_pkg.dart` barrels | Done |
 | 4 | Move the remaining Riverpod providers to GetX controllers (behaviour change, needs QA) | Planned |
 
-`oms_shared` has no compile errors and 27 analyzer infos/warnings left (Radio
-API migration, `BuildContext` across async gaps, protected-member use); each
-of those changes behaviour and needs QA before it is fixed.
+Every package, `oms_shared` included, analyzes with zero issues and CI runs
+`dart analyze --fatal-infos`, so any new warning or info fails the build.
 # oms_trading_workspace
 # oms_trading_workspace

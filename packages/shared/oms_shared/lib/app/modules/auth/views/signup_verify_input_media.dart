@@ -59,15 +59,17 @@ class SignupVerifyInputMedia extends GetView<AuthController> {
                           child: Row(
                             mainAxisAlignment: .start,
                             children: [
-                              Radio(
-                                value: authCon.media["email"],
+                              RadioGroup<String?>(
                                 groupValue: authCon.selectedMedia,
-                                activeColor: context.buttonColor,
                                 onChanged: (value) {
                                   printLog(value);
                                   authCon.setSelectMedia(value);
                                 },
-                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                child: Radio<String?>(
+                                  value: authCon.media["email"],
+                                  activeColor: context.buttonColor,
+                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                ),
                               ),
                               Text(
                                 'Email',
@@ -87,14 +89,16 @@ class SignupVerifyInputMedia extends GetView<AuthController> {
                           child: Row(
                             mainAxisAlignment: .start,
                             children: [
-                              Radio(
-                                value: authCon.media["mobile"],
+                              RadioGroup<String?>(
                                 groupValue: authCon.selectedMedia,
-                                activeColor: context.buttonColor,
                                 onChanged: (value) {
                                   authCon.setSelectMedia(value);
                                 },
-                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                child: Radio<String?>(
+                                  value: authCon.media["mobile"],
+                                  activeColor: context.buttonColor,
+                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                ),
                               ),
                               Text(
                                 'Mobile',
@@ -141,14 +145,16 @@ class SignupVerifyInputMedia extends GetView<AuthController> {
                                                     child: Row(
                                                       mainAxisAlignment: .start,
                                                       children: [
-                                                        Radio(
-                                                          value: model,
+                                                        RadioGroup<String?>(
                                                           groupValue: authCon.selectedAvailablePhoneOrEmail,
-                                                          activeColor: context.buttonColor,
                                                           onChanged: (value) {
                                                             authCon.setSelectedAvailableEmail(value);
                                                           },
-                                                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                          child: Radio<String?>(
+                                                            value: model,
+                                                            activeColor: context.buttonColor,
+                                                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                          ),
                                                         ),
                                                         Text(
                                                           model,

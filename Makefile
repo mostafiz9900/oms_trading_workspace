@@ -60,9 +60,8 @@ deploy-ios: ## Release to TestFlight from this Mac (CI does this on push to prod
 
 check: analyze test validate ## Analyze, test and validate everything
 
-analyze: ## Static analysis (warnings fail; oms_shared only fails on errors)
+analyze: ## Static analysis (every package strict: any issue fails)
 	$(DART) run melos run analyze
-	$(DART) run melos run analyze:legacy
 
 test: ## Run all tests (unit + widget/UI tests)
 	cd packages/core/broker_config && $(DART) test

@@ -59,15 +59,17 @@ class SignupVerify extends GetView<AuthController> {
                           child: Row(
                             mainAxisAlignment: .start,
                             children: [
-                              Radio(
-                                value: model.name,
+                              RadioGroup<String?>(
                                 groupValue: authCon.chooseName,
-                                activeColor: context.buttonColor,
                                 onChanged: (value) {
                                   printLog(value);
                                   authCon.setChooseName(value);
                                 },
-                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                child: Radio<String?>(
+                                  value: model.name,
+                                  activeColor: context.buttonColor,
+                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                ),
                               ),
                               Text(
                                 '${model.name}',
@@ -100,14 +102,16 @@ class SignupVerify extends GetView<AuthController> {
                           child: Row(
                             mainAxisAlignment: .start,
                             children: [
-                              Radio(
-                                value: model.fathersName,
+                              RadioGroup<String?>(
                                 groupValue: authCon.chooseFatherName,
-                                activeColor: context.buttonColor,
                                 onChanged: (value) {
                                   authCon.setChooseFatherName(value);
                                 },
-                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                child: Radio<String?>(
+                                  value: model.fathersName,
+                                  activeColor: context.buttonColor,
+                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                ),
                               ),
                               Text(
                                 '${model.fathersName}',

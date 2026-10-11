@@ -19,17 +19,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Clean packages fail on warnings; oms_shared still carries legacy
-        # warnings, so it only fails on errors until those are cleaned up.
+        # Every package is analyzed strictly: any error, warning or info fails.
         package:
           - packages/core/trading_core
           - packages/core/trading_ui
           - packages/core/broker_config
           - packages/shared/localization
+          - packages/shared/oms_shared
           - apps/benemoy
-        include:
-          - package: packages/shared/oms_shared
-            flags: --no-fatal-warnings
     steps:
       - uses: actions/checkout@v4
       - id: fvm
@@ -39,7 +36,7 @@ jobs:
           flutter-version: ${{ steps.fvm.outputs.flutter }}
           cache: true
       - run: flutter pub get
-      - run: dart analyze ${{ matrix.flags }} .
+      - run: dart analyze --fatal-infos .
         working-directory: ${{ matrix.package }}
 
   test:

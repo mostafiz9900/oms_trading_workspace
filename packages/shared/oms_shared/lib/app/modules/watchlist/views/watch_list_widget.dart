@@ -59,6 +59,7 @@ class WatchListWidget extends StatelessWidget {
                           null) {
                         Helpers.showLoginRequiredDialog();
                       } else {
+                        if (!context.mounted) return;
                         _showCreateWatchListDialog(context, controller);
                       }
                     },

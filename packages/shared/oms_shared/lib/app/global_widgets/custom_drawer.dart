@@ -239,7 +239,7 @@ class CustomDrawer extends StatelessWidget {
                               Helpers.showLoginRequiredDialog();
                             } else {
                               Get.back();
-                              final success = await homeCon.enableDisableBiometric(context);
+                              final success = await homeCon.enableDisableBiometric();
                               printLog('success:: $success');
                               if (success) {
                                 Helpers.snackBarForSuccess2(bodyText: "Biometric auth seccess");

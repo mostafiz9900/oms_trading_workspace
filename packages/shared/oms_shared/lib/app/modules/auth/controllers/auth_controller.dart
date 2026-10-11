@@ -612,6 +612,9 @@ class CountDownNotifier extends Notifier<int> {
   }
 
   bool get isRunning => state > 0;
+
+  /// Seconds left; lets widgets read the value without touching [state].
+  int get seconds => state;
 }
 
 final countDownProvider = NotifierProvider.family<CountDownNotifier, int, int>(

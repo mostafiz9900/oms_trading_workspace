@@ -171,7 +171,7 @@ void showLogoutDialog(BuildContext context) {
                         style: ElevatedButton.styleFrom(backgroundColor: context.buttonColor),
                         onPressed: () async {
                           Get.back();
-                          Get.find<HomeController>().logout(context);
+                          Get.find<HomeController>().logout();
                         },
                         child: Text("Logout", style: Get.textTheme.bodyMedium!.copyWith(color: Colors.white)),
                       ),

@@ -167,7 +167,7 @@ class OtpVerifyScreen extends HookConsumerWidget {
                         return const Text("Failed to fetch OTP duration");
                       }
                       final notifier = ref.read(countDownProvider(2).notifier);
-                      if (!notifier.state.isFinite || notifier.state == minutes * 60) {
+                      if (!notifier.seconds.isFinite || notifier.seconds == minutes * 60) {
                         notifier.start();
                       }
                       return CircularCountdownWidget(apiMinutes: minutes, email: email);

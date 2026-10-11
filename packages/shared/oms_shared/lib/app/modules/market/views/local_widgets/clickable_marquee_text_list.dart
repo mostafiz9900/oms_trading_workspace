@@ -14,7 +14,7 @@ class ClickableMarqueeTextList extends StatefulWidget {
   const ClickableMarqueeTextList({super.key, required this.homeCon});
 
   @override
-  _ClickableMarqueeTextListState createState() => _ClickableMarqueeTextListState();
+  State<ClickableMarqueeTextList> createState() => _ClickableMarqueeTextListState();
 }
 
 class _ClickableMarqueeTextListState extends State<ClickableMarqueeTextList> with SingleTickerProviderStateMixin {

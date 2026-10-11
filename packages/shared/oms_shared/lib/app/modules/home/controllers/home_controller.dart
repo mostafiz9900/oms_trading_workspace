@@ -124,9 +124,7 @@ class HomeController extends HomeState
   @override
   void onInit() async {
     super.onInit();
-    if (!searchController.hasListeners) {
-      searchController.addListener(_onSearchChanged);
-    }
+    searchController.addListener(_onSearchChanged);
     printLog('home repository :: ${homeRepository.hashCode}');
     if (Get.arguments != null) {
       currentIndex = Get.arguments;

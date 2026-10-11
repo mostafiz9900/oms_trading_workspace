@@ -142,8 +142,8 @@ class _NewsWidget extends StatelessWidget {
           itemCount: homeCon.newsSingleItem.length,
           separatorBuilder: (_, _) => dividerWidget,
           itemBuilder: (context, index) {
-            final NewsModel? model = homeCon.newsSingleItem[index];
-            if (model == null || model.tl == null) {
+            final NewsModel model = homeCon.newsSingleItem[index];
+            if (model.tl == null) {
               return const SizedBox.shrink();
             }
             return NewsItemWidget(model: model);
