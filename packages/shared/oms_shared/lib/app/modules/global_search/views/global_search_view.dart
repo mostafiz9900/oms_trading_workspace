@@ -5,7 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../app_pkg.dart';
 import '../../top_share/views/live_value_blinker.dart';
-import '../../../global_widgets/index_value_loader.dart';
+import '../../../global_widgets/loaders/watchlist_loader.dart';
 
 class GlobalSearchScreen extends HookWidget {
   const GlobalSearchScreen({super.key});

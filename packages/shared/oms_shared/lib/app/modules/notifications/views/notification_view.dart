@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../app_pkg.dart';
 
-import '../../quote/views/local_widgets/quote_tab_widget.dart';
+import '../../quote/views/local_widgets/news_item_widget.dart';
 
 class NotificationView extends StatelessWidget {
   const NotificationView({super.key});

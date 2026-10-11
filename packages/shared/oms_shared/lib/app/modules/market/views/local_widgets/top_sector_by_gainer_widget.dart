@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../../../app_pkg.dart';
-import '../../../../global_widgets/index_value_loader.dart';
+import '../../../../global_widgets/loaders/cartesian_chart_loader.dart';
 
 class TopSectorByGainerWidget extends StatelessWidget {
   const TopSectorByGainerWidget({super.key});

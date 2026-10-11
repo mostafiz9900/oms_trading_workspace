@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../global_widgets/empty_widget.dart';
 import '../../../../global_widgets/appbar_right_search_tap.dart';
-import '../../../quote/views/local_widgets/quote_tab_widget.dart';
 import '../../../../global_widgets/responsive_wrap_widget.dart';
 import '/app/app_pkg.dart';
+import '../../../quote/views/local_widgets/quote_ui_helper.dart';
 
 // ========================================================
 // ========================================================

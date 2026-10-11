@@ -2,8 +2,8 @@ import '/app/app_pkg.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_treemap/treemap.dart';
 import 'package:get/get.dart';
+import '../../../../global_widgets/loaders/market_map_loader.dart';
 
-import '../../../../global_widgets/index_value_loader.dart';
 
 class MarketMapWidget extends StatefulWidget {
   const MarketMapWidget({super.key});

@@ -4,7 +4,8 @@ import 'package:intl/intl.dart';
 
 import '../../../../app_pkg.dart';
 import '../../controllers/live_index_controller.dart';
-import '../../../../global_widgets/index_value_loader.dart';
+import '../../../../global_widgets/loaders/index_value_loader.dart';
+import '../../../../global_widgets/loaders/index_list_loader.dart';
 
 class MarketIndexListWidget extends StatelessWidget {
   const MarketIndexListWidget({super.key});

@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import '../../../../app_pkg.dart';
 
 import '../../controllers/live_index_controller.dart';
-import '../../../../global_widgets/index_value_loader.dart';
+import '../../../../global_widgets/loaders/full_index_chart_shimmer.dart';
 
 class IndexChartWidget extends StatelessWidget {
   IndexChartWidget({super.key}); // 🚀 const remove kora hoyeche

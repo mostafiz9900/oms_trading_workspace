@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app_pkg.dart';
-import '../../../global_widgets/index_value_loader.dart';
 import '../controllers/limit_request_controller.dart';
+import '../../../global_widgets/loaders/order_list_loader.dart';
 
 class LimitRequestView extends GetView<LimitRequestController> {
   const LimitRequestView({super.key});

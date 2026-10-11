@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../../../app_pkg.dart';
 import '../../../../global_widgets/empty_widget.dart';
 import 'time_sales_charts_view.dart';
-import '../../../../global_widgets/index_value_loader.dart';
+import '../../../../global_widgets/loaders/time_sales_list_loader.dart';
 
 // =========================================================================
 // =========================================================================

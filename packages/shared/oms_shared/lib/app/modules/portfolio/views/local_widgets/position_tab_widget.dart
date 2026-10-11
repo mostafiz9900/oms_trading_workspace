@@ -3,7 +3,7 @@ import 'package:oms_shared/app/modules/portfolio/controllers/position_controller
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../app_pkg.dart';
-import '../../../../global_widgets/index_value_loader.dart';
+import '../../../../global_widgets/loaders/position_loader.dart';
 
 class PositionTabWidget extends StatelessWidget {
   const PositionTabWidget({super.key});

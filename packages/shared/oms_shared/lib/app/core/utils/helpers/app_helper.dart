@@ -14,7 +14,6 @@ import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:popover/popover.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../app_pkg.dart';
@@ -1413,79 +1412,5 @@ class Helpers {
       printLog("Error encoding image to JPEG: $e");
       return null;
     }
-  }
-}
-
-extension ExtendedString on String {
-  bool get isValidName {
-    return !contains(RegExp(r'[0–9]'));
-  }
-}
-
-extension DateTimeFormat on DateTime {
-  String get ddMMyy => DateFormat("dd-MM-yy").format(this);
-
-  String ddMMyyyy(String formate) {
-    return DateFormat(formate).format(this);
-  }
-
-  String get yyyDDmm => DateFormat("yyyy-MM-dd").format(this);
-
-  String get mmYYYY => DateFormat("MM-yyyy").format(this);
-
-  String get eMMMd => DateFormat('E, MMM d').format(this);
-
-  String get mmDDyyHHmmA => DateFormat('MM/dd/yyyy hh:mm a').format(this);
-
-  String get yyyDDmmNumber => DateFormat("yyyyMMdd").format(this);
-  String get fullDateReadable => DateFormat("d MMMM, yyyy").format(this);
-
-  String get standardDate => DateFormat("dd MMM, yyyy").format(this);
-}
-
-extension StringExtension on String {
-  String toCapitalize() {
-    return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
-  }
-}
-
-class HexColor extends Color {
-  HexColor(String hexColor) : super(_getColorFromHex(hexColor));
-
-  static int _getColorFromHex(String hexColor) {
-    hexColor = hexColor.toUpperCase().replaceAll('#', '');
-    if (hexColor.length == 6) {
-      hexColor = 'FF$hexColor';
-    }
-    return int.parse(hexColor, radix: 16);
-  }
-}
-
-class AppPopover {
-  static void show({
-    required BuildContext context,
-    required String text,
-    PopoverDirection direction = PopoverDirection.top,
-    double radius = 10,
-    Color backgroundColor = Colors.white,
-    double arrowHeight = 10,
-    double arrowWidth = 20,
-    TextStyle? textStyle,
-    List<BoxShadow>? shadow,
-  }) {
-    showPopover(
-      context: context,
-      direction: direction,
-      radius: radius,
-      backgroundColor: backgroundColor,
-      barrierColor: Colors.black.withValues(alpha: 0.1),
-      arrowHeight: arrowHeight,
-      arrowWidth: arrowWidth,
-      shadow: shadow ?? const [BoxShadow(color: Colors.black12, blurRadius: 10)],
-      bodyBuilder: (context) => Padding(
-        padding: const EdgeInsets.all(12),
-        child: Text(text, style: textStyle ?? const TextStyle(fontSize: 12, color: Colors.black87, height: 1.4)),
-      ),
-    );
   }
 }

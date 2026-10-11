@@ -5,3 +5,7 @@ export 'extensions/app_context.dart';
 export 'extensions/market_model_extensions.dart';
 export 'helpers/formatter_helper.dart';
 export 'helpers/update_throttle.dart';
+export 'extensions/string_extensions.dart';
+export 'extensions/date_time_extensions.dart';
+export 'helpers/hex_color.dart';
+export 'helpers/app_popover.dart';

@@ -3,8 +3,8 @@ import 'package:oms_shared/app/app_pkg.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../global_widgets/loaders/distribution_chart_loader.dart';
 
-import '../../../../global_widgets/index_value_loader.dart';
 
 class WatchlistDistributionPage extends StatelessWidget {
   WatchlistDistributionPage({super.key});

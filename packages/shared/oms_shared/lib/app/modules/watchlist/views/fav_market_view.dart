@@ -5,7 +5,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 import '../../../global_widgets/empty_widget.dart';
 import '../../../global_widgets/appbar_right_search_tap.dart';
-import '../../../global_widgets/index_value_loader.dart';
+import '../../../global_widgets/loaders/watchlist_loader.dart';
 // আপনার MarketModelExtensions ইম্পোর্ট করে নিবেন
 
 class FavMarketView extends StatelessWidget {

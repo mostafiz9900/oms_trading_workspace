@@ -7,7 +7,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../../../app_pkg.dart';
 import '../../controllers/historical_volume_controller.dart';
-import 'time_sales_line_chart.dart';
+import 'fast_line_with_bar_chart.dart';
 
 class _VolBucket {
   final DateTime start;

@@ -8,7 +8,7 @@ import '/app/app_pkg.dart';
 import '../../../data/models/request/add_fav_item_request.dart' show AddFavItemRequest;
 
 import '../../../global_widgets/empty_widget.dart';
-import '../../../global_widgets/index_value_loader.dart';
+import '../../../global_widgets/loaders/watchlist_loader.dart';
 
 class WatchListWidget extends StatelessWidget {
   const WatchListWidget({super.key});

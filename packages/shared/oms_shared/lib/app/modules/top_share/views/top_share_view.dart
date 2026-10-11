@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../global_widgets/appbar_right_search_tap.dart';
-import '../../../global_widgets/index_value_loader.dart';
 import '../controllers/top_share_controller.dart';
+import '../../../global_widgets/loaders/watchlist_loader.dart';
 
 class TopShareView extends GetView<TopShareController> {
   const TopShareView({super.key});

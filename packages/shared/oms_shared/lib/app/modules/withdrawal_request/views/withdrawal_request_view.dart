@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../app_pkg.dart';
-import '../../../global_widgets/index_value_loader.dart';
 import '../controllers/withdrawal_request_controller.dart';
+import '../../../global_widgets/loaders/order_list_loader.dart';
 import '../../../data/models/response/withdraw_model.dart'; //  মডেল ইম্পোর্ট করা হলো
 
 class WithdrawalRequestView extends GetView<WithdrawalRequestController> {

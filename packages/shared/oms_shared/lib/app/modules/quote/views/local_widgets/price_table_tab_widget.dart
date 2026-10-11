@@ -6,7 +6,7 @@ import 'package:horizontal_data_table/horizontal_data_table.dart';
 
 import '../../../../app_pkg.dart';
 import '../../controllers/historical_volume_controller.dart';
-import '../../../../global_widgets/index_value_loader.dart';
+import '../../../../global_widgets/loaders/price_table_loader.dart';
 
 class PriceTableTabWidget extends StatelessWidget {
   const PriceTableTabWidget({super.key});
