@@ -102,9 +102,6 @@ class HomeController extends SuperController {
   var previousIndex = 0;
   late ZoomPanBehavior zoomPanBehavior;
   late TooltipBehavior tooltipBehavior;
-  CategoryAxisController?
-  axisController1; // create instance to axis controller for first chart
-  CategoryAxisController? axisController2;
   int currentTabIndex = 0;
 
   SideType2 buySellTabActive = SideType2.BUY;
@@ -139,7 +136,6 @@ class HomeController extends SuperController {
   String watchListFilterPublic = 'Public';
   int watchListFilterFavorite = 0;
   String watchListFilterFavoriteName = "";
-  String watchListFilterSetting = 'New Watch List';
   Map<String, List<MarketModel>>? groupedSectionMarketData;
   final currentSession = "".obs;
 
@@ -501,11 +497,6 @@ class HomeController extends SuperController {
   // চার্ট ডেটা প্রসেস করার ক্লিন ফাংশন
   List<Map<String, dynamic>> chartData = [];
   List<Map<String, dynamic>> chartDataShareType = [];
-  List<Map<String, dynamic>> chartDataVolumeLeaders = [];
-  List<Map<String, dynamic>> chartData52WeekProximity = [];
-  List<Map<String, dynamic>> chartDataPerformanceHorizon = [];
-  List<Map<String, dynamic>> chartDataBidAskRatio = [];
-  List<Map<String, dynamic>> chartDataVolumeComparison = [];
   final MarketSectorSummaryAggregator _sectorSummaryAggregator =
       MarketSectorSummaryAggregator();
   final MarketSnapshotAnalytics _marketSnapshotAnalytics =
@@ -698,20 +689,6 @@ class HomeController extends SuperController {
     }
     // If you use GetBuilder or manual update
     update(['indexList']); // uncomment if you rely on GetBuilder with id
-  }
-
-  void processTick2(String message) {
-    final tick = Map<String, dynamic>.from(jsonDecode(message) as Map);
-    if (!_marketStatistics.processGainerTick(tick)) return;
-    chartData = _marketStatistics.chartData;
-    update(['marketListByGainer']);
-  }
-
-  void processShareTypeTick(String message) {
-    final tick = Map<String, dynamic>.from(jsonDecode(message) as Map);
-    if (!_marketStatistics.processShareTypeTick(tick)) return;
-    chartDataShareType = _marketStatistics.chartDataShareType;
-    update(['marketListByShareType']);
   }
 
   // Share Type (Category) চার্টের ডেটা
@@ -1052,20 +1029,6 @@ class HomeController extends SuperController {
   void reconnectSocket(String socketId) {
   }
 
-  void reconnectMarketDepth() {
-    reconnectSocket(AppConfig.marketDepthSocketId);
-  }
-
-  void reconnectIndex() {
-    reconnectSocket(AppConfig.indexSocketId);
-  }
-
-  void reconnectAllSockets() {
-    for (var socketId in _socketUrls.keys) {
-      reconnectSocket(socketId);
-    }
-  }
-
   // Reinitialize specific socket
   void _reinitializeSocket(String socketId) {
     final url = _socketUrls[socketId];
@@ -1099,14 +1062,6 @@ class HomeController extends SuperController {
 
   Future<void> refreshIndex() async {
     await _refreshSocket(AppConfig.indexSocketId);
-  }
-
-  Future<void> refreshMarketDepth() async {
-    await _refreshSocket(AppConfig.marketDepthSocketId);
-  }
-
-  Future<void> refreshTimeAndSales() async {
-    await _refreshSocket(AppConfig.newsTimeSalesSocketId);
   }
 
   Future<void> _refreshSocket(String socketId) async {
@@ -1150,30 +1105,10 @@ class HomeController extends SuperController {
 
   // Connection status checkers
   bool isSocketConnected(String socketId) => _socketStatus[socketId] ?? false;
-  bool get isMarketConnected => isSocketConnected(AppConfig.marketSocketId);
-  bool get isMarketDepthConnected =>
-      isSocketConnected(AppConfig.marketDepthSocketId);
-  bool get isIndexConnected => isSocketConnected(AppConfig.indexSocketId);
-  bool get isTimeAndSalesConnected =>
-      isSocketConnected(AppConfig.newsTimeSalesSocketId);
   bool get isOrderConfirmConnected =>
       isSocketConnected(AppConfig.orderConfirmSocketId);
   // Data getters
   String getSocketData(String socketId) => _socketData[socketId] ?? '';
-  String get marketStatus => getSocketData(AppConfig.marketSocketId);
-  String get marketDepthStatus => getSocketData(AppConfig.marketDepthSocketId);
-  String get indexStatus => getSocketData(AppConfig.indexSocketId);
-  String get timeAndSalesStatus =>
-      getSocketData(AppConfig.newsTimeSalesSocketId);
-  String get orderConfirmStatus =>
-      getSocketData(AppConfig.orderConfirmSocketId);
-
-  void disconnectSocket(String socketId) {
-    _webSocketService.disconnect(socketId);
-    _socketData.remove(socketId);
-    _socketStatus.remove(socketId);
-    update([socketId]);
-  }
 
   void _disconnectAll() {
     for (var socketId in _socketUrls.keys) {
@@ -1240,43 +1175,6 @@ class HomeController extends SuperController {
     });
   }
 
-  Future<bool> enableDisableBiometric2(BuildContext ctx) async {
-    try {
-      // Step 1: Authenticate
-      printLog('user info b:::${userInfo.b}');
-      bool isBioUser = userInfo.b!;
-      final authenticated = await bioCon.authenticate();
-      printLog('authenticated::::::: $authenticated');
-      if (!authenticated) return false;
-
-      // Step 2: Get device ID
-      final deviceId = await Helpers.getSecureDeviceId();
-      printLog('deviceId::::::: $deviceId');
-      // Step 3: Check current biometric status
-      final isEnable = await bioCon.isBiometricEnabled();
-      final isBio = await Helpers.isBiometricEnabled();
-      printLog('isEnable;::::::: $isEnable');
-      printLog('isBio;::::::: $isBio');
-      if (isBioUser == true && deviceId != null) {
-        printLog('Biometric disabled locally');
-        await biometricActive(null, false);
-        await logout(ctx);
-      } else {
-        printLog('Biometric enabled locally');
-        await biometricActive(deviceId, true);
-        await logout(ctx);
-      }
-
-      // Step 4: Update storage if needed
-      await Helpers.setBiometricEnabled(!isEnable);
-
-      return true;
-    } catch (e) {
-      printLog('Error in enableDisableBiometric: $e');
-      return false;
-    }
-  }
-
   Future<bool> enableDisableBiometric(BuildContext ctx) async {
     try {
       // Safely check if user has biometric enabled on backend (defaults to false if null)
@@ -1331,7 +1229,6 @@ class HomeController extends SuperController {
   }
 
   TradingChartModel? tradingChartModel;
-  int visibleCount = 50;
 
   Future<void> tradingChart() async {
     DateTime now = DateTime.now();
@@ -1374,12 +1271,6 @@ class HomeController extends SuperController {
     update(['interactive_charts']);
   }
 
-  void setFilterName(String name) {
-    filterName = name;
-    scrollToMatch();
-    update();
-  }
-
   void scrollToMatch() {
     final model = marketList.firstWhere(
       (market) => market.filterName == filterName,
@@ -1404,17 +1295,6 @@ class HomeController extends SuperController {
     });
 
     update();
-  }
-
-  void toggleSide(SideType name) {
-    selectBuySell = name;
-    update(['market_depth']);
-  }
-
-  void changeTextNotifier() {
-    var value = providerContainer.read(watchListOnProvider);
-    printLog(value);
-    printLog('notifier get controller');
   }
 
   void changeOrderType(String data) {
@@ -1450,39 +1330,6 @@ class HomeController extends SuperController {
   String currentSearchQuery = '';
   String currentSortOrder = 'ASC'; // ডিফল্ট ASC
   String currentSortCategory = 'A-Z';
-  void searchOld(String query) {
-    if (query.isEmpty) {
-      filteredItems = marketList;
-    } else {
-      filteredItems = marketList
-          .where(
-            (item) => (item.filterName ?? "").toLowerCase().startsWith(
-              query.toLowerCase(),
-            ),
-          )
-          .toList();
-    }
-
-    update(['marketList']);
-  }
-
-  void searchSectorOld(String query) {
-    printLog('data: ${marketList.first.toJson()}');
-    selectSector = query;
-    if (query == 'All') {
-      filteredItems = marketList;
-      update(['marketList']);
-    } else {
-      filteredItems = marketList
-          .where(
-            (item) =>
-                (item.sector ?? "").toLowerCase().contains(query.toLowerCase()),
-          )
-          .toList();
-    }
-
-    update(['marketList']);
-  }
 
   // আপনার এই ফাংশনটি ঠিক রাখুন
   void search(String query) {
@@ -1591,10 +1438,6 @@ class HomeController extends SuperController {
   }
 
   // optionally explicit setters
-  void setGridView(bool value) {
-    isGridView = value;
-    update(['marketList']);
-  }
 
   /// Call ONCE when page opens (or when marketData arrives)
   void setInitialPrice(double? reference) {
@@ -1819,13 +1662,6 @@ class HomeController extends SuperController {
     return words.isNotEmpty ? words[0] : '';
   }
 
-  void changeFavFilter(int filter) {
-    watchListFilterFavorite = filter;
-    var item = favCatList.where((o) => o.id == filter).first;
-    watchListFilterFavoriteName = item.name!;
-    update();
-  }
-
   Future<void> addMarketDataToFav(AddFavItemRequest requestData) async {
     if (await NetworkUtil.checkInternetConnection()) {
       isAddFavCat = true;
@@ -1852,15 +1688,6 @@ class HomeController extends SuperController {
       isAddFavCat = false;
       update();
     }
-  }
-
-  bool isFavourite(int orderBookId) {
-    // favMarketData এর মধ্যে check
-    return favMarketData.any(
-      (fav) =>
-          fav.oderBook != null &&
-          fav.oderBook.toString() == orderBookId.toString(),
-    );
   }
 
   List<FavMarketResponse> favMarketData = [];
@@ -2058,94 +1885,23 @@ class HomeController extends SuperController {
 
   // ================= index socket ========================
 
-  List<IndexModel> uniqueArray(List<IndexModel> arr) {
-    List<IndexModel> newArr = [];
-    for (var obj in arr) {
-      if (newArr.contains(obj)) {
-        continue;
-      }
-      newArr.add(obj);
-    }
-    return newArr;
-  }
-
   // sector summary map
   Map<String, Map<String, int>> get sectorSummary =>
       _marketStatistics.sectorSummary;
-  final Map<String, double> lastPrices = {};
-  final Map<String, String> lastStatus = {};
 
   // chart data
 
   // process incoming tick / market data
 
   //2nd grop by
-  List<Map<String, dynamic>> getChartData3() {
-    return _marketStatistics.getGainerChartData();
-  }
-
-  List<Map<String, dynamic>> getChartData2() =>
-      _marketStatistics.getGainerCountsChartData();
 
   // end
   Map<String, Map<String, int>> sectorCounts = {};
   Map<int, Map<String, dynamic>> stockDataMap = {};
-  void countStockChanges(dynamic message) {
-    final tick = jsonDecode(message);
-    if (tick["sn"] == null) {
-      printLog("⚠️ Tick missing symbol: $tick");
-      return; // বা continue; যদি loop এর মধ্যে হয়
-    }
-    final int orderBookId = tick["ob"];
-    final String sector = tick["sc"];
-    final double price = (tick["lp"] as num).toDouble();
-    final double prev = (tick["r"] as num).toDouble();
-
-    // Initialize sector if not already present in sectorCounts
-    if (!stockDataMap.containsKey(orderBookId)) {
-      // Initialize sector if not already present in sectorCounts
-      if (!sectorCounts.containsKey(sector)) {
-        sectorCounts[sector] = {'up': 0, 'down': 0, 'equal': 0};
-      }
-
-      // Determine if stock price is up, down, or unchanged
-      if (price > prev) {
-        sectorCounts[sector]!['up'] = sectorCounts[sector]!['up']! + 1;
-      } else if (price < prev) {
-        sectorCounts[sector]!['down'] = sectorCounts[sector]!['down']! + 1;
-      } else {
-        sectorCounts[sector]!['equal'] = sectorCounts[sector]!['equal']! + 1;
-      }
-
-      // Store the tick in stockDataMap using the unique orderBookId
-      stockDataMap[orderBookId] = tick;
-      // Prepare data for chart update
-      List<Map<String, dynamic>> chartData2 = [];
-      sectorCounts.forEach((sector, counts) {
-        chartData2.add({
-          'sector': sector,
-          'up': counts['up'],
-          'down': counts['down'],
-          'equal': counts['equal'],
-        });
-      });
-
-      // Update the chart data source (this is where homeCon.chartData comes in)
-      chartData = chartData2;
-      update(['marketList']);
-    }
-  }
 
   // convert sector summary to chart-friendly format
 
-  Set<String> processedOrderBookIds = {}; // ✅ to avoid duplicates
   //2nd one
-  Map<String, Map<String, int>> get sectorShareTypeSummary =>
-      _marketStatistics.sectorShareTypeSummary;
-  Map<String, String> get lastShareType => _marketStatistics.lastShareType;
-
-  List<Map<String, dynamic>> getShareTypeChartData() =>
-      _marketStatistics.getShareTypeChartData();
 
   //new task end
   UserBalance? userBalanceData;
@@ -2229,15 +1985,6 @@ class HomeController extends SuperController {
     }
   }
 
-  List<StackedColumnSeries<MarketModel, String>> buildStackedColumnSeries() {
-    List<StackedColumnSeries<MarketModel, String>> seriesList = [];
-    groupedSectionMarketData?.forEach((session, models) {
-      printLog(session);
-      printLog('section : ${models.length}');
-    });
-    return seriesList;
-  }
-
   void filterItems(String query) {
     if (query.isEmpty) {
       marketListForDilog = marketListAll;
@@ -2250,85 +1997,6 @@ class HomeController extends SuperController {
           )
           .toList();
     }
-    update();
-  }
-
-  void newMarketInfo(int orderBookId) async {
-    printLog(orderBookId);
-    searchController.clear();
-    await manageMarketDepth(orderBookId);
-    subscribeTimeAndSales('tsm', '01', '$orderBookId');
-    subscribeTimeAndSales('tsb', '02', '$orderBookId');
-    subscribeTimeAndSales('news_hist', '04', '$orderBookId');
-    update(['marketList']);
-
-    if (!isClosed) {
-      // update data
-    }
-    Get.back();
-    marketListForDilog = marketListAll;
-    await Future.delayed(Duration(seconds: 1));
-    setInitialPrice(marketData.last);
-  }
-
-  Future<void> OrderBookForChange(int orderBookId) async {
-    await manageMarketDepth(orderBookId);
-    subscribeTimeAndSales('tsm', '01', '$orderBookId');
-    subscribeTimeAndSales('tsb', '02', '$orderBookId');
-    subscribeTimeAndSales('news_hist', '04', '$orderBookId');
-    update(['marketList']);
-  }
-
-  void filterWatchListMain(String data) {
-    watchListFilterBoard = data;
-    isMarket = true;
-    update();
-    Get.back();
-    printLog('data --- :: $watchListFilterBoard ::  ');
-    marketList = [];
-    update();
-    for (var i = 0; i < marketListAll.length; i++) {
-      if (watchListFilterBoard.toUpperCase() ==
-          marketListAll[i].board?.toUpperCase()) {
-        marketList.add(marketListAll[i]);
-      }
-    }
-
-    update();
-
-    Future.delayed(const Duration(seconds: 1), () {
-      isMarket = false;
-      update();
-    });
-
-    printWrapped("----------9999999--------s");
-  }
-
-  void filterWatchListPublic(String data) {
-    Get.back();
-    watchListFilterPublic = data;
-    update();
-    printLog('data --- :: $watchListFilterPublic ::  ');
-    marketList = [];
-    update();
-    for (var i = 0; i < marketListAll.length; i++) {
-      if (watchListFilterPublic.toUpperCase() ==
-          marketListAll[i].marketType?.toUpperCase()) {
-        marketList.add(marketListAll[i]);
-      }
-    }
-    update();
-  }
-
-  void changeTabIndex(int index) {
-    printLog('changeTabIndex -- :: ');
-    printLog(marketList.isEmpty);
-    if (marketList.isEmpty) {
-    }
-    if (watchListFilterFavorite == 0 && favCatList.isNotEmpty) {
-      watchListFilterFavorite = favCatList.elementAt(0).id!;
-    }
-    currentTabIndex = index;
     update();
   }
 
@@ -2546,8 +2214,6 @@ class HomeController extends SuperController {
     update();
   }
 
-  Map<double, List<MarketOrderModel>> orderMap = {};
-  Map<double, List<MarketOrderModel>> orderDepthMap = {};
   MarketModel marketData = MarketModel();
 
   Future<void> markerInfo() async {
@@ -2588,58 +2254,6 @@ class HomeController extends SuperController {
 
   int totalBuyQty = 0;
   int totalSalesQty = 0;
-  Map<double, List<OrderModel>> findSamePriceProducts(List<OrderModel> orders) {
-    Map<double, List<OrderModel>> priceMap = {};
-
-    for (var order in orders) {
-      printLog('available key Is ${order.side}');
-      printLog('available key Is');
-      printLog(!priceMap.containsKey(order.price));
-
-      final isBuyOrder = order.side?.trim().toUpperCase() == "B";
-      final isEligibleStatus =
-          order.status == AppConstants.pendingOrderStatus ||
-          order.status == AppConstants.updatedOrderStatus ||
-          order.status == AppConstants.partiallyFilledOrderStatus;
-      if (isBuyOrder && isEligibleStatus && order.price != null) {
-        if (!priceMap.containsKey(order.price)) {
-          priceMap[order.price!] = [];
-        }
-        priceMap[order.price]!.add(order);
-      }
-    }
-
-    // Remove entries with only one product (no duplicates)
-    for (var item in priceMap.values) {
-      for (var i in item) {
-        printLog(i.price);
-        printLog(i.qty);
-        printLog(i.executedQty);
-        printLog('i.side');
-        totalBuyQty += i.qty!;
-      }
-    }
-    update();
-    return priceMap;
-  }
-
-  Map<double, List<MarketOrderModel>> findSomeSalesItem(
-    List<MarketOrderModel> orders,
-  ) {
-    Map<double, List<MarketOrderModel>> priceMap = {};
-
-    // Remove entries with only one product (no duplicates)
-    for (var item in priceMap.values) {
-      for (var i in item) {
-        printLog(i.price);
-        printLog(i.quantity);
-        printLog('i.side');
-        totalSalesQty += i.quantity!;
-        update();
-      }
-    }
-    return priceMap;
-  }
 
   void getUserInfo() async {
     try {
@@ -2658,31 +2272,6 @@ class HomeController extends SuperController {
       printLog('Error loading user info: $e');
       isUserInfoLoaded = true;
     }
-  }
-
-  String? getBoId() {
-    return userInfo.userDetail?.boId;
-  }
-
-  Future<bool> showExitDialog(BuildContext context) async {
-    return (await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text("Exit App"),
-            content: const Text("Do you really want to exit the app?"),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text("No"),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text("Yes"),
-              ),
-            ],
-          ),
-        )) ??
-        false;
   }
 
   MarketModel getMarketByOrderBookId(int orderBookId) {
@@ -3119,69 +2708,6 @@ class HomeController extends SuperController {
     update();
   }
 
-  void orderDuplicateSubmittedOld(
-    ActionsType action, {
-    UserOrder? order,
-  }) async {
-    if (!await checkInternet()) return;
-    var clientCode = userInfo.userDetail?.investorCode;
-    final marketFindByOrderBookId = getMarketByOrderBookId(
-      order?.orderBookId ?? 0,
-    );
-    // If it returned an empty MarketModel, the ticker or orderBook will likely be null.
-    if (marketFindByOrderBookId.orderBook == null ||
-        marketFindByOrderBookId.shortName == null) {
-      printLog(
-        'Error: Market data not found for OrderBookId: ${order?.orderBookId}',
-      );
-      // ⚠️ Show a Toast/SnackBar here: "Market data not found, please try again."
-      return; // Stop execution here. Do not send invalid data to the socket!
-    }
-    var price = double.parse('${order?.limit}');
-    var qty = int.parse('${order?.sentQty}');
-    OrderConfirmRequest requestBody = OrderConfirmRequest(
-      action: actionValues[action],
-      traderPk: userInfo.userDetail?.traderId,
-      traderId: userInfo.userDetail?.traderCode,
-      boId: "${userInfo.userDetail?.boId}",
-      clientCode: '$clientCode',
-      branchId: userInfo.userDetail?.branchId,
-      userId: userInfo.id,
-      orderType: order?.ordType?.toUpperCase(),
-      qty: qty,
-      price: price,
-      symbol: marketFindByOrderBookId.shortName,
-      side: order?.side, // 'BUY':'SELL',
-      isin: marketFindByOrderBookId.isinCode,
-      assetClass: marketFindByOrderBookId.instrumentType,
-      securityCode: marketFindByOrderBookId.ticker,
-      orderBookId: marketFindByOrderBookId.orderBook,
-      board: marketFindByOrderBookId.board,
-      session: currentSession.value,
-      category: marketFindByOrderBookId.shareType?.toUpperCase(),
-      marketType: marketFindByOrderBookId.marketType,
-      group: marketFindByOrderBookId.group?.toUpperCase(),
-      timeInForce: "0",
-      displayQty: order?.displayQty == 0 ? null : order?.displayQty,
-      minQty: order?.minQty == 0 ? null : order?.minQty,
-    );
-    printWrapped(
-      'Sending replace order----: ${jsonEncode(requestBody.toJson())}',
-    );
-    try {
-      sendMessage(
-        AppConfig.orderConfirmSocketId,
-        jsonEncode(requestBody.toJson()),
-      );
-      currentTabIndexPortfolio = 1;
-      update([AppConstants.orderList]);
-    }
-    catch (e) {
-      printLog('Unknown exception: $e');
-    }
-    update();
-  }
-
   void orderConfirmSubmittedReplaceOrder(
     SideType2 sideType,
     ActionsType action, {
@@ -3310,102 +2836,6 @@ class HomeController extends SuperController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-    }
-  }
-
-  void orderConfirmSubmittedReplaceOrderOld(
-    SideType2 sideType,
-    ActionsType action, {
-    UserOrder? order,
-  }) async {
-    // 1. SAFEGUARD: Check internet
-    if (!await checkInternet()) return;
-
-    // 2. SAFEGUARD: A replace order MUST have an existing order to replace.
-    if (order == null || order.orderId == null || order.orderId!.isEmpty) {
-      printLog(
-        'Error: Cannot replace order because original order data is missing.',
-      );
-      return;
-    }
-
-    printLog('order confirm socket called::::::::');
-
-    // 3. SAFEGUARD: Handle orderBookId safely.
-    final safeOrderBookId = order.orderBookId ?? 0;
-    final marketFindByOrderBookId = getMarketByOrderBookId(safeOrderBookId);
-
-    //  NEW SAFEGUARD: Check if market data was actually found
-    // If it returned an empty MarketModel, the ticker or orderBook will likely be null.
-    if (marketFindByOrderBookId.orderBook == null ||
-        marketFindByOrderBookId.shortName == null) {
-      printLog(
-        'Error: Market data not found for OrderBookId: $safeOrderBookId',
-      );
-      // ⚠️ Show a Toast/SnackBar here: "Market data not found, please try again."
-      return; // Stop execution here. Do not send invalid data to the socket!
-    }
-
-    final userDetail = userInfo.userDetail;
-    final traderCode = userDetail?.traderCode ?? '';
-    final boId = userDetail?.boId ?? '';
-    final clientCode = userDetail?.investorCode ?? '';
-
-    // 4. SAFEGUARD: Ensure price and qty are parsed safely.
-    final price = double.tryParse(tradPriceTextEditField.text) ?? 0.0;
-    final qty = int.tryParse(qtyTextEditField.text) ?? 0;
-
-    // Fetch the reference price safely
-    final marketPrice = marketFindByOrderBookId.reference ?? 0.0;
-
-    final sendPrice =
-        (selectOrderType?.toUpperCase() != 'LIMIT' && sideType == SideType2.BUY)
-        ? marketPrice
-        : price;
-
-    final requestBody = OrderConfirmRequest(
-      action: actionValues[action],
-      traderPk: userDetail?.traderId,
-      traderId: traderCode,
-      boId: boId,
-      clientCode: clientCode,
-      orderId: order.orderId ?? '',
-      clientOrderId: order.clientOrderId ?? '',
-      branchId: userDetail?.branchId,
-      userId: userInfo.id,
-      orderType: selectOrderType?.toUpperCase(),
-      qty: qty,
-      price: sendPrice,
-      symbol: marketFindByOrderBookId.shortName,
-      side: sideTypeEnumMap[sideType],
-      isin: marketFindByOrderBookId.isinCode,
-      assetClass: marketFindByOrderBookId.instrumentType,
-      securityCode: marketFindByOrderBookId.ticker,
-      orderBookId: marketFindByOrderBookId.orderBook,
-      board: marketFindByOrderBookId.board,
-      session: currentSession.value,
-      category: marketFindByOrderBookId.shareType?.toUpperCase(),
-      marketType: marketFindByOrderBookId.marketType,
-      group: marketFindByOrderBookId.group?.toUpperCase(),
-      timeInForce: "0",
-      displayQty: _parseNullableInt(disclosedQtyTextEditField.text),
-      minQty: _parseNullableInt(minQtyTextEditField.text),
-    );
-
-    final jsonRequest = jsonEncode(requestBody.toJsonReplaceOrder());
-    printWrapped('Sending replace order: $jsonRequest');
-
-    try {
-      // 5. SAFEGUARD: Check if the socket is actually available before sending
-
-      sendMessage(AppConfig.orderConfirmSocketId, jsonRequest);
-
-      // Only update UI if the send attempt didn't throw an error
-      currentTabIndexPortfolio = 1;
-      update([AppConstants.orderList]);
-    } catch (e) {
-      printLog('WebSocket send failed: $e');
-      // Show error to user: "Failed to send order modification"
     }
   }
 
@@ -3589,57 +3019,6 @@ class HomeController extends SuperController {
     }
   }
 
-  void orderCancelSubmittedOld(String action, UserOrder order) async {
-    if (!await checkInternet()) return;
-    printLog(
-      'update order confirm socket called::::::::  ORDER_CANCEL_REQUEST',
-    );
-    var traderCode = userInfo.userDetail?.traderCode;
-    var boId = userInfo.userDetail?.boId;
-    var clientCode = userInfo.userDetail?.investorCode;
-    var token = await StorageService.read(StorageConstants.token);
-    final shortName =
-        marketListAll
-            .firstWhereOrNull((market) => market.orderBook == order.orderBookId)
-            ?.shortName ??
-        '';
-    printLog('market.orderBook:: ${order.orderBookId}');
-    printLog('shortName:: $shortName');
-    final wsUrl = Uri.parse(
-      '${AppConfig.socketBaseUrl}order/$boId/?token=$token',
-    );
-    printLog(wsUrl);
-    printLog(clientCode);
-    printLog(traderCode);
-    UpdateOrderHolder requestBody = UpdateOrderHolder(
-      action: action,
-      traderId: userInfo.userDetail?.traderCode,
-      boId: "${userInfo.userDetail?.boId}",
-      clientCode: '$clientCode',
-      userId: userInfo.id,
-      symbol: shortName,
-      side: '${order.side}', // 'BUY':'SELL',
-      orderId: '${order.orderId}',
-      origClientOrderId: order.clientOrderId ?? "",
-      clientOrderId: "",
-      session: currentSession.value,
-    );
-    var reqData = requestBody.toJson();
-    printWrapped('cancle order::::: ${jsonEncode(reqData)}');
-    try {
-      sendMessage(
-        AppConfig.orderConfirmSocketId,
-        jsonEncode(requestBody.toJson()),
-      );
-    } catch (e) {
-      printLog('WebSocket connection failed: $e');
-    }
-    Future.delayed(const Duration(seconds: 1), () {});
-    printLog('Socket db service initialized=  ${marketList.length}=');
-    currentTabIndexPortfolio = 1;
-    update([AppConstants.orderList]);
-  }
-
   OrderStatusDetailsModel orderStatusDetails = OrderStatusDetailsModel();
   void orderStatusChangeConfirmSubmitted(
     ActionsType action,
@@ -3777,10 +3156,6 @@ class HomeController extends SuperController {
   }
 
   // Toggle sorting order
-  void toggleSorting() {
-    isAscendingOrderList = !isAscendingOrderList;
-    update(['order_list_tag']);
-  }
 
   @override
   void onResumed() {
