@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import '../../../app_pkg.dart';
 import '../controllers/companies_controller.dart';
 import '../controllers/historical_volume_controller.dart';
-import '../controllers/index_chart_controller.dart';
 import '../controllers/live_index_controller.dart';
 import '../controllers/market_index_controller.dart';
 import '../controllers/password_reset_controller.dart';
@@ -29,9 +28,6 @@ class HomeBinding extends Bindings {
     );
     Get.lazyPut<MarketIndexController>(
       () => MarketIndexController(Get.find<HomeRepository>()),
-    );
-    Get.lazyPut<IndexChartController>(
-      () => IndexChartController(Get.find<HomeRepository>()),
     );
     Get.lazyPut<OrderSummaryController>(() => OrderSummaryController());
   }

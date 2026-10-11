@@ -14,48 +14,6 @@ mixin QuoteMixin on HomeState {
     update();
   }
 
-  @override
-  Future<void> tradingChart() async {
-    DateTime now = DateTime.now();
-    DateTime threeMonthsAgo = DateTime(now.year, now.month - 6, now.day);
-    int fromTimestamp = (threeMonthsAgo.millisecondsSinceEpoch / 1000).round();
-    int toTimestamp = (now.millisecondsSinceEpoch / 1000).round();
-    var sortName = marketData.shortName;
-    printLog(" from:  $fromTimestamp ");
-    printLog("to  '$toTimestamp");
-    printLog("symbole  '$sortName");
-    try {
-      final connect = _chartClient;
-      final url = 'https://itch-chart.skytrade.us/history';
-      final response = await connect.get(
-        url,
-        query: {
-          'symbol': 'GP',
-          'resolution': '1D',
-          'from': '$fromTimestamp',
-          'to': '$toTimestamp',
-          'countback': '330',
-        },
-      );
-      if (response.isOk) {
-        final Map<String, dynamic> jsonMap = json.decode(response.bodyString!);
-        final chart = TradingChartModel.fromJson(jsonMap);
-        printLog("Open: ${chart.o?.first}");
-        printLog("Close: ${chart.c?.first}");
-        printLog(
-          "Date: ${DateTime.fromMillisecondsSinceEpoch((chart.t?.first ?? 0) * 1000)}",
-        );
-        tradingChartModel = chart;
-        printWrapped('tradingChartModel :: ${tradingChartModel?.toJson()}');
-      } else {
-        printLog('error :::::: ${response.statusText}');
-      }
-    } catch (e) {
-      printLog('tradingChart error :: $e');
-    }
-    update(['interactive_charts']);
-  }
-
   void changeShortName(String name) {
     shortName = name;
     update();

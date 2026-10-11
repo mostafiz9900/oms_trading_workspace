@@ -6,7 +6,6 @@ abstract class HomeState extends SuperController {
   HomeState({required this.homeRepository})
     : marketFavoritesRepository = homeRepository;
 
-  final GetConnect _chartClient = GetConnect(timeout: const Duration(seconds: 30));
 
   final MarketSocketService marketService = Get.find<MarketSocketService>();
 
@@ -219,7 +218,6 @@ abstract class HomeState extends SuperController {
 
   int Function(int, int) calc = (a, b) => a + b;
 
-  TradingChartModel? tradingChartModel;
 
   String currentSearchQuery = '';
 
@@ -358,7 +356,6 @@ abstract class HomeState extends SuperController {
   void sendMessage(String socketId, String message);
   bool isSocketConnected(String socketId);
   bool get isOrderConfirmConnected;
-  Future<void> tradingChart();
   void applyFilters();
   Future<void> getFavoriteAllMarketData();
   void selectTable(int tableId);

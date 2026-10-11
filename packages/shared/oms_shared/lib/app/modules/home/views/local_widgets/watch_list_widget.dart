@@ -281,7 +281,6 @@ class WatchListWidget extends StatelessWidget {
                                           1,
                                           model.orderBook!,
                                         );
-                                        controller.homeCon.tradingChart();
                                         FocusManager.instance.primaryFocus
                                             ?.unfocus();
                                         controller.searchController.clear();
@@ -332,7 +331,6 @@ class WatchListWidget extends StatelessWidget {
                                           1,
                                           model.orderBook!,
                                         );
-                                        controller.homeCon.tradingChart();
                                         FocusManager.instance.primaryFocus
                                             ?.unfocus();
                                         controller.searchController.clear();

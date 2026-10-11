@@ -576,7 +576,6 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
         if (marketData.isValidShare) {
           if (marketData.orderBook != null && marketData.shortName != null) {
             Get.find<HomeController>().goBottomNabBarPage(5, marketData.orderBook!);
-            Get.find<HomeController>().tradingChart();
             Get.find<HomeController>().tradPriceTextEditField.text = (marketData.last?.toStringAsFixed(2) ?? '0.00');
           }
         }

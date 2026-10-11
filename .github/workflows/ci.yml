@@ -62,6 +62,8 @@ jobs:
         working-directory: packages/core/broker_config
       - run: flutter test
         working-directory: packages/shared/oms_shared
+      - run: flutter test
+        working-directory: packages/features/market
       - run: dart run tool/validate_apps.dart
 
   build:

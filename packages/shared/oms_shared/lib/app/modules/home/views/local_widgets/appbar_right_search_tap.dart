@@ -32,7 +32,6 @@ class AppbarRightSearchTapWidget extends StatelessWidget {
 
           if (result.orderBook != null && result.shortName != null) {
             Get.find<HomeController>().goBottomNabBarPage(1, result.orderBook!);
-            Get.find<HomeController>().tradingChart();
           }
         }
       },

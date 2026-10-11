@@ -70,7 +70,7 @@ class MarketIndexListWidget extends StatelessWidget {
                     child: InkWell(
                       onTap: () {
                         indexCon.getSumOfAllIndex(model);
-                        // 🚀 MarketIndexController এবং IndexChartController আগের মতোই কাজ করবে
+                        // 🚀 MarketIndexController আগের মতোই কাজ করবে
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 0),

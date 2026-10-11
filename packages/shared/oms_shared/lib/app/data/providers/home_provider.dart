@@ -101,7 +101,7 @@ class HomeProvider extends BaseProvider {
     required int toTs,
   }) {
     return _plainClient.get(
-      'https://uat-itchservice.skytrade.us/api/get_index_chart_data',
+      '${AppConfig.baseURLItch}api/get_index_chart_data',
       query: {
         'fsym': fsym,
         'resolution': resolution.toString(),

@@ -24,8 +24,7 @@ import 'package:market/market.dart'
         SectorDataModel,
         MarketTickKind,
         MarketTickMessage,
-        MarketTickStore,
-        TradingChartModel;
+        MarketTickStore;
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '/app/data/models/request/update_order_holder.dart';
@@ -41,7 +40,6 @@ import '../../../data/services/market_socket.service.dart';
 import '../../auth/controllers/biometric_controller.dart';
 import '../../auth/controllers/token_controller.dart';
 import '../views/order_status_details_view.dart';
-import 'candle_chart_controller.dart';
 import 'companies_controller.dart';
 import 'market_index_controller.dart';
 import 'watchlist_controller.dart';
@@ -147,7 +145,6 @@ class HomeController extends HomeState
 
   @override
   void onClose() {
-    _chartClient.dispose();
     _marketUpdateTimer?.cancel();
     _indexUpdateTimer?.cancel();
     _orderResponseTimer?.cancel();

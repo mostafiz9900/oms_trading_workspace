@@ -68,7 +68,6 @@ class MarketWidget extends StatelessWidget {
                               print("Selected Market to map: ${result.toJson()}");
                               if (result.orderBook != null && result.shortName != null) {
                                 homeNotifyCont.goBottomNabBarPage(1, result.orderBook!);
-                                homeNotifyCont.tradingChart();
                               }
                             }
                           },

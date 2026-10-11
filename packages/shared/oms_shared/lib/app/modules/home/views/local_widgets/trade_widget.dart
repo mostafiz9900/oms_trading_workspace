@@ -654,7 +654,6 @@ class _BankPercentageWidget extends StatelessWidget {
                     result.orderBook != null &&
                     result.shortName != null) {
                   homeController.goBottomNabBarPage(5, result.orderBook!);
-                  homeController.tradingChart();
                   homeController.tradPriceTextEditField.text =
                       (result.last?.toStringAsFixed(2) ?? '0.00');
                 }

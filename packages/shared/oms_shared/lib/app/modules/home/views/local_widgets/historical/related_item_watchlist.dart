@@ -48,7 +48,6 @@ class RelatedItemWatchlist extends StatelessWidget {
                   if (item.orderBook != null) {
                     // 🚀 FIX: .homeCon বাদ দেওয়া হয়েছে, সরাসরি controller থেকে কল করা হচ্ছে
                     controller.goBottomNabBarPage(1, item.orderBook!);
-                    controller.tradingChart();
                     FocusManager.instance.primaryFocus?.unfocus();
 
                     // যদি searchController HomeController-এর অংশ হয়, তবে এটি কাজ করবে

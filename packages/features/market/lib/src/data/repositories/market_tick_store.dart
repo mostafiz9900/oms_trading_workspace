@@ -9,17 +9,20 @@ class MarketTickStore {
 
   Iterable<MarketModel> get quotes => _quotesByOrderBook.values;
 
+  /// Stores [tick] and returns the merged quote for its order book.
+  ///
+  /// (It used to return the raw tick, whose omitted fields parse as 0, so
+  /// the marquee briefly showed 0 for price and change on partial updates.)
   MarketModel? apply(Map<String, dynamic> tick) {
     final incoming = MarketModel.fromJson(tick);
     final orderBook = incoming.orderBook;
     if (orderBook == null) return null;
 
-    _quotesByOrderBook.update(
+    return _quotesByOrderBook.update(
       orderBook,
       (existing) => existing.mergePartialUpdate(tick),
       ifAbsent: () => incoming,
     );
-    return incoming;
   }
 
   void clear() => _quotesByOrderBook.clear();

@@ -46,7 +46,6 @@ class ProSectorHorizontalList extends StatelessWidget {
                     var model = await Get.to(() => SectorDetailsView(sectorName: sector.sectorName));
                     if (model != null) {
                       homeCon.goBottomNabBarPage(1, model.orderBook!);
-                      homeCon.tradingChart();
                       homeCon.loadComanyDividentEPS(model.shortName ?? "");
                     }
                   },
