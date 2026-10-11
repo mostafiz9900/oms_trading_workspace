@@ -1,6 +1,5 @@
 export 'app_config.dart';
 export 'colors.dart';
-export 'common.dart';
 export 'storage.dart';
 export 'api_url.dart';
 export 'dimens.dart';

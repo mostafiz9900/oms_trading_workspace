@@ -5,7 +5,6 @@ import '../../../../app_pkg.dart';
 import 'account_summery_tab_widget.dart';
 import 'appbar_right_search_tap.dart';
 import 'order_list_tab_widget.dart';
-import 'order_summery_tab_widget.dart';
 import 'position_tab_widget.dart';
 
 class PortfolioWidget extends StatelessWidget {

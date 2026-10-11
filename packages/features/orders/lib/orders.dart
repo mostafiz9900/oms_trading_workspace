@@ -4,4 +4,3 @@ export 'src/data/models/responses/order_model.dart';
 export 'src/data/models/responses/order_status_details_model.dart';
 export 'src/data/models/responses/order_summary_model.dart';
 export 'src/data/models/responses/user_order.dart';
-export 'src/domain/repositories/order_repository.dart';

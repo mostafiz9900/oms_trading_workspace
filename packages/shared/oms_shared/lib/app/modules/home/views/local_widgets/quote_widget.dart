@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'appbar_right_search_tap.dart';
 import 'candle_series_charts.dart';
 import 'historical/price_table_tab_widget.dart';
-import 'market_depth_tab_widget.dart';
 import 'time_sales_tab_widget.dart';
 
 class QuoteWidget extends StatelessWidget {

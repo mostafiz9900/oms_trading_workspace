@@ -24,7 +24,6 @@ jobs:
           - packages/core/broker_config
           - packages/shared/localization
           - packages/features/auth
-          - packages/features/limits
           - packages/features/market
           - packages/features/notifications
           - packages/features/orders
