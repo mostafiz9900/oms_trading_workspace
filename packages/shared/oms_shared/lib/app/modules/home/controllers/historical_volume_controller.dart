@@ -1,5 +1,5 @@
-import 'package:market/market.dart'
-    show HistoricalVolume, MarketChartRepository;
+import '../../../data/models/response/historical_volume.dart' show HistoricalVolume;
+import '../../../data/repositories/market_chart_repository.dart' show MarketChartRepository;
 // lib/controllers/historical_volume_controller.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

@@ -26,13 +26,6 @@ jobs:
           - packages/core/trading_ui
           - packages/core/broker_config
           - packages/shared/localization
-          - packages/features/auth
-          - packages/features/market
-          - packages/features/notifications
-          - packages/features/orders
-          - packages/features/portfolio
-          - packages/features/research
-          - packages/features/withdrawals
           - apps/benemoy
         include:
           - package: packages/shared/oms_shared
@@ -64,8 +57,6 @@ jobs:
         working-directory: packages/core/broker_config
       - run: flutter test
         working-directory: packages/shared/oms_shared
-      - run: flutter test
-        working-directory: packages/features/market
       - run: dart run tool/validate_apps.dart
 
   build:

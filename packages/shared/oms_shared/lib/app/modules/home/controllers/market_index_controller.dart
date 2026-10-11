@@ -1,4 +1,5 @@
-import 'package:market/market.dart' show IndexChartModel, MarketChartRepository;
+import '../../../data/models/response/index_chart_model.dart' show IndexChartModel;
+import '../../../data/repositories/market_chart_repository.dart' show MarketChartRepository;
 
 import 'dart:math';
 

@@ -67,7 +67,6 @@ analyze: ## Static analysis (warnings fail; oms_shared only fails on errors)
 test: ## Run all tests (unit + widget/UI tests)
 	cd packages/core/broker_config && $(DART) test
 	cd packages/shared/oms_shared && $(FLUTTER) test
-	cd packages/features/market && $(FLUTTER) test
 
 validate: ## Check env files, brand assets and app ids of every app
 	$(DART) run tool/validate_apps.dart

@@ -1,6 +1,6 @@
 import '../enums/app.enum.dart';
 
-import 'package:market/market.dart' show MarketModel;
+import 'response/market_model.dart' show MarketModel;
 
 class OrderConfirmHolder {
   final MarketModel? marketData;

@@ -1,13 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:market/market.dart'
-    show
-        AddFavItemRequest,
-        FavMarketResponse,
-        IndexChartModel,
-        IndexChartModel2,
-        MarketChartRepository,
-        MarketFavoritesRepository,
-        PriceTableResponse;
+import '../models/request/add_fav_item_request.dart' show AddFavItemRequest;
+import '../models/response/fav_market_response.dart' show FavMarketResponse;
+import '../models/response/index_chart_model.dart' show IndexChartModel;
+import '../models/response/index_chart_model2.dart' show IndexChartModel2;
+import 'market_chart_repository.dart' show MarketChartRepository;
+import 'market_favorites_repository.dart' show MarketFavoritesRepository;
+import '../models/response/historical_volume.dart' show PriceTableResponse;
 
 import '../../app_pkg.dart';
 import 'benemoy_market_favorites_repository.dart';

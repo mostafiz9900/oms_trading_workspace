@@ -1,4 +1,5 @@
-import 'package:market/market.dart';
+import '../../../data/models/response/market_model.dart';
+import '../../../data/models/market_quote.dart';
 
 /// Preserves the existing app API and delegates calculations to the shared
 /// market-domain package. Screens and their presentation remain unchanged.

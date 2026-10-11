@@ -4,7 +4,7 @@ import '/app/modules/home/views/local_widgets/trade_confirm_order.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:market/market.dart' show MarketDepthModel;
+import '../../../../data/models/response/market_depth_model.dart' show MarketDepthModel;
 
 import 'appbar_right_search_tap.dart';
 import 'market_dept_single_widget.dart';

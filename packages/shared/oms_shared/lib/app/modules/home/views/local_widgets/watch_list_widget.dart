@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import '../../controllers/watchlist_controller.dart';
 import '/app/app_pkg.dart';
 
-import 'package:market/market.dart' show AddFavItemRequest;
+import '../../../../data/models/request/add_fav_item_request.dart' show AddFavItemRequest;
 
 import '../../../../global_widgets/empty_widget.dart';
 import 'index_value_loader.dart';

@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:market/market.dart' show AddFavItemRequest;
+import '../models/request/add_fav_item_request.dart' show AddFavItemRequest;
 
 import '../../app_pkg.dart';
 import '../models/request/withdraw_request.dart';

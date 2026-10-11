@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:market/market.dart' show MarketDepthModel;
+import '../../../../data/models/response/market_depth_model.dart' show MarketDepthModel;
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 

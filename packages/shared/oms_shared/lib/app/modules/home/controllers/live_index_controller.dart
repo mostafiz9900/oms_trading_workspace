@@ -1,5 +1,4 @@
-import 'package:market/market.dart'
-    show IndexCandleModel, indexCandleModelFromJson;
+import '../../../data/models/response/index_candle_model.dart' show IndexCandleModel, indexCandleModelFromJson;
 
 import 'dart:async';
 import 'dart:convert';

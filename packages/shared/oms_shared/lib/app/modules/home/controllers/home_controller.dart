@@ -10,21 +10,17 @@ import '/app/modules/home/controllers/position_controller.dart';
 import 'package:flutter/material.dart' hide Actions;
 import 'package:get/get.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:market/market.dart'
-    show
-        AddFavItemRequest,
-        FavMarketResponse,
-        MarketDepthData,
-        MarketDepthModel,
-        MarketStatisticsAggregator,
-        MarketFavoritesRepository,
-        MarketSectorFilterStore,
-        MarketSectorSummaryAggregator,
-        MarketSnapshotAnalytics,
-        SectorDataModel,
-        MarketTickKind,
-        MarketTickMessage,
-        MarketTickStore;
+import '../../../data/models/request/add_fav_item_request.dart' show AddFavItemRequest;
+import '../../../data/models/response/fav_market_response.dart' show FavMarketResponse;
+import '../../../data/models/response/market_depth_model.dart' show MarketDepthData, MarketDepthModel;
+import '../../../data/services/market_statistics_aggregator.dart' show MarketStatisticsAggregator;
+import '../../../data/repositories/market_favorites_repository.dart' show MarketFavoritesRepository;
+import '../../../data/services/market_sector_filter_store.dart' show MarketSectorFilterStore;
+import '../../../data/services/market_sector_summary_aggregator.dart' show MarketSectorSummaryAggregator;
+import '../../../data/services/market_snapshot_analytics.dart' show MarketSnapshotAnalytics;
+import '../../../data/models/response/sector_data_model.dart' show SectorDataModel;
+import '../../../data/models/response/market_tick_message.dart' show MarketTickKind, MarketTickMessage;
+import '../../../data/services/market_tick_store.dart' show MarketTickStore;
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '/app/data/models/request/update_order_holder.dart';

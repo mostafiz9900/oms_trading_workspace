@@ -17,20 +17,6 @@ dependencies:
     path: ../../core/trading_ui
   broker_config:
     path: ../../core/broker_config
-  auth:
-    path: ../../features/auth
-  market:
-    path: ../../features/market
-  orders:
-    path: ../../features/orders
-  withdrawals:
-    path: ../../features/withdrawals
-  portfolio:
-    path: ../../features/portfolio
-  notifications:
-    path: ../../features/notifications
-  research:
-    path: ../../features/research
   localization:
     path: ../localization
   get: ^4.7.3

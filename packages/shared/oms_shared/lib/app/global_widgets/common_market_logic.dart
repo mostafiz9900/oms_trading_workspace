@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 import '../app_pkg.dart';
 
-import 'package:market/market.dart' show AddFavItemRequest;
+import '../data/models/request/add_fav_item_request.dart' show AddFavItemRequest;
 
 class SharedMarketLogic {
   /// 🚀 Common Text Highlighter

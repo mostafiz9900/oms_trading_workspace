@@ -68,16 +68,37 @@ oms_trading_workspace/
 │   ├── core/                    trading_core, trading_ui, broker_config
 │   ├── shared/
 │   │   ├── localization/        Translations
-│   │   └── oms_shared/          Screens, controllers, services (transitional)
-│   └── features/                auth, market, orders, portfolio, notifications,
-│                                research, withdrawals, limits
+│   │   └── oms_shared/          The app itself, in GetX CLI layout (below)
 ├── tool/                        new_app.dart, validate_apps.dart
 ├── Makefile                     Day-to-day commands
 └── pubspec.yaml                 Workspace root + Melos config
 ```
 
-Dependencies only point downward: `apps` → `shared` → `features` → `core`.
+Dependencies only point downward: `apps` → `shared` → `core`.
 Nothing in `packages/` may import an app.
+
+## Where code goes (GetX CLI layout)
+
+All screens and logic live in `packages/shared/oms_shared/lib/app/`, in the
+same layout `get create page` produces. There is no separate `features/`
+folder: a new screen is a new module.
+
+```text
+lib/app/
+├── modules/<name>/        bindings/, controllers/, views/  (one per screen/flow)
+├── data/
+│   ├── models/            request/ and response/ DTOs
+│   ├── providers/         API calls
+│   ├── repositories/      Repositories and repository contracts
+│   └── services/          Sockets, storage, market tick store, aggregators
+├── routes/                app_routes.dart (route names; pages are in the app)
+├── global_widgets/        Widgets shared by several modules
+└── core/                  theme, utils, values
+```
+
+To add a screen, run `get create page:<name>` inside
+`packages/shared/oms_shared` (or copy an existing module), then register the
+route in `apps/<house>/lib/src/routing/`.
 
 ## Adding a broker house
 
@@ -108,8 +129,8 @@ Secrets, store setup and the release steps: [docs/release.md](docs/release.md).
 |---|---|---|
 | 1 | App layout, entry points, routing in app, CI, localization package, live native projects | Done |
 | 2 | Split `core` (network, storage, theme, utils) and `shared/design_system` out of `oms_shared`; remove the `app_pkg.dart` barrel | Planned |
-| 3 | Move small modules into `features/*/lib/src/{data,domain,presentation}` | Planned |
-| 4 | Split the `home` module (~30k LOC) into market, orders, portfolio, watchlist, notifications | Planned |
+| 3 | Fold the old `packages/features/*` DTO packages back into `oms_shared/lib/app/data` (GetX CLI layout only) | Done |
+| 4 | Split the `home` module (~30k LOC) into GetX modules: market, orders, portfolio, watchlist, notifications | Planned |
 
 `oms_shared` empties out phase by phase. It has no compile errors but still
 carries ~590 legacy analyzer warnings/info from the original app. Only

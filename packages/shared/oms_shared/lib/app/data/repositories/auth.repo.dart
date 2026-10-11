@@ -1,6 +1,6 @@
 import '../../app_pkg.dart';
 
-import 'package:auth/auth.dart' show AuthenticationRepository;
+import 'authentication_repository.dart' show AuthenticationRepository;
 
 import '../models/response/register_model.dart';
 import '../models/response/select_media.dart';

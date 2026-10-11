@@ -1,11 +1,7 @@
-import 'package:market/market.dart'
-    show
-        IndexChartModel,
-        IndexChartModel2,
-        MarketChartRepository,
-        PriceTableResponse,
-        indexChartModel2FromJson,
-        indexChartModelFromJson;
+import '../models/response/index_chart_model.dart' show IndexChartModel, indexChartModelFromJson;
+import '../models/response/index_chart_model2.dart' show IndexChartModel2, indexChartModel2FromJson;
+import 'market_chart_repository.dart' show MarketChartRepository;
+import '../models/response/historical_volume.dart' show PriceTableResponse;
 
 import '../../app_pkg.dart';
 

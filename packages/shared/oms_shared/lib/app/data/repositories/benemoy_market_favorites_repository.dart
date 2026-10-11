@@ -1,11 +1,6 @@
-import 'package:market/market.dart'
-    show
-        AddFavItemRequest,
-        FavMarketResponse,
-        FavouriteModel,
-        MarketFavoritesRepository,
-        favMarketResponseFromMap,
-        favouriteModelFromJson;
+import '../models/request/add_fav_item_request.dart' show AddFavItemRequest;
+import '../models/response/fav_market_response.dart' show FavMarketResponse, favMarketResponseFromMap;
+import 'market_favorites_repository.dart' show MarketFavoritesRepository;
 
 import '../../app_pkg.dart';
 
