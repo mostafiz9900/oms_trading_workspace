@@ -11,8 +11,8 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
-  oms_app:
-    path: ../../packages/app/oms_app
+  oms_shared:
+    path: ../../packages/shared/oms_shared
   firebase_core: ^4.15.0
   firebase_messaging: ^16.7.0
 

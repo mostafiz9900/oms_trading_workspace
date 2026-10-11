@@ -2,7 +2,7 @@
 
 ## Current boundary
 
-- `packages/app/oms_app` is the shared trading app: every screen, controller,
+- `packages/shared/oms_shared` is the common package (not an app): every screen, controller,
   route, service, and common asset. It starts through `runOmsApp(...)` and must
   not contain broker-specific values; it reads them from `AppConfig.house`
   (env profile) and `AppConfig.profile` (`HouseProfile`).
@@ -27,24 +27,24 @@
 - `packages/features/auth` owns login, profile, registration, OTP, and media
   DTOs plus the `AuthenticationRepository` contract. Benemoy keeps compatibility
   exports and implements the contract in its app-owned API adapter; auth
-  screens, state, providers, and API orchestration still live in `oms_app`.
+  screens, state, providers, and API orchestration still live in `oms_shared`.
 - `packages/features/orders` owns reusable order submission/cancellation DTOs
   and order list/status/summary response models plus the `OrderRepository`
   command contract. Benemoy's websocket service implements that contract;
   controllers and UI keep importing through compatibility exports.
 - `packages/features/withdrawals` owns withdrawal request/history DTOs. The
-  existing Benemoy API, validation, controller, and UI remain in `oms_app`.
+  existing Benemoy API, validation, controller, and UI remain in `oms_shared`.
 - `packages/features/portfolio` owns cash/balance and position response DTOs;
   its position payload reuses the market security model. Benemoy's portfolio
-  controllers, API integration, calculations, and UI remain in `oms_app`.
+  controllers, API integration, calculations, and UI remain in `oms_shared`.
 - `packages/features/notifications` owns notification feed and order-alert
   DTOs. Push/local notification services, websocket lifecycle, app routing,
-  state, and screens remain in `oms_app`.
+  state, and screens remain in `oms_shared`.
 - `packages/features/research` owns issuer profile/fundamental, dividend, EPS,
   and issuer news DTOs. Benemoy's fetch/caching logic and research UI remain in
   the app.
 - `packages/features/limits` owns the client limit response DTO. Limit request
-  networking, pagination, form state, and presentation stay in `oms_app`.
+  networking, pagination, form state, and presentation stay in `oms_shared`.
 - `trading_core` owns the generic API error DTO; `auth` owns the general user
   profile DTO alongside the authentication DTOs.
 - `packages/core/broker_config` owns the typed runtime view of broker-house
@@ -56,8 +56,9 @@
 
 ## Dependency direction
 
-Target dependencies flow from an app to feature packages and from features to
-core packages. Core packages must not depend on app packages. House identity,
+Dependencies flow `apps` → `packages/shared` → `packages/features` →
+`packages/core`. `apps/` contains only deployable broker shells; all common
+code lives under `packages/`. Core packages must not depend on app packages. House identity,
 API endpoints, and Firebase registration are deployment configuration, not
 copies of the live UI.
 

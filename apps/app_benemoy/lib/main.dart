@@ -1,5 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:oms_app/oms_app.dart';
+import 'package:oms_shared/oms_shared.dart';
 
 import 'firebase_options.dart';
 import 'house_profile.dart';

@@ -1,4 +1,4 @@
-import 'package:oms_app/oms_app.dart';
+import 'package:oms_shared/oms_shared.dart';
 
 /// Benemoy Securities company details shown in the app (contact page, share
 /// text, store links). Environment endpoints live in `config/houses/*.json`.
