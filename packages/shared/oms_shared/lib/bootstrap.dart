@@ -14,22 +14,28 @@ import 'app/data/services/notification_service.dart';
 final providerContainer = ProviderContainer();
 bool isDarkMode = Get.isDarkMode;
 int initScreen = 0;
-const _omsEnvironment = String.fromEnvironment('OMS_ENV', defaultValue: 'prod');
+const _definedEnvironment = String.fromEnvironment('OMS_ENV');
 
 /// Starts the shared OMS trading app for one broker house.
 ///
-/// Endpoints and branding come from `--dart-define-from-file`; [profile],
-/// [firebaseOptions] and [firebaseBackgroundHandler] are owned by the app.
+/// [environment] comes from the app's flavor entry point; endpoints and
+/// branding from `--dart-define-from-file`. [profile], [firebaseOptions],
+/// [firebaseBackgroundHandler] and the root widget [app] are owned by the app.
 Future<void> runOmsApp({
+  required OmsEnvironment environment,
   required HouseProfile profile,
   required FirebaseOptions firebaseOptions,
   required BackgroundMessageHandler firebaseBackgroundHandler,
+  required Widget Function() app,
 }) async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (_omsEnvironment != 'uat' && _omsEnvironment != 'prod') {
-    throw StateError('OMS_ENV must be either "uat" or "prod".');
+  if (_definedEnvironment != environment.name) {
+    throw StateError(
+      'Entry point is "${environment.name}" but the --dart-define-from-file '
+      'profile has OMS_ENV="$_definedEnvironment". Use the matching profile.',
+    );
   }
-  AppConfig.initialize(environment: _omsEnvironment, profile: profile);
+  AppConfig.initialize(environment: environment.name, profile: profile);
   await GetStorage.init();
   await Firebase.initializeApp(options: firebaseOptions);
 
@@ -45,7 +51,7 @@ Future<void> runOmsApp({
   printLog(Get.isDarkMode);
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  runApp(UncontrolledProviderScope(container: providerContainer, child: const MyApp()));
+  runApp(UncontrolledProviderScope(container: providerContainer, child: app()));
   configLoading();
 }
 

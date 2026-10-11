@@ -5,24 +5,19 @@ The live UI and feature implementation remain in place.
 
 ## FVM commands
 
-Run from this package directory:
+Run from this package directory, pairing each entry point with its profile:
 
 ```sh
-cd apps/app_benemoy
-fvm flutter run \
-  --flavor benemoy \
+cd apps/benemoy
+fvm flutter run -t lib/main_uat.dart --flavor benemoy \
   --dart-define-from-file=config/houses/benemoy-uat.json
 ```
 
-Use `benemoy-prod.json` for production. The two local profile files are
-git-ignored. The existing dotenv files remain as a
-backward-compatible fallback, but checked-in config templates use invalid
-placeholder URLs so they cannot silently point another house at Benemoy.
-The shared `broker_config` package provides the app's title, endpoint, brand
-asset, default locale, theme colors, and optional contract URL. Benemoy's
-defaults preserve its current appearance. Native launcher icons, per-house
-iOS schemes, contract-page navigation, and manifest capability handling still
-need separate integration work.
+Use `lib/main_prod.dart` with `benemoy-prod.json` for production. A mismatched
+pair fails at startup. The two local profile files are git-ignored. All screens
+and logic live in `packages/shared/oms_shared`; this app only owns
+`lib/src/house_profile.dart`, `lib/src/app.dart`, `lib/src/routing/`, brand
+assets, env profiles and native configuration.
 
 ## Android release
 
@@ -30,6 +25,7 @@ Build the signed Benemoy App Bundle with the original release key:
 
 ```sh
 fvm flutter build appbundle \
+  -t lib/main_prod.dart \
   --flavor benemoy \
   --release \
   --dart-define-from-file=config/houses/benemoy-prod.json
@@ -44,7 +40,7 @@ do not fall back to the debug key. Keep a secure backup of the original key.
 Create a new local profile with the repo's Mason brick:
 
 ```sh
-fvm exec mason make house_profile --output-dir apps/app_benemoy
+fvm exec mason make house_profile --output-dir apps/benemoy
 ```
 
 It generates an environment-specific Dart define JSON and an Android flavor

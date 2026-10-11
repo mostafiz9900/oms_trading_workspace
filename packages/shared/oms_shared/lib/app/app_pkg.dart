@@ -7,7 +7,6 @@ export '../app/modules/modules.dart';
 export '../bootstrap.dart';
 export 'app_binding.dart';
 export 'di.dart';
-export 'my_app.dart';
 export 'routes/routes.dart';
 export 'global_provider.dart';
 

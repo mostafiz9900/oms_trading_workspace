@@ -17,10 +17,10 @@
 **/macos/SourcePackages/
 
 # Local house configuration and signing credentials
-apps/app_benemoy/config/houses/*.json
-!apps/app_benemoy/config/houses/*.example.json
-apps/app_benemoy/android/key.properties
-apps/app_benemoy/android/oms-app-release-key.jks
+apps/*/config/houses/*.json
+!apps/*/config/houses/*.example.json
+apps/*/android/key.properties
+apps/*/android/oms-app-release-key.jks
 
 # Legacy dotenv files, local SDK paths, and any signing material
 **/env/.env*

@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 
-import 'app_pkg.dart';
+import 'package:oms_shared/app/app_pkg.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+import 'routing/app_pages.dart';
+
+/// Root widget: GetMaterialApp wired to this app's route table.
+class App extends StatelessWidget {
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +21,7 @@ class MyApp extends StatelessWidget {
       initialBinding: AppBinding(),
       smartManagement: SmartManagement.keepFactory,
       translations: LocalizationService(),
-      locale: LocalizationService.defaultLocale,
+      locale: LocalizationService.parseLocale(AppConfig.house.defaultLocale),
       fallbackLocale: LocalizationService.fallbackLocale,
       theme: AppTheme().lightTheme,
       darkTheme: AppTheme.darkTheme,

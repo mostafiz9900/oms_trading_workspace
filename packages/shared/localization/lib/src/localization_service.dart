@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../core.dart';
+import 'languages/bn_bd.dart';
+import 'languages/en_us.dart';
 
 //Worker use backround task
 class LocalizationService extends Translations {
   static const Locale fallbackLocale = Locale('en', 'US');
-  static Locale get defaultLocale {
-    final parts = AppConfig.house.defaultLocale.split('_');
+  /// Parses a locale tag such as `en_US` or `bn_BD`.
+  static Locale parseLocale(String tag) {
+    final parts = tag.split('_');
     return Locale(parts.first, parts.length > 1 ? parts[1] : '');
   }
 

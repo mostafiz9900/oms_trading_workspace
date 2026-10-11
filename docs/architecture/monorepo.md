@@ -6,9 +6,13 @@
   route, service, and common asset. It starts through `runOmsApp(...)` and must
   not contain broker-specific values; it reads them from `AppConfig.house`
   (env profile) and `AppConfig.profile` (`HouseProfile`).
-- `apps/app_benemoy` is a thin deployable shell: `main.dart`, its
-  `HouseProfile`, Firebase options, brand assets under `assets/houses/benemoy/`,
-  env profiles, and native Android/iOS configuration. Android application id
+- `apps/benemoy` is a thin orchestrator: flavor entry points
+  (`main_uat.dart`, `main_prod.dart`), `src/app.dart` (GetMaterialApp),
+  `src/routing/` (route table stitching feature screens), `src/house_profile.dart`,
+  Firebase options, brand assets under `assets/houses/benemoy/`, env profiles,
+  and native Android/iOS configuration. Route names stay in `oms_shared`
+  (`app/routes/app_routes.dart`) because feature code navigates by name.
+- `packages/shared/localization` owns GetX translations and locale parsing. Android application id
   and iOS bundle id are unchanged from the live app.
 - Values that existing installs depend on are derived from `OMS_HOUSE_ID` so
   they stay byte-identical for Benemoy: notification channel ids

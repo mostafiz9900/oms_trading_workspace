@@ -12,6 +12,12 @@ dev_dependencies:
   melos: ^8.9.0
 
 melos:
+  command:
+    version:
+      # `melos version` bumps changed packages from conventional commits and
+      # writes per-package and workspace CHANGELOG.md files.
+      workspaceChangelog: true
+
   scripts:
     analyze:
       exec:

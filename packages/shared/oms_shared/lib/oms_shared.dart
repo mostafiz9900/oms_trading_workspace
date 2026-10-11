@@ -4,7 +4,7 @@
 library;
 
 export 'package:broker_config/broker_config.dart'
-    show HouseProfile, HouseContact, HouseStoreListing;
+    show HouseProfile, HouseContact, HouseStoreListing, OmsEnvironment;
 
 export 'app/data/services/notification_service.dart' show NotificationService;
 export 'bootstrap.dart' show runOmsApp;

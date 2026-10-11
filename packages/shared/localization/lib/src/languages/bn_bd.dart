@@ -1,4 +1,4 @@
-import '../../../core.dart';
+import '../app_translations.dart';
 
 class BnLanguage {
   //create hashmap for bangla language

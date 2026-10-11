@@ -1,13 +1,17 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:oms_shared/oms_shared.dart';
 
-import 'firebase_options.dart';
+import '../firebase_options.dart';
+import 'app.dart';
 import 'house_profile.dart';
 
-void main() => runOmsApp(
+/// Shared startup for every Benemoy flavor entry point.
+Future<void> runBenemoy(OmsEnvironment environment) => runOmsApp(
+  environment: environment,
   profile: benemoyProfile,
   firebaseOptions: DefaultFirebaseOptions.currentPlatform,
   firebaseBackgroundHandler: _firebaseBackgroundHandler,
+  app: () => const App(),
 );
 
 @pragma('vm:entry-point')

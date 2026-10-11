@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Benemoy UAT",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "apps/benemoy",
+      "program": "lib/main_uat.dart",
+      "args": ["--flavor", "benemoy", "--dart-define-from-file=config/houses/benemoy-uat.json"]
+    },
+    {
+      "name": "Benemoy Prod",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "apps/benemoy",
+      "program": "lib/main_prod.dart",
+      "args": ["--flavor", "benemoy", "--dart-define-from-file=config/houses/benemoy-prod.json"]
+    }
+  ]
+}

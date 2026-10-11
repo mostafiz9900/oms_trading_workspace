@@ -33,6 +33,8 @@ dependencies:
     path: ../../features/research
   limits:
     path: ../../features/limits
+  localization:
+    path: ../localization
   cupertino_icons: ^1.0.8
   get: ^4.7.3
   hooks_riverpod: ^3.0.3

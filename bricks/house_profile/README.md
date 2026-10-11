@@ -14,9 +14,9 @@ authorization remain app/backend responsibilities.
 Run from the monorepo root:
 
 ```sh
-fvm exec mason make house_profile --output-dir apps/app_benemoy
+fvm exec mason make house_profile --output-dir apps/benemoy
 ```
 
 Add the matching `google-services.json` under
-`apps/app_benemoy/android/app/src/<house_id>/` and house-specific assets under
-`apps/app_benemoy/assets/houses/<house_id>/` before building Android.
+`apps/benemoy/android/app/src/<house_id>/` and house-specific assets under
+`apps/benemoy/assets/houses/<house_id>/` before building Android.

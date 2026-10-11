@@ -1,4 +1,4 @@
-import '../../../core.dart';
+import '../app_translations.dart';
 
 class EnLanguage {
   //create hashmap for english language

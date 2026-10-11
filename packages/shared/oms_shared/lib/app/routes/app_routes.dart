@@ -1,5 +1,5 @@
-part of 'app_pages.dart';
-// DO NOT EDIT. This is code generated via package:get_cli/get_cli.dart
+/// Route names shared by every feature. Each app builds its own route table
+/// (GetPage list) from these in `lib/src/routing/`.
 
 abstract class Routes {
   Routes._();

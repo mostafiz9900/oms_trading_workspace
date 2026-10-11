@@ -1,0 +1,107 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: analyze ${{ matrix.package }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Clean packages fail on warnings; oms_shared still carries legacy
+        # warnings, so it only fails on errors until those are cleaned up.
+        package:
+          - packages/core/trading_core
+          - packages/core/trading_ui
+          - packages/core/broker_config
+          - packages/shared/localization
+          - packages/features/auth
+          - packages/features/limits
+          - packages/features/market
+          - packages/features/notifications
+          - packages/features/orders
+          - packages/features/portfolio
+          - packages/features/research
+          - packages/features/withdrawals
+          - apps/benemoy
+          - apps/app_fakhrul
+        include:
+          - package: packages/shared/oms_shared
+            flags: --no-fatal-warnings
+    steps:
+      - uses: actions/checkout@v4
+      - id: fvm
+        run: echo "flutter=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm.outputs.flutter }}
+          cache: true
+      - run: flutter pub get
+      - run: dart analyze ${{ matrix.flags }} .
+        working-directory: ${{ matrix.package }}
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: fvm
+        run: echo "flutter=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm.outputs.flutter }}
+          cache: true
+      - run: flutter pub get
+      - run: dart test
+        working-directory: packages/core/broker_config
+      - run: dart run tool/validate_house_profiles.dart
+
+  build:
+    name: build ${{ matrix.platform }} (benemoy uat)
+    needs: [analyze, test]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: android
+            os: ubuntu-latest
+            command: flutter build apk --debug
+          - platform: ios
+            os: macos-latest
+            command: flutter build ios --debug --no-codesign
+    steps:
+      - uses: actions/checkout@v4
+      - id: fvm
+        run: echo "flutter=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm.outputs.flutter }}
+          cache: true
+      - if: matrix.platform == 'android'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Write UAT house profile
+        working-directory: apps/benemoy
+        env:
+          PROFILE: ${{ secrets.BENEMOY_UAT_PROFILE_JSON }}
+        run: |
+          if [ -z "$PROFILE" ]; then
+            echo "::error::Set the BENEMOY_UAT_PROFILE_JSON repository secret"
+            exit 1
+          fi
+          printf '%s' "$PROFILE" > config/houses/benemoy-uat.json
+      - run: flutter pub get
+      - run: >-
+          ${{ matrix.command }} -t lib/main_uat.dart --flavor benemoy
+          --dart-define-from-file=config/houses/benemoy-uat.json
+        working-directory: apps/benemoy
