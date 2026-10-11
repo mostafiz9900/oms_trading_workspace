@@ -90,7 +90,7 @@ This copies Benemoy's app (never its env files, Firebase files or signing
 keys), sets the new app id, bundle id and name everywhere, and prints the
 remaining checklist: env files, brand images, contact details, `flutterfire
 configure`, launcher icons and signing. `make validate` reports whatever is
-still missing.
+still missing. Full step-by-step guide: [docs/new-app.md](docs/new-app.md).
 
 ## CI
 
