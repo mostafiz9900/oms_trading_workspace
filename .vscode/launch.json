@@ -5,16 +5,16 @@
       "name": "Benemoy UAT",
       "request": "launch",
       "type": "dart",
-      "cwd": "apps/benemoy",
-      "program": "lib/main_uat.dart",
+      "cwd": "${workspaceFolder}/apps/benemoy",
+      "program": "${workspaceFolder}/apps/benemoy/lib/main_uat.dart",
       "args": ["--dart-define-from-file=config/houses/benemoy-uat.json"]
     },
     {
       "name": "Benemoy Prod",
       "request": "launch",
       "type": "dart",
-      "cwd": "apps/benemoy",
-      "program": "lib/main_prod.dart",
+      "cwd": "${workspaceFolder}/apps/benemoy",
+      "program": "${workspaceFolder}/apps/benemoy/lib/main_prod.dart",
       "args": ["--dart-define-from-file=config/houses/benemoy-prod.json"]
     }
   ]
