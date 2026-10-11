@@ -1,4 +1,4 @@
-// fvm flutter build appbundle -t lib/main_prod.dart --flavor benemoy \
+// fvm flutter build appbundle -t lib/main_prod.dart \
 //   --dart-define-from-file=config/houses/benemoy-prod.json
 import 'package:oms_shared/oms_shared.dart';
 

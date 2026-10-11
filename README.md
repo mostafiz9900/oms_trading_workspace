@@ -23,7 +23,8 @@ oms_trading_workspace/
 │   │   │       └── run.dart           Shared startup for both entry points
 │   │   ├── assets/houses/benemoy/     Logo, splash, onboarding images
 │   │   ├── config/houses/             uat/prod env JSON, Android flavor, brand manifest
-│   │   └── android/ ios/              App id, bundle id, icons, Firebase, signing
+│   │   └── android/ ios/              Copied from the live project (app id, icons,
+│   │                                  Firebase, signing, entitlements)
 │   └── app_fakhrul/             Starter app, not yet converted
 ├── packages/
 │   ├── core/                    trading_core, trading_ui, broker_config
@@ -46,9 +47,9 @@ Nothing in `packages/` may import an app.
 fvm dart run melos bootstrap
 
 cd apps/benemoy
-fvm flutter run -t lib/main_uat.dart --flavor benemoy \
+fvm flutter run -t lib/main_uat.dart \
   --dart-define-from-file=config/houses/benemoy-uat.json
-fvm flutter build appbundle -t lib/main_prod.dart --flavor benemoy \
+fvm flutter build appbundle -t lib/main_prod.dart \
   --dart-define-from-file=config/houses/benemoy-prod.json
 ```
 
@@ -65,7 +66,7 @@ compiled into the binary, so never put passwords or signing credentials in them.
 | App name, logo, splash, onboarding, colors | `OMS_HOUSE_NAME`, `OMS_BRAND_*` keys + `assets/houses/<house>/` |
 | Contact page, share text, store links | `lib/src/house_profile.dart` |
 | Which screens exist and their routes | `lib/src/routing/app_pages.dart` |
-| App id, bundle id, icon, Firebase, signing | `android/`, `ios/`, `config/houses/android/<house>.properties`, `lib/firebase_options.dart` |
+| App id, bundle id, icon, Firebase, signing, entitlements | `android/`, `ios/` (one native project per house app), `lib/firebase_options.dart` |
 
 ## Workspace commands
 
@@ -75,6 +76,13 @@ fvm dart run melos run test
 fvm dart run melos run validate:houses
 fvm dart run melos version        # bump versions + CHANGELOGs from conventional commits
 ```
+
+Each house app has its own plain Flutter `android/` and `ios/` folders (no
+Gradle flavors). Benemoy's were copied from the live project; the only edits
+are the minimums Flutter 3.47.6 requires: Gradle wrapper 8.13 → 8.14, Kotlin
+plugin 2.1.0 → 2.2.20, and two `gradle.properties` flags added by Flutter's
+migrator. `config/houses/android/<house>.properties` is metadata that
+`validate:houses` checks against the real Gradle `applicationId`.
 
 CI needs one repository secret, `BENEMOY_UAT_PROFILE_JSON`, containing the
 UAT env JSON.

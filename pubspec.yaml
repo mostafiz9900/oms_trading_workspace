@@ -33,4 +33,4 @@ melos:
       description: Run each package's Flutter tests.
     validate:houses:
       run: fvm dart run tool/validate_house_profiles.dart
-      description: Validate broker-house manifests and Android flavor metadata.
+      description: Validate broker-house manifests and Android metadata against native config.

@@ -4,7 +4,7 @@
   `config/houses/{{house_id}}-prod.json`
 - Android native Firebase file:
   `android/app/src/{{house_id}}/google-services.json`
-- Android flavor metadata: `config/houses/android/{{house_id}}.properties`
+- Android metadata: `config/houses/android/{{house_id}}.properties`
 - Dart brand assets: `assets/houses/{{house_id}}/`
 - House branding and capability manifest: `config/houses/brands/{{house_id}}/manifest.json`
 - iOS must receive a house-specific bundle ID, Firebase plist, and Xcode

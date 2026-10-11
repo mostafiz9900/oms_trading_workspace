@@ -102,6 +102,6 @@ jobs:
           printf '%s' "$PROFILE" > config/houses/benemoy-uat.json
       - run: flutter pub get
       - run: >-
-          ${{ matrix.command }} -t lib/main_uat.dart --flavor benemoy
+          ${{ matrix.command }} -t lib/main_uat.dart
           --dart-define-from-file=config/houses/benemoy-uat.json
         working-directory: apps/benemoy

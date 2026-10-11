@@ -6,7 +6,7 @@
   route, service, and common asset. It starts through `runOmsApp(...)` and must
   not contain broker-specific values; it reads them from `AppConfig.house`
   (env profile) and `AppConfig.profile` (`HouseProfile`).
-- `apps/benemoy` is a thin orchestrator: flavor entry points
+- `apps/benemoy` is a thin orchestrator: environment entry points
   (`main_uat.dart`, `main_prod.dart`), `src/app.dart` (GetMaterialApp),
   `src/routing/` (route table stitching feature screens), `src/house_profile.dart`,
   Firebase options, brand assets under `assets/houses/benemoy/`, env profiles,
@@ -78,8 +78,8 @@ adapters for behavior that is genuinely different.
 
 - Build-time values such as API and socket endpoints use one UAT or production
   `--dart-define-from-file` profile.
-- Native app IDs, icons, Firebase resources, and signing remain in the platform
-  flavor/configuration for that house.
+- Native app IDs, icons, Firebase resources, signing, and entitlements live in
+  each house app's own plain `android/` and `ios/` project (no Gradle flavors).
 - Profiles can choose client capabilities for presentation, but the backend
   remains responsible for authorizing every trading operation.
 - Local profiles and signing credentials must not be committed.

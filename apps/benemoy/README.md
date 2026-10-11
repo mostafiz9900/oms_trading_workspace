@@ -9,7 +9,7 @@ Run from this package directory, pairing each entry point with its profile:
 
 ```sh
 cd apps/benemoy
-fvm flutter run -t lib/main_uat.dart --flavor benemoy \
+fvm flutter run -t lib/main_uat.dart \
   --dart-define-from-file=config/houses/benemoy-uat.json
 ```
 
@@ -26,7 +26,6 @@ Build the signed Benemoy App Bundle with the original release key:
 ```sh
 fvm flutter build appbundle \
   -t lib/main_prod.dart \
-  --flavor benemoy \
   --release \
   --dart-define-from-file=config/houses/benemoy-prod.json
 ```
@@ -43,17 +42,17 @@ Create a new local profile with the repo's Mason brick:
 fvm exec mason make house_profile --output-dir apps/benemoy
 ```
 
-It generates an environment-specific Dart define JSON and an Android flavor
-properties file. Replace all `.invalid` endpoint and Firebase placeholders
-before building. Android also needs that house's Firebase file at
-`android/app/src/<house>/google-services.json`. Do not put passwords, signing
-keys, or other secrets in Dart defines; values compiled into the app can be
-read from the binary. CI should inject profiles from a configuration store.
+It generates an environment-specific Dart define JSON and Android metadata
+(`config/houses/android/<house>.properties`, checked by `validate:houses`
+against the real Gradle `applicationId`). Replace all `.invalid` endpoint and
+Firebase placeholders before building. Do not put passwords, signing keys, or
+other secrets in Dart defines; values compiled into the app can be read from
+the binary. CI should inject profiles from a configuration store.
 
-Android flavors are discovered from
-`config/houses/android/<house>.properties`. The Benemoy Firebase config and
-native app identities are already connected. iOS currently builds the
-Benemoy scheme with the existing bundle ID and Firebase plist. An iOS
-distribution archive still needs a valid Apple Developer provisioning profile
-and signing setup on the release machine; per-house iOS schemes are not yet
-generated.
+`android/` and `ios/` are a plain Flutter native project copied from the live
+Benemoy app (no flavors): app id, bundle id, Firebase files
+(`android/app/google-services.json`, `ios/Runner/GoogleService-Info.plist`),
+signing and push entitlements are exactly as in production, except the Gradle
+wrapper (8.14) and Kotlin plugin (2.2.20) minimums Flutter 3.47.6 requires.
+An iOS distribution archive still needs the Apple provisioning profile on the
+release machine.

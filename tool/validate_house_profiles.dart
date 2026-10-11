@@ -172,6 +172,13 @@ void _validateManifest(File file) {
     'Android displayName must match appName',
   );
   if (applicationId != null) {
+    final nativeId = _nativeApplicationId(appRoot);
+    _expect(
+      nativeId == applicationId,
+      path,
+      'Android applicationId must match android/app/build.gradle '
+      '(found "${nativeId ?? 'none'}")',
+    );
     final previousHouse = _applicationIds[applicationId];
     _expect(
       previousHouse == null,
@@ -348,4 +355,18 @@ void _expectUrl(
     path,
     '$key must be an absolute ${allowedSchemes.join('/')} URL',
   );
+}
+
+/// Reads `applicationId` from the app's real Gradle config so the house
+/// metadata cannot drift from what is actually shipped.
+String? _nativeApplicationId(String appRoot) {
+  for (final name in ['build.gradle', 'build.gradle.kts']) {
+    final file = File('$appRoot/android/app/$name');
+    if (!file.existsSync()) continue;
+    final match = RegExp(
+      r'''applicationId\s*=?\s*["']([^"']+)["']''',
+    ).firstMatch(file.readAsStringSync());
+    if (match != null) return match.group(1);
+  }
+  return null;
 }

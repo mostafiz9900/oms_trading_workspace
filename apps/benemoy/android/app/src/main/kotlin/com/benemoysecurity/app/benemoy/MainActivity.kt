@@ -1,4 +1,4 @@
-package com.benemoysecurity.app.app_benemoy
+package com.benemoysecurity.app.benemoy
 
 import io.flutter.embedding.android.FlutterActivity
 

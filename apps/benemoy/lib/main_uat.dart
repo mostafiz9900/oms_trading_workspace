@@ -1,4 +1,4 @@
-// fvm flutter run -t lib/main_uat.dart --flavor benemoy \
+// fvm flutter run -t lib/main_uat.dart \
 //   --dart-define-from-file=config/houses/benemoy-uat.json
 import 'package:oms_shared/oms_shared.dart';
 
