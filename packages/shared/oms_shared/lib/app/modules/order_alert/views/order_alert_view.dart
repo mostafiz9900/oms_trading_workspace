@@ -7,8 +7,6 @@ import '../../../data/models/response/order_alert_model.dart';
 import '../../home/views/local_widgets/index_value_loader.dart';
 
 // আপনার কাস্টম উইজেটগুলো ইম্পোর্ট করে নিবেন
-// import 'path/to/CommonMinimalDropdown.dart';
-// import 'path/to/OrderListLoader.dart';
 
 class OrderAlertView extends HookWidget {
   const OrderAlertView({super.key});
@@ -32,7 +30,6 @@ class OrderAlertView extends HookWidget {
 
     return Scaffold(
       appBar: CustomAppBar(
-        // automaticallyImplyLeading: false,
         titleText: 'Alert Message',
         titleFontSize: 16,
         isBackButtonIcon: true,
@@ -104,7 +101,6 @@ class OrderAlertView extends HookWidget {
 
           return Column(
             children: [
-              // Table Header (ওয়েবের মতো)
               Container(
                 color: const Color(0xFFE8F5E9), // Light Green Header
                 padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
@@ -138,7 +134,6 @@ class OrderAlertView extends HookWidget {
                   itemBuilder: (context, index) {
                     final alert = filteredAlerts[index];
 
-                    // 🎨 Row Background Color Logic (Alternate or Status based)
                     Color rowColor = index.isEven ? Colors.white : const Color(0xFFFAFAFA);
                     if (alert.execType?.toUpperCase() == 'TRADE' || alert.status?.toUpperCase() == 'FILLED') {
                       rowColor = const Color(0xFFE3F2FD); // Light Blue for Trade/Filled
@@ -155,8 +150,6 @@ class OrderAlertView extends HookWidget {
                             flex: 2,
                             child: Row(
                               children: [
-                                // const Icon(Icons.access_time, size: 14, color: Colors.black54),
-                                // const SizedBox(width: 4),
                                 Expanded(
                                   child: Text(
                                     _formatTime(alert.transactTime),

@@ -27,11 +27,9 @@ class CustomDrawer extends StatelessWidget {
       builder: (homeCon) {
         return Drawer(
           elevation: 0,
-          // backgroundColor: isDark?hexToColor('#1C2546F0'):HexColor('#FFFFFF'),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
           child: SafeArea(
             child: Column(
-              // padding: .zero,
               children: [
                 AppSpace.spaceH12,
                 SvgPicture.asset(context.bannerLogo, height: 40),
@@ -40,7 +38,6 @@ class CustomDrawer extends StatelessWidget {
                 AppSpace.spaceH6,
                 Column(
                   children: [
-                    // Text('', style: Get.textTheme.bodyMedium!.copyWith(color: ColorConstants.black)),
                     if (homeCon.userInfo.userDetail?.investorName != null) ...[
                       Text(
                         homeCon.userInfo.userDetail?.investorName ?? "",
@@ -60,7 +57,6 @@ class CustomDrawer extends StatelessWidget {
                 AppSpace.spaceH6,
                 Expanded(
                   child: ListView(
-                    // padding: .symmetric(horizontal: 15),
                     children: [
                       itemHeader(context, title: 'Requests'),
                       customDrawerItem(
@@ -109,7 +105,6 @@ class CustomDrawer extends StatelessWidget {
                         title: 'Favorites',
                         onTap: () {
                           Get.back();
-                          // Get.to(()=>FavMarketView());
                           homeCon.changeCurrentIndex(3);
                         },
                       ),
@@ -152,7 +147,6 @@ class CustomDrawer extends StatelessWidget {
                         title: 'News',
                         onTap: () {
                           Get.back();
-                          // Get.to(()=> NewsView());
                           int uniqueId = Random().nextInt(1000000);
                           homeCon.subscribeTimeAndSalesNews('news', '$uniqueId');
                           Get.to(() => NotificationView());
@@ -219,19 +213,7 @@ class CustomDrawer extends StatelessWidget {
                         },
                       ),
 
-                      // customDrawerItem(
-                      //   context,
-                      //   image: Assets.svgImageTradeIcon,
-                      //   title: 'Chart',
-                      //   onTap: () {
-                      //     Get.back();
-                      //     // Get.to(() => TradingViewPage());
-                      //     Get.to(() => ProfessionalStockChart());
-                      //     // launchOnlyDseChart('GP');
-                      //   },
-                      // ),
                       AppSpace.spaceH8,
-                      // itemHeader(context, title: 'Help'),
                       if (homeCon.userInfo.id != null) ...[
                         customDrawerItem(
                           context,
@@ -247,8 +229,6 @@ class CustomDrawer extends StatelessWidget {
                               final success = await homeCon.enableDisableBiometric(context);
                               printLog('success:: $success');
                               if (success) {
-                                // ref.refresh(refreshTokenProvider);
-                                // Get.offAll(() => const HomePage());
                                 Helpers.snackBarForSuccess2(bodyText: "Biometric auth seccess");
                               } else {
                                 Helpers.snackbarForErorr2(bodyText: "Biometric auth failed");
@@ -264,7 +244,6 @@ class CustomDrawer extends StatelessWidget {
                             onTap: () {
                               Get.back();
                               printLog(homeCon.userInfo.toJson());
-                              // showResetPasswordBottomSheet(context);
                               showChangePasswordBottomSheet(context);
                             },
                           ),
@@ -296,35 +275,6 @@ class CustomDrawer extends StatelessWidget {
                         ),
                       ),
 
-                      // customDrawerItem(
-                      //   context,
-                      //   image: Assets.svgImageAboutUs,
-                      //   title: 'About Us',
-                      //   onTap: () {
-                      //     Get.back();
-                      //   },
-                      // ),
-                      // customDrawerItem(
-                      //   context,
-                      //   image: Assets.svgImageHelp,
-                      //   title: 'Help',
-                      //   onTap: () {
-                      //     Get.back();
-                      //   },
-                      // ),
-                      // customDrawerItem(context,
-                      //     image: Assets.svgImageLogout,
-                      //     title: 'Log out',
-                      //     onTap: (){
-                      //   StorageService.read(StorageConstants.refreshToken).then((value) {
-                      //     if(value!=null){
-                      //       printLog('is login');
-                      //     }else{
-                      //       printLog('after loign');
-                      //     }
-                      //   });
-                      // }),
-                      // CheckTokenWidget(child:
                       customDrawerItem(
                         context,
                         image: Assets.svgImageLogout,
@@ -339,7 +289,6 @@ class CustomDrawer extends StatelessWidget {
                         },
                       ),
 
-                      // ),
                       AppSpace.spaceH20,
                     ],
                   ),
@@ -491,130 +440,6 @@ class CustomDrawer extends StatelessWidget {
       isDismissible: false,
     );
   }
-  /*   void showResetPasswordBottomSheet(BuildContext context) {
-    // Get.put(PasswordResetController());
-    final oldPasswordController = TextEditingController();
-    final passwordController = TextEditingController();
-    final confirmPasswordController = TextEditingController();
-    Get.bottomSheet(
-      GetBuilder<PasswordResetController>(
-        init: Get.find<PasswordResetController>(),
-        builder: (passResetCon) {
-          return Builder(
-            builder: (ctx) {
-              return Container(
-                padding: const .all(16),
-                decoration: BoxDecoration(
-                  color: ctx.bgColor,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                ),
-                child: Stack(
-                  children: [
-                    Form(
-                      key: passResetCon.formKey,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text('Change Password', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 16),
-                          CustomEditTextFormField(
-                            controller: oldPasswordController,
-                            hintText: 'Old Password',
-                            onChanged: (value) {},
-                            passwordVisible: !passResetCon.oldPasswordVisible,
-                            keyboardType: TextInputType.text,
-                            prefixIcon: AssetsConstants.passwordIconSvg,
-                            suffixIcon: passResetCon.oldPasswordVisible
-                                ? AssetsConstants.passwordInvisibelSvg
-                                : AssetsConstants.passwordVisibleSvg,
-                            // validator: (text)=>validateField(text!),
-                            suffixOnTap: () {
-                              passResetCon.oldPasswordVisible = !passResetCon.oldPasswordVisible;
-                              passResetCon.update();
-                            },
-                          ),
-                          AppSpace.spaceH10,
-                          CustomEditTextFormField(
-                            controller: passwordController,
-                            hintText: 'Password',
-                            onChanged: (value) {},
-                            passwordVisible: !passResetCon.passwordVisible,
-                            keyboardType: TextInputType.text,
-                            prefixIcon: AssetsConstants.passwordIconSvg,
-                            suffixIcon: passResetCon.passwordVisible
-                                ? AssetsConstants.passwordInvisibelSvg
-                                : AssetsConstants.passwordVisibleSvg,
-                            // validator: (text)=>validateField(text!),
-                            suffixOnTap: () {
-                              passResetCon.passwordVisible = !passResetCon.passwordVisible;
-                              passResetCon.update();
-                            },
-                          ),
-                          AppSpace.spaceH10,
-                          CustomEditTextFormField(
-                            controller: confirmPasswordController,
-                            hintText: 'Confirm Password',
-                            onChanged: (value) {},
-                            passwordVisible: !passResetCon.confirmPasswordVisible,
-                            keyboardType: TextInputType.text,
-                            prefixIcon: AssetsConstants.passwordIconSvg,
-                            suffixIcon: passResetCon.confirmPasswordVisible
-                                ? AssetsConstants.passwordInvisibelSvg
-                                : AssetsConstants.passwordVisibleSvg,
-                            // validator: (text)=>validateField(text!),
-                            suffixOnTap: () {
-                              passResetCon.confirmPasswordVisible = !passResetCon.confirmPasswordVisible;
-                              passResetCon.update();
-                            },
-                            // validator: (value){
-                            //   if (passwordController != confirmPasswordController) {
-                            //     // Get.snackbar('Validation Error', 'Passwords do not match');
-                            //     return 'Passwords do not match';
-                            //   }
-                            //   return null;
-                            // },
-                          ),
-
-                          AppSpace.spaceH30,
-                          CustomButton(
-                            isLoading: passResetCon.isLoading,
-                            onPressed: () {
-                              if (oldPasswordController.text.isEmpty) {
-                                Helpers.snackbarForErorr2(bodyText: 'Please enter old password');
-                              } else if (passwordController.text.isEmpty) {
-                                Helpers.snackbarForErorr2(bodyText: 'Please enter password');
-                              } else if (passwordController.text != confirmPasswordController.text) {
-                                Helpers.snackbarForErorr2(bodyText: 'Passwords do not match');
-                              } else {
-                                // passResetCon.changePassword(oldPasswordController.text, passwordController.text);
-                              }
-                            },
-                            title: AppTranslations.login.tr,
-                          ),
-                          AppSpace.spaceH20,
-                          const SizedBox(height: 16),
-                        ],
-                      ),
-                    ),
-                    Positioned(
-                      right: -10,
-                      top: -15,
-                      child: IconButton(
-                        icon: const Icon(Icons.close, color: Colors.red),
-                        onPressed: () => Get.back(),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        },
-      ),
-      isScrollControlled: true,
-      isDismissible: false,
-    );
-  } */
 
   Widget itemHeader(BuildContext context, {required String title}) {
     return Container(

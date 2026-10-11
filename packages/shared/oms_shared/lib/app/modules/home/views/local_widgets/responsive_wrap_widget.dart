@@ -67,7 +67,6 @@ class ResponsiveWrap extends StatelessWidget {
           }
         }
 
-        // final clamp to safe bounds
         itemWidth = itemWidth.clamp(effectiveMin, effectiveMax).toDouble();
 
         // If itemWidth still below effectiveMin (happens on tiny screens), reduce itemsPerRow progressively

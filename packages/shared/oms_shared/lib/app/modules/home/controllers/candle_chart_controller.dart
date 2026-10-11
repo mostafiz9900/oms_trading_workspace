@@ -6,8 +6,6 @@ import 'package:market/market.dart' show MarketModel;
 
 import 'historical_volume_controller.dart';
 
-// import 'package:oms_shared/app/core/core.dart'; // MarketModelExtensions
-
 enum ChartType { candle, line }
 
 class CandleChartController extends GetxController {
@@ -38,14 +36,12 @@ class CandleChartController extends GetxController {
       ? 0
       : chartData.map((e) => e.volume).reduce((a, b) => a + b);
 
-  // 🚀 Volume Bar Scale (ভলিউম চার্টের নিচের ২৫% জায়গায় আটকে থাকবে)
   double get maxVolumeScale {
     if (chartData.isEmpty) return 100;
     double maxV = chartData.map((e) => e.volume).reduce(max);
     return maxV <= 0 ? 100 : maxV * 4;
   }
 
-  // 🚀 Professional Zoom Logic (Binance Standard)
   // লেটেস্ট ৩০টি ক্যান্ডেল ফোকাস করে ডানপাশে জুম করে রাখবে
   double get initialZoomFactor {
     if (chartData.isEmpty || chartData.length <= 30) return 1.0;
@@ -92,7 +88,6 @@ class CandleChartController extends GetxController {
     if (Get.isRegistered<HistoricalVolumeController>()) {
       final historyCtrl = Get.find<HistoricalVolumeController>();
       if (!historyCtrl.isLoading && historyCtrl.allData.isNotEmpty) {
-        // 🚀 1. Data Cleaning (০ ভ্যালু রিমুভ)
         List<CandleData> parsedData = historyCtrl.chartData
             .where((e) => e.close > 0 && e.high > 0)
             .toList();

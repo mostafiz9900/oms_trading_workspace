@@ -27,19 +27,12 @@ class CustomAppBar2 extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // height: preferredSize.height,
       alignment: Alignment.center,
       child: AppBar(
         titleSpacing: 15.0,
         centerTitle: true,
         automaticallyImplyLeading: false,
         surfaceTintColor: Colors.transparent,
-        // leadingWidth: 8, // <-- Use this
-        // centerTitle: false,
-        // leading: Container(
-        //   color: Colors.red,
-        //   width: 24,height: 29,
-        //     child: SvgPicture.asset(AssetsConstants.moreIconSvg,width: 24,height: 29,)),
         title: Row(
           mainAxisAlignment: .spaceBetween,
           crossAxisAlignment: .center,
@@ -129,7 +122,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               context.bannerLogo,
               width: 120,
               height: 35,
-              // colorFilter: ColorFilter.mode(context.textColor, BlendMode.srcIn)
             ),
       actions: [
         right ??
@@ -147,39 +139,5 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-// Widget setAppBar() {
-//   return AppBar(
-//     //backgroundColor: Colors.blue,
 //     //automaticallyImplyLeading: true
-//       elevation: 0.0, // for elevation
-//       titleSpacing: 0.0, // if you want remove title spacing with back button
-//       title:  UtilCommonWidget.addTextMedium('About US', Colors.white, 20.0, 1),
-//       actions: <Widget>[
-//         addAppBarActionWidgetProfile(icon, 30.0, 30.0, 15.0) // add your custom action widget
-//       ],//Action icon search as search icon, notification icon
-//       leading: new Material( //Custom leading icon, such as back icon or other icon
-//         color: Colors.transparent,
-//         child: new InkWell(
-//             onTap: () {
-//               Navigator.of(context).pop();
-//             },
-//             splashColor: UniQueryColors.colorGradientEnd.alphaSafe(.5),
-//             child: new Container(
-//                 padding: const .fromLTRB(12.0, 16.0, 16.0, 16.0),
-//                 child: UtilCommonWidget.addImage(Constant.iconBack, 19.0, 10.0))
-//         ),
-//       )
-//   );
-// }
 
-/*
-
-class CustomAppBar extends AppBar {
-  CustomAppBar()
-      : super(
-    title: Text('MyApp'),
-    actions: [
-      IconButton(icon: Icon(Icons.search), onPressed: () {}),
-    ],
-  );
-}*/

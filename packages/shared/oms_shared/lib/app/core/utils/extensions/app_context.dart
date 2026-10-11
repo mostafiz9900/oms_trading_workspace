@@ -2,7 +2,6 @@ import 'package:oms_shared/app/app_pkg.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
 extension BuildContextExtensions on BuildContext {
   ThemeData get theme => Theme.of(this);
 

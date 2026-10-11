@@ -157,7 +157,6 @@ class GlobalSearchScreen extends HookWidget {
                 RichText(
                   text: TextSpan(
                     // 🚀 Extension displayName ব্যবহার করা হয়েছে
-                    // children: _buildHighlightText(model.displayName, textCon.text, context, fontSize: 15),
                     children: [
                       ...SharedMarketLogic.buildHighlightText(model.displayName, textCon.text, context, fontSize: 14),
                       if (model.shareType != null)
@@ -545,15 +544,6 @@ class GlobalSearchScreen extends HookWidget {
                   children: [
                     Text("Sort:", style: TextStyle(fontSize: 13, color: Colors.grey[600])),
                     const SizedBox(width: 8),
-                    // _buildMinimalDropdown(
-                    //   controller: controller,
-                    //   id: 'sortCategoryDropdown',
-                    //   currentValue: controller.currentSortCategory,
-                    //   items: const ['A-Z', 'Change(%)', 'Value', 'Volume', 'Trade', 'Price', 'Paidup'],
-                    //   onSelected: controller.updateSortCategory,
-                    //   ctx: context,
-                    //   widthDropdown: 130,
-                    // ),
                     CommonMinimalDropdown(
                       currentValue: controller.currentSortCategory,
                       items: const ['A-Z', 'Change(%)', 'Value', 'Volume', 'Trade', 'Price', 'Paidup'],
@@ -573,22 +563,10 @@ class GlobalSearchScreen extends HookWidget {
                     const SizedBox(width: 16),
                     Text("View:", style: TextStyle(fontSize: 13, color: Colors.grey[600])),
                     const SizedBox(width: 8),
-                    // _buildMinimalDropdown(
-                    //   controller: controller,
-                    //   id: 'viewModeDropdown',
-                    //   currentValue: controller.currentViewMode,
-                    //   items: controller.viewModes,
-                    //   onSelected: controller.updateViewMode,
-                    //   ctx: context,
-                    //   widthDropdown: 100,
-                    // ),
                     CommonMinimalDropdown(
-                      // controller: controller,
-                      // id: 'viewModeDropdown',
                       currentValue: controller.currentViewMode,
                       items: controller.viewModes,
                       onSelected: controller.updateViewMode,
-                      // ctx: context,
                       widthDropdown: 100,
                     ),
                   ],
@@ -601,7 +579,6 @@ class GlobalSearchScreen extends HookWidget {
                 const Expanded(
                   child: WatchlistLoader(), // 🚀 সাধারণ স্পিনারের বদলে প্রিমিয়াম শিমার লোডার
                 )
-              // 🚀 1. Recent Searches (শুধু টেক্সট খালি থাকলেই দেখাবে)
               else if (isTextEmpty && controller.recentSearches.isNotEmpty) ...[
                 Padding(
                   padding: const EdgeInsets.only(left: 16.0, top: 12.0, bottom: 8.0, right: 16.0),
@@ -639,7 +616,6 @@ class GlobalSearchScreen extends HookWidget {
                   ),
                 ),
               ]
-              // 🚀 2. Live Search Results (টেক্সট টাইপ করা শুরু করলেই এটি দেখাবে)
               else ...[
                 if (controller.filteredItems.isEmpty)
                   Expanded(
@@ -667,13 +643,11 @@ class GlobalSearchScreen extends HookWidget {
                       itemCount: controller.filteredItems.length,
                       itemBuilder: (context, index) {
                         final model = controller.filteredItems[index];
-                        // _buildMarketRow(controller.filteredItems[index], index, context, controller, textController),
                         return SharedMarketListItem(
                           model: model,
                           index: index,
                           viewMode: controller.currentViewMode,
 
-                          // 🚀 এই লাইনটি অবশ্যই দিতে হবে (textController.text এর বদলে controller.currentSearchQuery দিন)
                           searchQuery: controller.currentSearchQuery,
 
                           onTap: () {

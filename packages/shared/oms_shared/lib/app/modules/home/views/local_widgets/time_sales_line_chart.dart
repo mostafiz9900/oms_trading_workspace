@@ -33,7 +33,6 @@ class _FastLineChartState extends State<FastLineChart> {
     );
   }
 
-  // parse tst like '14:26:55.089297' to DateTime (today)
   DateTime _parseTst(String? tst) {
     if (tst == null) return DateTime.now();
     try {
@@ -50,7 +49,6 @@ class _FastLineChartState extends State<FastLineChart> {
     }
   }
 
-  // Optional downsample: simple largest-triangle-one-bin (LTB) is more advanced,
   // here a simple uniform sampling to keep example short.
   List<_ChartPoint> _downsampleIfNeeded(List<_ChartPoint> pts, {int threshold = 1500}) {
     if (pts.length <= threshold) return pts;
@@ -130,7 +128,6 @@ class _FastLineChartState extends State<FastLineChart> {
             ),
 
             SizedBox(
-              // height: 350,
               child: SfCartesianChart(
                 backgroundColor: context.bgColor,
                 plotAreaBackgroundColor: context.bgColor,
@@ -140,23 +137,11 @@ class _FastLineChartState extends State<FastLineChart> {
                 primaryXAxis: DateTimeAxis(
                   intervalType: DateTimeIntervalType.minutes,
                   interval: 30,
-                  // dateFormat: DateFormat('HH:mm:ss'),
                   dateFormat: DateFormat('HH:mm'),
                   labelRotation: -90,
-                  // majorGridLines: const MajorGridLines(width: 0.5),
                   majorGridLines: MajorGridLines(color: context.isDark ? Colors.white12 : Colors.black12, width: 0.5),
                   labelStyle: TextStyle(color: context.textColor),
                 ),
-                /*primaryYAxis: NumericAxis(
-                  minimum: (minY == maxY) ? minY - 1 : minY - ((maxY - minY) * 0.1),
-                  maximum: (minY == maxY) ? maxY + 1 : maxY + ((maxY - minY) * 0.1),
-                  opposedPosition: true,
-                  interval: 0.10,
-                  numberFormat: NumberFormat("##0.0"),
-                  // edgeLabelPlacement: EdgeLabelPlacement.shift,
-                  // majorGridLines: MajorGridLines(color: Colors.white12, width: 0.5),
-                  // isVisible: false,
-                ),*/
                 primaryYAxis: NumericAxis(
                   minimum: alignedMin,
                   maximum: paddedMax,
@@ -167,12 +152,10 @@ class _FastLineChartState extends State<FastLineChart> {
                   majorGridLines: MajorGridLines(color: context.isDark ? Colors.white12 : Colors.black12, width: 0.5),
                   minorGridLines: MinorGridLines(color: Colors.grey.alphaSafe(0.08), width: 0.5),
                   labelStyle: TextStyle(color: context.textColor, fontSize: 11),
-                  // isVisible: false,
                 ),
 
                 // USE FastLineSeries for speed
                 series: <CartesianSeries<dynamic, dynamic>>[
-                  //LineSeries,FastLineSeries,SplineSeries,
                   // StepLineSeries,AreaSeries,SplineAreaSeries,SplineAreaSeries
                   //RangeAreaSeries,StackedLineSeries
                   AreaSeries<_ChartPoint, DateTime>(
@@ -194,21 +177,8 @@ class _FastLineChartState extends State<FastLineChart> {
                       ],
                       stops: const [0.0, 0.25, 0.65, 1.0],
                     ),
-                    // markerSettings:  MarkerSettings(isVisible: false),
                     animationDuration: 0,
-                    // enableTooltip: true, // tooltips can be enabled but may affect perf with many points
                   ),
-                  // FastLineSeries<_ChartPoint, DateTime>(
-                  //   dataSource: data,
-                  //   xValueMapper: (_ChartPoint p, _) => p.xDate,
-                  //   yValueMapper: (_ChartPoint p, _) => p.y,
-                  //   color: Colors.green.shade800,
-                  //   width: 1.5,
-                  //   markerSettings:  MarkerSettings(isVisible: false),
-                  //   animationDuration: 0,
-                  //   // splineType: SplineType.monotonic,
-                  //
-                  // ),
                 ],
               ),
             ),
@@ -241,309 +211,6 @@ class _ChartPoint {
 
 // Make sure TimeAndSalesModel and HomeController are imported/defined in your project.
 
-/*class FastLineWithBarChart extends StatefulWidget {
-  const FastLineWithBarChart({super.key});
-  @override
-  State<FastLineWithBarChart> createState() => _FastLineWithBarChartState();
-}
-
-class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
-  final HomeController homeCont = Get.find<HomeController>();
-  late ZoomPanBehavior _zoomPanBehavior;
-  late TrackballBehavior _trackballBehavior;
-
-  // bucket size for volume aggregation (seconds)
-  final int bucketSeconds = 30;
-  final int maxBuckets = 300;
-
-  @override
-  void initState() {
-    super.initState();
-    _zoomPanBehavior = ZoomPanBehavior(
-      enablePanning: true,
-      enablePinching: true,
-      zoomMode: ZoomMode.x,
-    );
-
-    _trackballBehavior = TrackballBehavior(
-      enable: true,
-      activationMode: ActivationMode.singleTap,
-      tooltipSettings: const InteractiveTooltip(
-        enable: true,
-        format: 'point.x : point.y',
-      ),
-    );
-  }
-
-  // parse tst like '14:26:55.089297' to DateTime (today)
-  DateTime _parseTst(String? tst) {
-    if (tst == null) return DateTime.now();
-    try {
-      final parts = tst.split('.');
-      final hhmmss = parts[0]; // '14:26:55'
-      final seg = hhmmss.split(':');
-      final h = int.tryParse(seg[0]) ?? 0;
-      final m = int.tryParse(seg[1]) ?? 0;
-      final s = int.tryParse(seg[2]) ?? 0;
-      final now = DateTime.now();
-      return DateTime(now.year, now.month, now.day, h, m, s);
-    } catch (e) {
-      return DateTime.now();
-    }
-  }
-
-  // downsample price points (uniform sampling)
-  List<_PricePoint> _downsampleIfNeeded(List<_PricePoint> pts, {int threshold = 1500}) {
-    if (pts.length <= threshold) return pts;
-    final step = (pts.length / threshold).ceil();
-    final res = <_PricePoint>[];
-    for (var i = 0; i < pts.length; i += step) {
-      res.add(pts[i]);
-    }
-    if (res.isEmpty || res.last.xDate != pts.last.xDate) res.add(pts.last);
-    return res;
-  }
-
-  // Build sorted price points from timeAndSales
-  List<_PricePoint> _buildPricePoints() {
-    final raw = List<TimeAndSalesModel>.from(homeCont.timeAndSales);
-    if (raw.isEmpty) return [];
-    raw.sort((a, b) => _parseTst(a.tst).compareTo(_parseTst(b.tst)));
-    final pts = raw.map((e) => _PricePoint(xDate: _parseTst(e.tst), y: e.p ?? 0.0, volume: e.v ?? 0)).toList();
-    return _downsampleIfNeeded(pts, threshold: 2000);
-  }
-
-  // aggregate volume into time buckets (bucketSeconds)
-  List<_VolBucket> _aggregateVolumeBuckets(List<TimeAndSalesModel> raw, int bucketSeconds, {int keepLast = 300}) {
-    if (raw.isEmpty) return [];
-    // sort raw by time ascending
-    raw.sort((a, b) => _parseTst(a.tst).compareTo(_parseTst(b.tst)));
-
-    final Map<int, _VolBucket> map = {};
-    for (final t in raw) {
-      final dt = _parseTst(t.tst);
-      final epoch = dt.millisecondsSinceEpoch;
-      final bucketStartEpoch = (epoch ~/ (bucketSeconds * 1000)) * (bucketSeconds * 1000);
-      final key = bucketStartEpoch;
-      final price = t.p ?? 0.0;
-      final vol = (t.v ?? 0);
-      if (!map.containsKey(key)) {
-        map[key] = _VolBucket(
-          start: DateTime.fromMillisecondsSinceEpoch(key),
-          volume: vol.toDouble(),
-          open: price,
-          high: price,
-          low: price,
-          close: price,
-        );
-      } else {
-        final b = map[key]!;
-        b.volume += vol;
-        b.close = price;
-        if (price > b.high) b.high = price;
-        if (price < b.low) b.low = price;
-      }
-    }
-
-    final keys = map.keys.toList()..sort();
-    final list = keys.map((k) => map[k]!).toList();
-    if (list.length > keepLast) return list.sublist(list.length - keepLast);
-    return list;
-  }
-
-  double _alignFloor(double value, double step) => (value / step).floorToDouble() * step;
-  double _alignCeil(double value, double step) => (value / step).ceilToDouble() * step;
-
-  @override
-  Widget build(BuildContext context) {
-    return GetBuilder<HomeController>(
-      id: 'timeAndSales',
-      builder: (_) {
-        // price points (downsampled for performance)
-        final pricePts = _buildPricePoints();
-        if (pricePts.isEmpty) return const Center(child: CircularProgressIndicator());
-
-        // volume buckets aggregated (not downsampled)
-        final rawTicks = List<TimeAndSalesModel>.from(homeCont.timeAndSales);
-        final volBuckets = _aggregateVolumeBuckets(rawTicks, bucketSeconds, keepLast: maxBuckets);
-
-        // compute price axis min/max (with padding and alignment)
-        final ys = pricePts.map((e) => e.y).toList();
-        double minY = ys.reduce((a, b) => a < b ? a : b);
-        double maxY = ys.reduce((a, b) => a > b ? a : b);
-        if ((maxY - minY).abs() < 1e-8) {
-          minY -= 1.0;
-          maxY += 1.0;
-        }
-        final rawRange = maxY - minY;
-        final pad = max(rawRange * 0.12, 0.05);
-        final paddedMin = minY - pad;
-        final paddedMax = maxY + pad;
-
-        final step = 0.10; // price tick step
-        final alignedMin = _alignFloor(paddedMin, step);
-        final alignedMax = _alignCeil(paddedMax, step);
-        final paddedMaxForLabel = alignedMax + step;
-
-        // compute volume axis range
-        final volYs = volBuckets.map((b) => b.volume.toDouble()).toList();
-        double volMax = volYs.isEmpty ? 1.0 : volYs.reduce((a, b) => a > b ? a : b);
-        // give a little headroom
-        final volAxisMax = (volMax * 1.12).ceilToDouble();
-
-        // build chart data objects for series
-        final priceSeriesData = pricePts; // List<_PricePoint>
-        // final volSeriesData = volBuckets.map((b) => _VolPoint(time: b.start, volume: b.volume.toDouble(), open: b.open, close: b.close)).toList();
-        final volSeriesData = volBuckets.map((b) {
-          return _VolPoint(
-            time: b.start,
-            volume: b.volume.toDouble(),
-            open: b.open,
-            close: b.close,
-          );
-        }).toList();
-
-        // decide bar color based on bucket open/close
-        // ColumnSeries will use pointColorMapper
-        final upColor = Colors.green;
-        final downColor = Colors.red;
-        final equalColor = Colors.grey;
-        return ListView(
-          // crossAxisAlignment: .stretch,
-          children: [
-            // header + controls
-            Row(
-              mainAxisAlignment: .end,
-              children: [
-                AppSpace.spaceW10,
-                Expanded(
-                  child: Text(
-                    homeCont.marketData.shortName ?? '',
-                    style: Get.textTheme.bodyLarge?.copyWith(color: context.buttonColor),
-                  ),
-                ),
-                IconButton(onPressed: () => _zoomPanBehavior.zoomOut(), icon: Icon(Icons.zoom_out, color: context.buttonColor)),
-                IconButton(onPressed: () => _zoomPanBehavior.reset(), icon: Icon(Icons.refresh, color: context.buttonColor)),
-                IconButton(onPressed: () => _zoomPanBehavior.zoomIn(), icon: Icon(Icons.zoom_in, color: context.buttonColor)),
-                const SizedBox(width: 8),
-              ],
-            ),
-
-            // Chart area
-            SizedBox(
-              height: 360,
-              child: SfCartesianChart(
-                backgroundColor: context.bgColor,
-                plotAreaBackgroundColor: context.bgColor,
-                plotAreaBorderWidth: 0,
-                zoomPanBehavior: _zoomPanBehavior,
-                trackballBehavior: _trackballBehavior,
-
-                // X axis (shared)
-                primaryXAxis: DateTimeAxis(
-                  intervalType: DateTimeIntervalType.minutes,
-                  interval: bucketSeconds.toDouble(),
-                  dateFormat: DateFormat('HH:mm'),
-                  labelRotation: -45,
-                  majorGridLines: MajorGridLines(color: context.isDart ? Colors.white12 : Colors.black12, width: 0.5),
-                  labelStyle: TextStyle(color: context.textColor, fontSize: 11),
-                  edgeLabelPlacement: EdgeLabelPlacement.shift,
-                ),
-
-                // Price axis on right
-                primaryYAxis: NumericAxis(
-                  minimum: alignedMin,
-                  maximum: paddedMaxForLabel,
-                  interval: step,
-                  opposedPosition: true,
-                  edgeLabelPlacement: EdgeLabelPlacement.shift,
-                  numberFormat: NumberFormat("##0.0"),
-                  majorGridLines: MajorGridLines(color: context.isDart ? Colors.white12 : Colors.black12, width: 0.5),
-                  minorGridLines: MinorGridLines(color: Colors.grey.alphaSafe(0.08), width: 0.5),
-                  labelStyle: TextStyle(color: context.textColor, fontSize: 11),
-                ),
-
-                // Volume axis on left (named axis)
-                axes: <ChartAxis>[
-                  NumericAxis(
-                    name: 'volumeAxis',
-                    minimum: 0,
-                    maximum: volAxisMax,
-                    opposedPosition: false, // left side
-                    interval: (volAxisMax / 16).ceilToDouble(), // four ticks approx
-                    numberFormat: NumberFormat.compact(),
-                    majorGridLines: MajorGridLines(color: Colors.transparent),
-                    labelStyle: TextStyle(color: context.textColor, fontSize: 11),
-                  ),
-                ],
-
-                series: <CartesianSeries>[
-                  // Volume bars (mapped to volumeAxis on left)
-                  //LineSeries,FastLineSeries,SplineSeries,
-                  // StepLineSeries,AreaSeries,SplineAreaSeries,SplineAreaSeries
-                  //RangeAreaSeries,StackedLineSeries
-                  ColumnSeries<_VolPoint, DateTime>(
-                    dataSource: volSeriesData,
-                    xValueMapper: (_VolPoint p, _) => p.time,
-                    yValueMapper: (_VolPoint p, _) => p.volume,
-                    yAxisName: 'volumeAxis',
-                    // pointColorMapper: (_VolPoint p, _) => p.close >= p.open ? Colors.green : Colors.red,
-                    pointColorMapper: (_VolPoint p, _) {
-                      if (p.close > p.open) return upColor;       // price went up in this bucket
-                      if (p.close < p.open) return downColor;     // price went down
-                      return equalColor;                           // price unchanged
-                    },
-                    width: 0.7,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-
-                  // Area (smoothed or raw) for price
-                  // SplineAreaSeries<_PricePoint, DateTime>(
-                  //   dataSource: priceSeriesData,
-                  //   xValueMapper: (_PricePoint p, _) => p.xDate,
-                  //   yValueMapper: (_PricePoint p, _) => p.y,
-                  //   borderColor: Colors.green.shade800,
-                  //   borderWidth: 1.2,
-                  //   gradient: LinearGradient(
-                  //     begin: Alignment.topCenter,
-                  //     end: Alignment.bottomCenter,
-                  //     colors: [
-                  //       Colors.green.shade300.alphaSafe(0.95),
-                  //       Colors.green.shade200.alphaSafe(0.45),
-                  //       Colors.green.shade100.alphaSafe(0.12),
-                  //       Colors.transparent,
-                  //     ],
-                  //     stops: const [0.0, 0.25, 0.65, 1.0],
-                  //   ),
-                  //   splineType: SplineType.monotonic,
-                  //   markerSettings: const MarkerSettings(isVisible: false),
-                  //   animationDuration: 0,
-                  // ),
-
-                  // FastLine over the area for crisp tick line
-                  FastLineSeries<_PricePoint, DateTime>(
-                    dataSource: priceSeriesData,
-                    xValueMapper: (_PricePoint p, _) => p.xDate,
-                    yValueMapper: (_PricePoint p, _) => p.y,
-                    color: Colors.green.shade800,
-                    width: 1.5,
-                    markerSettings: const MarkerSettings(isVisible: false),
-                    animationDuration: 0,
-                  ),
-
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 8),
-            // TimeAndSalesBarChart(),
-            const SizedBox(height: 8),
-          ],
-        );
-      },
-    );
-  }
-}*/
 // --- Your widget (full updated state class) ---
 class FastLineWithBarChart extends StatefulWidget {
   const FastLineWithBarChart({super.key});
@@ -559,7 +226,6 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
   // State variable to toggle between 1D and 1Y
   bool _show1D = true;
 
-  // bucket size for volume aggregation (seconds)
   final int bucketSeconds = 30;
   final int maxBuckets = 300;
 
@@ -714,23 +380,8 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
                     style: Get.textTheme.bodyLarge?.copyWith(color: context.buttonColor),
                   ),
                 ),
-                // const SizedBox(width: 8),
 
                 // // Show zoom controls only when 1D is selected
-                // if (_show1D) ...[
-                //   IconButton(
-                //     onPressed: () => _zoomPanBehavior.zoomOut(),
-                //     icon: Icon(Icons.zoom_out, color: context.buttonColor),
-                //   ),
-                //   IconButton(
-                //     onPressed: () => _zoomPanBehavior.reset(),
-                //     icon: Icon(Icons.refresh, color: context.buttonColor),
-                //   ),
-                //   IconButton(
-                //     onPressed: () => _zoomPanBehavior.zoomIn(),
-                //     icon: Icon(Icons.zoom_in, color: context.buttonColor),
-                //   ),
-                // ],
                 const SizedBox(width: 8),
                 // --- 1D and 1Y Toggle Buttons ---
                 TextButton(
@@ -848,7 +499,6 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
             ] else ...[
               // 1Y Chart
               const SizedBox(height: 16),
-              // StockHistoricalChartWidget(controller: Get.find<HistoricalVolumeController>()),
             ],
 
             const SizedBox(height: 8),
@@ -948,7 +598,6 @@ class VolumePieByDirection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Builder(
-      // id: 'timeAndSales',
       builder: (_) {
         final raw = List<TimeAndSalesModel>.from(homeCont.timeAndSales);
         if (raw.isEmpty) {
@@ -993,9 +642,6 @@ class VolumePieByDirection extends StatelessWidget {
                 xValueMapper: (_PieSlice s, _) => s.category,
                 yValueMapper: (_PieSlice s, _) => s.value,
                 pointColorMapper: (_PieSlice s, _) => s.color,
-                // dataLabelMapper: (_PieSlice s, _) =>
-                // '${s.category}\n${NumberFormat.compact().format(s.value)}\n(${(s.value / total * 100).toStringAsFixed(1)}%)',
-                // dataLabelSettings: DataLabelSettings(isVisible: true, labelPosition: ChartDataLabelPosition.outside),
                 innerRadius: '55%',
                 radius: '85%',
                 enableTooltip: true,
@@ -1116,7 +762,6 @@ class _TimeAndSalesBarChartState extends State<TimeAndSalesBarChart> {
           return _BarPoint(time: b.start, y: y, color: up ? Colors.green : Colors.red, open: b.open, close: b.close);
         }).toList();
 
-        // compute y-axis max (small padding)
         final ys = chartData.map((e) => e.y).toList();
         double minY = ys.reduce((a, b) => a < b ? a : b);
         double maxY = ys.reduce((a, b) => a > b ? a : b);

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:get/get.dart';
-// import 'package:sse_channel/sse_channel.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../../app_pkg.dart';
@@ -32,7 +31,6 @@ class MarketSocketService2 extends GetxService {
   }
 
   void _onMessage(event) {
-    // final String? messageData = event.data;
     if (event != null) {
       final jsonResponse = jsonDecode(event);
       if (jsonResponse['ob'] != null) {
@@ -97,7 +95,6 @@ class MarketSocketService extends GetxService {
     }
   }
 
-  // 🚀 রিকানেকশন হ্যান্ডলার (৩ সেকেন্ড পর ট্রাই করবে)
   void _reconnect() {
     if (_isReconnecting) return;
     _isReconnecting = true;
@@ -114,26 +111,22 @@ class MarketSocketService extends GetxService {
       if (jsonResponse['ob'] != null) {
         final incoming = MarketModel.fromJson(jsonResponse);
 
-        // 🚀 ১. O(1) Map Update & Merge (সরাসরি লেটেস্ট ডাটা)
         final updatedModel = _marketMap.update(
           incoming.orderBook!,
           (existing) => existing.mergePartialUpdate(jsonResponse),
           ifAbsent: () => incoming,
         );
 
-        // 🚀 ২. Instant Targeted UI Update (Zero Lag Blink Animation)
         if (Get.isRegistered<TopShareController>()) {
           Get.find<TopShareController>().updateSingleRowFromService(updatedModel);
         }
 
-        // 🚀 ৩. Throttle List Processing (Battery & CPU Optimization)
         // লিস্ট ফিল্টার করার ভারী কাজটা প্রতি সেকেন্ডে মাত্র ১ বার হবে।
         if (_listUpdateTimer == null || !_listUpdateTimer!.isActive) {
           _listUpdateTimer = Timer(const Duration(milliseconds: 1000), () {
             final filtered = _marketMap.values
               ..where((m) => m.group == "PUBLIC" && m.board == "Main Board" || m.board == "Small Cap Board").toList();
 
-            // 🚀 Trigger Debounce for sorting (Controller-কে সিগন্যাল পাঠানো)
             marketFeedList.assignAll(filtered);
           });
         }

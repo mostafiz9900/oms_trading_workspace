@@ -16,7 +16,6 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
   String? _selectedSector;
 
   // =========================================================================
-  // 🚀 Core Business Logic (অপরিবর্তিত)
   // =========================================================================
   double _parseChgToDouble(dynamic raw) {
     try {
@@ -209,7 +208,6 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   decoration: BoxDecoration(
                     color: context.tapBg,
-                    // borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
                   ),
                   child: Row(
                     children: [
@@ -224,7 +222,6 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: Get.theme.scaffoldBackgroundColor,
-                              // borderRadius: BorderRadius.circular(4),
                               border: Border.all(color: context.borderSideColor.withOpacity(0.5), width: 1.0),
                             ),
                             child: Row(

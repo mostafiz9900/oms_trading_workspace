@@ -11,7 +11,6 @@ abstract class BaseResponse {
       return true; // Successful response
     } else {
       printLog('Error: ${response.statusCode}');
-      // printLog('Error Body: ${response.body}');
       // You can show a snackbar or dialog with error message to the user
       return false; // Unsuccessful response
     }

@@ -43,7 +43,6 @@ class ConfirmDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 🚀 ১. অরিজিনাল স্টাইলের কালারফুল হেডার (Top Header Bar)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
@@ -64,7 +63,6 @@ class ConfirmDialog extends StatelessWidget {
               ),
             ),
 
-            // 🚀 ২. বডি মেসেজ (Body Message)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
               child: Text(
@@ -74,7 +72,6 @@ class ConfirmDialog extends StatelessWidget {
               ),
             ),
 
-            // 🚀 ৩. আপডেট করা অ্যাকশন বাটন (Modern Action Buttons)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: Row(
@@ -100,7 +97,6 @@ class ConfirmDialog extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
 
-                  // 🟢/🔴 Confirm Button (App Theme Color)
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {

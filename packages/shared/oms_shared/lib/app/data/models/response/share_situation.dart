@@ -1,6 +1,4 @@
 // To parse this JSON data, do
-//
-//     final shareSituation = shareSituationFromJson(jsonString);
 
 import 'dart:convert';
 

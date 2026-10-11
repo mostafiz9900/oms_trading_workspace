@@ -23,7 +23,6 @@ class SharedMarketLogic {
         ) ??
         const TextStyle();
 
-    // 🚀 ২. হাইলাইট করা টেক্সটের কালার (context.buttonColor)
     final highlightStyle = defaultStyle.copyWith(
       color: context.buttonColor,
       fontWeight: FontWeight.w900,

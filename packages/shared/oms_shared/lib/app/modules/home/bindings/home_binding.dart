@@ -15,10 +15,8 @@ class HomeBinding extends Bindings {
       () => HomeController(homeRepository: Get.find()),
       fenix: true,
     );
-    // Get.lazyPut<LiveIndexController>(() => LiveIndexController(), fenix: true);
     //লাইভ ইনডেক্স কন্ট্রোলারকে permanent করে দেওয়া হলো, যেন ট্যাব পাল্টালে ডিসপোজ না হয়
     Get.put<LiveIndexController>(LiveIndexController(), permanent: true);
-    // Get.put<HomeController>(HomeController(homeRepository: Get.find()), permanent: true);
     Get.lazyPut<HomeController>(
       () => HomeController(homeRepository: Get.find()),
       tag: 'orderModifiy',
@@ -27,7 +25,6 @@ class HomeBinding extends Bindings {
       () => PasswordResetController(Get.find()),
     );
     Get.lazyPut<CompaniesController>(() => CompaniesController());
-    // Get.lazyPut<PositionController>(() => PositionController());
     // Register HistoricalVolumeController with dependency injection
     Get.lazyPut<HistoricalVolumeController>(
       () => HistoricalVolumeController(repository: Get.find<HomeRepository>()),

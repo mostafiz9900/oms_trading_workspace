@@ -35,7 +35,6 @@ class AppTheme {
     appBarTheme: AppBarTheme(
       backgroundColor: ColorConstants.white,
       elevation: 0,
-      // systemOverlayStyle: SystemUiOverlayStyle.dark, // modified system overlay style for dark theme
       iconTheme: IconThemeData(color: ColorConstants.black),
       titleTextStyle: TextStyle(color: ColorConstants.primaryColor, fontWeight: FontWeight.w500, fontSize: 21),
       systemOverlayStyle: SystemUiOverlayStyle(
@@ -46,10 +45,8 @@ class AppTheme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        // foregroundColor: ColorConstants.secondaryColorLight,
         backgroundColor: ColorConstants.buttonColorLight,
         textStyle: GoogleFonts.ibmPlexSans(
-          // fontFeatures: stockFontFeatures,
           textStyle: TextStyle(
             color: ColorConstants.white,
             fontSize: 16,
@@ -65,9 +62,6 @@ class AppTheme {
     cardTheme: const CardThemeData(color: Colors.white),
     brightness: Brightness.light,
 
-    // primaryTextTheme: TextTheme(
-    //   bodyMedium: AppTextStyleLight.displayMedium,
-    // ),
     dividerColor: hexToColor('#D8D8D8'),
     inputDecorationTheme: InputDecorationTheme(
       fillColor: ColorConstants.editTextFillColorLight,
@@ -82,7 +76,6 @@ class AppTheme {
     ),
     textTheme: TextTheme(
       displayLarge: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(
           color: ColorConstants.primaryColorLight,
           fontSize: 57,
@@ -91,7 +84,6 @@ class AppTheme {
         ),
       ),
       displayMedium: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(
           color: ColorConstants.primaryColorLight.withAlpha((0.80 * 255).toInt()),
           fontSize: 45,
@@ -100,7 +92,6 @@ class AppTheme {
         ),
       ),
       displaySmall: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(
           color: ColorConstants.primaryColorLight.withAlpha((0.60 * 255).toInt()),
           fontSize: 36,
@@ -109,7 +100,6 @@ class AppTheme {
         ),
       ),
       headlineMedium: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(
           color: ColorConstants.textColorLight,
           fontSize: 32,
@@ -127,7 +117,6 @@ class AppTheme {
         ),
       ),
       titleLarge: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(
           color: ColorConstants.yaleBlue,
           fontSize: 25,
@@ -136,7 +125,6 @@ class AppTheme {
         ),
       ),
       titleMedium: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(
           color: ColorConstants.yaleBlue.withAlpha((0.90 * 255).toInt()),
           fontSize: 20,
@@ -145,7 +133,6 @@ class AppTheme {
         ),
       ),
       titleSmall: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(
           color: ColorConstants.yaleBlue.withAlpha((0.60 * 255).toInt()),
           fontSize: 18,
@@ -154,11 +141,9 @@ class AppTheme {
         ),
       ),
       bodyLarge: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(color: ColorConstants.textColorLight, fontSize: 16, fontWeight: FontWeight.normal),
       ),
       bodyMedium: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(
           color: ColorConstants.textColorLight.withAlpha((0.60 * 255).toInt()),
           fontSize: 14,
@@ -167,7 +152,6 @@ class AppTheme {
         ),
       ),
       bodySmall: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(
           color: ColorConstants.textColorLight.withAlpha((0.50 * 255).toInt()),
           fontSize: 12,
@@ -176,7 +160,6 @@ class AppTheme {
         ),
       ),
       labelLarge: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(
           color: ColorConstants.textColorLight,
           fontSize: 14,
@@ -185,7 +168,6 @@ class AppTheme {
         ),
       ),
       labelMedium: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(
           color: ColorConstants.textColorLight,
           fontSize: 12,
@@ -194,7 +176,6 @@ class AppTheme {
         ),
       ),
       labelSmall: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(color: HexColor('#9ba0a5'), fontSize: 11, letterSpacing: 0.5, fontWeight: FontWeight.w500),
       ),
     ),
@@ -204,14 +185,6 @@ class AppTheme {
       disabledColor: Colors.grey,
       textTheme: ButtonTextTheme.accent,
     ),
-    // appBarTheme: AppBarTheme(
-    //   backgroundColor: AppColors.primaryColor,
-    //   titleTextStyle: const TextStyle(color: Colors.white, fontSize: 18),
-    //   iconTheme: const IconThemeData(color: Colors.white),
-    //   systemOverlayStyle: SystemUiOverlayStyle(
-    //       statusBarIconBrightness: Brightness.light,
-    //       statusBarColor: AppColors.primaryColor),
-    // ),
     tabBarTheme: TabBarThemeData(
       //salmasharif013@gmail.com
       labelColor: hexToColor('#EBF2FC'),
@@ -242,7 +215,6 @@ class AppTheme {
       style: ElevatedButton.styleFrom(
         backgroundColor: ColorConstants.buttonColorDark,
         textStyle: GoogleFonts.ibmPlexSans(
-          // fontFeatures: stockFontFeatures,
           textStyle: TextStyle(
             color: ColorConstants.white,
             fontSize: 16,
@@ -272,7 +244,6 @@ class AppTheme {
     ),
     textTheme: TextTheme(
       displayLarge: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(
           color: ColorConstants.textColorDark,
           fontSize: 57,
@@ -281,7 +252,6 @@ class AppTheme {
         ),
       ),
       displayMedium: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(
           color: ColorConstants.textColorDark.withAlpha((0.80 * 255).toInt()),
           fontSize: 45,
@@ -290,7 +260,6 @@ class AppTheme {
         ),
       ),
       displaySmall: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(
           color: ColorConstants.textColorDark.withAlpha((0.60 * 255).toInt()),
           fontSize: 36,
@@ -299,7 +268,6 @@ class AppTheme {
         ),
       ),
       headlineMedium: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(
           color: ColorConstants.textColorDark,
           fontSize: 32,
@@ -309,7 +277,6 @@ class AppTheme {
         ),
       ),
       headlineSmall: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(
           color: ColorConstants.textColorDark.withAlpha((0.80 * 255).toInt()),
           fontSize: 24,
@@ -318,7 +285,6 @@ class AppTheme {
         ),
       ),
       titleLarge: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(
           color: ColorConstants.textColorDark,
           fontSize: 25,
@@ -327,11 +293,9 @@ class AppTheme {
         ),
       ),
       bodyLarge: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(color: ColorConstants.textColorDark, fontSize: 16, fontWeight: FontWeight.normal),
       ),
       bodyMedium: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(
           color: ColorConstants.textColorDark.withAlpha((0.80 * 255).toInt()),
 
@@ -341,11 +305,9 @@ class AppTheme {
         ),
       ),
       bodySmall: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(color: HexColor("#ffffff"), fontSize: 12, letterSpacing: 0.4, fontWeight: FontWeight.w500),
       ),
       labelSmall: GoogleFonts.ibmPlexSans(
-        // fontFeatures: stockFontFeatures,
         textStyle: TextStyle(color: HexColor('#AEAEB2'), fontSize: 11, letterSpacing: 0.5, fontWeight: FontWeight.w500),
       ),
     ),

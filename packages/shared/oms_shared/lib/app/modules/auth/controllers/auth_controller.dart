@@ -96,7 +96,6 @@ class AuthController extends GetxController {
           await StorageService.save(StorageConstants.refreshToken, res.data!.token?.refresh);
           await StorageService.saveMap(StorageConstants.userInfo, res.data!.toJson());
 
-          // 2. টোকেন সেভ নিশ্চিত করার জন্য সামান্য মাইক্রোটাস্ক বা ডিলে দিতে পারেন (যদি প্রয়োজন হয়)
           await Future.delayed(const Duration(milliseconds: 100));
 
           isLoading = false; // 👈 এখানে অবশ্যই false করতে হবে, নাহলে লোডার আটকে থাকবে
@@ -108,7 +107,6 @@ class AuthController extends GetxController {
           }
 
           // 4. হোম পেজে নেভিগেট করুন।
-          // লক্ষ্য রাখবেন: Routes.HOME এর জন্য যেন নির্দিষ্ট Binding (যেমন HomeBinding) বাঁধানো থাকে,
           // যাতে HomeController স্বয়ংক্রিয়ভাবে আবার তৈরি হয়ে onInit() কল করতে পারে।
           Get.offAllNamed(
             Routes.HOME,
@@ -139,16 +137,13 @@ class AuthController extends GetxController {
         if (res.data != null) {
           printLog(res.data);
           printLog("res.data here it is");
-          // _rememberedUserSave(loginUserNameController.text);
           await StorageService.save(StorageConstants.token, res.data!.token?.access);
           await StorageService.save(StorageConstants.refreshToken, res.data!.token?.refresh);
           await StorageService.saveMap(StorageConstants.userInfo, res.data!.toJson());
           var token = await StorageService.read(StorageConstants.token);
-          // timerCont.startTokenCountdown('$token');
           isLoading = true;
           update();
           Get.delete<HomeController>(force: true);
-          // await Get.find<HomeController>().reloadHome();
           Get.offNamed(Routes.HOME, preventDuplicates: false);
         } else {
           Helpers.snackbarForErorr2(bodyText: '${res.errorMessage}');
@@ -174,12 +169,6 @@ class AuthController extends GetxController {
     final decureDeviceId = await Helpers.getSecureDeviceIdLogin();
     printLog('decureDeviceId ::::::::: $decureDeviceId');
     await loginBiometric(decureDeviceId);
-    // final res = await api.post('/biometric-login', {"device_id": deviceId});
-    // if (res['success'] == true) {
-    //   token.value = res['token'];
-    //   userId.value = res['user']['id'];
-    //   return true;
-    // }
     return authenticated;
   }
 
@@ -218,17 +207,14 @@ class AuthController extends GetxController {
     try {
       final isEnable = await bioCon.isBiometricEnabled(); // check current status
       if (isEnable) {
-        // Currently enabled → disable?';
         await bioCon.disableBiometric();
         printLog('Biometric disabled locally');
         // Call API to disable
-        // await apiCallDisable();
       } else {
         // Currently disabled → enable
         await bioCon.enableBiometric();
         printLog('Biometric enabled locally');
         // Call API to enable
-        // await apiCallEnable();
       }
     } catch (e) {
       printLog('Error in enableDisableBiometric: $e');
@@ -544,7 +530,6 @@ class AuthController extends GetxController {
 
           // 🚀 ফিক্স ২: ফোকাস রিলিজ হওয়ার জন্য ২০০ মিলি-সেকেন্ড অপেক্ষা করে তারপর নেভিগেট করা হলো
           Future.delayed(const Duration(milliseconds: 200), () {
-            // Get.offAllNamed(Routes.LOGIN);
             Get.off(() => const LoginView());
           });
         } else {
@@ -621,59 +606,7 @@ class CountDownNotifier extends Notifier<int> {
   bool get isRunning => state > 0;
 }
 
-// Provider: family, pass minutes into constructor
 final countDownProvider = NotifierProvider.family<CountDownNotifier, int, int>(
   (int minutes) => CountDownNotifier(minutes),
 );
-// Provider: family with explicit typed closure (Ref, int)
 
-/*
-class CountDownTime extends StateNotifier<int> {
-  Timer? _timer;
-  final int initialSeconds;
-  bool _mounted = true;
-  CountDownTime({required this.initialSeconds}) : super(initialSeconds);
-
-  void start() {
-    if (_timer != null) return; // prevent multiple timers
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (!_mounted) return;
-      if (state > 0) {
-        state = state - 1;
-      } else {
-        timer.cancel();
-        _timer = null;
-      }
-    });
-  }
-
-  void reset() {
-    if (!_mounted) return;
-    _timer?.cancel();
-    _timer = null;
-    state = initialSeconds;
-  }
-
-  @override
-  void dispose() {
-    _mounted = false;
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  bool get isRunning => state > 0;
-}
-
-// AutoDispose family to handle dynamic minutes and page lifecycle
-final countDownProvider = StateNotifierProvider.autoDispose.family<CountDownTime, int, int>((ref, minutes) {
-  final notifier = CountDownTime(initialSeconds: minutes * 60);
-
-  // Optional: persist remaining seconds when disposed
-  ref.onDispose(() {
-    // You can store notifier.state somewhere (SharedPreferences, etc.)
-    notifier.dispose();
-  });
-
-  return notifier;
-});
-*/

@@ -67,7 +67,6 @@ class RelatedItemWatchlist extends StatelessWidget {
 }
 
 // =========================================================================
-// 🚀 3. The Card Item (Tap Action + Google Finance UI)
 // =========================================================================
 class _GoogleFinanceCard extends StatelessWidget {
   final MarketModel item;
@@ -255,7 +254,6 @@ class _GoogleFinanceCard extends StatelessWidget {
 }
 
 // =========================================================================
-// 🚀 6. Google Finance Sparkline Widget (Unchanged and Perfect)
 // =========================================================================
 class GoogleFinanceSparkline extends StatelessWidget {
   final List<num> data;
@@ -302,7 +300,6 @@ class GoogleFinanceSparkline extends StatelessWidget {
             borderColor: lineColor,
             borderWidth: 1.4,
             axisLineWidth: 0,
-            // margin: EdgeInsets.zero,
             marker: SparkChartMarker(
               displayMode: SparkChartMarkerDisplayMode.last,
               size: 4,

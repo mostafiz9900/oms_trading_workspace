@@ -14,8 +14,6 @@ class EmptyWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: .center,
         children: [
-          // Icon(icon, size: 48, color: context.textColor),
-          // const SizedBox(height: 12),
           Text(title ?? "Nothing here yet", style: TextStyle(fontSize: 18, color: context.textColor)),
           if (subtitle != null) ...[
             const SizedBox(height: 6),

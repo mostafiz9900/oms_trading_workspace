@@ -177,7 +177,6 @@ class CustomEditTextFormField extends StatelessWidget {
         prefixIcon: prefixIcon != null
             ? Padding(
                 padding: const EdgeInsets.only(
-                  //  Syntax Fixed (.only to EdgeInsets.only)
                   left: AppDimens.space20,
                   top: AppDimens.space8,
                   bottom: AppDimens.space8,

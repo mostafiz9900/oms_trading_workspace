@@ -48,7 +48,6 @@ class SignupVerifyOtp extends GetView<AuthController> {
                       ..onTap = () {
                         printLog('data');
                         Get.to(() => const LoginView());
-                        //     binding: AuthBinding());
                       },
                   ),
                 ],

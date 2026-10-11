@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-// import 'package:sse_channel/sse_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -606,7 +605,6 @@ class WebSocketServiceOld extends GetxService {
 
     _retryCount[socketId] = retries + 1;
 
-    // Exponential back-off: 2s, 4s, 8s, 16s, 32s (Capped at 30 seconds max delay)
     int delaySeconds = 2 * (retries + 1);
     if (delaySeconds > 30) delaySeconds = 30;
 
@@ -675,7 +673,6 @@ class WebSocketServiceOld extends GetxService {
     _connectionStatus.clear();
   }
 }
-
 
 //last update code: 2024-06-17 12:00:00
 /*
@@ -900,7 +897,6 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
       config.onConnected?.call();
 
       // FIX #1 — Store subscription so we can cancel it explicitly
-      // FIX #9 — cancelOnError: true  (stream closes on error, _handleError reconnects)
       final sub = channel.stream.listen(
         (message) {
           final raw = message.toString();

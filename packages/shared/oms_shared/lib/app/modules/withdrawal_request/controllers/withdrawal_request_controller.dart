@@ -11,7 +11,6 @@ class WithdrawalRequestController extends GetxController {
   HomeController homeController = Get.find<HomeController>();
 
   // ==========================================
-  // 🟢 State Variables (For GetBuilder)
   // ==========================================
   bool isFetching = false;
   bool isSubmitting = false;
@@ -125,7 +124,6 @@ class WithdrawalRequestController extends GetxController {
       final response = await homeController.homeRepository.createWithdraw(requestData);
 
       if (response.data != null) {
-        // Context Safety (যদি ডায়ালগ থেকে রিকোয়েস্ট করা হয়)
         if (context.mounted) {
           Navigator.of(context).pop();
         }

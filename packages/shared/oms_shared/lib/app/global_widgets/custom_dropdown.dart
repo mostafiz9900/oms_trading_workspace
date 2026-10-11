@@ -69,7 +69,6 @@ class OrderTypeDropdownListWidget extends ConsumerWidget {
               }).toList();
             },
 
-            // আইটেম এবং চেকমার্ক (আলাদা ValueListenableBuilder এর আর দরকার নেই)
             items: result.map<DropdownItem<String>>((String item) {
               final isSelected = safeValue == item;
               return DropdownItem<String>(
@@ -564,9 +563,6 @@ class WatchDropdownListWidget extends ConsumerWidget {
             onChanged: valueChanged,
             buttonStyleData: ButtonStyleData(padding: .symmetric(horizontal: 16), height: 40, width: Get.width * 0.50),
             dropdownStyleData: DropdownStyleData(maxHeight: Get.height * 0.70),
-            // menuItemStyleData: const MenuItemStyleData(
-            //   height: 40,
-            // ),
             dropdownSearchData: DropdownSearchData(
               searchController: searchController,
               searchBarWidgetHeight: 50,
@@ -611,7 +607,6 @@ class CustomFilterDropdown extends StatelessWidget {
     return PopupMenuButton<String>(
       color: Colors.white,
       offset: const Offset(0, 45),
-      // ড্রপডাউন লিস্টের সাইজ নিয়ন্ত্রণ করা (বড় লিস্টের জন্য)
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.5, // স্ক্রিনের ৪০% হাইট পর্যন্ত হবে
         minWidth: 150,
@@ -739,7 +734,6 @@ class OrderTypeDropdownListWidget extends ConsumerWidget {
             ),
           );
         }).toList(),
-        // 🚀 valueListenable এর বদলে value প্রপার্টি ব্যবহার করা হলো (Standard fix)
         value: selectedValueNotifier.value,
         onChanged: (val) {
           if (val != null) {
@@ -1132,6 +1126,5 @@ class CustomFilterDropdown extends StatelessWidget {
     );
   }
 }
-
 
  */

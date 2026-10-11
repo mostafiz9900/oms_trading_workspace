@@ -9,7 +9,6 @@ class ContactUsView extends GetView<ContactUsController> {
 
   @override
   Widget build(BuildContext context) {
-    // Get.put(ContactUsController());
 
     final bool isDark = context.isDark;
 
@@ -256,7 +255,6 @@ class _ContactCard extends StatelessWidget {
             ),
             const SizedBox(width: 16),
 
-            // Middle Text (Title + Subtitle)
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -283,7 +281,6 @@ class _ContactCard extends StatelessWidget {
             ),
             const SizedBox(width: 8),
 
-            // 🚀 Right Trailing Actions (Copy Button + Action Pill)
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [

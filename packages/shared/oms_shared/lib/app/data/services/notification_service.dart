@@ -68,13 +68,6 @@ class NotificationService {
       return null;
     }
   }
-  // static Future<void> _getToken() async {
-  //   String? token = await _fcm.getToken();
-  //   if (token != null) {
-  //     print('📱 FCM Token: $token');
-  //     await _saveToken(token);
-  //   }
-  // }
 
   static Future<void> _saveToken(String token) async {
     await StorageService.save(StorageConstants.fcmToken, token);
@@ -150,7 +143,6 @@ class NotificationService {
     if (screen != null) {
       // TODO: Navigate to specific screen based on your app's routes
       print('Navigate to: $screen');
-      // Example: Get.toNamed(screen);
     }
   }
 

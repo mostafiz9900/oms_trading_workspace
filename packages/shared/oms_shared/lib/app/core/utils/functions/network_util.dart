@@ -16,11 +16,6 @@ class NetworkUtil {
     return !connectivityResult.contains(connectivity.ConnectivityResult.none);
   }
 
-  // static Future<bool> checkInternetConnection() async {
-  //   final connectivityResult = await connectivity.Connectivity().checkConnectivity();
-  //
-  //   return connectivityResult.contains(connectivity.ConnectivityResult.none);
-  // }
   static Future<bool> checkInternetConnection() async {
     try {
       final result = await InternetAddress.lookup('example.com');
@@ -29,15 +24,6 @@ class NetworkUtil {
       return false;
     }
   }
-
-  // static Future<bool> checkInternetConnection() async {
-  //   try {
-  //     final response = await GetConnect().get('https://google.com').timeout(Duration(seconds: 3));
-  //     return response.statusCode == 200;
-  //   } catch (_) {
-  //     return false;
-  //   }
-  // }
 
   static void networkErrorMessage() {
     if (!Get.isSnackbarOpen) {

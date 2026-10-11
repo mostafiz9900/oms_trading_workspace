@@ -164,7 +164,6 @@ class _TopSummaryDashboard extends StatelessWidget {
 }
 
 // ----------------------------------------------------------------------
-//  Dynamic Table (Original UI Maintained)
 // ----------------------------------------------------------------------
 class _Pro2LineHorizontalTable extends StatelessWidget {
   final PositionController positionCont;
@@ -201,7 +200,6 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (viewMode == 0) {
-      // 🟢 ১. SHOW ALL (Original 2-Line UI)
       double totalTableWidth =
           colInstrument + colPositions + colIntraday + colPrices + colCostValue + colUnrealized + colRealized;
 
@@ -271,7 +269,6 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
         ),
       );
     } else {
-      // 🟢 ২. ৩-কলাম লেআউট (Mobile View - Original Code)
       String col2HeaderTop, col2HeaderBottom, col3HeaderTop, col3HeaderBottom;
 
       if (viewMode == 1) {
@@ -363,7 +360,6 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
     double closeOrSettle = marketData.closeOrSettle;
     double activeLast = marketData.activeLast;
 
-    //  3. JS Logic: Market Value (Only Rem. Qty)
     double marketValue = remQty * activeLast;
 
     //  4. JS Logic: Unrealized PnL
@@ -487,7 +483,6 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
         ],
       );
     } else {
-      // 🟢 Mobile View (Original Logic Kept Intact)
       String col2DataTop, col2DataBottom, col3DataTop, col3DataBottom;
       bool col2TopBold = false, col2BottomBold = false, col3TopBold = false, col3BottomBold = false;
       Color? col2TopColor, col2BottomColor, col3TopColor, col3BottomColor;

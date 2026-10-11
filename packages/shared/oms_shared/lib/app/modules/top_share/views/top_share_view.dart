@@ -51,44 +51,6 @@ class TopShareView extends GetView<TopShareController> {
                 ),
               ),
               AppSpace.spaceH4,
-              /*  Expanded(
-                child: ListView.separated(
-                  itemCount: topShareCon.marketFeedSortList.length,
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                  itemBuilder: (context, index) {
-                    final initialModel = topShareCon.marketFeedSortList[index];
-
-                    if (initialModel.orderBook == null) return const SizedBox.shrink();
-
-                    return GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        Get.find<HomeController>().goBottomNabBarPage(1, initialModel.orderBook!);
-                        Get.find<HomeController>().loadComanyDividentEPS('${initialModel.shortName}');
-                        Get.back();
-                      },
-                      // 🚀 Magic Step: orderBook কে ID হিসেবে দেওয়া হয়েছে (সবচেয়ে সেইফ)
-                      child: GetBuilder<TopShareController>(
-                        id: '${initialModel.orderBook}',
-                        builder: (controller) {
-                          // final latestModel = controller.marketFeedSortList[index];
-                          // ইনডেক্সের ওপর ভরসা না করে সরাসরি orderBook দিয়ে লেটেস্ট ডাটা খুঁজুন
-                          final latestModel = controller.marketFeedSortList.firstWhere(
-                            (e) => e.orderBook == initialModel.orderBook,
-                            orElse: () => initialModel, // যদি কোনো কারণে না পায়, তবে আগেরটাই দেখাবে
-                          );
-                          return _MarketItemWidget(
-                            model: latestModel,
-                            index: index,
-                            activeDuration: controller.activeDurationFilter,
-                          );
-                        },
-                      ),
-                    );
-                  },
-                  separatorBuilder: (_, __) => dividerWidget,
-                ),
-              ), */
               Expanded(
                 child: ListView.separated(
                   itemCount: topShareCon.marketFeedSortList.length,
@@ -98,7 +60,6 @@ class TopShareView extends GetView<TopShareController> {
 
                     if (initialModel.orderBook == null) return const SizedBox.shrink();
 
-                    // 🚀 Magic Step: orderBook কে ID হিসেবে দেওয়া হয়েছে (সবচেয়ে সেইফ)
                     return GetBuilder<TopShareController>(
                       id: '${initialModel.orderBook}',
                       builder: (controller) {
@@ -361,7 +322,6 @@ class _ShareSituationWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = context.isDark;
 
-    // স্ক্রিন উইডথের ওপর ভিত্তি করে ডাইনামিক গ্যাপ তৈরি করা হলো (Responsive Space)
     final double dynamicGap = MediaQuery.of(context).size.width * 0.02; // স্ক্রিনের ২%
 
     return Container(
@@ -378,7 +338,6 @@ class _ShareSituationWidget extends StatelessWidget {
         itemCount: topShareCon.shareSituationList.length,
         scrollDirection: Axis.horizontal,
 
-        // ডাইনামিক ডিভাইডার (Separator)
         separatorBuilder: (context, index) {
           return Center(
             // ভার্টিক্যালি সেন্টারে রাখার জন্য
@@ -437,7 +396,6 @@ class _MarketItemWidget extends StatelessWidget {
   final int index;
   final String activeDuration;
 
-  // 🚀 UI এর ডিউরেশন স্ট্রিং কে এক্সটেনশনের ফরমেটে ম্যাপ করা হচ্ছে[cite: 8]
   String _mapDuration(String duration) {
     switch (duration) {
       case "Weekly":
@@ -461,7 +419,6 @@ class _MarketItemWidget extends StatelessWidget {
     final homeCon = Get.find<HomeController>();
     var favList = homeCon.isFav(model.orderBook!);
 
-    // 🚀 Extension Properties ব্যবহার করে সরাসরি ডাটা ফেচ করা হলো[cite: 8]
     double percentageChange = model.getChangeByDuration(_mapDuration(activeDuration));
     double absoluteChange = model.absoluteChange;
 
@@ -483,7 +440,6 @@ class _MarketItemWidget extends StatelessWidget {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              // 🚀 model.displayName এক্সটেনশন ব্যবহার করা হয়েছে[cite: 8]
                               text: model.displayName,
                               style: Get.textTheme.titleMedium?.copyWith(
                                 color: context.textColor,
@@ -573,7 +529,6 @@ class _MarketItemWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 LiveProBlinker(
-                  // 🚀 model.activePrice এক্সটেনশন ব্যবহার করা হয়েছে[cite: 8]
                   trackValue: model.activePrice,
                   child: Text(
                     model.activePrice.toStringAsFixed(2),

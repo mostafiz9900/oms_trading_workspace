@@ -30,11 +30,9 @@ import 'package:market/market.dart'
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-// import '../../../data/services/sse_db.service.dart';
 import '/app/data/models/request/update_order_holder.dart';
 import '../../../app_pkg.dart';
 import '../../../data/models/marquee_holder.dart';
-// import 'package:sse_channel/sse_channel.dart';
 
 import '../../../data/models/response/companies_model.dart';
 import '../../../data/models/response/dividend_model.dart';
@@ -63,7 +61,6 @@ final userNotifierProvider = NotifierProvider<UserNotifier, UserProfile>(
   () => UserNotifier(),
 );
 
-// final counterProvider=NotifierProvider<CounterNotifier, MyState>(()=>CounterNotifier());
 class UserNotifier extends Notifier<UserProfile> {
   @override
   UserProfile build() {
@@ -93,19 +90,16 @@ final timeAndSalesProvider = FutureProvider<dynamic>((ref) async {
   return;
 });
 
-//class HomeController extends SuperController with WidgetsBindingObserver {
 class HomeController extends SuperController {
   final MarketSocketService marketService = Get.find<MarketSocketService>();
   final CompaniesController companiesController =
       Get.find<CompaniesController>();
   final WebSocketService _webSocketService = WebSocketService.instance;
-  // final SSEService _sseService = SSEService.instance;
   final HomeRepository homeRepository;
   final MarketFavoritesRepository marketFavoritesRepository;
   HomeController({required this.homeRepository})
     : marketFavoritesRepository = homeRepository;
   final marketIndexController = Get.find<MarketIndexController>();
-  // final indexChartController = Get.find<IndexChartController>();
   // Socket data storage
   final Map<String, String> _socketData = {};
   final Map<String, bool> _socketStatus = {};
@@ -124,7 +118,6 @@ class HomeController extends SuperController {
   SideType selectBuySell = SideType.buy;
   //filter data
 
-  // AppLifecycleListener? _listener;
   var currentIndex = 0;
   var previousIndex = 0;
   late ZoomPanBehavior zoomPanBehavior;
@@ -139,16 +132,6 @@ class HomeController extends SuperController {
   String? selectOrderType;
   String? selectType;
   String? selectValidity;
-
-  // late WebSocketChannel channel;
-  // WebSocketChannel? userOrderChannel;
-  // WebSocketChannel? orderStatusChannel;
-  // WebSocketChannel? orderConfirmSock;
-  // WebSocketChannel? timeAndSalesChannel;
-
-  // WebSocketChannel? _statusChannel;
-  // WebSocketChannel? _channel2;
-  // late WebSocketChannel indexChannel;
 
   List<MarketDepthModel> buys = [];
   List<MarketDepthModel> sells = [];
@@ -189,11 +172,6 @@ class HomeController extends SuperController {
   var currentTabIndexPortfolio = 0;
 
   final watchlistTextEditField = TextEditingController();
-  // final tradPriceTextEditField = TextEditingController();
-  // final tradePriceFocusNode = FocusNode();
-  // final disclosedQtyTextEditField = TextEditingController();
-  // final qtyTextEditField = TextEditingController();
-  // final minQtyTextEditField = TextEditingController();
   late TextEditingController disclosedQtyTextEditField;
   late TextEditingController qtyTextEditField;
   late TextEditingController minQtyTextEditField;
@@ -245,7 +223,6 @@ class HomeController extends SuperController {
   @override
   void onInit() async {
     super.onInit();
-    // WidgetsBinding.instance.addObserver(this);
     if (!searchController.hasListeners) {
       searchController.addListener(_onSearchChanged);
     }
@@ -255,13 +232,8 @@ class HomeController extends SuperController {
       update();
     }
     printLog('home controller initialized:: on init');
-    // statusConnect();
     _firstDataLoaded = false;
-    // connectMarketSocket();
-    // notificationSocket();
     initConnect();
-    // _initializeAllWebSockets();
-    // update(['marketList']);
     // যেকোনো ফিল্ডে চেঞ্জ আসলে ক্যালকুলেশন ট্রিগার হবে
     disclosedQtyTextEditField = TextEditingController();
     qtyTextEditField = TextEditingController();
@@ -273,46 +245,12 @@ class HomeController extends SuperController {
 
   //না, এই সেকশনটি (didChangeAppLifecycleState) আর একদমই থাকবে না!
 
-  // @override
-  // void didChangeAppLifecycleState(AppLifecycleState state) {
-  //   super.didChangeAppLifecycleState(state);
-  //   if (!Get.isRegistered<HomeController>()) return;
-  //   if (state == AppLifecycleState.resumed) {
-  //     printLog("▶️ App resumed → reconnecting");
-  //     initConnect();
-  //     reloadHome();
-  //   } else if (state == AppLifecycleState.paused) {
-  //     printLog("⏸️ App paused → closing socket");
-  //     disconnect();
-
-  //     // _disposeSearchController();
-  //   }
-
-  //   switch (state) {
-  //     case AppLifecycleState.paused:
-  //     case AppLifecycleState.inactive:
-  //     case AppLifecycleState.hidden:
-  //       printLog('app is hidden:::::::::::::');
-  //       // _handleAppToBackground();
-  //       break;
-  //     case AppLifecycleState.resumed:
-  //       // _handleAppToForeground();
-  //       printLog('app is resumed::::::::::::');
-  //       break;
-  //     case AppLifecycleState.detached:
-  //       // _disconnectAllWebSockets();
-  //       printLog('app is detached ::::::::::::::::::');
-  //       break;
-  //   }
-  // }
-
   // ================= end index socket ========================
   var timerCont = Get.put<TokenController>(TokenController());
   @override
   Future<void> onReady() async {
     super.onReady();
     reloadHome();
-    // getTimeAndSales();
     qtyTextEditField.addListener(calculateTotal);
     tradPriceTextEditField.addListener(calculateTotal);
     final container = ProviderContainer();
@@ -323,7 +261,6 @@ class HomeController extends SuperController {
     var validity = container.read(validityProvider);
     selectValidity = validity.first;
     marketIndexController.loadData('${newArr?.sn}');
-    // indexChartController.fetchChartData('${newArr?.sn}');
     update();
     update(['total_amount_update']);
     printLog("on ready home controller");
@@ -331,7 +268,6 @@ class HomeController extends SuperController {
 
   @override
   void onClose() {
-    // WidgetsBinding.instance.removeObserver(this);
     disconnect();
     Future.delayed(const Duration(milliseconds: 100), () {
       _disconnectAll();
@@ -359,10 +295,8 @@ class HomeController extends SuperController {
     _initializeMarketWebSocket();
     _initializeNotificationWebSocket();
     _initializeNewsWebSocket();
-    // _initializeIndexWebSocket(); //update live index controller
     _initializeMarketDepthWebSocket();
     _initializeNewsTimeSalesWebSocket();
-    // _initializeOrderConfirmWebSocket();
     printLog('All WebSockets initialized');
   }
 
@@ -414,23 +348,6 @@ class HomeController extends SuperController {
     _socketUrls[socketId] = url;
     _socketData[socketId] = '';
     _socketStatus[socketId] = false;
-    // _clearSocketData(socketId);
-    // _sseService.connect(
-    //   socketId: socketId,
-    //   url: url,
-    //   onMessage: (message) {
-    //     _handleSocketMessage(socketId, message, messageHandler);
-    //   },
-    //   onConnected: () {
-    //     _handleSocketConnected(socketId);
-    //   },
-    //   onDisconnected: () {
-    //     _handleSocketDisconnected(socketId);
-    //   },
-    //   onError: (error) {
-    //     // _handleSocketError(socketId, error);
-    //   },
-    // );
   }
 
   void _handleSocketMessage(
@@ -521,22 +438,9 @@ class HomeController extends SuperController {
   }
 
   void _initializeNotificationWebSocket() {
-    //
-    // _initializeSocket(
-    //   socketId: AppConfig.notificationSocketId,
-    //   url: AppConfig.notificationUrl,
-    //   messageHandler: _handleNotificationMessage,
-    // );
   }
 
   void _initializeNewsWebSocket() {
-    //
-    // _initializeSocket(
-    //   socketId: AppConfig.newsSocketId,
-    //   url: AppConfig.newsUrl,
-    //   messageHandler: _handleNewsMessage,
-    // );
-    //
   }
 
   void _initializeIndexWebSocket() {
@@ -578,7 +482,6 @@ class HomeController extends SuperController {
       return;
     }
 
-    //  আপনার দেওয়া হুবহু URL (individual_id সহ)
     final wsUrl =
         '${AppConfig.socketBaseUrl}order/$boId/?token=$token&individual_id=$deviceId';
     printLog('Initializing Order Confirm Socket: $wsUrl');
@@ -612,14 +515,10 @@ class HomeController extends SuperController {
     );
   }
 
-  // Helper methods:
-
   void _handleMarketMessage(dynamic message) async {
     try {
       final event = MarketTickMessage.decode(message.toString());
       final jsonResponse = event.payload;
-      // printLog(message);
-      // printLog('messageType =============== Handle Market Massage');
       // Handle different message types
       if (event.kind == MarketTickKind.session) {
         currentSession.value = jsonResponse['cs'];
@@ -630,8 +529,6 @@ class HomeController extends SuperController {
         // Handle index data
       } else if (event.kind == MarketTickKind.quote) {
         _processMarketData(jsonResponse);
-        // processTick2(message);
-        // processShareTypeTick(message);
       }
       // Update sector filters
       _updateSectorFilters(jsonResponse);
@@ -660,11 +557,9 @@ class HomeController extends SuperController {
 
   void _processMarketData(Map<String, dynamic> jsonResponse) {
     final incoming = _marketTickStore.apply(jsonResponse);
-    // printLog('market incoming data: ${jsonEncode(jsonResponse)}');
 
     if (incoming == null || incoming.orderBook == null) return;
 
-    //  নির্দিষ্ট একটি রো/আইটেম সাথে সাথে আপডেট হবে (নো ডিলে)
     update(['ITEM_${incoming.orderBook}']);
     _updateMarqueeIncremental(incoming);
 
@@ -779,7 +674,6 @@ class HomeController extends SuperController {
   }
 
   // =================================================================================
-  //  ১. Volume Leaders (ভ্যালুকে ১০ লক্ষ দিয়ে ভাগ করা হয়েছে)
   // =================================================================================
   List<Map<String, dynamic>> _calculateVolumeLeaders(List<MarketModel> list) {
     var filteredList = list.where((m) {
@@ -857,7 +751,6 @@ class HomeController extends SuperController {
   //  ১. O(1) স্পিড এবং জিরো-ল্যাগের জন্য Map এবং ValueNotifier
   final List<MarqueeHolder> marqueeList = [];
 
-  //  ২. Marquee আপডেট ফাংশন (স্মার্ট চেকার সহ)
   // call this after you update _marketMap and marketList
   void _updateMarqueeIncremental(MarketModel incoming) {
     if (incoming.group != "PUBLIC") return;
@@ -871,7 +764,6 @@ class HomeController extends SuperController {
     // If marqueeList is RxList:
     final idx = marqueeList.indexWhere((m) => m.shortName == holder.shortName);
     if (idx >= 0) {
-      // replace existing entry (triggers Rx update)
       marqueeList[idx] = holder;
     } else {
       // add new entry
@@ -915,7 +807,6 @@ class HomeController extends SuperController {
 
       // Small Cap Board এর নাম পরিবর্তন
       if (model.board == "Small Cap Board") {
-        //[cite: 1]
         sectorName = "SME";
       }
 
@@ -974,7 +865,6 @@ class HomeController extends SuperController {
   void _scheduleReconnection() {
     Future.delayed(const Duration(seconds: 5), () {
       printLog('Attempting to reconnect market socket...');
-      // marketSocket();
     });
   }
 
@@ -1005,7 +895,6 @@ class HomeController extends SuperController {
   DateTime _lastIndexUIUpdateTime = DateTime.now();
   Timer? _indexUpdateTimer;
 
-  //  ১. UI এর জন্য ফিল্টার করা লিস্ট (যাতে ListView তে SizedBox দিতে না হয়)
   List<IndexModel> get visibleIndexList {
     return indexList
         .where(
@@ -1106,22 +995,16 @@ class HomeController extends SuperController {
   void getSumOfAllIndex(IndexModel? newIndexData) {
     newArr = newIndexData;
     selectedSn = newIndexData!.sn!;
-    // printLog(newIndexData?.toJson());
-    // update();
     printLog('getSumOfAllIndex called -> ${newArr?.toJson()}');
     update(['indexList']);
   }
 
   void _handleNewsTimeSalesMessage(String message) {
     // Process news and time sales
-    // printLog('News & Time Sales: $message');
     try {
       final jsonResponse = jsonDecode(message);
       final messageType = jsonResponse['tp'];
-      // final messageText = jsonResponse['msg'];
       final data = jsonResponse['d'];
-
-      // printLog('Time & Sales Response - Type: $messageType, Data: $data');
 
       if (messageType == 'tsm') {
         if (data is List) {
@@ -1131,8 +1014,6 @@ class HomeController extends SuperController {
         } else if (data is Map<String, dynamic>) {
           timeAndSales.insert(0, TimeAndSalesModel.fromMap(data));
         }
-        // printLog('time as sell:: $data');
-        // printLog('time as sell length:: ${timeAndSales.length}');
         update(['timeAndSales']);
       } else if (messageType == 'tsb') {
         if (data is List) {
@@ -1157,7 +1038,6 @@ class HomeController extends SuperController {
         } else if (data is Map<String, dynamic>) {
           news.insert(0, NewsModel.fromMap(data));
           //condition order book id jodi match kore tobe add hboe
-          //newsSingleItem.insert(0, NewsModel.fromMap(data));
         } else {
           news.clear();
         }
@@ -1246,7 +1126,6 @@ class HomeController extends SuperController {
     final payload = {"type": type, "ob": orderbookId}; //ob orderbook
     //change for new
     printLog('SendPayload :: $payload');
-    // channelMarketDepth?.sink.add(jsonEncode(payload));
     _webSocketService.sendMessage(
       AppConfig.marketDepthSocketId,
       jsonEncode(payload),
@@ -1258,13 +1137,6 @@ class HomeController extends SuperController {
     int oldOrderBookId =
         await StorageService.read(StorageConstants.orderBookId) ?? 0;
     printLog('old order book id:: $oldOrderBookId');
-    // reconnectMarketDepth();
-    // _initializeMarketDepthWebSocket();
-    // _initializeSocket(
-    //   socketId: AppConfig.marketDepthSocketId,
-    //   url: AppConfig.marketDepthUrl,
-    //   messageHandler: _handleMarketDepthMessage,
-    // );
     if (oldOrderBookId != newOrderBookId) {
       _sendMarketDepthPayload(AppConstants.unsubscribe, oldOrderBookId);
       _sendMarketDepthPayload(AppConstants.subscribe, newOrderBookId);
@@ -1276,7 +1148,6 @@ class HomeController extends SuperController {
     }
   }
 
-  // WebSocketChannel? channelMarketDepth;
   //end market depth
   Function(String) _getMessageHandler(String socketId) {
     switch (socketId) {
@@ -1308,30 +1179,6 @@ class HomeController extends SuperController {
   }
 
   void reconnectSocket(String socketId) {
-    /* if (_webSocketService.channels.containsKey(socketId)) {
-      _webSocketService.disconnect(socketId);
-      // Reinitialize the specific socket
-      switch (socketId) {
-        case AppConfig.marketSocketId:
-          _initializeMarketWebSocket();
-          break;
-        case AppConfig.notificationSocketId:
-          _initializeNotificationWebSocket();
-          break;
-        case AppConfig.newsSocketId:
-          _initializeNewsWebSocket();
-          break;
-        case AppConfig.indexSocketId:
-          _initializeIndexWebSocket();
-          break;
-        case AppConfig.marketDepthSocketId:
-          _initializeMarketDepthWebSocket();
-          break;
-        case AppConfig.newsTimeSalesSocketId:
-          _initializeNewsTimeSalesWebSocket();
-          break;
-      }
-    }*/
   }
 
   void reconnectMarketDepth() {
@@ -1429,11 +1276,6 @@ class HomeController extends SuperController {
     return _socketUrls.keys.any((socketId) => !_socketStatus[socketId]!);
   }
   // Refresh all sockets
-  // Future<void> refreshAllSockets() async {
-  //   for (var socketId in _socketUrls.keys) {
-  //     await refreshSocket(socketId);
-  //   }
-  // }
 
   // Connection status checkers
   bool isSocketConnected(String socketId) => _socketStatus[socketId] ?? false;
@@ -1476,11 +1318,6 @@ class HomeController extends SuperController {
   }
 
   void disconnect() {
-    // _channelUserBalance = null;
-    // _isUserBalanceConnected = false;
-    // // userOrderChannel?.sink.close();
-    // orderStatusChannel?.sink.close();
-    // orderConfirmSock?.sink.close();
     _disconnectAll();
   }
 
@@ -1495,16 +1332,10 @@ class HomeController extends SuperController {
       enablePanning: true,
     );
     tooltipBehavior = TooltipBehavior(enable: true);
-    // indexSocket();
     _initializeAllWebSockets();
-    // await marketSocket();
-    // initMarketDepthSocket();
 
-    // connectTimeAndSalesAndNotification();
-    // subscribeTimeAndSalesNews('news',"03");
     await tradingChart();
 
-    // selectSector=filtersSectorList.first;
   }
 
   Future<void> reloadHome() async {
@@ -1519,7 +1350,6 @@ class HomeController extends SuperController {
     printLog('deviceId :::: $deviceId');
 
     var isToken = await StorageService.read(StorageConstants.token);
-    // var refreshToken = await StorageService.read(StorageConstants.refreshToken);
 
     printLog('isToken home controller::::: $isToken');
 
@@ -1561,7 +1391,6 @@ class HomeController extends SuperController {
         await biometricActive(null, false);
         await logout(ctx);
       } else {
-        // await bioCon.enableBiometric();
         printLog('Biometric enabled locally');
         await biometricActive(deviceId, true);
         await logout(ctx);
@@ -1656,12 +1485,7 @@ class HomeController extends SuperController {
           'countback': '330',
         },
       );
-      // printLog('statusCode :::::: ${response.statusCode}');
-      // printLog('headers :::::: ${response.headers}');
-      // printLog('request headers :::::: ${response.request?.headers}');
-      // printLog('body :::::: ${response.bodyString}');
       if (response.isOk) {
-        // printLog('trading chart data :::::: ${response.bodyString}');
         final Map<String, dynamic> jsonMap = json.decode(response.bodyString!);
         final chart = TradingChartModel.fromJson(jsonMap);
         printLog("Open: ${chart.o?.first}");
@@ -1713,7 +1537,6 @@ class HomeController extends SuperController {
   }
 
   void toggleSide(SideType name) {
-    // selectBuySell = selectBuySell == SideType.buy ? SideType.sell : SideType.buy;
     selectBuySell = name;
     update(['market_depth']);
   }
@@ -1758,7 +1581,6 @@ class HomeController extends SuperController {
   String currentSortOrder = 'ASC'; // ডিফল্ট ASC
   String currentSortCategory = 'A-Z';
   void searchOld(String query) {
-    // filteredItems.clear();
     if (query.isEmpty) {
       filteredItems = marketList;
     } else {
@@ -1775,10 +1597,8 @@ class HomeController extends SuperController {
   }
 
   void searchSectorOld(String query) {
-    // filteredItems.clear();
     printLog('data: ${marketList.first.toJson()}');
     selectSector = query;
-    // update();
     if (query == 'All') {
       filteredItems = marketList;
       update(['marketList']);
@@ -1806,14 +1626,12 @@ class HomeController extends SuperController {
     applyFilters();
   }
 
-  // ক্যাটাগরি পরিবর্তনের জন্য (যেমন: A-Z, Price, Volume)
   void updateSortCategory(String category) {
     currentSortCategory = category;
     update(['sortCategoryDropdown']); // Category ড্রপডাউন আপডেট হবে
     applyFilters();
   }
 
-  // অর্ডার পরিবর্তনের জন্য (ASC, DESC)
   void updateSortOrder(String order) {
     currentSortOrder = order;
     update(['sortOrderDropdown']); // Order ড্রপডাউন আপডেট হবে
@@ -1845,7 +1663,6 @@ class HomeController extends SuperController {
           .toList();
     }
 
-    // ৩. মার্জ করা সর্টিং লজিক (Category + Order)
     results.sort((a, b) {
       int comparison = 0;
 
@@ -1968,10 +1785,8 @@ class HomeController extends SuperController {
   }
 
   void updateQuantity(String value) {
-    // ১. বর্তমান ইনপুট ফিল্ডে থাকা ভ্যালু (যদি খালি থাকে তবে 0 ধরবে)
     double currentValue = double.tryParse(qtyTextEditField.text) ?? 0.0;
 
-    // ২. বাটনের ভ্যালুকে সংখ্যায় রূপান্তর (1K হলে 1000, অন্যথায় ইনপুট ভ্যালু)
     double newValue = (value == '1K')
         ? 1000.0
         : (double.tryParse(value) ?? 0.0);
@@ -1979,7 +1794,6 @@ class HomeController extends SuperController {
     // ৩. যোগফল বের করা
     double total = currentValue + newValue;
 
-    // ৪. টেক্সট কন্ট্রোলারে সেট করা (দশমিক এড়িয়ে পূর্ণসংখ্যা দেখাতে .toInt())
     // যদি আপনার কোয়ান্টিটি দশমিক হতে পারে তবে .toInt() বাদ দিবেন
     qtyTextEditField.text = total.toInt().toString();
 
@@ -1992,7 +1806,6 @@ class HomeController extends SuperController {
   }
 
   Future<bool?> refreshTokenIfNeeded() async {
-    // var accessToken = await StorageService.read(StorageConstants.refreshToken);
     final res = await homeRepository.refreshTokenIfNeeded(
       watchlistTextEditField.text,
     );
@@ -2020,20 +1833,12 @@ class HomeController extends SuperController {
       printLog(res?.success);
       if (res?.success == true) {
         watchlistTextEditField.clear();
-        // requestEmail = email.text;
-        // email.clear();
-        // forgotRes = res?.data;
-        // printLog(forgotRes?.toMap());
-        // Get.back();
-        // callBackFunction(VerificationCode(response: forgotRes!), false);
         isCreateFavCat = false;
         update();
         getFavCategory();
         Get.back();
-        //EasyLoading.dismiss();
       } else {
         Helpers.snackbarForErorr2(bodyText: res?.errorMessage ?? "");
-        // printLog('set forget password error :: ${res?.errorMessage}');
         isCreateFavCat = false;
         update();
       }
@@ -2084,10 +1889,8 @@ class HomeController extends SuperController {
         isCreateFavCat = false;
         update();
         Get.back();
-        // Helpers.snackBarForSuccess2(bodyText: res?.data ?? "");
         return true;
       } else {
-        // Helpers.snackbarForErorr2(bodyText: res?.errorMessage ?? "");
         isCreateFavCat = false;
         update();
         return false;
@@ -2161,7 +1964,6 @@ class HomeController extends SuperController {
         requestData,
       );
       printLog('res?.data?.toMap()');
-      // printLog(res?.data?.toMap());
       if (res?.success == true) {
         selectFavCatId = 0;
         isAddFavCat = false;
@@ -2329,8 +2131,6 @@ class HomeController extends SuperController {
           printLog(item.toJson());
         }
       } else {
-        // AppHelper.snackbarForErorr(bodyText: res?.errorMessage ?? "");
-        // printLog('set forget password error :: ${res?.errorMessage}');
         isGetFavCat = false;
         update();
       }
@@ -2355,7 +2155,6 @@ class HomeController extends SuperController {
             onPressed: () {
               Get.back();
               setBuySellActive(SideType2.BUY);
-              // homeCon.changeCurrentIndex(4);
               goBottomNabBarPage(5, orderBookId);
             },
             child: Text(
@@ -2373,7 +2172,6 @@ class HomeController extends SuperController {
             onPressed: () {
               Get.back();
               setBuySellActive(SideType2.SELL);
-              // homeCon.changeCurrentIndex(4);
               goBottomNabBarPage(5, orderBookId);
             },
             child: Text(
@@ -2428,7 +2226,6 @@ class HomeController extends SuperController {
       printLog("⚠️ Tick missing symbol: $tick");
       return; // বা continue; যদি loop এর মধ্যে হয়
     }
-    // final String symbol = tick["sn"];
     final int orderBookId = tick["ob"];
     final String sector = tick["sc"];
     final double price = (tick["lp"] as num).toDouble();
@@ -2471,7 +2268,6 @@ class HomeController extends SuperController {
 
   // convert sector summary to chart-friendly format
 
-  // List<Map<String, dynamic>> chartDataShareType = [];
   Set<String> processedOrderBookIds = {}; // ✅ to avoid duplicates
   //2nd one
   Map<String, Map<String, int>> get sectorShareTypeSummary =>
@@ -2482,9 +2278,7 @@ class HomeController extends SuperController {
       _marketStatistics.getShareTypeChartData();
 
   //new task end
-  // WebSocketChannel? _channelUserBalance;
   UserBalance? userBalanceData;
-  // bool _isUserBalanceConnected = false;
   // 🚀 লোডারের জন্য নতুন ভেরিয়েবল
   bool isUserBalanceLoading = false;
   void userBalance() async {
@@ -2539,7 +2333,6 @@ class HomeController extends SuperController {
   }
 
   // ==========================================
-  // 📥 ২. Message Handler (Clean Architecture)
   // ==========================================
   void _handleUserBalanceMessage(dynamic message) {
     printLog('📩 User Balance Socket Message Received: $message');
@@ -2565,50 +2358,6 @@ class HomeController extends SuperController {
       update(['user_balance_update']);
     }
   }
-  /*  void userBalanceOld() async {
-    if (_isUserBalanceConnected) {
-      printLog('🔄 User balance socket already connected');
-      return;
-    }
-    printLog('📡 Connecting user balance socket');
-    var token = await StorageService.read(StorageConstants.token);
-    final boId = userInfo.userDetail?.boId;
-
-    if (token == null || boId == null) {
-      printLog('❌ Cannot connect balance socket. Missing token or boId');
-      return;
-    }
-    final url = '${AppConfig.socketBaseUrl}cash/$boId/?token=$token';
-    printLog('url ::==== $url');
-
-    _channelUserBalance = WebSocketChannel.connect(Uri.parse(url));
-    _isUserBalanceConnected = true;
-
-    _channelUserBalance!.stream.listen(
-      (message) {
-        try {
-          final jsonResponse = jsonDecode("$message");
-          // final messageType = jsonResponse[AppConstants.messageType];
-          // final messageText = jsonResponse[AppConstants.message];
-          final data = jsonResponse[AppConstants.data];
-          printLog('🧾 Data balance :: $data');
-          var response = userBalanceFromJson(data);
-          userBalanceData = response.first;
-          update();
-        } catch (e) {
-          printLog('❌ Error parsing user balance socket data: $e');
-        }
-      },
-      onDone: () {
-        printLog('🔌 Balance socket closed');
-        _isUserBalanceConnected = false;
-      },
-      onError: (error) {
-        printLog('❗ Balance socket error: $error');
-        _isUserBalanceConnected = false;
-      },
-    );
-  } */
 
   List<StackedColumnSeries<MarketModel, String>> buildStackedColumnSeries() {
     List<StackedColumnSeries<MarketModel, String>> seriesList = [];
@@ -2635,7 +2384,6 @@ class HomeController extends SuperController {
   }
 
   void newMarketInfo(int orderBookId) async {
-    // searchController.clear();
     printLog(orderBookId);
     searchController.clear();
     await manageMarketDepth(orderBookId);
@@ -2646,7 +2394,6 @@ class HomeController extends SuperController {
 
     if (!isClosed) {
       // update data
-      // update();
     }
     Get.back();
     marketListForDilog = marketListAll;
@@ -2661,132 +2408,6 @@ class HomeController extends SuperController {
     subscribeTimeAndSales('news_hist', '04', '$orderBookId');
     update(['marketList']);
   }
-  /* 
-  var userOrder = UserOrderModel();
-  List<UserOrder> userOrderList = [];
-  bool isLoadingUserOrder = false;
-  Future<void> getUserOrder() async {
-    printLog('user order socket called::::::::  ');
-    printLog(userInfo.toJson());
-    isLoadingUserOrder = true;
-    update();
-    // var traderCode = userInfo.userDetail?.traderCode;
-    var boId = userInfo.userDetail?.boId;
-    // var clientCode = userInfo.userDetail?.investorCode;
-    var token = await StorageService.read(StorageConstants.token);
-    // var refreshToken = await StorageService.read(StorageConstants.refreshToken);
-    final wsUrl = Uri.parse('${AppConfig.socketBaseUrl}order/$boId/?token=$token');
-    printLog('get oreder :::: $wsUrl');
-    userOrderChannel?.sink.close();
-    userOrderChannel = WebSocketChannel.connect(wsUrl);
-    try {
-      // await userOrderChannel.ready;
-      userOrderList.clear();
-      userOrderChannel?.stream.listen(
-        (message) {
-          final jsonResponse = jsonDecode("$message");
-          final messageType = jsonResponse['message_type'];
-          final messageText = jsonResponse['message'];
-          final data = jsonResponse['data'];
-          printLog('get user data:: $jsonResponse');
-          if (messageType == AppConstants.connection) {
-            // printWrapped('get order:: $message');
-            // List<UserOrder> convertedCart = [];
-            userOrder = UserOrderModel.fromJson(jsonDecode("$message"));
-            for (final order in jsonDecode("$message")['data']) {
-              // printLog('order;:: ${order}');
-              var userOrder = UserOrder.fromJson(order);
-              userOrderList.add(userOrder);
-              update([AppConstants.orderList]);
-            }
-            var abc = userOrderFromJson(jsonDecode("$message")['data']);
-            for (final order in abc) {
-              // printLog(order);
-              // var userOrder =UserOrder.fromJson(order);
-              // userOrderList.add(userOrder);
-            }
-
-            // userOrderList.addAll(convertedCart);
-
-            // update();
-            // printWrapped('${market.toJson()}=====');
-          } else if (messageType == AppConstants.orderError) {
-            printLog("❌ 🙈 Order Error: $messageText");
-            Get.snackbar("Order Update Failed", messageText, backgroundColor: Colors.red, colorText: Colors.white);
-            // orderConfirmSock.sink.close(status.normalClosure);
-          } else if (messageType == AppConstants.orderSubmitted) {
-            //
-            // orderConfirmSock.sink.close(status.normalClosure);
-            // clearAllFields();
-            // currentIndex = 2;
-            // Get.offNamed(Routes.HOME);
-            Helpers.snackBarForSuccess2(bodyText: '$messageText');
-          } else if (messageType == AppConstants.orderReport) {
-            // Get.snackbar("Order Update Successful", "Order placed successfully.",
-            //         backgroundColor: Colors.green, colorText: Colors.white);
-            printLog("✅  Order report message: $message");
-            printLog("✅  Order report data: ${jsonEncode(data)}");
-            printLog("✅  Order Update Success:==== ${jsonEncode(data)}");
-            printLog("✅  Order Update Success:==== $data");
-            UserOrder singleData = UserOrder.fromJson(data);
-            printLog('================ one ===============');
-            final index = userOrder.data?.indexWhere(
-              (element) => element.clientOrderId?.trim() == singleData.clientOrderId?.trim(),
-            );
-            printLog('index::: $index');
-            // if (index == null || index == -1) {
-            //   userOrder.data?.add(singleData);
-            // } else {
-            //   final updatedList = List<UserOrder>.from(userOrder.data!);
-            //   updatedList[index] = singleData;
-            //   userOrder = userOrder.copyWith(data: updatedList);
-            // }
-            final exists =
-                userOrder.data?.any((element) => element.clientOrderId?.trim() == singleData.clientOrderId?.trim()) ??
-                false;
-
-            if (exists) {
-              var newData = userOrder.data?.map((element) {
-                if (element.clientOrderId?.trim() == singleData.clientOrderId?.trim()) {
-                  return singleData;
-                }
-                return element;
-              }).toList();
-              userOrder = userOrder.copyWith(data: newData);
-            } else {
-              // add new
-              userOrder = userOrder.copyWith(data: [...?userOrder.data, singleData]);
-            }
-            update([AppConstants.orderList]);
-          } else {
-            printLog('orderConfirmSockL 📞 😅 =======$message');
-          }
-        },
-        cancelOnError: true,
-        onError: (error) {
-          // debugPrint('WebSocket error getuserorder: ${(error as WebSocketChannelException).message}');
-          // handleReconnect();
-        },
-        onDone: () {
-          debugPrint('✅ WebSocket closed getuserorder');
-          // handleReconnect();
-        },
-      );
-    } catch (e) {
-      // userOrderChannel?.sink.close();
-      if (e is WebSocketException) {
-        printLog('get order WebSocketException: ${e.message}');
-      } else {
-        printLog('Other exception: $e');
-      }
-    }
-    Future.delayed(const Duration(seconds: 1), () {
-      isLoadingUserOrder = false;
-      update([AppConstants.orderList]);
-    });
-
-    update();
-  } */
 
   void filterWatchListMain(String data) {
     watchListFilterBoard = data;
@@ -2827,14 +2448,12 @@ class HomeController extends SuperController {
       }
     }
     update();
-    // }
   }
 
   void changeTabIndex(int index) {
     printLog('changeTabIndex -- :: ');
     printLog(marketList.isEmpty);
     if (marketList.isEmpty) {
-      // marketSocket();
     }
     if (watchListFilterFavorite == 0 && favCatList.isNotEmpty) {
       watchListFilterFavorite = favCatList.elementAt(0).id!;
@@ -2852,7 +2471,6 @@ class HomeController extends SuperController {
     // একই ট্যাবে আবার ক্লিক করলে কিছুই হবে না
     if (currentIndex == index) return;
 
-    //  ২. Auth Check (লগিন ছাড়া ৩, ৪, ৫ নম্বর ট্যাবে যাওয়া ব্লক করা হলো)
     if (index >= 3) {
       if (await StorageService.read(StorageConstants.token) == null) {
         Helpers.showLoginRequiredDialog();
@@ -2860,7 +2478,6 @@ class HomeController extends SuperController {
       }
     }
 
-    //  ৩. History Update (যে ট্যাবে যাচ্ছে, সেটি হিস্ট্রির লাস্টে যুক্ত হবে)
     tabHistory.remove(
       index,
     ); // যদি আগে থেকেই লিস্টে থাকে, সেটা রিমুভ করবে (যাতে ডুপ্লিকেট না হয়)
@@ -2869,9 +2486,7 @@ class HomeController extends SuperController {
       currentIndex = index;
       update();
       if (marketList.isEmpty) {
-        // marketSocket();
       }
-      // notificationSocket();
     } else if (index == 1) {
       printLog('change tab index $index');
       currentIndex = index;
@@ -2890,7 +2505,6 @@ class HomeController extends SuperController {
         Helpers.showLoginRequiredDialog();
       } else {
         currentIndex = index;
-        // tradPriceTextEditField.text = (marketData.last?.toStringAsFixed(2) ?? '0.00');
       }
     } else if (index == 5) {
       if (await StorageService.read(StorageConstants.token) == null) {
@@ -2924,9 +2538,7 @@ class HomeController extends SuperController {
       currentIndex = index;
       update();
       if (marketList.isEmpty) {
-        // marketSocket();
       }
-      // notificationSocket();
     } else if (index == 1) {
       printLog('change tab index $index');
       currentIndex = index;
@@ -3001,7 +2613,6 @@ class HomeController extends SuperController {
   Future<void> loadEPS(String symbol) async {
     int year = DateTime.now().year;
     epsData = await companiesController.getYearlyEPS(symbol, year);
-    // printLog('${epsData.keys} EPS : ${epsData["Q1"]!.toMap()}');
     update(['marketList']);
   }
 
@@ -3018,34 +2629,27 @@ class HomeController extends SuperController {
     try {
       if (index == 0) {
         printLog('change tab index $index');
-        // marketSocket();
         currentIndex = index;
       } else if (index == 1) {
         currentIndex = index;
         currentTabIndexQuote = 0;
         update();
-        // notification Socket();
         printLog('orderBookId:: $orderBookId');
         await manageMarketDepth(orderBookId);
-        // changeTabQuote(0);
         subscribeTimeAndSales("tsm", "01", "$orderBookId");
         subscribeTimeAndSales("tsb", "02", "$orderBookId");
         subscribeTimeAndSales("news_hist", "04", "$orderBookId");
       } else if (index == 2) {
         printLog('change tab index $index');
-        // marketSocket();
-        // await manageMarketDepth(orderBookId);
         currentIndex = index;
       } else if (index == 3) {
         printLog('change tab index $index');
-        // marketSocket();
         if (await StorageService.read(StorageConstants.token) == null) {
           Helpers.showLoginRequiredDialog();
         } else {
           currentIndex = index;
         }
       } else if (index == 4) {
-        // await manageMarketDepth(orderBookId);
         if (await StorageService.read(StorageConstants.token) == null) {
           Helpers.showLoginRequiredDialog();
         } else {
@@ -3056,7 +2660,6 @@ class HomeController extends SuperController {
           update();
         }
       } else if (index == 5) {
-        // await manageMarketDepth(orderBookId);
         if (await StorageService.read(StorageConstants.token) == null) {
           Helpers.showLoginRequiredDialog();
         } else {
@@ -3064,7 +2667,6 @@ class HomeController extends SuperController {
           await manageMarketDepth(orderBookId);
           printLog('change tab index=== $currentIndex');
           update();
-          // await manageMarketDepth(orderBookId);
         }
       }
     } catch (error) {
@@ -3077,27 +2679,6 @@ class HomeController extends SuperController {
   Map<double, List<MarketOrderModel>> orderMap = {};
   Map<double, List<MarketOrderModel>> orderDepthMap = {};
   MarketModel marketData = MarketModel();
-  /*  void markerInfo() async {
-    int orderBook = await StorageService.read(StorageConstants.orderBookId) ?? 0;
-    if (marketList.isEmpty) {
-      update(['marketList']);
-      return;
-    }
-    if (orderBook == 0) {
-      marketData = marketList.first;
-      // marketData = marketData.mergeUpdate(marketList.first.toJson());
-      await StorageService.save(StorageConstants.orderBookId, marketList.first.orderBook);
-      _sendMarketDepthPayload(AppConstants.subscribe, marketData.orderBook!);
-      loadComanyDividentEPS('${marketData.shortName}');
-    } else if (marketList.isNotEmpty) {
-      marketData = marketList.firstWhere((c) => c.orderBook == orderBook, orElse: () => MarketModel());
-      // marketData = marketData.mergeUpdate(marketDataGet.toJson());
-      if (marketData.orderBook == null) {
-        marketData = marketList.first;
-      }
-    }
-    update(['marketList']);
-  } */
 
   Future<void> markerInfo() async {
     int orderBook =
@@ -3159,7 +2740,6 @@ class HomeController extends SuperController {
     }
 
     // Remove entries with only one product (no duplicates)
-    // priceMap.removeWhere((key, value) => value.length == 1);
     for (var item in priceMap.values) {
       for (var i in item) {
         printLog(i.price);
@@ -3180,7 +2760,6 @@ class HomeController extends SuperController {
     for (var order in orders) {}
 
     // Remove entries with only one product (no duplicates)
-    // priceMap.removeWhere((key, value) => value.length == 1);
     for (var item in priceMap.values) {
       for (var i in item) {
         printLog(i.price);
@@ -3216,13 +2795,6 @@ class HomeController extends SuperController {
     return userInfo.userDetail?.boId;
   }
 
-  // final List<Widget> screens = const [
-  //   QuoteWidget(),
-  //   WatchListWidget(),
-  //   MarketWidget(),
-  //   PortfolioWidget(),
-  //   TradeWidget(),
-  // ];
   Future<AppExitResponse> _onExitRequested() async {
     final response = await showDialog<AppExitResponse>(
       context: Get.overlayContext!,
@@ -3279,7 +2851,6 @@ class HomeController extends SuperController {
   }
 
   // =========================================================================
-  //  ORDER CONFIRMATION SOCKET (With Exact Old URL)
   // =========================================================================
   var userOrder = UserOrderModel();
   List<UserOrder> userOrderList = [];
@@ -3288,7 +2859,6 @@ class HomeController extends SuperController {
   bool isOrderConfirmLoading = false;
 
   // =========================================================================
-  //  UNIFIED ORDER & ALERT SOCKET HANDLER (Based on JS Logic)
   // =========================================================================
   void _handleOrderConfirmMessage(String message) {
     printLog(' RAW Socket Message: $message');
@@ -3301,7 +2871,6 @@ class HomeController extends SuperController {
       final dataPayload = jsonResponse['data'];
       final alertPayload = jsonResponse['alert'];
 
-      //  FIX ২: Array/List মেসেজ হ্যান্ডেল করা (JS Code অনুযায়ী)
       final rawMessage = jsonResponse['message'];
       String messageText = "Unknown Error";
       if (rawMessage is List && rawMessage.isNotEmpty) {
@@ -3362,7 +2931,6 @@ class HomeController extends SuperController {
           );
 
           clearAllFields();
-          // গ্লোবাল ইনডেক্স আপডেট (Portfolio/Order List ট্যাবে যাওয়ার জন্য)
           currentIndex = 4;
           currentTabIndexPortfolio = 1;
           update();
@@ -3374,7 +2942,6 @@ class HomeController extends SuperController {
           }
           break;
         // ==========================================
-        // 🔴 ৩. Order Error (FIXED)
         // ==========================================
         case AppConstants.orderError:
           printLog("❌ Order Error: $messageText");
@@ -3417,7 +2984,6 @@ class HomeController extends SuperController {
           break;
 
         // ==========================================
-        // 🔵 ৬. Order Report (Single Order Update)
         // ==========================================
         case AppConstants.orderReport:
           if (dataPayload is Map<String, dynamic>) {
@@ -3502,7 +3068,6 @@ class HomeController extends SuperController {
     }
   }
   // =========================================================================
-  //  HELPER FUNCTIONS (Optimized for O(N) Performance)
   // =========================================================================
 
   void _removeOrderFromList(UserOrder singleData) {
@@ -3538,7 +3103,6 @@ class HomeController extends SuperController {
       userOrder = userOrder.copyWith(data: [singleData, ...currentData]);
     }
 
-    //  ২. Update Active List (userOrderList)
     final listIndex = userOrderList.indexWhere(
       (e) => e.clientOrderId?.trim() == clientId,
     );
@@ -3564,7 +3128,6 @@ class HomeController extends SuperController {
     }
   }
 
-  //  ৩. মেইন সাবমিট ফাংশন (শুধুমাত্র ডেটা সেন্ড করবে)
   void orderConfirmSubmitted(
     SideType2 sideType,
     ActionsType action, {
@@ -3601,97 +3164,12 @@ class HomeController extends SuperController {
 
       printLog('📤 Sending Order Data: ${jsonEncode(actionData)}');
       sendMessage(AppConfig.orderConfirmSocketId, jsonEncode(actionData));
-      // orderConfirmSock?.sink.add(jsonEncode(actionData));
     } catch (e) {
       isOrderConfirmLoading = false;
       update(['order_confirm_btn']);
       printLog('❌ WebSocket connection failed: $e');
     }
   }
-
-  /*   void orderConfirmSubmittedOld(SideType2 sideType, ActionsType action, {UserOrder? order}) async {
-    if (!await checkInternet()) return;
-    isOrderConfirmLoading = true;
-    var deviceId = await Helpers.getDeviceIdUuid();
-    var traderCode = userInfo.userDetail?.traderCode;
-    var boId = userInfo.userDetail?.boId;
-    var clientCode = userInfo.userDetail?.investorCode;
-    var marketPrice = marketData.reference;
-    var price = double.parse(tradPriceTextEditField.text);
-    var qty = int.parse(qtyTextEditField.text);
-    final sendPrice = (selectOrderType?.toUpperCase() != 'LIMIT' && sideType == SideType2.BUY) ? marketPrice : price;
-    var token = await StorageService.read(StorageConstants.token);
-    final wsUrl = Uri.parse('${AppConfig.socketBaseUrl}order/$boId/?token=$token&individual_id=$deviceId');
-    printLog('order confirms submitted: ${wsUrl}');
-    printLog(clientCode);
-    printLog(traderCode);
-    orderConfirmSock = WebSocketChannel.connect(wsUrl);
-    try {
-      await orderConfirmSock?.ready;
-      orderConfirmSock?.stream.listen(
-        (dynamic message) {
-          final jsonResponse = jsonDecode(message);
-          final messageType = jsonResponse['message_type'];
-          final messageText = jsonResponse['message'];
-          final data = jsonResponse['data'];
-          if (messageType == AppConstants.connection) {
-            debugPrint('message $message');
-            debugPrint('jsonResponse $jsonResponse');
-            debugPrint('messageText $messageText');
-            debugPrint('messageText $messageText');
-            debugPrint('data $data');
-          } else if (messageType == AppConstants.orderError) {
-            isOrderConfirmLoading = false;
-            printLog("❌ Order Error: $messageText");
-            Get.snackbar("Order Failed", messageText, backgroundColor: Colors.red, colorText: Colors.white);
-            orderConfirmSock?.sink.close();
-            update();
-          } else if (messageType == AppConstants.orderSubmitted) {
-            isOrderConfirmLoading = false;
-            printLog("✅ Order Success: ${jsonEncode(data)}");
-            Get.snackbar(
-              "Order Successful",
-              "Order placed successfully.",
-              backgroundColor: Colors.green,
-              colorText: Colors.white,
-            );
-            orderConfirmSock?.sink.close();
-            clearAllFields();
-            currentIndex = 4;
-            currentTabIndexPortfolio = 1;
-            Get.offNamed(Routes.HOME);
-          } else {
-            printLog("ℹ️ Unknown Message Type: $messageType");
-          }
-        },
-        cancelOnError: true,
-        onDone: () {
-          debugPrint('order confirm ws channel closed');
-        },
-        onError: (error) {
-          isOrderConfirmLoading = false;
-          debugPrint('order confirm ws error $error');
-        },
-      );
-      final reqBody = _buildReqBody(action, sideType, qty, sendPrice);
-      printLog('sent request:: ${jsonEncode(reqBody)}');
-      printLog('sent marketData------:: ${marketData.toJson()} end::');
-      var actionData = action == ActionsType.ORDER ? reqBody.toJson() : reqBody.toJsonReplaceOrder();
-      printLog('actionData:::::::::::: ${jsonEncode(actionData)}');
-      orderConfirmSock?.sink.add(jsonEncode(actionData));
-    } catch (e) {
-      isOrderConfirmLoading = false;
-      //final we = e as WebSocketChannelException;
-      //printLog('${we1.message}');
-      //printLog('${we.inner}');
-      //printLog('${we.inner.message}');
-      printLog('WebSocket connection failed: $e');
-    }
-    Future.delayed(const Duration(seconds: 1), () {});
-
-    printLog('Socket db service initialized=  ${marketList.length}=');
-    update();
-  } */
 
   void orderDuplicateSubmitted(ActionsType action, {UserOrder? order}) async {
     //  ১. ইন্টারনেট চেক
@@ -3724,7 +3202,6 @@ class HomeController extends SuperController {
       return; // অবৈধ ডেটা সকেটে পাঠানো বন্ধ করা হলো
     }
 
-    //  ৪. Safe Parsing (লাইভ অ্যাপ ক্র্যাশ রোধ করার জন্য)
     // .parse এর বদলে .tryParse ব্যবহার করা হয়েছে, যাতে null/ফাঁকা আসলে ক্র্যাশ না করে 0.0 বসিয়ে দেয়।
     var price = double.tryParse('${order.limit}') ?? 0.0;
     var qty = int.tryParse('${order.sentQty}') ?? 0;
@@ -3769,7 +3246,6 @@ class HomeController extends SuperController {
         await Future.delayed(const Duration(seconds: 1));
       }
 
-      //  ৬. Final Verification (১ সেকেন্ড পরও কানেক্ট না হলে)
       if (!isSocketConnected(AppConfig.orderConfirmSocketId)) {
         Get.snackbar(
           "Connection Failed",
@@ -3788,7 +3264,6 @@ class HomeController extends SuperController {
       update([AppConstants.orderList]);
 
       // অপশনাল: ইউজারকে একটি সাকসেস স্নাইকবার দেখানো যেতে পারে
-      // Get.snackbar("Request Sent", "Duplicate order submitted.", backgroundColor: Colors.green, colorText: Colors.white);
     } catch (e) {
       printLog('❌ Unknown exception during duplicate order: $e');
       Get.snackbar(
@@ -3807,10 +3282,7 @@ class HomeController extends SuperController {
     UserOrder? order,
   }) async {
     if (!await checkInternet()) return;
-    // var traderCode = userInfo.userDetail?.traderCode;
-    // var boId = userInfo.userDetail?.boId;
     var clientCode = userInfo.userDetail?.investorCode;
-    // var marketPrice = marketData.reference;
     final marketFindByOrderBookId = getMarketByOrderBookId(
       order?.orderBookId ?? 0,
     );
@@ -3825,7 +3297,6 @@ class HomeController extends SuperController {
     }
     var price = double.parse('${order?.limit}');
     var qty = int.parse('${order?.sentQty}');
-    // var token = await StorageService.read(StorageConstants.token);
     OrderConfirmRequest requestBody = OrderConfirmRequest(
       action: actionValues[action],
       traderPk: userInfo.userDetail?.traderId,
@@ -3856,7 +3327,6 @@ class HomeController extends SuperController {
       'Sending replace order----: ${jsonEncode(requestBody.toJson())}',
     );
     try {
-      // userOrderChannel?.sink.add(jsonEncode(requestBody.toJson()));
       sendMessage(
         AppConfig.orderConfirmSocketId,
         jsonEncode(requestBody.toJson()),
@@ -3864,29 +3334,11 @@ class HomeController extends SuperController {
       currentTabIndexPortfolio = 1;
       update([AppConstants.orderList]);
     }
-    // on WebSocketChannelException catch (we) {
-    //  printLog('WebSocketChannelException: ${we.inner}');
-    // }
     catch (e) {
       printLog('Unknown exception: $e');
     }
     update();
   }
-
-  // void orderConfirmSubmittedReplaceOrder(SideType2 sideType, ActionsType action, {UserOrder? order}) async {
-  //   if (!await checkInternet()) return;
-  //   printLog('order confirm socket called::::::::');
-  //   final marketFindByOrderBookId = getMarketByOrderBookId(order?.orderBookId ?? 0);
-
-  //   final userDetail = userInfo.userDetail;
-  //   final traderCode = userDetail?.traderCode ?? '';
-  //   final boId = userDetail?.boId ?? '';
-  //   final clientCode = userDetail?.investorCode ?? '';
-  //   final marketPrice = marketFindByOrderBookId.reference ?? 0;
-  //   final price = double.tryParse(tradPriceTextEditField.text) ?? 0;
-  //   final qty = int.tryParse(qtyTextEditField.text) ?? 0;
-
-  //   final sendPrice = (selectOrderType?.toUpperCase() != 'LIMIT' && sideType == SideType2.BUY) ? marketPrice : price;
 
   void orderConfirmSubmittedReplaceOrder(
     SideType2 sideType,
@@ -3990,7 +3442,6 @@ class HomeController extends SuperController {
         await Future.delayed(const Duration(seconds: 1));
       }
 
-      //  7. SAFEGUARD: Final Verification (১ সেকেন্ড পরও কানেক্ট না হলে)
       if (!isSocketConnected(AppConfig.orderConfirmSocketId)) {
         Get.snackbar(
           "Connection Failed",
@@ -4009,8 +3460,6 @@ class HomeController extends SuperController {
       currentTabIndexPortfolio = 1;
       update([AppConstants.orderList]);
 
-      // অপশনাল:
-      // Get.snackbar("Request Sent", "Order modification request submitted.", backgroundColor: Colors.blue, colorText: Colors.white);
     } catch (e) {
       printLog('❌ WebSocket send failed: $e');
       Get.snackbar(
@@ -4022,43 +3471,6 @@ class HomeController extends SuperController {
     }
   }
 
-  //   final requestBody = OrderConfirmRequest(
-  //     action: actionValues[action],
-  //     traderPk: userDetail?.traderId,
-  //     traderId: traderCode,
-  //     boId: boId,
-  //     clientCode: clientCode,
-  //     orderId: order?.orderId ?? '',
-  //     clientOrderId: order?.clientOrderId ?? '',
-  //     branchId: userDetail?.branchId,
-  //     userId: userInfo.id,
-  //     orderType: selectOrderType?.toUpperCase(),
-  //     qty: qty,
-  //     price: sendPrice,
-  //     symbol: marketFindByOrderBookId.shortName,
-  //     side: sideTypeEnumMap[sideType],
-  //     isin: marketFindByOrderBookId.isinCode,
-  //     assetClass: marketFindByOrderBookId.instrumentType,
-  //     securityCode: marketFindByOrderBookId.ticker,
-  //     orderBookId: marketFindByOrderBookId.orderBook,
-  //     board: marketFindByOrderBookId.board,
-  //     session: currentSession.value,
-  //     category: marketFindByOrderBookId.shareType?.toUpperCase(),
-  //     marketType: marketFindByOrderBookId.marketType,
-  //     group: marketFindByOrderBookId.group?.toUpperCase(),
-  //     timeInForce: "0",
-  //     displayQty: _parseNullableInt(disclosedQtyTextEditField.text),
-  //     minQty: _parseNullableInt(minQtyTextEditField.text),
-  //   );
-  //   printWrapped('Sending replace order: ${jsonEncode(requestBody.toJsonReplaceOrder())}');
-  //   try {
-  //     userOrderChannel?.sink.add(jsonEncode(requestBody.toJsonReplaceOrder()));
-  //   } catch (e) {
-  //     printLog('WebSocket send failed: $e');
-  //   }
-  //   currentTabIndexPortfolio = 1;
-  //   update([AppConstants.orderList]);
-  // }
   void orderConfirmSubmittedReplaceOrderOld(
     SideType2 sideType,
     ActionsType action, {
@@ -4072,7 +3484,6 @@ class HomeController extends SuperController {
       printLog(
         'Error: Cannot replace order because original order data is missing.',
       );
-      // Optionally: Show a Toast/SnackBar to the user here
       return;
     }
 
@@ -4145,7 +3556,6 @@ class HomeController extends SuperController {
     try {
       // 5. SAFEGUARD: Check if the socket is actually available before sending
 
-      // userOrderChannel!.sink.add(jsonRequest);
       sendMessage(AppConfig.orderConfirmSocketId, jsonRequest);
 
       // Only update UI if the send attempt didn't throw an error
@@ -4192,7 +3602,6 @@ class HomeController extends SuperController {
           securityCode: marketData.ticker,
           orderBookId: marketData.orderBook,
           board: marketData.board,
-          // session: marketData.sector?.toUpperCase(),
           session: currentSession.value,
           category: marketData.shareType?.toUpperCase(),
           marketType: marketData.marketType,
@@ -4227,7 +3636,6 @@ class HomeController extends SuperController {
           securityCode: marketData.ticker,
           orderBookId: marketData.orderBook,
           board: marketData.board,
-          // session: marketData.sector?.toUpperCase(),
           session: currentSession.value,
           category: marketData.shareType?.toUpperCase(),
           marketType: marketData.marketType,
@@ -4254,7 +3662,6 @@ class HomeController extends SuperController {
     //  ১. ইন্টারনেট চেক
     if (!await checkInternet()) return;
 
-    //  ২. অর্ডার ডেটা ভ্যালিডেশন (ক্যান্সেল করার জন্য Order ID থাকা বাধ্যতামূলক)
     if (order.orderId == null || order.orderId!.isEmpty) {
       printLog('❌ Error: Cannot cancel order because Order ID is missing.');
       Get.snackbar(
@@ -4310,7 +3717,6 @@ class HomeController extends SuperController {
         await Future.delayed(const Duration(seconds: 1));
       }
 
-      //  ৫. Final Verification (১ সেকেন্ড পরও কানেক্ট না হলে)
       if (!isSocketConnected(AppConfig.orderConfirmSocketId)) {
         Get.snackbar(
           "Connection Failed",
@@ -4324,14 +3730,12 @@ class HomeController extends SuperController {
       //  ৬. Send Data via Common Socket
       sendMessage(AppConfig.orderConfirmSocketId, jsonRequest);
       printLog('✅ Cancel order request sent successfully.');
-      // sendMessage(AppConfig.orderConfirmSocketId, jsonEncode(requestBody.toJson()));
 
       // 🔄 UI Update
       currentTabIndexPortfolio = 1;
       update([AppConstants.orderList]);
 
       // অপশনাল: ইউজারকে একটি ওয়ার্নিং/সাকসেস স্নাইকবার দেখানো যেতে পারে
-      // Get.snackbar("Request Sent", "Order cancellation request submitted.", backgroundColor: Colors.orange, colorText: Colors.white);
     } catch (e) {
       printLog('❌ Unknown exception during order cancel: $e');
       Get.snackbar(
@@ -4379,20 +3783,13 @@ class HomeController extends SuperController {
       session: currentSession.value,
     );
     var reqData = requestBody.toJson();
-    // printLog(reqData);
     printWrapped('cancle order::::: ${jsonEncode(reqData)}');
-    // orderConfirmSock = WebSocketChannel.connect(wsUrl);
     try {
-      // userOrderChannel?.sink.add(jsonEncode(requestBody.toJson()));
       sendMessage(
         AppConfig.orderConfirmSocketId,
         jsonEncode(requestBody.toJson()),
       );
     } catch (e) {
-      // final we = e as WebSocketChannelException;
-      //printLog('${we1.message}');
-      //printLog('${we.inner}');
-      //printLog('${we.inner.message}');
       printLog('WebSocket connection failed: $e');
     }
     Future.delayed(const Duration(seconds: 1), () {});
@@ -4463,7 +3860,6 @@ class HomeController extends SuperController {
         return; // ডেটা সেন্ড করবে না
       }
 
-      //  ৬. Send Data via Common Socket (নো মোর ডুপ্লিকেট সকেট)
       sendMessage(AppConfig.orderConfirmSocketId, jsonRequest);
       printLog('✅ Order status change request sent successfully.');
 
@@ -4480,101 +3876,6 @@ class HomeController extends SuperController {
       );
     }
   }
-
-  /*   void orderStatusChangeConfirmSubmittedOld(ActionsType action, UserOrder order) async {
-    if (!await checkInternet()) return;
-    printLog('update order StatusChange socket called::::::::  ORDER_CANCEL_REQUEST');
-    var traderCode = userInfo.userDetail?.traderCode;
-    var boId = userInfo.userDetail?.boId;
-    var clientCode = userInfo.userDetail?.investorCode;
-    var token = await StorageService.read(StorageConstants.token);
-    final shortName =
-        marketListAll.firstWhereOrNull((market) => market.orderBook == order.orderBookId)?.shortName ?? '';
-    printLog('user infoLLL:: ${userInfo.toJson()}');
-    printLog('shortName:: $shortName');
-    final wsUrl = Uri.parse('${AppConfig.socketBaseUrl}order/$boId/?token=$token');
-    printLog(wsUrl);
-    printLog(clientCode);
-    printLog(traderCode);
-    var requestBody = {
-      'action': actionValues[action],
-      'trader_id': traderCode,
-      'request_sender': boId,
-      'client_order_id': order.clientOrderId,
-      'symbol': shortName,
-      'side': order.side,
-      'session': "continuous",
-    };
-    var reqData = requestBody;
-    printLog('reqData::::::::::::::::::::: $reqData');
-    printWrapped(jsonEncode(reqData));
-    orderStatusChannel = WebSocketChannel.connect(wsUrl);
-
-    try {
-      await orderStatusChannel?.ready;
-      orderStatusChannel?.stream.listen(
-        (dynamic message) {
-          final jsonResponse = jsonDecode(message);
-          final messageType = jsonResponse['message_type'];
-          final messageText = jsonResponse['message'];
-          final data = jsonResponse['data'];
-          printLog('jsonResponse:::::::::orderStatusChangeConfirmSubmitted:::::$jsonResponse');
-          if (messageType == AppConstants.connection) {
-            printWrapped('message change order status============== $message');
-            // debugPrint('jsonResponse change order status $jsonResponse');
-            // debugPrint('messageText change order status $messageText');
-            // debugPrint('messageText change order status $messageText');
-            // debugPrint('data $data');
-          } else if (messageType == AppConstants.orderError) {
-            printLog("❌ Order Error: $messageText");
-            Get.snackbar("Order Update Failed", messageText, backgroundColor: Colors.red, colorText: Colors.white);
-            orderStatusChannel?.sink.close();
-          } else if (messageType == AppConstants.orderSubmitted) {
-            printLog("✅ status Order Update Success: ${jsonEncode(data)}");
-            // Get.snackbar(
-            //   "Status Update Successful",
-            //   "Order placed successfully.",
-            //   backgroundColor: Colors.green,
-            //   colorText: Colors.white,
-            // );
-            // orderStatusChannel.sink.close(status.normalClosure);
-            clearAllFields();
-            // currentIndex = 2;
-            // Get.offNamed(Routes.HOME);
-          } else if (messageType == AppConstants.orderStatus) {
-            printLog("✅ orderStatus Success: ${jsonEncode(data)}");
-            orderStatusDetails = OrderStatusDetailsModel.fromJson(data);
-            Get.to(() => OrderStatusDetailsView(order: orderStatusDetails), fullscreenDialog: true);
-            orderStatusChannel?.sink.close();
-            clearAllFields();
-            // currentIndex = 2;
-            // Get.offNamed(Routes.HOME);
-          } else {
-            printLog("ℹ️ Unknown Message Type: $messageType");
-          }
-        },
-        cancelOnError: true,
-        onDone: () {
-          debugPrint('order confirm ws channel closed');
-        },
-        onError: (error) {
-          debugPrint('order confirm ws error $error');
-        },
-      );
-      orderStatusChannel?.sink.add(jsonEncode(requestBody));
-    } catch (e) {
-      // final we = e as WebSocketChannelException;
-      //printLog('${we1.message}');
-      //printLog('${we.inner}');
-      //printLog('${we.inner.message}');
-      printLog('WebSocket connection failed: $e');
-    }
-    Future.delayed(const Duration(seconds: 1), () {});
-
-    printLog('Socket db service initialized=  ${marketList.length}=');
-    currentTabIndexPortfolio = 1;
-    update([AppConstants.orderList]);
-  } */
 
   void clearAllFields() {
     tradPriceTextEditField.clear();
@@ -4617,11 +3918,9 @@ class HomeController extends SuperController {
     Helpers.snackBarForSuccess2(bodyText: "Logged out successfully");
 
     // ৩. পুরো রাউট স্ট্যাক ক্লিয়ার করে লগইন পেজে পাঠানো
-    // (Get.offNamed এর বদলে Get.offAllNamed ব্যবহার করা বেস্ট, যাতে ব্যাক স্ট্যাকে কিছু না থাকে)
     Get.offAllNamed(Routes.LOGIN);
 
     //  ৪. Permanent HomeController-কে জোরপূর্বক ডিলিট করা
-    // (যেহেতু কন্ট্রোলারটি ডিলিট হয়ে যাচ্ছে, তাই userInfo = UserProfile() বা update() করার আর কোনো দরকার নেই)
     Get.delete<HomeController>(force: true);
   }
 

@@ -9,21 +9,8 @@ class CustomLoaderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       child: SpinKitCircle(color: ColorConstants.primaryColor, size: 50.0),
-      // child: Text("Loading......"),
     );
 
-    // return LoaderOverlay(
-    //   useDefaultLoading: false,
-    //   overlayWidgetBuilder: (_) {
     //     //ignored progress for the moment
-    //     return Center(
-    //       child: SpinKitCubeGrid(
-    //         color: Colors.red,
-    //         size: 50.0,
-    //       ),
-    //     );
-    //   },
-    //   child: Text(""),
-    // );
   }
 }

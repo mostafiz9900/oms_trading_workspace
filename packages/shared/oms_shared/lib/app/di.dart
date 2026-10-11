@@ -9,9 +9,7 @@ class DependencyInjection {
     Get.lazyPut(() => StorageService());
     Get.put<ThemeServices>(ThemeServices(), permanent: true);
     Get.lazyPut(() => WebSocketService());
-    // Get.lazyPut(() => SSEService());
     Get.lazyPut<TokenController>(() => TokenController(), fenix: true);
     await Get.putAsync(() => MarketSocketService().init());
-    // Get.lazyPut<MarketWebSocketService>(() => MarketWebSocketService(), fenix: true);
   }
 }

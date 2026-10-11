@@ -341,7 +341,6 @@ class HistoricalVolumeController extends GetxController {
     return filteredData.map((e) => e.volume).reduce((a, b) => a < b ? a : b);
   }
 
-  // ইন্টারনাল সর্টেড ডাটা (তারিখ অনুযায়ী সাজানো)
   List<HistoricalVolume> get _sortedFilteredData {
     final list = List<HistoricalVolume>.from(filteredData);
     list.sort((a, b) => b.date.compareTo(a.date)); // Newest first

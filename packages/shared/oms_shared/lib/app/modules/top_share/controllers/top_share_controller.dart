@@ -197,10 +197,8 @@ class TopShareController extends GetxController {
   }
 
   // ========================================================
-  // HELPER FUNCTIONS (Refactored using MarketModelExtensions)
   // ========================================================
 
-  // 🚀 Extension এর getChangeByDuration মেথডের জন্য ম্যাপিং[cite: 8]
   String _mapDurationToExtensionFormat(String duration) {
     switch (duration) {
       case "Weekly":
@@ -220,7 +218,6 @@ class TopShareController extends GetxController {
   }
 
   double _getChangeValue(MarketModel m, String duration) {
-    // 🚀 Extension মেথড সরাসরি ব্যবহার করা হয়েছে[cite: 8]
     return m.getChangeByDuration(_mapDurationToExtensionFormat(duration));
   }
 
@@ -230,7 +227,6 @@ class TopShareController extends GetxController {
         : duration == "Monthly"
         ? "monthly"
         : "daily";
-    // 🚀 Extension মেথড সরাসরি ব্যবহার করা হয়েছে[cite: 8]
     return m.getVolumeByDuration(extDur);
   }
 

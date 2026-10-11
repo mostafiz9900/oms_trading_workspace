@@ -67,7 +67,6 @@ class WithdrawalRequestView extends GetView<WithdrawalRequestController> {
   }
 
   // ==========================================
-  //  LIST ITEM WIDGET (Mobile Friendly)
   // ==========================================
   Widget _buildWithdrawItem(BuildContext context, WithdrawModel item, bool isDark) {
     String status = item.status?.toUpperCase() ?? 'PENDING';
@@ -79,7 +78,6 @@ class WithdrawalRequestView extends GetView<WithdrawalRequestController> {
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        // color: Get.theme.cardColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.withValues(alpha: 0.2),
@@ -214,7 +212,6 @@ class WithdrawalRequestView extends GetView<WithdrawalRequestController> {
                         child: Divider(height: 1, color: Colors.grey.withValues(alpha: 0.2)),
                       ),
 
-                      //  Client Code & Available Balance (Side-by-side)
                       Row(
                         children: [
                           Expanded(

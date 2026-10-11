@@ -80,7 +80,6 @@ class CommonMinimalDropdown extends StatelessWidget {
                     ? null
                     : Border(
                         bottom: BorderSide(
-                          // 🚀 Updated: withOpacity -> withValues(alpha: ...)
                           color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade200,
                         ),
                       ),
@@ -114,7 +113,6 @@ class CommonMinimalDropdown extends StatelessWidget {
             color: context.cardColor,
             boxShadow: [
               BoxShadow(
-                // 🚀 Updated: withOpacity -> withValues(alpha: ...)
                 color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
@@ -128,7 +126,6 @@ class CommonMinimalDropdown extends StatelessWidget {
 }
 
 // ==========================================
-// 🚀 ২. Common Horizontal Tab List (Sectors/Categories)
 // ==========================================
 class CommonHorizontalTabList extends StatelessWidget {
   final List<String> items;
@@ -201,7 +198,6 @@ class CommonHorizontalTabList extends StatelessWidget {
 }
 
 // ==========================================
-// 🚀 ৩. Shared Market List Item (List View)
 // ==========================================
 class SharedMarketListItemOld extends StatelessWidget {
   final MarketModel model;
@@ -490,8 +486,6 @@ class SharedMarketListItemOld extends StatelessWidget {
     );
   }
 }
-
-// ফাইল: SharedMarketListItem.dart (আপনার অরিজিনাল ফাইলের আপডেট)
 
 class SharedMarketListItem extends StatelessWidget {
   final MarketModel model;
@@ -820,7 +814,6 @@ class SharedMarketListItem extends StatelessWidget {
         ],
       );
     } else {
-      // Default View (আপনার আগের কোডটি এখানে থাকবে)
       childWidget = Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -841,7 +834,6 @@ class SharedMarketListItem extends StatelessWidget {
                               context,
                               fontSize: 14,
                             ),
-                            // if (model.shareType != null)
                             TextSpan(
                               text: ' [${model.shareType}]',
                               style: Get.textTheme.bodySmall?.copyWith(
@@ -850,7 +842,6 @@ class SharedMarketListItem extends StatelessWidget {
                                 fontFeatures: const [FontFeature.superscripts()],
                               ),
                             ),
-                            // if (model.marketType != null)
                             TextSpan(
                               text: ' [${model.marketType}]',
                               style: Get.textTheme.bodySmall?.copyWith(
@@ -970,7 +961,6 @@ class SharedMarketListItem extends StatelessWidget {
 }
 
 // ==========================================
-// 🚀 ৪. Shared Market Grid Item (Grid View)
 // ==========================================
 class SharedMarketGridItem extends StatelessWidget {
   final MarketModel model;

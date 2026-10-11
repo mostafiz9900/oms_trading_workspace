@@ -123,7 +123,6 @@ class WatchListController extends GetxController {
       }
     }
 
-    // 🚀 ২. Market Type Filter (Public, Spot)
     if (selectedMarketType != 'All') {
       results = results
           .where(
@@ -134,12 +133,10 @@ class WatchListController extends GetxController {
           .toList();
     }
 
-    // 🚀 ৩. Share Type Filter (A, B, N, P, S, Z)
     if (selectedShareType != 'All') {
       results = results.where((m) => (m.shareType ?? "").toUpperCase() == selectedShareType.toUpperCase()).toList();
     }
 
-    // ১. সার্চ ফিল্টার (🚀 Extension displayName ব্যবহার করা হয়েছে)
     if (currentSearchQuery.isNotEmpty) {
       results = results
           .where((item) => item.displayName.toLowerCase().contains(currentSearchQuery.toLowerCase()))
@@ -154,7 +151,6 @@ class WatchListController extends GetxController {
           .toList();
     }
 
-    // ৩. সর্টিং লজিক (🚀 Extension Properties ব্যবহার করা হয়েছে)
     results.sort((a, b) {
       int comparison = 0;
       switch (currentSortCategory) {

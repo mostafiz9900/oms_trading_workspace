@@ -36,13 +36,8 @@ class OnboardingView extends GetView<OnboardingController> {
                         mainAxisAlignment: .center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // ColorFiltered(
-                          //   // colorFilter: ColorFilter.mode(
                           //   //   context.isDart?HexColor('#1C2546'):HexColor('#EBF2FC'), // Color with opacity as the overlay
                           //   //   BlendMode.srcOver, // Blending mode for the overlay
-                          //   // ),
-                          //   child: Image.asset(onboardingCont.demoData[index]['illustration']),
-                          // ),
                           Image.asset(
                             onboardingCont.demoData[index]['illustration'],
                           ),
@@ -95,8 +90,6 @@ class OnboardingView extends GetView<OnboardingController> {
                       onPressed: () {
                         onboardingCont.changeNextPage();
 
-                        // Get.to(() => const RegistrationView(),
-                        //     binding: AuthBinding());
                       },
                       title: AppTranslations.startBenemoy.tr.replaceAll(
                         'Benemoy',
@@ -108,17 +101,6 @@ class OnboardingView extends GetView<OnboardingController> {
                   ),
                 ),
                 AppSpace.spaceH30,
-                // CreateNewAccount(
-                //   alignment: Alignment.center,
-                //   titleOne: 'Already have an account? ',
-                //   titleTwo: 'Login',
-                //   recognizer: TapGestureRecognizer()
-                //     ..onTap = () {
-                //       printLog('data');
-                //       // Get.to(() => const RegistrationView(),
-                //       //     binding: AuthBinding());
-                //     },
-                // ),
               ],
             ),
           ),

@@ -17,7 +17,6 @@ class WatchlistDistributionPage extends StatelessWidget {
     return GetBuilder<HomeController>(
       id: 'distributionChartUpdate',
       builder: (_) {
-        // 🚀 ডেটা সরাসরি কন্ট্রোলার থেকে নেওয়া হচ্ছে (No Loop, No Computation here)
         final counts = controller.distributionCounts;
         final total = controller.distributionTotal;
         final maxCount = controller.distributionMaxCount;

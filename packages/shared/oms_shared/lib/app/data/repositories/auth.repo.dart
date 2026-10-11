@@ -160,7 +160,6 @@ class AuthRepository implements AuthenticationRepository {
       // 🚀 ফিক্স: এখানে authProvider হবে, authRepository নয়!
       final res = await authProvider.resetPassword(url, resetPasswordData);
 
-      // 🚀 সাকসেস চেক (200 বা 201)
       if (res.statusCode == 200 || res.statusCode == 201) {
         Helpers.snackBarForSuccess2(
           bodyText:
@@ -202,7 +201,6 @@ class AuthRepository implements AuthenticationRepository {
     final res = await authProvider.getUsers('/api/users?page=1&per_page=12');
     if (BaseResponse.handleApiResponse(res)) {
       return null;
-      // UsersResponse.fromJson(res.body)
     }
   }
 }

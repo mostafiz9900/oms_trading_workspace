@@ -18,7 +18,6 @@ class TopSectorByCategoryWidget extends StatelessWidget {
         }
         return Container(
           margin: const .symmetric(horizontal: 8, vertical: 2),
-          // padding: const .symmetric(horizontal: 2, vertical: 0),
           decoration: BoxDecoration(
             color: context.cardColor,
             borderRadius: BorderRadius.circular(6),
@@ -56,7 +55,6 @@ class TopSectorByCategoryWidget extends StatelessWidget {
                     interval: 1,
                     minimum: -0.5,
                     maximum: homeCon.chartDataShareType.isNotEmpty ? homeCon.chartDataShareType.length - 0.5 : null,
-                    // 🚀 FIX: X-অক্ষ বরাবর গ্রিড লাইন অন করা হয়েছে (width: 0.5)
                     majorGridLines: MajorGridLines(width: 0.5, color: Colors.grey.withOpacity(0.3)),
                     labelPlacement: LabelPlacement.onTicks,
                     labelIntersectAction: AxisLabelIntersectAction.rotate90,

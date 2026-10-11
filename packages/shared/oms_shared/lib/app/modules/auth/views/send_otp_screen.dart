@@ -33,7 +33,6 @@ class SendOTPScreen extends GetView<AuthController> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch, //  ফিল্ড এবং বাটন ফুল-উইডথ করার জন্য
                     children: [
-                      //  Logo (সেন্টারে এবং পারফেক্ট সাইজে রাখা হলো)
                       Center(
                         child: SvgPicture.asset(
                           context.bannerLogo,
@@ -42,14 +41,8 @@ class SendOTPScreen extends GetView<AuthController> {
                           fit: BoxFit.contain,
                         ),
                       ),
-                      // AppSpace.spaceH20,
 
                       // //  Title
-                      // Text(
-                      //   "Forgot Password",
-                      //   textAlign: TextAlign.center,
-                      //   style: Get.textTheme.titleLarge?.copyWith(fontSize: 24, fontWeight: FontWeight.bold),
-                      // ),
                       AppSpace.spaceH10,
 
                       //  Subtitle
@@ -81,7 +74,6 @@ class SendOTPScreen extends GetView<AuthController> {
                       ),
                       AppSpace.spaceH20,
 
-                      //  Action Button (With Validation Trigger)
                       CustomButton(
                         isLoading: authCon.loadingForgotPass,
                         onPressed: () {
@@ -96,17 +88,7 @@ class SendOTPScreen extends GetView<AuthController> {
                       AppSpace.spaceH20,
 
                       //  "Already Registered?" অপশনটি ফিক্স করে চালু করা হলো
-                      //   CreateNewAccount(
-                      //     alignment: Alignment.center,
-                      //     titleOne: "Already Registered? ",
-                      //     titleTwo: 'Sign-in',
-                      //     color: ColorConstants.blueColor,
-                      //     recognizer: TapGestureRecognizer()
-                      //       ..onTap = () {
-                      //         printLog('Navigating back to Login');
                       //         Get.offAll(() => const LoginView()); //  লগিন পেজে নিয়ে যাবে
-                      //       },
-                      //   ),
                     ],
                   ),
                 ),

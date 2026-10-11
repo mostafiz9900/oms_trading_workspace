@@ -26,7 +26,6 @@ class GoogleFinanceSparkline extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // 🚀 Google Finance ডটেড রেফারেন্স লাইন (মাঝখানে)
           Positioned.fill(
             child: Align(
               alignment: Alignment.center,
@@ -51,7 +50,6 @@ class GoogleFinanceSparkline extends StatelessWidget {
             borderColor: lineColor,
             borderWidth: 1.4,
             axisLineWidth: 0,
-            // margin: EdgeInsets.zero,
             marker: SparkChartMarker(
               displayMode: SparkChartMarkerDisplayMode.last,
               size: 4,
@@ -160,7 +158,6 @@ class DayRangeIndicator extends StatelessWidget {
               Container(
                 decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: BorderRadius.circular(2)),
               ),
-              // কারেন্ট প্রাইস মার্কার (ডট)
               Positioned(
                 left: percentage * 100 > 95 ? null : (percentage * 100), // ডানপাশে ওভারফ্লো বন্ধ করতে
                 right: percentage * 100 > 95 ? 0 : null,

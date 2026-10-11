@@ -214,7 +214,6 @@ class CandleSeriesChartsWidget extends HookWidget {
             final bool isCandleUp = activeCandle.close >= activeCandle.open;
             final Color candleColor = isCandleUp ? bullColor : bearColor;
 
-            // 🚀 Chart Height Increased (45% of screen height, minimum 350px)
             final double dynamicChartHeight = (screenHeight * 0.45).clamp(350.0, 550.0);
 
             return SingleChildScrollView(

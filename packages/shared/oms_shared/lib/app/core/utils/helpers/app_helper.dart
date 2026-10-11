@@ -25,7 +25,6 @@ final uuid = Uuid();
 
 class Helpers {
   Helpers._();
-  // Per-house salt; resolves to "benemoy_app" for Benemoy (must stay stable).
   static String get _uniqueKey => "${AppConfig.houseId}_app";
   static final Uuid _uuid = Uuid();
   static final Random _random = Random.secure();
@@ -39,14 +38,12 @@ class Helpers {
   }
 
   static Future<String> getSecureDeviceIdLogin() async {
-    // StorageService.remove(StorageConstants.deviceSecIdKey);
     String deviceId = await StorageService.read(StorageConstants.deviceSecIdKey);
     printLog('shat key:: $deviceId');
     return deviceId;
   }
 
   static Future<String?> getSecureDeviceId() async {
-    // StorageService.remove(StorageConstants.deviceSecIdKey);
     String? deviceId = await StorageService.read(StorageConstants.deviceSecIdKey);
     var res = StorageService.getMap(StorageConstants.userInfo);
     if (deviceId == null && res != null) {
@@ -107,14 +104,6 @@ class Helpers {
     if (d > 0) return Icons.arrow_drop_up; // up arrow
     return Icons.arrow_drop_down; // down arrow
   }
-  // static List<TimeAndSalesModel> sortByTstDesc(List<TimeAndSalesModel> list) {
-  //    list.sort((a, b) {
-  //      final aTime = parseTst(a.tst ?? "00:00:00.000000");
-  //      final bTime = parseTst(b.tst ?? "00:00:00.000000");
-  //      return bTime.compareTo(aTime); // 🔽 latest time upore
-  //    });
-  //    return list;
-  //  }
 
   static List<T> sortByTstDesc<T>(List<T> list, String Function(T) getTst) {
     list.sort((a, b) {
@@ -407,10 +396,6 @@ class Helpers {
         title: const Text("sebaghar"),
         content: const Text("yourAreNotOldPatient"),
         actions: [
-          // TextButton(
-          //   onPressed: () => Get.back(),
-          //   child: Text(AppTranslations.no.tr),
-          // ),
           TextButton(onPressed: onPressed, child: const Text("ok")),
         ],
       ),
@@ -433,8 +418,6 @@ class Helpers {
     onchangeSearch,
   }) {
     return AppBar(
-      // systemOverlayStyle:
-      //     const SystemUiOverlayStyle(statusBarColor: Colors.orange),
       backgroundColor: Get.theme.primaryColor,
       centerTitle: false,
       scrolledUnderElevation: 0.0,
@@ -498,36 +481,14 @@ class Helpers {
   static BoxDecoration createButtonDecoration({double? radius}) {
     return BoxDecoration(
       borderRadius: BorderRadius.circular(radius ?? 0.0),
-      // border: Border.all(
-      //   color: Colors.black26,
-      // ),
       color: Colors.grey.withAlpha((0.13 * 255).toInt()),
-      // boxShadow: [
-      //   BoxShadow(
-      //     color: Colors.grey.alphaSafe(0.2),
-      //     spreadRadius: 1,
-      //     blurRadius: 2,
-      //     offset: const Offset(0, 0), // changes position of shadow
-      //   ),
-      // ]
     );
   }
 
   static BoxDecoration createDropdownButtonDecoration({double? radius}) {
     return BoxDecoration(
       borderRadius: BorderRadius.circular(radius ?? 0.0),
-      // border: Border.all(
-      //   color: Colors.black26,
-      // ),
       color: Colors.white,
-      // boxShadow: [
-      //   BoxShadow(
-      //     color: Colors.grey.alphaSafe(0.2),
-      //     spreadRadius: 1,
-      //     blurRadius: 2,
-      //     offset: const Offset(0, 0), // changes position of shadow
-      //   ),
-      // ]
     );
   }
 
@@ -592,7 +553,6 @@ class Helpers {
       bodyText,
       snackPosition: SnackPosition.TOP,
       margin: .only(top: topMargin ?? Get.height * 0.0, left: Get.width * 0.05, right: Get.width * 0.05),
-      // backgroundColor: fromHex('#E9A9AF'),
       backgroundColor: Colors.black,
       colorText: Colors.white,
     );
@@ -660,9 +620,6 @@ class Helpers {
               onSecondary: Get.theme.primaryColor, // <-- SEE HERE  secondary: Get.theme.primaryColor, // <-- SEE HERE
             ),
             textButtonTheme: const TextButtonThemeData(
-              // style: TextButton.styleFrom(
-              //   primary: Colors.w, // button text color
-              // ),
             ),
           ),
           child: child!,
@@ -692,9 +649,6 @@ class Helpers {
               onSecondary: Get.theme.primaryColor, // <-- SEE HERE  secondary: Get.theme.primaryColor, // <-- SEE HERE
             ),
             textButtonTheme: const TextButtonThemeData(
-              // style: TextButton.styleFrom(
-              //   primary: Colors.w, // button text color
-              // ),
             ),
           ),
           child: child!,
@@ -722,9 +676,6 @@ class Helpers {
               onSecondary: Get.theme.primaryColor, // <-- SEE HERE  secondary: Get.theme.primaryColor, // <-- SEE HERE
             ),
             textButtonTheme: const TextButtonThemeData(
-              // style: TextButton.styleFrom(
-              //   primary: Colors.w, // button text color
-              // ),
             ),
           ),
           child: child!,
@@ -733,7 +684,6 @@ class Helpers {
       context: Get.overlayContext!,
       initialDate: DateTime.now(),
       firstDate: DateTime(1950),
-      //DateTime.now() - not to allow to choose before today.
       lastDate: DateTime(2100),
     );
 
@@ -766,7 +716,6 @@ class Helpers {
       helpText: "selectDate.",
       cancelText: "cancel",
       confirmText: "ok",
-      // locale: Locale( StorageService.read(StorageConstants.languageCode) ?? AppConst.langCodeEn),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -829,22 +778,11 @@ class Helpers {
   }
 
   static final timePickerTheme = TimePickerThemeData(
-    // backgroundColor: AppColors.secondaryColor,
     hourMinuteShape: RoundedRectangleBorder(
       borderRadius: const BorderRadius.all(Radius.circular(8)),
       side: BorderSide(color: ColorConstants.primaryColorLight, width: 2),
     ),
     dayPeriodBorderSide: BorderSide(color: ColorConstants.primaryColorLight, width: 4),
-    // dayPeriodColor: Colors.blueGrey.shade600,
-    // shape:  RoundedRectangleBorder(
-    //   borderRadius:const BorderRadius.all(Radius.circular(8)),
-    //   side: BorderSide(color:  AppColors.primaryColor, width: 2),
-    // ),
-    // dayPeriodTextColor: Colors.white,
-    // dayPeriodShape:  RoundedRectangleBorder(
-    //   borderRadius:const BorderRadius.all(Radius.circular(8)),
-    //   side: BorderSide(color:  AppColors.primaryColor, width: 4),
-    // ),
     hourMinuteColor: WidgetStateColor.resolveWith(
       (states) => states.contains(WidgetState.selected) ? ColorConstants.primaryColorLight : Colors.blueGrey.shade200,
     ),
@@ -852,17 +790,6 @@ class Helpers {
       (states) => states.contains(WidgetState.selected) ? Colors.white : ColorConstants.primaryColorLight,
     ),
     dialHandColor: ColorConstants.primaryColorLight,
-    // dialBackgroundColor: Colors.blueGrey.shade400,
-    // hourMinuteTextStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-    // dayPeriodTextStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-    // helpTextStyle:
-    // const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
-    // inputDecorationTheme: const InputDecorationTheme(
-    //   border: InputBorder.none,
-    //   contentPadding: .all(0),
-    // ),
-    // dialTextColor: MaterialStateColor.resolveWith(
-    //         (states) => states.contains(MaterialState.selected) ? Colors.orange : Colors.white),
     entryModeIconColor: ColorConstants.primaryColorLight,
   );
 
@@ -960,21 +887,10 @@ class Helpers {
   static openAuthAlertDialog(VoidCallback? onPressed) {
     Get.dialog(
       AlertDialog(
-        //title: const Text('Are Yor Sure?'),
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
         elevation: 0.0,
         titlePadding: .zero,
 
-        // content: Column(
-        //   mainAxisSize: MainAxisSize.min,
-        //   children: [
-        //     AppSpace.spaceH10,
-        //     const Text(
-        //       "আপনাকে লগইন করতে হবে।\n আপনি কি রাজি?",
-        //       textAlign: TextAlign.center,
-        //     ),
-        //   ],
-        // ),
         //আপনাকে লগইন করতে হবে।\n আপনি কি রাজি?
         insetPadding: .zero,
         contentPadding: .zero,
@@ -1030,157 +946,26 @@ class Helpers {
     );
   }
 
-  // static openDropdownShare(BuildContext ctx, {String? title, List<String>? menuLists}) {
-  //   Get.dialog(
-  //     GetBuilder<TopShareController>(
-  //       builder: (topShareControl) {
-  //         return Padding(
-  //           padding: const .all(30),
-  //           child: AlertDialog(
-  //             shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
-  //             elevation: 0.0,
-  //             titlePadding: .zero,
-  //             insetPadding: .zero,
-  //             contentPadding: .zero,
-  //             actionsPadding: .zero,
-  //             backgroundColor: ctx.bgColor,
-  //             actions: [
-  //               Container(
-  //                 margin: const .all(15),
-  //                 padding: const .all(10),
-  //                 width: Get.width,
-  //                 decoration: BoxDecoration(
-  //                   border: Border(bottom: BorderSide(width: 1, color: ctx.bgColor)),
-  //                 ),
-  //                 child: Text(
-  //                   title ?? "",
-  //                   style: Get.textTheme.titleMedium?.copyWith(color: ctx.textColor, fontSize: AppDimens.space18),
-  //                 ),
-  //               ),
-  //               Padding(
-  //                 padding: const .symmetric(horizontal: 15),
-  //                 child: SizedBox(
-  //                   height: 200,
-  //                   child: SingleChildScrollView(
-  //                     child: Column(
-  //                       mainAxisAlignment: .center,
-  //                       crossAxisAlignment: .center,
-  //                       children: List.generate(menuLists!.length, (index) {
-  //                         String model = menuLists.elementAt(index);
-  //                         return InkWell(
-  //                           splashColor: Colors.transparent,
-  //                           highlightColor: Colors.transparent,
-  //                           onTap: () {
-  //                             if (title == "Sector") {
-  //                               topShareControl.setActiveSector(model);
-  //                               topShareControl.getMarketFeedSortByDropdown("Sector");
-  //                             } else if (title == "Sort By") {
-  //                               topShareControl.setActiveSortByCompany(model);
-  //                               topShareControl.getMarketFeedSortByDropdown("Sort By");
-  //                             } else if (title == "Order By") {
-  //                               topShareControl.setActiveSortByAscDesc(model);
-  //                               topShareControl.getMarketFeedSortByDropdown("Order By");
-  //                             }
-  //                             Get.back();
-  //                           },
-  //                           child: Container(
-  //                             padding: const .only(bottom: 15),
-  //                             margin: const .only(bottom: 10),
-  //                             alignment: Alignment.center,
-  //                             decoration: BoxDecoration(
-  //                               border: Border(bottom: BorderSide(width: 1, color: ctx.borderSideColor)),
-  //                             ),
-  //                             child: title == "Sector"
-  //                                 ? Row(
-  //                                     children: [
-  //                                       Icon(
-  //                                         Icons.check,
-  //                                         color: topShareControl.activeSector == null
   //                                             ? ctx.textColor
   //                                             : topShareControl.activeSector == model
   //                                             ? ColorConstants.blueColor
-  //                                             : ctx.textColor,
-  //                                       ),
-  //                                       const SizedBox(width: 10),
-  //                                       Text(
-  //                                         menuLists.elementAt(index),
-  //                                         style: Get.textTheme.titleMedium?.copyWith(
-  //                                           color: topShareControl.activeSector == null
   //                                               ? ctx.textColor
   //                                               : topShareControl.activeSector == model
   //                                               ? ColorConstants.blueColor
-  //                                               : ctx.textColor,
-  //                                         ),
-  //                                         textAlign: TextAlign.center,
-  //                                       ),
-  //                                     ],
-  //                                   )
   //                                 : title == "Sort By"
-  //                                 ? Row(
-  //                                     children: [
-  //                                       Icon(
-  //                                         Icons.check,
-  //                                         color: topShareControl.activeSortByCompany == null
   //                                             ? ctx.textColor
   //                                             : topShareControl.activeSortByCompany == model
   //                                             ? ColorConstants.blueColor
-  //                                             : ctx.textColor,
-  //                                       ),
-  //                                       const SizedBox(width: 10),
-  //                                       Text(
-  //                                         menuLists.elementAt(index),
-  //                                         style: Get.textTheme.titleMedium?.copyWith(
-  //                                           color: topShareControl.activeSortByCompany == null
   //                                               ? ctx.textColor
   //                                               : topShareControl.activeSortByCompany == model
   //                                               ? ColorConstants.blueColor
-  //                                               : ctx.textColor,
-  //                                         ),
-  //                                         textAlign: TextAlign.center,
-  //                                       ),
-  //                                     ],
-  //                                   )
   //                                 : title == "Order By"
-  //                                 ? Row(
-  //                                     children: [
-  //                                       Icon(
-  //                                         Icons.check,
-  //                                         color: topShareControl.activeSortByAscDesc == null
   //                                             ? ctx.textColor
   //                                             : topShareControl.activeSortByAscDesc == model
   //                                             ? ColorConstants.blueColor
-  //                                             : ctx.textColor,
-  //                                       ),
-  //                                       const SizedBox(width: 10),
-  //                                       Text(
-  //                                         menuLists.elementAt(index),
-  //                                         style: Get.textTheme.titleMedium?.copyWith(
-  //                                           color: topShareControl.activeSortByAscDesc == null
   //                                               ? ctx.textColor
   //                                               : topShareControl.activeSortByAscDesc == model
   //                                               ? ColorConstants.blueColor
-  //                                               : ctx.textColor,
-  //                                         ),
-  //                                         textAlign: TextAlign.center,
-  //                                       ),
-  //                                     ],
-  //                                   )
-  //                                 : Container(),
-  //                           ),
-  //                         );
-  //                       }),
-  //                     ),
-  //                   ),
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //     barrierDismissible: true,
-  //   );
-  // }
   static openDropdownShare(
     BuildContext ctx, {
     required String title,
@@ -1256,12 +1041,10 @@ class Helpers {
   static openLoginAlertDialog(VoidCallback? onPressed) {
     Get.dialog(
       AlertDialog(
-        //title: const Text('Are Yor Sure?'),
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
         elevation: 0.0,
         titlePadding: .zero,
         insetPadding: .zero,
-        // contentPadding: .zero,
         actionsPadding: .zero,
         title: Container(
           width: double.infinity,
@@ -1346,12 +1129,10 @@ class Helpers {
   static openCustomAlertDialog(VoidCallback? onPressed, {String? title, String? bodyText}) {
     Get.dialog(
       AlertDialog(
-        //title: const Text('Are Yor Sure?'),
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
         elevation: 0.0,
         titlePadding: .zero,
         insetPadding: .zero,
-        // contentPadding: .zero,
         actionsPadding: .zero,
         contentPadding: const .fromLTRB(20, 20, 20, 0),
         title: Container(
@@ -1427,7 +1208,6 @@ class Helpers {
   static openWelcomeDialog(VoidCallback? onPressed) {
     Get.dialog(
       AlertDialog(
-        //title: const Text('Are Yor Sure?'),
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
         elevation: 0.0,
         titlePadding: .zero,
@@ -1513,7 +1293,6 @@ class Helpers {
     switch (statusCode) {
       case 400:
         printLog('Bad request status code : $statusCode');
-        // break;
         return "Bad request status code : $statusCode";
       case 401:
         printLog('Unauthorized status code : $statusCode');
@@ -1542,7 +1321,6 @@ class Helpers {
 
   static Future<String?> picImage(ImageSource type) async {
     try {
-      //imgLoader(false);
       final imagePicker = await ImagePicker().pickImage(
         source: type == ImageSource.camera ? ImageSource.camera : ImageSource.gallery,
         imageQuality: 80,
@@ -1585,7 +1363,6 @@ class Helpers {
 
   static Future<File?> selectVideo() async {
     final ImagePicker picker = ImagePicker();
-    // final XFile? pickedFile = await picker.pickVideo(source: ImageSource.gallery);
     final XFile? pickedFile = await picker.pickMedia();
     if (pickedFile != null) {
       final videoFile = File(pickedFile.path);

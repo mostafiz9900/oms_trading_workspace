@@ -52,7 +52,6 @@ class _OrderListTabWidgetState extends State<OrderListTabWidget> with AutomaticK
 }
 
 // ----------------------------------------------------------------------
-//  ১. Original Title Widget (Padding Matches New UI Perfectly)
 // ----------------------------------------------------------------------
 class _OriginalItemTitleWidget extends StatelessWidget {
   const _OriginalItemTitleWidget();
@@ -90,7 +89,6 @@ class _OriginalItemTitleWidget extends StatelessWidget {
 }
 
 // ----------------------------------------------------------------------
-//  ২. New Title Widget (Flex 4, 3, 3 -> Start, Center, End Aligned)
 // ----------------------------------------------------------------------
 class _NewItemTitleWidget extends StatelessWidget {
   const _NewItemTitleWidget();
@@ -270,7 +268,6 @@ class OrderHistoryWidget extends StatelessWidget {
     HomeController homeCotByOrder,
     String totalFormatted,
   ) {
-    // 👉 Condition: status == 'Expired' হলে 3-Dot মেনু দেখাবে না[cite: 9]
     bool isExpired = order.status?.trim().toLowerCase() == 'expired';
 
     return CustomContainerWidget(
@@ -388,7 +385,6 @@ class OrderHistoryWidget extends StatelessWidget {
             ),
           ),
           AppSpace.spaceW8,
-          // 👉 Expired হলে 3-Dot মেনু হাইড থাকবে[cite: 9]
           isExpired
               ? const SizedBox(width: 28)
               : SizedBox(
@@ -405,7 +401,6 @@ class OrderHistoryWidget extends StatelessWidget {
   //  New Row Widget (Flex 4, 3, 3 with Status Check & Action Wrap)[cite: 9]
   // ----------------------------------------------------------------------
   Widget _buildNewRow(BuildContext context, UserOrder order, HomeController homeCotByOrder, String totalFormatted) {
-    // 👉 Condition: status == 'Expired' হলে অ্যাকশন বাটনগুলো দেখাবে না[cite: 9]
     bool isExpired = order.status?.trim().toLowerCase() == 'expired';
 
     return Container(
@@ -424,7 +419,6 @@ class OrderHistoryWidget extends StatelessWidget {
             child: Row(
               crossAxisAlignment: .center,
               children: [
-                // Col 1: Symbol, Time, Side (Flex: 4)
                 Expanded(
                   flex: 4,
                   child: Column(
@@ -470,7 +464,6 @@ class OrderHistoryWidget extends StatelessWidget {
                 ),
                 AppSpace.spaceW6,
 
-                // Col 2: Qty, Price, Total Value (Flex: 3)
                 Expanded(
                   flex: 3,
                   child: Column(
@@ -503,7 +496,6 @@ class OrderHistoryWidget extends StatelessWidget {
                 ),
                 AppSpace.spaceW6,
 
-                //  Col 3: Colored Text ONLY (No Background Box)
                 Expanded(
                   flex: 3,
                   child: Column(
@@ -546,7 +538,6 @@ class OrderHistoryWidget extends StatelessWidget {
             ),
           ),
 
-          // 👉 Expired হলে Divider এবং Action Wrap দুটোই হাইড থাকবে[cite: 9]
           if (!isExpired) ...[
             const Padding(padding: .symmetric(vertical: 8), child: Divider(height: 1, thickness: 0.6)),
             SizedBox(
@@ -1152,7 +1143,6 @@ void showOrderFormDialog(UserOrder order) {
                               ),
                               child: Row(
                                 children: [
-                                  // 🔴 Decrement Button (-0.10)
                                   InkWell(
                                     onTap: () {
                                       double currentVal = double.tryParse(homeCon.tradPriceTextEditField.text) ?? 0.0;
@@ -1180,7 +1170,6 @@ void showOrderFormDialog(UserOrder order) {
                                   Expanded(
                                     child: TextFormField(
                                       controller: homeCon.tradPriceTextEditField,
-                                      //  Regex Fix: শুধুমাত্র ২ ঘর ডেসিমাল সাপোর্ট করবে (0.00)
                                       inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}'))],
                                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
                                       textAlign: TextAlign.center,
@@ -1201,7 +1190,6 @@ void showOrderFormDialog(UserOrder order) {
                                     ),
                                   ),
 
-                                  // 🟢 Increment Button (+0.10)
                                   InkWell(
                                     onTap: () {
                                       double currentVal = double.tryParse(homeCon.tradPriceTextEditField.text) ?? 0.0;
@@ -1230,7 +1218,6 @@ void showOrderFormDialog(UserOrder order) {
                     ),
                     AppSpace.spaceH10,
 
-                    // Action Buttons (Cancel & Submit)
                     Padding(
                       padding: const EdgeInsets.all(10),
                       child: Row(

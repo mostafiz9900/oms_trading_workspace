@@ -68,16 +68,13 @@ class BiometricController extends GetxController implements GetxService {
     try {
       final result = await _auth.authenticate(
         localizedReason: 'Authenticate to login',
-        // DIRECT PARAMETERS (Replaces AuthenticationOptions)
         persistAcrossBackgrounding: true, // Replaces stickyAuth
-        // biometricOnly: true, // Uncomment if you don't want to fallback to PIN/Pattern
       );
       return result;
     } on LocalAuthException catch (e) {
       // Handles local_auth specific errors (e.g., user locked out)
       print('Authentication LocalAuthException: ${e.code} - ${e.details}');
 
-      // Optional: Check specific error codes
       if (e.code == LocalAuthExceptionCode.biometricLockout) {
         print('User is temporarily locked out due to too many attempts.');
       }

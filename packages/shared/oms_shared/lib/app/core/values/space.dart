@@ -55,4 +55,3 @@ class AppSpace {
   static SizedBox spaceW50 = const SizedBox(width: AppDimens.space50);
 }
 
-// export PATH="/Users/bdtask/development/flutter/bin:$PATH"

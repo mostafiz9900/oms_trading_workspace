@@ -33,11 +33,6 @@ class LimitRequestView extends GetView<LimitRequestController> {
         ),
       ),
       body: const _ClientLimitView(),
-      // floatingActionButton: FloatingActionButton(
-      //   backgroundColor: context.buttonColor,
-      //   onPressed: () => controller.openLimitRequestDialog(context),
-      //   child: Icon(Icons.add, color: context.iconColor),
-      // ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: context.buttonColor,
         onPressed: () => controller.openLimitRequestDialog(context),
@@ -138,7 +133,6 @@ class CommonLimitItemWidget extends StatelessWidget {
   }
 
   // ==========================================
-  // 🟢 ১. SHORT VIEW (Client Code Removed, Added Date Time)
   // ==========================================
   Widget _buildShortView(BuildContext context, String status, Color statusColor) {
     return Container(
@@ -229,7 +223,6 @@ class CommonLimitItemWidget extends StatelessWidget {
   }
 
   // ==========================================
-  // 🟢 ২. ACCESSIBLE DETAIL VIEW (বয়স্ক ইউজারদের জন্য)
   // ==========================================
   Widget _buildDetailedView(BuildContext context, String status, Color statusColor) {
     return Container(
@@ -237,7 +230,6 @@ class CommonLimitItemWidget extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        // color: Get.theme.cardColor,
         color: context.isDark ? Colors.grey.shade900 : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: context.dividerColor, width: 1),
@@ -246,7 +238,6 @@ class CommonLimitItemWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          //  Name & Status (বড় ফন্ট)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -287,7 +278,6 @@ class CommonLimitItemWidget extends StatelessWidget {
             child: Divider(height: 1, color: context.dividerColor ?? Colors.grey.withOpacity(0.2)),
           ),
 
-          //  Amount (সবচেয়ে হাইলাইটেড অংশ)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

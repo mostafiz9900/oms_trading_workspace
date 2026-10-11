@@ -86,7 +86,6 @@ class LoginView extends GetView<AuthController> {
                     ),
                     AppSpace.spaceH20,
 
-                    //  Remember Me & Forgot Password Row (Fixed Alignment)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -114,7 +113,6 @@ class LoginView extends GetView<AuthController> {
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
                               Get.to(() => SendOTPScreen());
-                              // Get.to(() => const OtpVerifyScreen(email: ''));
                             },
                         ),
                       ],
@@ -138,9 +136,6 @@ class LoginView extends GetView<AuthController> {
                     TextButton(
                       onPressed: () async {
                         // ১. গেস্ট মোডে যাওয়ার আগে স্টোরেজ থেকে সমস্ত টোকেন ক্লিয়ার করুন
-                        // await StorageService.remove(StorageConstants.token);
-                        // await StorageService.remove(StorageConstants.refreshToken);
-                        // await StorageService.remove(StorageConstants.userInfo);
 
                         // ২. মেমোরিতে যদি পুরানো HomeController অ্যাক্টিভ থাকে, তবে তা জোরপূর্বক ডিলিট করে দিন
                         if (Get.isRegistered<HomeController>()) {

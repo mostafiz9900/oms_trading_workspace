@@ -34,7 +34,6 @@ class LimitRequestController extends GetxController {
   void onInit() {
     super.onInit();
     _initTokenAndApi();
-    // fetchClientLimits(page: 1);
     _scrollListener();
   }
 
@@ -75,7 +74,6 @@ class LimitRequestController extends GetxController {
     }
   }
 
-  // var token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5MzUzNzI4LCJpYXQiOjE3NjkzMzIxMjgsImp0aSI6IjY4ZmRlODZmNGJkYzQ1NDRhYmFiMGUzN2FhMTA5ZTlhIiwidXNlcl9pZCI6OH0.SLYhTarfDUxb5g49rEueQPjrVKOVG5hz-6qFaZL22NI";
   Future<void> fetchClientLimits({required int page}) async {
     if (page == 1) {
       isLoading = true;
@@ -174,7 +172,6 @@ class LimitRequestController extends GetxController {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // 🔹 ১. Market Dropdown (Left Side - 40% Space)
                           Expanded(
                             flex: 2, //  প্রোপোরশনাল স্পেসিং
                             child: Column(
@@ -205,7 +202,6 @@ class LimitRequestController extends GetxController {
                           ),
 
                           const SizedBox(width: 16), // মাঝখানের স্পেসিং
-                          // 🔹 ২. Amount Input (Right Side - 60% Space)
                           Expanded(
                             flex: 4, //  অ্যামাউন্ট ফিল্ডে টাইপ করার জন্য একটু বেশি জায়গা দেওয়া হলো
                             child: Column(
@@ -402,7 +398,6 @@ class LimitRequestController extends GetxController {
   Future<void> submitLimitRequest(BuildContext dialogContext) async {
     var investorCode = homeController.userInfo.userDetail?.investorCode;
 
-    //  ১. ভ্যালিডেশন আপডেট করা হলো (ফাইল এখন অপশনাল)
     if (amountController.text.isEmpty) {
       Helpers.snackbarForErorr2(titleText: "Error", bodyText: "Amount is required. Please enter an amount.");
       return;

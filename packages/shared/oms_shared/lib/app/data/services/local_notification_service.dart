@@ -62,11 +62,6 @@ class LocalNotificationService {
       channelDescription: 'Notification channel for images',
       importance: Importance.high,
       priority: Priority.high,
-      // styleInformation: BigPictureStyleInformation(
-      // NetworkPathAndroidBitmap(imageUrl),
-      // contentTitle: title,
-      // summaryText: body,
-      // ),
     );
 
     const DarwinNotificationDetails iosDetails = DarwinNotificationDetails();

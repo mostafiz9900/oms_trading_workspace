@@ -12,10 +12,6 @@ class AppbarRightSearchTapWidgetOld extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      // onPressed: () {
-      //   // Get.toNamed(Routes.SEARCH_WATCH_LIST);
-      //   Get.find<HomeController>().changeCurrentIndex(2);
-      // },
       onPressed: () async {
         final result = await SearchHelper.open();
         if (result != null) {

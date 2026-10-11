@@ -13,7 +13,6 @@ class OtpVerifyScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final otpDurationAsync = ref.watch(otpDurationProvider);
 
-    //  THE MAGIC: মাত্র ১টি কন্ট্রোলার এবং ১টি ফোকাস নোড (কোনো গ্লিচ হবে না)
     final otpController = useTextEditingController();
     final focusNode = useFocusNode();
 
@@ -64,7 +63,6 @@ class OtpVerifyScreen extends HookConsumerWidget {
                 ),
                 const SizedBox(height: 32),
 
-                //  OTP BULLETPROOF UI (Single TextField overlaid on 6 Boxes)
                 HookBuilder(
                   builder: (innerContext) {
                     useListenable(otpController);
@@ -77,7 +75,6 @@ class OtpVerifyScreen extends HookConsumerWidget {
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          // 🟢 ১. Background UI (৬টি দৃশ্যমান বক্স)
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: List.generate(6, (index) {
@@ -111,7 +108,6 @@ class OtpVerifyScreen extends HookConsumerWidget {
                             }),
                           ),
 
-                          // 🟢 ২. Foreground (১টি অদৃশ্য TextField যা ইউজার টাইপ করবে)
                           Positioned.fill(
                             child: TextField(
                               controller: otpController,

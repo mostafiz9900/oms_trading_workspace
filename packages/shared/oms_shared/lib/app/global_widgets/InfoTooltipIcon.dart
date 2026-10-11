@@ -26,7 +26,6 @@ class InfoTooltipIcon2 extends StatelessWidget {
                   child: Text(infoText, style: const TextStyle(fontSize: 12, color: Colors.black87, height: 1.4)),
                 ),
                 direction: PopoverDirection.top,
-                // width: 220,
                 radius: 10,
                 backgroundColor: Colors.white,
                 barrierColor: Colors.black.withValues(alpha: 0.1),

@@ -14,12 +14,9 @@ class _ChartData {
 class HomePieChart extends StatelessWidget {
   const HomePieChart({super.key});
 
-  // Get.find will locate the controller registered in main()
-
   @override
   Widget build(BuildContext context) {
     return GetBuilder<LiveIndexController>(
-      // id: 'indexList',
       builder: (homeCon) {
         final IndexModel? model = homeCon.newArr;
 

@@ -12,8 +12,6 @@ class PortfolioWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // var controller=Get.put(PositionController());
-    // printLog('${controller.hashCode}===PositionTabWidget');
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
     return Scaffold(
       key: scaffoldKey,

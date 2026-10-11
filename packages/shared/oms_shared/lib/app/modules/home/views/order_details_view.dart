@@ -36,7 +36,6 @@ class OrderDetailsView extends StatelessWidget {
         String datePart = parts[0]; // 20260906
         String timePart = parts[1].split('.')[0]; // 04:15:23
 
-        // তারিখ সুন্দর করে সাজানো (DD-MM-YYYY)
         if (datePart.length == 8) {
           String year = datePart.substring(0, 4);
           String month = datePart.substring(4, 6);

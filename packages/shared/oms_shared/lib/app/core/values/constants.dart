@@ -25,8 +25,6 @@ class AppConstants {
   static const orderList = 'order_list';
   static const orderAlertsUpdate = 'orderAlertsUpdate';
   // Color constants
-  // static const Color primaryColor = Colors.blue;
-  // static const Color secondaryColor = Colors.green;
 
   // Size constants
   static const int successStatus = 200;

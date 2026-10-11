@@ -13,9 +13,6 @@ class TimeSalesTabHistoryWidget extends StatelessWidget {
     return GetBuilder<HomeController>(
       id: 'timeAndSalesHistory',
       initState: (_) {
-        // WidgetsBinding.instance.addPostFrameCallback((_) {
-        //   Get.find<HomeController>().getTimeAndSales();
-        // });
       },
       builder: (homeCon) {
         return Column(
@@ -58,9 +55,7 @@ class TimeSalesTabHistoryWidget extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final reverseIndex = homeCon.timeAndSalesHistory.length - 1 - index;
                         final model = homeCon.timeAndSalesHistory[reverseIndex];
-                        // TimeAndSalesModel model = homeCon.timeAndSalesHistory.elementAt(index);
                         return Container(
-                          // height: 40,
                           padding: const .symmetric(horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(color: index % 2 == 0 ? context.evenColor : context.oddColor),
                           child: Row(
@@ -81,7 +76,6 @@ class TimeSalesTabHistoryWidget extends StatelessWidget {
                                 flex: 2,
                                 child: _TableTitleTextWidget(
                                   title:
-                                      // NumberFormatter.millionFormat(model.vl??0.0),
                                       model.tds ?? "",
                                   textAlign: TextAlign.center,
                                 ),

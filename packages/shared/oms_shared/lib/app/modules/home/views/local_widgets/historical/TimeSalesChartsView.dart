@@ -5,7 +5,6 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import '../../../../../app_pkg.dart';
 
 // =========================================================================
-// 🚀 Main Charts View Wrapper (5 Pro Charts Included)
 // =========================================================================
 class TimeSalesChartsView extends StatelessWidget {
   final List<dynamic> data; // TimeAndSalesModel
@@ -39,7 +38,6 @@ class TimeSalesChartsView extends StatelessWidget {
 }
 
 // =========================================================================
-// 🚀 1. Whale Tracker (Bubble Chart) [Existing 1]
 // =========================================================================
 class WhaleTrackerChart extends StatelessWidget {
   final List<dynamic> chartData;
@@ -100,7 +98,6 @@ class WhaleTrackerChart extends StatelessWidget {
 }
 
 // =========================================================================
-// 🚀 2. Combined Price & Volume Chart [Existing 2]
 // =========================================================================
 class CombinedPriceVolumeChart extends StatelessWidget {
   final List<dynamic> chartData;
@@ -227,7 +224,6 @@ class CombinedPriceVolumeChart extends StatelessWidget {
 }
 
 // =========================================================================
-// 🚀 3. Cumulative Volume Delta (CVD) Chart [NEW 1]
 // =========================================================================
 class CvdModel {
   final int index;
@@ -305,7 +301,6 @@ class CvdLineChart extends StatelessWidget {
 }
 
 // =========================================================================
-// 🚀 4. Buy vs Sell Volume Breakdown [NEW 2]
 // =========================================================================
 class BuySellBreakdownChart extends StatelessWidget {
   final List<dynamic> chartData;
@@ -369,7 +364,6 @@ class BuySellBreakdownChart extends StatelessWidget {
 }
 
 // =========================================================================
-// 🚀 5. Trade Size Distribution Histogram [NEW 3]
 // =========================================================================
 class TradeSizeHistogramChart extends StatelessWidget {
   final List<dynamic> chartData;

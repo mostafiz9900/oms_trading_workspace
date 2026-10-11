@@ -177,7 +177,6 @@ class SignupVerifyInputMedia extends GetView<AuthController> {
                                           onChanged: (value) {
                                             authCon.setClearSelectedAvailableEmail();
                                           },
-                                          // prefixIcon: AssetsConstants.userIconSvg,
                                         ),
                                       ],
                                     ),
@@ -205,7 +204,6 @@ class SignupVerifyInputMedia extends GetView<AuthController> {
                         ..onTap = () {
                           printLog('data');
                           Get.to(() => const LoginView());
-                          //     binding: AuthBinding());
                         },
                     ),
                   ],

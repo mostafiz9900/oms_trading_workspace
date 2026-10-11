@@ -73,7 +73,6 @@ class WatchListWidget extends StatelessWidget {
             },
             child: Column(
               children: [
-                // _SectorFilterWidget(watchCon: controller),
                 if (controller.homeCon.filtersSectorList.length > 1)
                   CommonHorizontalTabList(
                     items: controller.homeCon.filtersSectorList
@@ -250,7 +249,6 @@ class WatchListWidget extends StatelessWidget {
                 ),
                 AppSpace.spaceH6,
                 dividerWidget,
-                // _WatchListBuilderWidget(watchCon: controller),
                 Expanded(
                   child: controller.isLoading
                       ? const WatchlistLoader()
@@ -277,7 +275,6 @@ class WatchListWidget extends StatelessWidget {
                                     searchQuery: controller.currentSearchQuery, // 🚀 Highlights search query
                                     onTap: () {
                                       if (model.orderBook != null) {
-                                        // controller.recentService.addToRecentSearch(model.orderBook!);
                                         printLog(
                                           'item list::: ${model.toJson()}',
                                         );
@@ -332,7 +329,6 @@ class WatchListWidget extends StatelessWidget {
                                     model: model,
                                     onTap: () {
                                       if (model.orderBook != null) {
-                                        // controller.recentService.addToRecentSearch(model.orderBook!);
                                         controller.homeCon.goBottomNabBarPage(
                                           1,
                                           model.orderBook!,

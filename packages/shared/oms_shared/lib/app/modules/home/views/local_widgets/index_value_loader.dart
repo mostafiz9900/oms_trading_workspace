@@ -317,7 +317,6 @@ class CartesianChartLoader extends StatelessWidget {
     final baseColor = context.isDark ? Colors.grey.shade800 : Colors.grey.shade200;
     final highlightColor = context.isDark ? Colors.grey.shade700 : Colors.grey.shade50;
 
-    // শিমারের ভেতরের শেপগুলোর কালার (যেকোনো সলিড কালার দিলেই হবে, শিমার এটা ওভাররাইট করবে)
     final shapeColor = Colors.white;
 
     return Container(
@@ -336,7 +335,6 @@ class CartesianChartLoader extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🚀 1. Header (Title & Legend Placeholder)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -387,7 +385,6 @@ class CartesianChartLoader extends StatelessWidget {
 
             const SizedBox(height: 12),
 
-            // 🚀 3. X-Axis Labels Placeholder (DSEX, DS30 etc.)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: List.generate(5, (index) {

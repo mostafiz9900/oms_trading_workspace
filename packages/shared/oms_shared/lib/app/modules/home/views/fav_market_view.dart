@@ -68,35 +68,9 @@ class FavMarketView extends StatelessWidget {
 
               const Divider(height: 1),
 
-              // SingleChildScrollView(
-              //   scrollDirection: Axis.horizontal,
-              //   child: Row(
-              //     children: homeCon.favCatList.map((table) {
-              //       final isSelected = homeCon.selectedTableId == table.id;
-              //       return Padding(
-              //         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              //         child: InkWell(
-              //           onTap: () => homeCon.selectTable(table.id ?? 0),
-              //           child: Container(
-              //             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-              //             decoration: BoxDecoration(
-              //               color: isSelected
               //                   ? Colors.blue
               //                   : context.isDark
               //                   ? context.unselectColor
-              //                   : context.tableLightColor,
-              //               borderRadius: BorderRadius.circular(12),
-              //             ),
-              //             child: Text(
-              //               table.name ?? "",
-              //               style: TextStyle(color: isSelected ? Colors.white : Colors.black, fontSize: 14),
-              //             ),
-              //           ),
-              //         ),
-              //       );
-              //     }).toList(),
-              //   ),
-              // ),
 
               // Market data list
               Expanded(
@@ -109,7 +83,6 @@ class FavMarketView extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
                         itemBuilder: (context, index) {
                           final item = homeCon.favMarketParseList[index];
-                          // return _MarketItemWidget(index: index, model: item);
                           return SharedMarketListItem(
                             model: item,
                             index: index,

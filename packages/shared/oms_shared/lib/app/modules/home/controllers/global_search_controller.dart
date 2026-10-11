@@ -28,7 +28,6 @@ class GlobalSearchController extends GetxController {
     return rawList.where((m) => m.group == "PUBLIC").toList();
   }
 
-  // 🚀 ২. Live Market List থেকে ID ম্যাচ করে রিসেন্ট ডাটা জেনারেট করা (Service থেকে ID নিয়ে)
   List<MarketModel> get recentSearches {
     List<MarketModel> liveRecentItems = [];
     for (int id in recentService.recentOrderBookIds) {
@@ -69,13 +68,11 @@ class GlobalSearchController extends GetxController {
   void searchData(String query) {
     currentSearchQuery = query;
 
-    // 🚀 ডাটা ফিল্টার (Extension: displayName ব্যবহার করা হয়েছে)
     filteredItems = _validHomeData.where((item) {
       bool matchesSearch = query.isEmpty || item.displayName.toLowerCase().contains(query.toLowerCase());
       return matchesSearch;
     }).toList();
 
-    // 🚀 Sorting Logic Applier (Extensions ব্যবহার করা হয়েছে)
     filteredItems.sort((a, b) {
       int result = 0;
       switch (currentSortCategory) {
@@ -121,13 +118,11 @@ class GlobalSearchController extends GetxController {
     update(['searchList', 'sortCategoryDropdown', 'sortOrderDropdown', 'viewModeDropdown']);
   }
 
-  // 🚀 ৩. শুধু OrderBook ID সেভ করা হচ্ছে (Service-এর মাধ্যমে)
   void addToRecent(MarketModel item) {
     if (item.orderBook == null) return;
     recentService.addToRecentSearch(item.orderBook!);
   }
 
-  // রিসেন্ট ক্লিয়ার করার ফাংশন (Service-এর মাধ্যমে)
   void clearRecent() {
     recentService.clearRecentSearches();
     update(['searchList']);

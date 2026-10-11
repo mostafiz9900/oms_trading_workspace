@@ -55,14 +55,6 @@ class UpdateController extends GetxController {
       printLog('New version     : ${result.newVersion}');
       printLog('Error           : ${result.errorMessage}');
 
-      // final current = result.currentVersion ?? "0.0.0";
-      // final latest = result.newVersion ?? "0.0.0";
-
-      // if (_isLower(current, latest)) {
-      //   forceUpdate = true;
-      //   updateUrl = result.appURL ?? (GetPlatform.isIOS ? iosUrl : androidUrl);
-      //   update();
-      // }
     } catch (e) {
       forceUpdate = false;
       update();
@@ -96,16 +88,6 @@ class UpdateController extends GetxController {
           update();
         }
         // show built-in dialog
-        // newVersion.showUpdateDialog(
-        //   context: ,
-        //   versionStatus: status,
-        //   dialogTitle: "Update Available",
-        //   dialogText:
-        //   "A new version (${status.storeVersion}) is available. Please update.",
-        //   updateButtonText: "Update Now",
-        //   dismissButtonText: "Later",
-        //   allowDismissal: true,
-        // );
       }
     } catch (e) {
       debugPrint("Version check failed: $e");

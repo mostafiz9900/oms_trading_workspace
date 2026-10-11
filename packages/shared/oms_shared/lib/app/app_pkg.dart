@@ -16,7 +16,6 @@ const kLOGENABLE = true;
 void printLog(dynamic data) {
   if (kLOGENABLE) {
     print("$kLOGTAG:👍 ⚖️ ${data.toString()}");
-    // log('benemoy:: ${data.toString()}');
   }
 }
 

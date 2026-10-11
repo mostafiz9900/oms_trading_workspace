@@ -7,7 +7,6 @@ class LiveProBlinker extends StatefulWidget {
   final EdgeInsetsGeometry padding;
   final BorderRadiusGeometry? borderRadius;
 
-  // 🚀 ১. Modern Dart Syntax: `super.key` ব্যবহার করা হয়েছে (Old `Key? key` বাদ দিয়ে)
   const LiveProBlinker({
     super.key,
     required this.trackValue,
@@ -42,7 +41,6 @@ class _LiveProBlinkerState extends State<LiveProBlinker> with SingleTickerProvid
       final Color targetColor;
 
       if (widget.defaultColor == Colors.transparent) {
-        // 🎨 TradingView স্ট্যান্ডার্ড কালার (একটু বেশি ভাইব্রেন্ট সবুজ/লাল)
         targetColor = isUp
             ? const Color(0xFF00C853).withOpacity(0.4) // Vivid Green
             : const Color(0xFFD50000).withOpacity(0.4); // Vivid Red

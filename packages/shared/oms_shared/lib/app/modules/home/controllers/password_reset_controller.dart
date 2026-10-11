@@ -18,7 +18,6 @@ class PasswordResetController extends GetxController {
   bool confirmPasswordVisible = false;
   final formKey = GlobalKey<FormState>();
 
-  // 🟢 Eye Icon Toggles (UI আপডেট করার জন্য)
   void toggleOldPassword() {
     oldPasswordVisible = !oldPasswordVisible;
     update();

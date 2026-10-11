@@ -20,10 +20,8 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final ThemeServices themeServices = Get.find();
 
     final homeController = Get.find<HomeController>();
-    // print(controller.hashCode);
     final UpdateController updateController = Get.put(UpdateController());
     return GetBuilder<UpdateController>(
       builder: (_) {
@@ -96,7 +94,6 @@ class HomeView extends StatelessWidget {
 
   Scaffold buildScafoldWidget(HomeController homeCon, BuildContext context) {
     return Scaffold(
-      // drawer: Drawer(),
       body: IndexedStack(
         index: homeCon.currentIndex,
         children: [MarketWidget(), QuoteWidget(), WatchListWidget(), FavMarketView(), PortfolioWidget(), TradeWidget()],

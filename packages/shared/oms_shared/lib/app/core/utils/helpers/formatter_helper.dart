@@ -67,11 +67,9 @@ class NumberFormatter {
       final sign = parsedValue < 0 ? "-" : "";
 
       if (absValue >= 10000000) {
-        // ১ কোটির বেশি হলে (Crore)
         final inCrore = absValue / 10000000;
         return "$sign${NumberFormat('#,##0.00', 'en_US').format(inCrore)} Cr";
       } else if (absValue >= 100000) {
-        // ১ লাখের বেশি হলে (Lakh)
         final inLakh = absValue / 100000;
         return "$sign${NumberFormat('#,##0.00', 'en_US').format(inLakh)} L";
       } else {
@@ -142,7 +140,6 @@ class NumberFormatter {
   }
 
   static String formatAmount(String? value) {
-    // String কে double এ কনভার্ট করা (ফেইল করলে 0.0 ধরবে)
     double doubleValue = double.tryParse(value ?? '0') ?? 0.0;
 
     if (doubleValue >= 1000000000000) {
@@ -161,7 +158,6 @@ class NumberFormatter {
   }
 
   static String calculateAndFormatSum(dynamic q1, dynamic q2, dynamic q3) {
-    // মানগুলোকে double এ রূপান্তর করা (যদি null থাকে তবে 0.0)
     double v1 = double.tryParse(q1.toString()) ?? 0.0;
     double v2 = double.tryParse(q2.toString()) ?? 0.0;
     double v3 = double.tryParse(q3.toString()) ?? 0.0;

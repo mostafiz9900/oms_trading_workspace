@@ -9,7 +9,6 @@ import '../../../data/models/response/eps_model.dart';
 class CompaniesController extends GetxController {
   final _connect = GetConnect(timeout: Duration(seconds: 30));
 
-  // plain fields (no obs)
   CompaniesModel? companies;
   bool isLoading = false;
   String error = '';
@@ -33,9 +32,7 @@ class CompaniesController extends GetxController {
           companies = CompaniesModel.fromMap(Map<String, dynamic>.from(response.body));
           return companies;
         } else {
-          // fallback: try to convert to string and decode
           companies = CompaniesModel.fromMap(response.body ?? '');
-          // companies = companiesModelFromMap(response.bodyString ?? '');
           return companies;
         }
       } else {
@@ -70,9 +67,7 @@ class CompaniesController extends GetxController {
           var dividend = DividendModel.fromMap(Map<String, dynamic>.from(response.body));
           return dividend;
         } else {
-          // fallback: try to convert to string and decode
           var dividend = DividendModel.fromMap(response.body ?? '');
-          // companies = companiesModelFromMap(response.bodyString ?? '');
           return dividend;
         }
       } else {
@@ -146,7 +141,6 @@ class CompaniesState {
   }
 }
 
-// 3. AsyncNotifier ভ্যালু দিয়ে (সবচেয়ে ভালো)
 class CompaniesAsyncNotifier extends AsyncNotifier<CompaniesState> {
   @override
   CompaniesState build() {

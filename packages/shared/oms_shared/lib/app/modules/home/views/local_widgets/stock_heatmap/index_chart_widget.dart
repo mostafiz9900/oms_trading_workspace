@@ -65,7 +65,6 @@ class IndexChartWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ==========================================
-            //  Top Header: Index Info (Left) & Toggle (Right)
             // ==========================================
             Padding(
               padding: const EdgeInsets.only(

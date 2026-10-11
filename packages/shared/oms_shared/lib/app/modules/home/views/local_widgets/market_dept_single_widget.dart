@@ -251,7 +251,6 @@ class DepthTableHeader extends StatelessWidget {
 }
 
 // =============================================================================
-// 3. Order Book List (Converted to SliverList to fix Overflow)
 // =============================================================================
 class _OrderBookSliverList extends StatelessWidget {
   final List<MarketDepthModel> buys;
@@ -323,7 +322,6 @@ class _OrderBookSliverList extends StatelessWidget {
 }
 
 // =============================================================================
-// Bid (Buy) Row Item (Centered Gradient Depth Bar)
 // =============================================================================
 class BidRowItem extends StatelessWidget {
   final MarketDepthModel model;
@@ -395,17 +393,6 @@ class BidRowItem extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Flexible(
-                //   flex: 3,
-                //   child: FittedBox(
-                //     fit: BoxFit.scaleDown,
-                //     alignment: Alignment.centerLeft,
-                //     child: Text(
-                //       NumberFormatter.bdFormatInt(qty),
-                //       style: Get.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500, fontSize: 13),
-                //     ),
-                //   ),
-                // ),
                 const SizedBox(width: 4),
                 Flexible(
                   flex: 2,
@@ -432,7 +419,6 @@ class BidRowItem extends StatelessWidget {
 }
 
 // =============================================================================
-// Ask (Sell) Row Item (Centered Gradient Depth Bar)
 // =============================================================================
 class AskRowItem extends StatelessWidget {
   final MarketDepthModel model;
@@ -595,7 +581,6 @@ class _MarketDepthChart extends StatelessWidget {
         ),
 
         primaryXAxis: NumericAxis(
-          // FIX: X-অক্ষের শেষের দিকের লেবেলগুলো যেন বাইরে না যায় (Shift to inside)
           edgeLabelPlacement: EdgeLabelPlacement.shift,
           majorGridLines: const MajorGridLines(width: 0),
           axisLine: const AxisLine(width: 0.5, color: Colors.grey),

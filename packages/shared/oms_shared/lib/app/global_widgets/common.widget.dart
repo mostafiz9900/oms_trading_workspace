@@ -188,7 +188,6 @@ void showLogoutDialog(BuildContext context) {
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(backgroundColor: context.buttonColor),
                         onPressed: () async {
-                          // ref.read(logoutProvider.notifier).logout(context);
                           Get.back();
                           Get.find<HomeController>().logout(context);
                         },

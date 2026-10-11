@@ -15,7 +15,6 @@ class SearchWatchListController extends GetxController {
   void onInit() {
     super.onInit();
     allItems.addAll(homeController.marketList);
-    // filteredItems.addAll(allItems);
     filteredItems = List.from(allItems);
     selectSector = homeController.filtersSectorList.first;
     textController.addListener(() {
@@ -35,7 +34,6 @@ class SearchWatchListController extends GetxController {
   }
 
   void search(String query) {
-    // filteredItems.clear();
     printLog('data: ${allItems.first.toJson()}');
     if (query.isEmpty) {
       filteredItems = allItems;
@@ -48,7 +46,6 @@ class SearchWatchListController extends GetxController {
   }
 
   void searchSector(String query) {
-    // filteredItems.clear();
     printLog('data: ${allItems.first.toJson()}');
     selectSector = query;
     if (query == 'All') {

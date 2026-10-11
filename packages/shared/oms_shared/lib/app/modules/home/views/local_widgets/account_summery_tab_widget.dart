@@ -13,9 +13,6 @@ class AccountSummeryTabWidget extends StatelessWidget {
     return GetBuilder<HomeController>(
       id: 'user_balance_update',
       initState: (___) {
-        // WidgetsBinding.instance.addPostFrameCallback((_) {
-        //   Get.find<HomeController>().userBalance();
-        // });
       },
       builder: (homeCont) {
         if (homeCont.userBalanceData == null) {
@@ -68,33 +65,6 @@ class AccountSummeryTabWidget extends StatelessWidget {
                     valueColor: context.textColor,
                   ),
                   AppSpace.spaceH10,
-                  // dividerWidget,
-                  // AppSpace.spaceH10,
-                  // const _TitleAndValueRowWidget(
-                  //   title: 'OD Limit',
-                  //   value: '0.00',
-                  // ),
-                  // AppSpace.spaceH10,
-                  // dividerWidget,
-                  // AppSpace.spaceH10,
-                  // const _TitleAndValueRowWidget(
-                  //   title: 'Portfolio Value',
-                  //   value: '12345.00',
-                  // ),
-                  // AppSpace.spaceH10,
-                  // dividerWidget,
-                  // AppSpace.spaceH10,
-                  // const _TitleAndValueRowWidget(
-                  //   title: 'Total Portfolio',
-                  //   value: '14,545450',
-                  // ),
-                  // AppSpace.spaceH10,
-                  // dividerWidget,
-                  // AppSpace.spaceH10,
-                  // const _TitleAndValueRowWidget(
-                  //   title: 'Buying Power',
-                  //   value: '1,1234.00',
-                  // ),
                 ],
               ),
             ),
@@ -150,25 +120,6 @@ class _ClineCodeWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: .start,
         children: [
-          // Expanded(
-          //   child: Container(
-          //     padding: const .symmetric(vertical: 5, horizontal: 10),
-          //     decoration: decoration,
-          //     child: Column(
-          //       crossAxisAlignment: .start,
-          //       mainAxisAlignment: .start,
-          //       children: [
-          //         Text('Portfolio',
-          //             style: Get.textTheme.bodySmall?.copyWith(
-          //                 fontSize: 13, fontWeight: FontWeight.w400)),
-          //         Text('DSE',
-          //             style: Get.textTheme.titleLarge?.copyWith(
-          //                 fontSize: 17, fontWeight: FontWeight.w700)),
-          //       ],
-          //     ),
-          //   ),
-          // ),
-          // AppSpace.spaceW16,
           Expanded(
             child: Container(
               padding: const .symmetric(vertical: 5, horizontal: 10),

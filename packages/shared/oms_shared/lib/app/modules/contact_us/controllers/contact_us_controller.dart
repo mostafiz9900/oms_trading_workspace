@@ -7,7 +7,6 @@ import '/app/app_pkg.dart';
 
 class ContactUsController extends GetxController {
   // ==========================================================
-  //  Global Variables (সব ডেটা এখান থেকে কন্ট্রোল হবে)
   // ==========================================================
   // Company-owned values come from the app's HouseProfile.
   String get contactNumber => AppConfig.profile.contact.phone;

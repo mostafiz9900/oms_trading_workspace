@@ -55,22 +55,6 @@ final Map<ExecInst, String> execInstMap = {
   ExecInst.WHOLE_OR_NONE_AND_SUSPEND: 'w S',
   ExecInst.WHOLE_OR_NONE_AND_RELEASE: 'w q',
 };
-// class SecuritySubtype {
-//   static const String PUBLIC = 'PUBLIC';
-//   static const String BLOCK = 'BLOCK';
-//   static const String DEBT = 'DEBT';
-//   static const String BUYIN = 'BUYIN';
-//   static const String INDEX = 'INDEX';
-//   static const String SPUBLIC = 'SPUBLIC';
-//   static const String SBLOCK = 'SBLOCK';
-//   static const String SDEBT = 'SDEBT';
-//   static const String SBUYIN = 'SBUYIN';
-//   static const String SCPX = 'SCPX';
-//   static const String ATBPUB = 'ATBPUB';
-//   static const String ATBDEBT = 'ATBDEBT';
-//   static const String ATBBUYIN = 'ATBBUYIN';
-//   static const String ATBX = 'ATBX';
-// }
 
 enum ActionsType { ORDER, REPLACE_ORDER, CANCEL_ORDER, ORDER_STATUS }
 

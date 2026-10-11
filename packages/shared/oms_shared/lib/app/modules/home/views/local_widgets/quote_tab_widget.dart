@@ -43,15 +43,12 @@ class QuoteTabWidget extends StatelessWidget {
               ),
             ),
 
-            // ২. Sticky Tab Bar (Updated for Scrollable)
             SliverPersistentHeader(
               pinned: true,
               delegate: _SliverTabBarDelegate(
                 TabBar(
                   dividerHeight: 0,
                   indicatorSize: TabBarIndicatorSize.tab,
-                  // isScrollable: true,
-                  // tabAlignment: TabAlignment.start,
                   labelColor: Colors.white,
                   unselectedLabelColor: context.textColor,
                   labelStyle: const TextStyle(
@@ -75,7 +72,6 @@ class QuoteTabWidget extends StatelessWidget {
                     Tab(text: "News"),
                     Tab(text: "Chart"),
                     // Tab(text: "Financials"), // উদাহরণস্বরূপ
-                    // Tab(text: "Dividends"),
                   ],
                 ),
                 backgroundColor: context.tapBg, // ট্যাবের নিজস্ব ব্যাকগ্রাউন্ড
@@ -92,7 +88,6 @@ class QuoteTabWidget extends StatelessWidget {
             MarketDeptSingleWidget(),
             _NewsWidget(),
             CandleSeriesChartsWidget(),
-            // CandleChartView(),
           ],
         ),
       ),
@@ -101,7 +96,6 @@ class QuoteTabWidget extends StatelessWidget {
 }
 
 // ==========================================
-// 1. Top Details Section (Orchestrator)
 // ==========================================
 class _QuoteTopDetailsSection extends StatelessWidget {
   final HomeController homeCon;
@@ -154,7 +148,6 @@ class _QuoteTopDetailsSection extends StatelessWidget {
 }
 
 // ==========================================
-// 2. Sub-components (Clean & Reusable)
 // ==========================================
 
 /// কোম্পানির নাম এবং সেক্টর ইনফো
@@ -475,12 +468,6 @@ class _DetailedStatsWrap extends StatelessWidget {
           NumberFormatter.bdFormat("${mData.wk52Low ?? 0.0}"),
         ),
 
-        // QuoteUIHelper.buildPerformanceItem(context, '2W H:', NumberFormatter.formatAmount("${mData.wk2High ?? 0.0}")),
-        // QuoteUIHelper.buildPerformanceItem(context, '2W L:', NumberFormatter.formatAmount("${mData.wk2Low ?? 0.0}")),
-        // QuoteUIHelper.buildPerformanceItem(context, '4W H:', NumberFormatter.formatAmount("${mData.wk4High ?? 0.0}")),
-        // QuoteUIHelper.buildPerformanceItem(context, '4W L:', NumberFormatter.formatAmount("${mData.wk4Low ?? 0.0}")),
-        // QuoteUIHelper.buildPerformanceItem(context, '26W H:', NumberFormatter.formatAmount("${mData.wk26High ?? 0.0}")),
-        // QuoteUIHelper.buildPerformanceItem(context, '26W L:', NumberFormatter.formatAmount("${mData.wk26Low ?? 0.0}")),
         QuoteUIHelper.buildPerformanceItem(
           context,
           'Crct Lw:',
@@ -519,7 +506,6 @@ class _DetailedStatsWrap extends StatelessWidget {
           context,
           'Ttl Share:',
           '${cData?.shareholding?.totalSharesMillions ?? 0.0}',
-          // NumberFormatter.croreFormat("${cData?.shareholding?.totalSharesMillions ?? 0.0}"),
           showInfo: true,
           infoText:
               'Total no of Share : ${NumberFormatter.croreFormat("${cData?.shareholding?.totalSharesMillions}")}',
@@ -579,23 +565,6 @@ class _DetailedStatsWrap extends StatelessWidget {
           '${(cData?.marketData?.valuation?.dividendYieldPct ?? 0.0).toStringAsFixed(2)}% csh',
         ),
 
-        // QuoteUIHelper.buildPerformanceItem(context, 'Best Bid:', '${mData.bid ?? '0.0'}'),
-        // QuoteUIHelper.buildPerformanceItem(context, 'Bid Qty:', '${mData.bq ?? '0'}'),
-        // QuoteUIHelper.buildPerformanceItem(context, 'Best Ask:', '${mData.ask ?? 0.0}'),
-        // QuoteUIHelper.buildPerformanceItem(context, 'Ask Qty:', '${mData.aq ?? 0}'),
-        // QuoteUIHelper.buildPerformanceItem(context, 'Change Tk:', (mData.chg ?? 0).toStringAsFixed(2)),
-        // QuoteUIHelper.buildPerformanceItem(context, 'Change%:', mData.d?.toStringAsFixed(2) ?? '0'),
-        // QuoteUIHelper.buildPerformanceItem(
-        //   context,
-        //   'L.T.Time:',
-        //   mData.lastTradeTime == 'null' ? "" : mData.lastTradeTime?.split('.').first ?? "",
-        // ),
-        // QuoteUIHelper.buildPerformanceItem(context, 'L.T.P:', mData.activePrice.toStringAsFixed(2)),
-        // QuoteUIHelper.buildPerformanceItem(context, 'Board:', mData.board ?? ""),
-        // QuoteUIHelper.buildPerformanceItem(context, 'Share Type:', mData.shareType ?? ""),
-        // QuoteUIHelper.buildPerformanceItem(context, 'Mkt Type:', mData.marketType ?? ""),
-        // QuoteUIHelper.buildPerformanceItem(context, 'Group:', mData.group ?? ''),
-        // QuoteUIHelper.buildPerformanceItem(context, 'Sector:', mData.sector ?? ""),
       ],
     );
   }
@@ -707,7 +676,6 @@ class _ShareholdingInfo extends StatelessWidget {
 }
 
 // ==========================================
-// 3. UI Helper Class (Static Methods for Reusability)
 // ==========================================
 class QuoteUIHelper {
   static Widget buildSingleItem(

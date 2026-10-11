@@ -18,7 +18,6 @@ class TopSectorByGainerWidget extends StatelessWidget {
         }
         return Container(
           margin: const .symmetric(horizontal: 8, vertical: 2),
-          // padding: const .symmetric(horizontal: 2, vertical: 0),
           decoration: BoxDecoration(
             color: context.cardColor,
             borderRadius: BorderRadius.circular(6),
@@ -61,12 +60,10 @@ class TopSectorByGainerWidget extends StatelessWidget {
                     enablePanning: true, // allows horizontal scroll
                     enablePinching: true, // optional pinch zoom
                     zoomMode: ZoomMode.xy,
-                    // enableSelectionZooming: true,
                     // only X-axis scroll/zoom
                   ),
                   primaryYAxis: NumericAxis(
                     minimum: 0,
-                    // maximum: 100,
                     interval: 5,
                     majorGridLines: const MajorGridLines(width: 0.5),
                   ),
@@ -81,7 +78,6 @@ class TopSectorByGainerWidget extends StatelessWidget {
                         fontSize: 18,
                         color: context.textColor,
                       ),
-                      // Optional: You can set a title for the legend
                     ),
                   ),
 

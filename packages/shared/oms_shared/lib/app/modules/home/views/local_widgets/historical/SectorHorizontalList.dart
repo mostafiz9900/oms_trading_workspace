@@ -7,7 +7,6 @@ import '../responsive_wrap_widget.dart';
 import '/app/app_pkg.dart';
 
 // ========================================================
-//  1. Pro Sector Horizontal List (Home Page Widget)
 // ========================================================
 class ProSectorHorizontalList extends StatelessWidget {
   const ProSectorHorizontalList({super.key});
@@ -124,7 +123,6 @@ class ProSectorHorizontalList extends StatelessWidget {
 }
 
 // ========================================================
-//  2. Sector Details View (The Full Page)
 // ========================================================
 class SectorDetailsView extends StatelessWidget {
   final String sectorName;
@@ -135,7 +133,6 @@ class SectorDetailsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        // automaticallyImplyLeading: false,
         titleText: sectorName,
         titleFontSize: 16,
         isBackButtonIcon: true,
@@ -312,7 +309,6 @@ class SectorDetailsView extends StatelessWidget {
 
                 Divider(color: context.isDark ? Colors.white10 : Colors.grey.shade200, thickness: 6),
 
-                //  ৩. Live Stock List (হেডার এখন এই উইজেটের ভেতরেই আছে)
                 ReusableLiveStockList(stocks: sector.stocks, homeCon: Get.find<HomeController>()),
                 const SizedBox(height: 40),
               ],
@@ -348,7 +344,6 @@ class _ReusableLiveStockListState extends State<ReusableLiveStockList> {
 
     return Column(
       children: [
-        //  Controls Row (View Mode Dropdown)
         Padding(
           padding: const .fromLTRB(16, 0, 16, 8), //  হেডার এবং লিস্টের মাঝের স্পেস অপটিমাইজড
           child: Row(
@@ -404,19 +399,7 @@ class _ReusableLiveStockListState extends State<ReusableLiveStockList> {
                   if (model.orderBook != null) {
                     Get.back(result: model);
                   }
-                  // Get.find<HomeController>().goBottomNabBarPage(1, model.orderBook!);
-                  // Get.find<HomeController>().loadComanyDividentEPS('${model.shortName}');
-                  // Get.back();
                 },
-                // onLongPress: () {
-                //   if (model.orderBook != null) {
-                //     MarketDialogHelper.showBuySellDialog(
-                //       context: context,
-                //       orderBookId: model.orderBook!,
-                //       shortName: model.shortName ?? "",
-                //     );
-                //   }
-                // },
                 onFavoriteTap: () {
                   MarketDialogHelper.showFavouriteBottomSheet(context, model);
                 },

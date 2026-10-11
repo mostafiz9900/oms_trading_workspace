@@ -24,12 +24,10 @@ class OnboardingController extends GetxController {
 
   void changeNextPage() {
     if (demoData.length == selectedIndex + 1) {
-      // Get.toNamed(Routes.HOME);
       Get.offAllNamed(Routes.HOME);
     } else {
       pageController.jumpToPage(selectedIndex + 1);
     }
-    // printLog('selectedIndex : $selectedIndex');
   }
 
   List<Map<String, dynamic>> demoData = [

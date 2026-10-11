@@ -54,7 +54,6 @@ class ResetPasswordPage extends HookConsumerWidget {
         leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Get.back()),
       ),
       body: SafeArea(
-        //  UI Fix: Center + SingleChildScrollView (কীবোর্ড ওপেন হলেও স্মুথ থাকবে)
         child: Center(
           child: SingleChildScrollView(
             physics: const ClampingScrollPhysics(), // ওভার-স্ক্রল বা বাউন্স বন্ধ করবে
@@ -66,16 +65,9 @@ class ResetPasswordPage extends HookConsumerWidget {
                 //  필্ডগুলোকে ফুল-উইডথ করার জন্য stretch ব্যবহার করা হলো
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Logo (সেন্টারে রাখার জন্য Center উইজেট)
                   Center(child: SvgPicture.asset(context.bannerLogo, width: 80, height: 80)),
                   const SizedBox(height: 10),
 
-                  // Title (সেন্টারে রাখার জন্য TextAlign.center)
-                  // Text(
-                  //   'Reset Password',
-                  //   textAlign: TextAlign.center,
-                  //   style: Get.theme.textTheme.bodyMedium?.copyWith(fontSize: 24),
-                  // ),
                   const SizedBox(height: 8),
                   Text('Please enter your new password', textAlign: TextAlign.center, style: inputHintStyle),
                   const SizedBox(height: 32),

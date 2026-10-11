@@ -71,8 +71,6 @@ class MarketIndexListWidget extends StatelessWidget {
                       onTap: () {
                         indexCon.getSumOfAllIndex(model);
                         // 🚀 MarketIndexController এবং IndexChartController আগের মতোই কাজ করবে
-                        // Get.find<MarketIndexController>().loadData('${model.sn}');
-                        // Get.find<LiveIndexController>().fetchIndexCandleData('${model.sn}', "");
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 0),

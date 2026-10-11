@@ -133,7 +133,6 @@ class MarketWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
     return SafeArea(
       child: Column(
@@ -155,9 +154,6 @@ class MarketWidget extends StatelessWidget {
                     state.openDrawer();
                   }
                 },
-                // searchButtonOnClick: () {
-                //   Get.find<HomeController>().changeCurrentIndex(1);
-                // },
                 right: GetBuilder<HomeController>(
                   builder: (homeNotifyCont) {
                     return Row(
@@ -169,7 +165,6 @@ class MarketWidget extends StatelessWidget {
                           },
                         ),
                         IconButton(
-                          // onPressed: () => homeNotifyCont.changeCurrentIndex(2),
                           onPressed: () async {
                             final result = await SearchHelper.open();
 
@@ -195,10 +190,6 @@ class MarketWidget extends StatelessWidget {
                 ),
               ),
               body: SizedBox(
-                // onRefresh: () async {
-                //   printLog('refresh :::=== ');
-                //   await Get.find<HomeController>().marketSocket();
-                // },
                 child: _BodyWidget(),
               ),
             ),
@@ -262,10 +253,8 @@ class _BodyWidget extends StatelessWidget {
       children: [
         AppSpace.spaceH6,
 
-        // MarketTickerBar(homeCon: homeCon),
         ClickableMarqueeTextList(homeCon: homeCon),
 
-        // ৩. আপনার TabWidget বা অন্যান্য উইজেট যদি রিফ্রেশ করার দরকার হয়,
         // শুধুমাত্র তাকে আলাদাভাবে GetBuilder দিয়ে র‍্যাপ করুন।
         GetBuilder<HomeController>(
           id: 'indexList', // অথবা 'marketList', আপনার যেটা প্রয়োজন
@@ -429,66 +418,6 @@ class CallNowWidget extends ConsumerWidget {
         child: Row(
           mainAxisAlignment: .spaceBetween,
           children: [
-            // InkWell(
-            //   onTap: () {
-            //     ScaffoldMessenger.of(context).showSnackBar(
-            //       SnackBar(
-            //         content: Text('Coming Soon'),
-            //         duration: Duration(seconds: 2),
-            //       ),
-            //     );
-            //   },
-            //   child: Container(
-            //     padding: .symmetric(horizontal: 2),
-            //     decoration: BoxDecoration(
-            //         color: Colors.redAccent.shade700
-            //     ),
-            //     child: Text('বাংলা সংস্করণ',
-            //         style: Get.textTheme.bodyMedium?.copyWith(
-            //             color: ColorConstants.white,
-            //             fontSize: AppDimens.space12,
-            //             fontWeight: FontWeight.w400)),
-            //   ),
-            // ),
-            /* Text.rich(
-                TextSpan(
-                  children: [
-                    TextSpan(
-                        text: 'Call Now : ',
-                        style: Get.textTheme.bodyMedium?.copyWith(
-                            color: ColorConstants.white, fontSize: AppDimens.space19, fontWeight: FontWeight.w400)),
-                    TextSpan(
-                      text: '+8801958157802',
-                      style: Get.textTheme.bodyMedium
-                          ?.copyWith(
-                          color: ColorConstants.white,
-                          // hexToColor('#FFE500'),
-                          fontSize: AppDimens.space19, fontWeight: FontWeight.w700),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () async {
-                         Get.find<HomeController>().statusConnect();
-                          String url = '+8801958157802';
-                          Uri phoneno = Uri.parse('tel:$url');
-                          printLog('data $phoneno');
-                          if (await canLaunchUrl(phoneno)) {
-                            printLog('data::$phoneno');
-                            printLog('data');
-                            await launchUrl(phoneno);
-                          } else {
-                            printLog('else phone called   with  unknown');
-                            //cannot launch phone
-                          }
-                        },
-                    ),
-                  ],
-                ),
-              ),*/
-            // Obx(() =>
-            //     Text(clockController.currentTime.value,
-            //         style: Get.textTheme.bodyMedium?.copyWith(
-            //             color: ColorConstants.white,
-            //             fontSize: AppDimens.space12,
-            //             fontWeight: FontWeight.w400))),
             timeAsync.when(
               data: (time) {
                 final formattedTime = DateFormat('EEE, dd MMM, yy,  hh:mm:ss a').format(time);
@@ -504,7 +433,6 @@ class CallNowWidget extends ConsumerWidget {
               loading: () => SizedBox(),
               error: (e, _) => Text('Error: $e'),
             ),
-            // if(homeCon.currentSession.value!="")...[
             Obx(() {
               return Text(
                 homeCon.currentSession.value == ''
@@ -523,9 +451,6 @@ class CallNowWidget extends ConsumerWidget {
               );
             }),
 
-            // ]else...[
-            //   SizedBox.shrink()
-            // ]
           ],
         ),
       ),
@@ -601,57 +526,20 @@ class _MarketTabWidget extends StatelessWidget {
       },
       child: ListView(
         children: [
-          // const _TradeGridViewWidget(),
-          // const _ItemListWidget(),
           TradeSummaryGridWidget(),
           MarketIndexListWidget(),
-          // IndexChartWidget(),
-          // MarketIndexChart(),
-          // AppSpace.spaceH20,
-          // const DsexWidget2(),
-          // ProfessionalStockChart(),
           IndexChartWidget(), //lastly added
-          // DsexWidget(),
-          // LineChartSampleWidget(),
-          // MarketMapWidget2(),
           AppSpace.spaceH10,
           const TopSectorByGainerWidget(),
           const TopSectorByCategoryWidget(),
-          // MarketMapWidget3(),
           AppSpace.spaceH10,
           ProSectorHorizontalList(),
 
           WatchlistDistributionPage(),
-          // VolumeLeadersChart(),
-          // ProWatchlistTicker(marketList: Get.find<HomeController>().marketListAll),
 
-          // const UpcomingEventWidget(),
-          // MarketMapWidget2(),
           MarketMapWidget(),
           AppSpace.spaceH20,
 
-          /*   SizedBox(
-          height: 400,
-          child: MasonryGridView.count(
-            crossAxisCount: 13,
-            mainAxisSpacing: 3,
-            crossAxisSpacing: 2,
-            shrinkWrap: true,
-            itemCount: 50,
-            semanticChildCount: 4,
-            scrollDirection:  Axis.vertical,
-            // clipBehavior: Clip.antiAlias,
-            // childAspectRatio: cardWidth / cardHeight,
-            physics: NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              return Tile(
-                index: index,
-                extent: (index%2+0.5) *60,
-                width: (index%2+1) *100,
-              );
-            },
-          ),
-        ),*/
         ],
       ),
     );
@@ -668,7 +556,6 @@ class _IndicesTabWidget extends StatelessWidget {
         TradeSummaryGridWidget(),
         MarketIndexListWidget(),
         GetBuilder<LiveIndexController>(
-          // id: 'indexChartTap',
           builder: (indexController) {
             if (indexController.indexList.isEmpty) {
               return const IndexValueLoader();
@@ -676,17 +563,11 @@ class _IndicesTabWidget extends StatelessWidget {
               return Column(
                 children: [
                   AppSpace.spaceH10,
-                  // _buildTabButtons(context, indexController),
                   _buildChart(context, indexController),
-                  // _buildMarketSentimentChart(context, indexController),
-                  // MarketBreadthMeter(),
                   const HomePieChart(),
                   MarketActivityChart(),
-                  // MarketLiquidityChart(),
-                  // MarketBreadthMomentumChart(),
                   MarketSentimentRatioChart(),
                   AppSpace.spaceH6,
-                  // IndexGroupedBarChart( indexData: homeCon.indexList),
                 ],
               );
             }
@@ -911,7 +792,6 @@ class MarketBreadthMeter extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // 🚀 1. Power Bar (স্ট্যাকড প্রগ্রেস বার)
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Row(
@@ -1059,7 +939,6 @@ class MarketActivityChart extends StatelessWidget {
                     labelStyle: TextStyle(fontWeight: FontWeight.w700, color: context.textColor, fontSize: 11),
                   ),
 
-                  // 🚀 Primary Y-অক্ষ (বাম দিকে): Turnover (Value)
                   primaryYAxis: NumericAxis(
                     name: 'PrimaryYAxis',
                     title: AxisTitle(
@@ -1112,7 +991,6 @@ class MarketActivityChart extends StatelessWidget {
                   ),
 
                   series: <CartesianSeries>[
-                    // 📊 1. Turnover Value Column (With Gradient)
                     ColumnSeries<dynamic, String>(
                       name: 'Turnover (Cr)',
                       dataSource: chartData,
@@ -1135,7 +1013,6 @@ class MarketActivityChart extends StatelessWidget {
                       animationDuration: 0, // লাইভ ফিল্টারের জন্য ০
                     ),
 
-                    // 📈 2. Trades Line (Sleek and Sharp)
                     SplineSeries<dynamic, String>(
                       name: 'Trades (K)',
                       dataSource: chartData,
@@ -1207,14 +1084,12 @@ class MarketLiquidityChart extends StatelessWidget {
               textStyle: TextStyle(color: context.textColor, fontSize: 11, fontWeight: FontWeight.w600),
             ),
 
-            // 🚀 X-অক্ষ: ইনডেক্সের নাম (DSEX, DS30)
             primaryXAxis: CategoryAxis(
               majorGridLines: const MajorGridLines(width: 0),
               axisLine: const AxisLine(width: 0),
               labelStyle: TextStyle(fontWeight: FontWeight.bold, color: context.textColor),
             ),
 
-            // 🚀 Left Y-Axis (Value এবং Volume এর জন্য)
             primaryYAxis: NumericAxis(
               title: AxisTitle(
                 text: 'Value (Cr) / Volume (Mn)',
@@ -1229,7 +1104,6 @@ class MarketLiquidityChart extends StatelessWidget {
               labelStyle: TextStyle(color: context.textColor, fontWeight: FontWeight.w500),
             ),
 
-            // 🚀 Right Y-Axis (Trades এর জন্য আলাদা স্কেল)
             axes: <ChartAxis>[
               NumericAxis(
                 name: 'TradesAxis',
@@ -1252,7 +1126,6 @@ class MarketLiquidityChart extends StatelessWidget {
             ),
 
             series: <CartesianSeries>[
-              // 📊 1. Value Column (vl: কোটিতে)
               ColumnSeries<dynamic, String>(
                 name: 'Value (Cr)',
                 dataSource: chartData,
@@ -1268,7 +1141,6 @@ class MarketLiquidityChart extends StatelessWidget {
                 spacing: 0.1, // কলামের ভেতরের গ্যাপ
               ),
 
-              // 📊 2. Volume Column (v: মিলিয়নে)
               ColumnSeries<dynamic, String>(
                 name: 'Volume (Mn)',
                 dataSource: chartData,
@@ -1284,7 +1156,6 @@ class MarketLiquidityChart extends StatelessWidget {
                 spacing: 0.1,
               ),
 
-              // 📈 3. Trades Line (tds: হাজারে)
               SplineSeries<dynamic, String>(
                 name: 'Trades (K)',
                 dataSource: chartData,
@@ -1344,7 +1215,6 @@ class InternationalMarketOverview extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 🚀 1. Market Breadth (Advanced vs Decline)
               Text(
                 'Market Sentiment',
                 style: Get.textTheme.titleMedium?.copyWith(
@@ -1389,7 +1259,6 @@ class InternationalMarketOverview extends StatelessWidget {
               ],
               const Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Divider(height: 1, thickness: 1)),
 
-              // 🚀 2. Comparative Divergence Bar Chart (Index Performance)
               Text(
                 'Indices Performance (%)',
                 style: Get.textTheme.titleMedium?.copyWith(
@@ -1519,14 +1388,12 @@ class MarketBreadthMomentumChart extends StatelessWidget {
               textStyle: TextStyle(color: context.textColor, fontWeight: FontWeight.w600, fontSize: 11),
             ),
 
-            // 🚀 X-অক্ষ: ইনডেক্সের নাম (DSEX, DS30)
             primaryXAxis: CategoryAxis(
               majorGridLines: const MajorGridLines(width: 0),
               axisLine: const AxisLine(width: 0),
               labelStyle: TextStyle(fontWeight: FontWeight.bold, color: context.textColor),
             ),
 
-            // 🚀 Primary Y-অক্ষ (বাম দিকে): শেয়ারের সংখ্যা (Advance, Decline, Unchanged)
             primaryYAxis: NumericAxis(
               title: AxisTitle(
                 text: 'No. of Companies',
@@ -1541,7 +1408,6 @@ class MarketBreadthMomentumChart extends StatelessWidget {
               labelStyle: TextStyle(color: context.textColor.withOpacity(0.8), fontWeight: FontWeight.bold),
             ),
 
-            // 🚀 Secondary Y-অক্ষ (ডান দিকে): পারফরম্যান্স (Percentage Change - ip)
             axes: <ChartAxis>[
               NumericAxis(
                 name: 'PercentageAxis',
@@ -1566,7 +1432,6 @@ class MarketBreadthMomentumChart extends StatelessWidget {
             ),
 
             series: <CartesianSeries>[
-              // 📊 ১. Advanced Column (সবুজ বার)
               ColumnSeries<IndexModel, String>(
                 name: 'Advanced',
                 dataSource: visibleIndices,
@@ -1578,7 +1443,6 @@ class MarketBreadthMomentumChart extends StatelessWidget {
                 spacing: 0.1,
               ),
 
-              // 📊 ২. Unchanged Column (নীল বার)
               ColumnSeries<IndexModel, String>(
                 name: 'Unchanged',
                 dataSource: visibleIndices,
@@ -1590,7 +1454,6 @@ class MarketBreadthMomentumChart extends StatelessWidget {
                 spacing: 0.1,
               ),
 
-              // 📊 ৩. Declined Column (লাল বার)
               ColumnSeries<IndexModel, String>(
                 name: 'Declined',
                 dataSource: visibleIndices,
@@ -1602,7 +1465,6 @@ class MarketBreadthMomentumChart extends StatelessWidget {
                 spacing: 0.1,
               ),
 
-              // 📈 8. Performance Line Chart (কমলা লাইন - ডান দিকের স্কেল ব্যবহার করবে)
               SplineSeries<IndexModel, String>(
                 name: 'Performance (%)',
                 dataSource: visibleIndices,
@@ -1667,7 +1529,6 @@ class MarketSentimentRatioChart extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // 🚀 2. Custom Native Sentiment Bars (100% Responsive)
               ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -1694,14 +1555,12 @@ class MarketSentimentRatioChart extends StatelessWidget {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // ইনডেক্সের নাম (যেমন: DSEX)
                       Text(
                         data.sn ?? '',
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: context.textColor),
                       ),
                       const SizedBox(height: 8),
 
-                      // 🚀 কাস্টম স্ট্যাকড বার (এটি কখনো ভাঙবে না)
                       ClipRRect(
                         borderRadius: BorderRadius.circular(6),
                         child: SizedBox(
@@ -1729,7 +1588,6 @@ class MarketSentimentRatioChart extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
 
-                      // 🚀 পার্সেন্টেজ এবং লেবেল (বারের নিচে সুন্দরভাবে সাজানো)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -1791,7 +1649,6 @@ class _TradeGridViewWidget extends StatelessWidget {
           return const IndexValueLoader();
         }
 
-        // 🚀 বারবার কল না করে লোকাল ভেরিয়েবলে রেফারেন্স নেওয়া হলো (পারফরম্যান্স বুস্ট)
         final newArr = homeController.newArr;
 
         return GridView.count(
@@ -1854,7 +1711,6 @@ class IndexGroupedBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var defIndex = (indexData.first.civ ?? 0) - (indexData.first.ivd ?? 0);
-    // printLog("defIndex::: ${defIndex}");
     return SfCartesianChart(
       title: ChartTitle(text: 'Market Index Analysis'),
       legend: Legend(isVisible: true),
@@ -2064,15 +1920,6 @@ class _ClickableMarqueeTextListState extends State<ClickableMarqueeTextList> wit
   }
 
   void _autoScroll() async {
-    // while (true) {
-    //   await Future.delayed(Duration(milliseconds: 30));
-    //   if (_scrollController.hasClients) {
-    //     _scrollController.jumpTo(_scrollController.offset + 1);
-    //     if (_scrollController.offset >= _scrollController.position.maxScrollExtent) {
-    //       _scrollController.jumpTo(0);
-    //     }
-    //   }
-    // }
     _isScrolling = true;
     _scrollTimer?.cancel();
     _scrollTimer = Timer.periodic(const Duration(milliseconds: 30), (_) {
@@ -2096,9 +1943,6 @@ class _ClickableMarqueeTextListState extends State<ClickableMarqueeTextList> wit
 
   void _onTextTap(MarqueeHolder marqueeHolder) {
     toggleScroll();
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   SnackBar(content: Text('Clicked: ${marqueeHolder.toJson()}')),
-    // );
   }
 
   void stopScroll() {
@@ -2177,11 +2021,9 @@ class _ClickableMarqueeTextListState extends State<ClickableMarqueeTextList> wit
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: _getColorForValue('${marqueeHolder.chg ?? 0.0}'),
-                    // color: marqueeHolder.status == "Up"
                     //     ? Colors.green
                     //     : marqueeHolder.status == "Down"
                     //     ? Colors.redAccent
-                    //     : context.textColor,
                   ),
                 ),
                 Text(
@@ -2201,7 +2043,6 @@ class _ClickableMarqueeTextListState extends State<ClickableMarqueeTextList> wit
   }
 
   Color _getColorForValue(String value) {
-    // printLog('value:: $value');
 
     // Handle "+" and "-" signs explicitly
     if (value.startsWith('+')) {

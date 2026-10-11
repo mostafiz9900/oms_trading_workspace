@@ -31,10 +31,8 @@ class OrderSummaryController extends GetxController {
       _setLoadingState();
 
       // 🚀 ডাইনামিক টোকেন এবং ইনভেস্টর কোড রিড করা
-      // String token = await StorageService.read(StorageConstants.token) ?? '';
       String token =
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzg3MjE5MTMxLCJpYXQiOjE3ODcxOTc1MzEsImp0aSI6ImRmYzdiZmU1MzY0OTQ2YzJiOGFhMWQxNWU5YmVkM2U1IiwidXNlcl9pZCI6Nn0.zRE8vxMFFtid72tszTqZ4QVASHkILsa_-1ormc3xCy8';
-      // String investorCode = homeController.userInfo.userDetail?.investorCode ?? "";
       String investorCode = "311";
 
       if (token.isEmpty || investorCode.isEmpty) {

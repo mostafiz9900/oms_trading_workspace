@@ -17,7 +17,6 @@ class HomeProvider extends BaseProvider {
   ) {
     var body = {
       "key": bioToken,
-      // "key": null,
       "is_active": isActive,
     };
     return post(path, body);

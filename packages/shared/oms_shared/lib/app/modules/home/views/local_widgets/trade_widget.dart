@@ -107,7 +107,6 @@ class TradeWidget extends StatelessWidget {
                           ),
                         ),
                         AppSpace.spaceH8,
-                        //  Dropdowns (Isolated ID)
                         GetBuilder<HomeController>(
                           id: 'trade_dropdowns',
                           builder: (con) => Padding(
