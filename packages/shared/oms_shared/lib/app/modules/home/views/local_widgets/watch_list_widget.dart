@@ -19,7 +19,7 @@ class WatchListWidget extends StatelessWidget {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
     final dividerWidget = Divider(height: 1, color: context.dividerColor);
 
-    return GetBuilder<WatchListController>(
+    return VisibleGetBuilder<WatchListController>(
       id: 'watchListUI',
       builder: (controller) {
         return Scaffold(
@@ -469,7 +469,7 @@ class _WatchListSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<WatchListController>(
+    return VisibleGetBuilder<WatchListController>(
       id: 'watchListUI',
       builder: (controller) {
         final bool hasText = controller.searchController.text.isNotEmpty;

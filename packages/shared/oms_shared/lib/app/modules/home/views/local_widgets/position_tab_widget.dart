@@ -14,7 +14,7 @@ class PositionTabWidget extends StatelessWidget {
 
     return GetBuilder<HomeController>(
       builder: (homeController) {
-        return GetBuilder<PositionController>(
+        return VisibleGetBuilder<PositionController>(
           builder: (positionCont) {
             if (positionCont.isLoading && positionCont.positions.data == null) {
               return const PositionLoader();

@@ -133,7 +133,7 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
     final double screenHeight = MediaQuery.sizeOf(context).height;
     final double responsiveHeight = (screenHeight * 0.65).clamp(400.0, 800.0);
 
-    return GetBuilder<HomeController>(
+    return VisibleGetBuilder<HomeController>(
       id: 'marketList',
       builder: (homeController) {
         if (!homeController.marketList.isNotEmpty || homeController.marketList.length < 20) {

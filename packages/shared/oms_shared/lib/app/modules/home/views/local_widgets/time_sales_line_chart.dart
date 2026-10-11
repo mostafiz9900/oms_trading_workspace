@@ -75,7 +75,7 @@ class _FastLineChartState extends State<FastLineChart> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<HomeController>(
+    return VisibleGetBuilder<HomeController>(
       id: 'timeAndSales',
       builder: (_) {
         final data = _buildChartData();
@@ -314,7 +314,7 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<HomeController>(
+    return VisibleGetBuilder<HomeController>(
       id: 'timeAndSales',
       builder: (_) {
         final pricePts = _buildPricePoints();
@@ -741,7 +741,7 @@ class _TimeAndSalesBarChartState extends State<TimeAndSalesBarChart> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<HomeController>(
+    return VisibleGetBuilder<HomeController>(
       id: 'timeAndSales',
       builder: (_) {
         final raw = List<TimeAndSalesModel>.from(homeCont.timeAndSales);

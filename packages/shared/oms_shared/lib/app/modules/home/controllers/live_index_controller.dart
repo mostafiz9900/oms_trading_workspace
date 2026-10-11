@@ -22,6 +22,7 @@ class LiveIndexController extends GetxController {
   DateTime? lastIndexUpdateTime;
   DateTime _lastIndexUIUpdateTime = DateTime.now();
   Timer? _indexUpdateTimer;
+  final _chartThrottle = UpdateThrottle();
 
   // Exact param list from UI
   final List<String> chartParamList = ["1D", "1W", "1M", "1Y"];
@@ -126,6 +127,7 @@ class LiveIndexController extends GetxController {
   @override
   void onClose() {
     _indexUpdateTimer?.cancel();
+    _chartThrottle.cancel();
     _webSocketService.disconnect(AppConfig.indexSocketId);
     super.onClose();
   }
@@ -244,7 +246,11 @@ class LiveIndexController extends GetxController {
         ),
       );
     }
-    update(['index_chart']);
+    // Live ticks for the selected index arrive many times a second; redraw
+    // the chart at most every 500 ms, like the index list.
+    _chartThrottle.run(() {
+      if (!isClosed) update(['index_chart']);
+    });
   }
 
   // ================= Socket Connection & Handler =================

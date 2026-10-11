@@ -151,6 +151,7 @@ class HomeController extends HomeState
     _marketUpdateTimer?.cancel();
     _indexUpdateTimer?.cancel();
     _orderResponseTimer?.cancel();
+    _timeSalesThrottle.cancel();
     disconnect();
     Future.delayed(const Duration(milliseconds: 100), () {
       _disconnectAll();

@@ -60,6 +60,8 @@ jobs:
       - run: flutter pub get
       - run: dart test
         working-directory: packages/core/broker_config
+      - run: flutter test
+        working-directory: packages/shared/oms_shared
       - run: dart run tool/validate_apps.dart
 
   build:

@@ -47,7 +47,7 @@ class TradeWidget extends StatelessWidget {
                         const _ClineCodeWidget(),
                         AppSpace.spaceH6,
                         // শুধুমাত্র সকেটের রিয়েল-টাইম ডেটা আসলে এটি আপডেট হবে
-                        GetBuilder<HomeController>(
+                        VisibleGetBuilder<HomeController>(
                           id: 'trade_ticker_data',
                           builder: (tickerCon) =>
                               _BankPercentageWidget(homeController: tickerCon),
@@ -60,7 +60,7 @@ class TradeWidget extends StatelessWidget {
                   // ==========================================
                   //  STICKY MARKET DEPTH SECTION
                   // ==========================================
-                  GetBuilder<HomeController>(
+                  VisibleGetBuilder<HomeController>(
                     id: 'market_depth',
                     builder: (depthCon) {
                       return SliverPersistentHeader(

@@ -10,7 +10,7 @@ class TopSectorByCategoryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<HomeController>(
+    return VisibleGetBuilder<HomeController>(
       id: "marketListByShareType",
       builder: (homeCon) {
         if (homeCon.chartDataShareType.isEmpty) {

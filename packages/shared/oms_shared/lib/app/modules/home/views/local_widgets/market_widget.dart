@@ -799,6 +799,7 @@ class _ClickableMarqueeTextListState extends State<ClickableMarqueeTextList> wit
   late ScrollController _scrollController;
   Timer? _scrollTimer;
   bool _isScrolling = true;
+  bool _onScreen = true;
 
   @override
   void initState() {
@@ -807,9 +808,26 @@ class _ClickableMarqueeTextListState extends State<ClickableMarqueeTextList> wit
     WidgetsBinding.instance.addPostFrameCallback((_) => _autoScroll());
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Pause the auto-scroll while the Market tab is hidden or another page
+    // covers it (the timer used to run 33 times a second all session); it
+    // resumes from the same spot when visible again.
+    final onScreen = Visibility.of(context) && TickerMode.valuesOf(context).enabled;
+    if (onScreen == _onScreen) return;
+    _onScreen = onScreen;
+    if (!onScreen) {
+      _scrollTimer?.cancel();
+    } else if (_isScrolling) {
+      _autoScroll();
+    }
+  }
+
   void _autoScroll() async {
     _isScrolling = true;
     _scrollTimer?.cancel();
+    if (!_onScreen) return;
     _scrollTimer = Timer.periodic(const Duration(milliseconds: 30), (_) {
       // ✅ Ensure controller is attached
       if (!_scrollController.hasClients || !_isScrolling) return;

@@ -20,10 +20,19 @@ mixin TimeSalesMixin on HomeState {
           var timeAndSalesData = timeAndSalesModelFromMap(data);
           timeAndSales.clear();
           timeAndSales.addAll(timeAndSalesData);
+          // A new snapshot (e.g. another instrument) is shown at once.
+          _timeSalesThrottle.reset();
+          update(['timeAndSales']);
         } else if (data is Map<String, dynamic>) {
           timeAndSales.insert(0, TimeAndSalesModel.fromMap(data));
+          // Each trade rebuilt the tape and up to five charts; redraw at most
+          // every 500 ms (like the market list), ending on the latest trade.
+          _timeSalesThrottle.run(() {
+            if (!isClosed) update(['timeAndSales']);
+          });
+        } else {
+          update(['timeAndSales']);
         }
-        update(['timeAndSales']);
       } else if (messageType == 'tsb') {
         if (data is List) {
           var timeAndSalesData = data

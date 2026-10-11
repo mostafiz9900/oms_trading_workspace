@@ -14,7 +14,7 @@ class WatchlistDistributionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 🚀 এখন এটি শুধুমাত্র distributionChartUpdate ট্যাগের জন্য রিবিল্ড হবে
-    return GetBuilder<HomeController>(
+    return VisibleGetBuilder<HomeController>(
       id: 'distributionChartUpdate',
       builder: (_) {
         final counts = controller.distributionCounts;

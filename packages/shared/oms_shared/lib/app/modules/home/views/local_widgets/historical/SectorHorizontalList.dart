@@ -13,7 +13,7 @@ class ProSectorHorizontalList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<HomeController>(
+    return VisibleGetBuilder<HomeController>(
       id: 'sectorSummary',
       builder: (homeCon) {
         final sectorList = homeCon.sectorSummaryList;

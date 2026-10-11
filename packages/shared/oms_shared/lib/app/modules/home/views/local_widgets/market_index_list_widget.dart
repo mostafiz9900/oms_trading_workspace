@@ -161,7 +161,7 @@ class TradeSummaryGridWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 🚀 GetBuilder এখন LiveIndexController কে পয়েন্ট করবে
-    return GetBuilder<LiveIndexController>(
+    return VisibleGetBuilder<LiveIndexController>(
       id: "index_list",
       builder: (indexCon) {
         if (indexCon.indexList.isEmpty) {

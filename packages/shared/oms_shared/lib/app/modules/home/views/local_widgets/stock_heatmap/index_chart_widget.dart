@@ -1,6 +1,5 @@
 import 'package:market/market.dart' show IndexCandleModel;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
 
@@ -42,7 +41,7 @@ class IndexChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<LiveIndexController>(
+    return VisibleGetBuilder<LiveIndexController>(
       id: 'index_chart',
       builder: (cont) {
         // 🚀 FIX: isChartLoading true ebang list empty hole sathe sathe shimmer asbe

@@ -24,13 +24,13 @@ class QuoteTabWidget extends StatelessWidget {
           return [
             // ১. Top Header Section
             SliverToBoxAdapter(
-              child: GetBuilder<HomeController>(
+              child: VisibleGetBuilder<HomeController>(
                 id: 'marketList',
                 builder: (homeCon) => _QuoteTopDetailsSection(homeCon: homeCon),
               ),
             ),
             SliverToBoxAdapter(
-              child: GetBuilder<HomeController>(
+              child: VisibleGetBuilder<HomeController>(
                 id: 'marketList',
                 builder: (homeCon) => RelatedItemWatchlist(
                   relatedMarketList: homeCon.getRelatedAssets(
@@ -206,7 +206,7 @@ class _TimeAndSalesButton extends StatelessWidget {
         child: Row(
           children: [
             AppSpace.spaceW6,
-            GetBuilder<HomeController>(
+            VisibleGetBuilder<HomeController>(
               id: 'timeAndSales',
               builder: (timeSalesCont) {
                 if (timeSalesCont.timeAndSales.isNotEmpty) {

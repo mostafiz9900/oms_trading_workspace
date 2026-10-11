@@ -13,7 +13,7 @@ class TimeSalesTabWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<HomeController>(
+    return VisibleGetBuilder<HomeController>(
       id: 'timeAndSales',
       builder: (homeCon) {
         final sortedList = Helpers.sortByTstDesc([...homeCon.timeAndSales], (m) => m.tst ?? "");

@@ -10,7 +10,7 @@ class TopSectorByGainerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<HomeController>(
+    return VisibleGetBuilder<HomeController>(
       id: "marketListByGainer",
       builder: (homeCon) {
         if (homeCon.chartData.isEmpty) {

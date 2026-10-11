@@ -14,7 +14,7 @@ class MarketDeptSingleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<HomeController>(
+    return VisibleGetBuilder<HomeController>(
       id: 'market_depth',
       builder: (homeCon) {
         final List<MarketDepthModel> buys = homeCon.buys;

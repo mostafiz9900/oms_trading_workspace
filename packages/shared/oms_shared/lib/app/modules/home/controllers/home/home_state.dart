@@ -299,6 +299,8 @@ abstract class HomeState extends SuperController {
   /// Releases the order button if the server never answers an order.
   Timer? _orderResponseTimer;
 
+  final _timeSalesThrottle = UpdateThrottle();
+
   void _endOrderConfirmLoading() {
     _orderResponseTimer?.cancel();
     isOrderConfirmLoading = false;
