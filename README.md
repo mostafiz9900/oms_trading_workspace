@@ -111,3 +111,4 @@ repository secret, `BENEMOY_UAT_PROFILE_JSON`, with the contents of
 `oms_shared` empties out phase by phase. It has no compile errors but still
 carries ~590 legacy analyzer warnings/info from the original app. Only
 `broker_config` has unit tests.
+# oms_trading_workspace
