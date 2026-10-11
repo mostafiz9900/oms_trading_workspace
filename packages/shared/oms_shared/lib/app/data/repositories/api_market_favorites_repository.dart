@@ -4,9 +4,9 @@ import 'market_favorites_repository.dart' show MarketFavoritesRepository;
 
 import '../../app_pkg.dart';
 
-/// Benemoy's API-backed adapter for the shared market watchlist contract.
-class BenemoyMarketFavoritesRepository implements MarketFavoritesRepository {
-  BenemoyMarketFavoritesRepository({required this.homeProvider});
+/// API-backed adapter for the shared market watchlist contract.
+class ApiMarketFavoritesRepository implements MarketFavoritesRepository {
+  ApiMarketFavoritesRepository({required this.homeProvider});
 
   final HomeProvider homeProvider;
 

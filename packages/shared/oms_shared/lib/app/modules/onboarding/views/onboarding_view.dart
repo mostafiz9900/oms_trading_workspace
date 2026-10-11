@@ -88,7 +88,7 @@ class OnboardingView extends GetView<OnboardingController> {
                         onboardingCont.changeNextPage();
 
                       },
-                      title: AppTranslations.startBenemoy.tr.replaceAll(
+                      title: AppTranslations.startHouse.tr.replaceAll(
                         'Benemoy',
                         AppConfig.house.displayName,
                       ),

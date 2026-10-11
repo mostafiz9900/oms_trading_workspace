@@ -5,9 +5,9 @@ import '../models/response/historical_volume.dart' show PriceTableResponse;
 
 import '../../app_pkg.dart';
 
-/// Benemoy's API-backed adapter for market chart and historical data.
-class BenemoyMarketChartRepository implements MarketChartRepository {
-  BenemoyMarketChartRepository({required this.homeProvider});
+/// API-backed adapter for market chart and historical data.
+class ApiMarketChartRepository implements MarketChartRepository {
+  ApiMarketChartRepository({required this.homeProvider});
 
   final HomeProvider homeProvider;
 

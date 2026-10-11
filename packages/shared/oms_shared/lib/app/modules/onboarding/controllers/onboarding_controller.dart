@@ -31,7 +31,7 @@ class OnboardingController extends GetxController {
     {
       "illustration": AssetsConstants.onboard_01Png,
       "title": AppTranslations.manageYourStocks.tr,
-      "text": AppTranslations.growYourInvestmentsWithBenemoy.tr.replaceAll(
+      "text": AppTranslations.growYourInvestmentsWithHouse.tr.replaceAll(
         'Benemoy',
         AppConfig.house.displayName,
       ),
@@ -39,7 +39,7 @@ class OnboardingController extends GetxController {
     {
       "illustration": AssetsConstants.onboard_02Png,
       "title": AppTranslations.getStarted.tr,
-      "text": AppTranslations.growYourInvestmentsWithBenemoy.tr.replaceAll(
+      "text": AppTranslations.growYourInvestmentsWithHouse.tr.replaceAll(
         'Benemoy',
         AppConfig.house.displayName,
       ),

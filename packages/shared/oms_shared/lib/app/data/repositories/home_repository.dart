@@ -8,8 +8,8 @@ import 'market_favorites_repository.dart' show MarketFavoritesRepository;
 import '../models/response/historical_volume.dart' show PriceTableResponse;
 
 import '../../app_pkg.dart';
-import 'benemoy_market_favorites_repository.dart';
-import 'benemoy_market_chart_repository.dart';
+import 'api_market_favorites_repository.dart';
+import 'api_market_chart_repository.dart';
 import '../models/request/withdraw_request.dart';
 import '../models/response/withdraw_model.dart';
 
@@ -19,15 +19,15 @@ final homeProvider = Provider<HomeProvider>((ref) {
 class HomeRepository
     implements MarketFavoritesRepository, MarketChartRepository {
   HomeRepository({required this.homeProvider})
-    : _marketFavoritesRepository = BenemoyMarketFavoritesRepository(
+    : _marketFavoritesRepository = ApiMarketFavoritesRepository(
         homeProvider: homeProvider,
       ),
-      _marketChartRepository = BenemoyMarketChartRepository(
+      _marketChartRepository = ApiMarketChartRepository(
         homeProvider: homeProvider,
       );
   final HomeProvider homeProvider;
-  final BenemoyMarketFavoritesRepository _marketFavoritesRepository;
-  final BenemoyMarketChartRepository _marketChartRepository;
+  final ApiMarketFavoritesRepository _marketFavoritesRepository;
+  final ApiMarketChartRepository _marketChartRepository;
 
   @override
   Future<ApiResponse<String>?> createFavCategory(String data) async {
