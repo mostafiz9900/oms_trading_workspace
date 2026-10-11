@@ -13,8 +13,11 @@ class NetworkManager extends GetxController {
     Connectivity().onConnectivityChanged.listen(_updateConnectionStatus);
   }
 
-  void _updateConnectionStatus(List<ConnectivityResult> connectivityResult) {
+  Future<void> _updateConnectionStatus(List<ConnectivityResult> connectivityResult) async {
     if (connectivityResult.contains(ConnectivityResult.none)) {
+      // Only on the online -> offline change; repeated "none" events used to
+      // queue several day-long bars behind each other.
+      if (!isConnected) return;
       isConnected = false;
       // ইন্টারনেট চলে গেলে মেসেজ
       Get.rawSnackbar(
@@ -26,7 +29,12 @@ class NetworkManager extends GetxController {
     } else {
       if (isConnected == false) {
         // ইন্টারনেট আসার সাথে সাথে আগের রেড স্নাকবারটি সরিয়ে দিন
-        Get.closeCurrentSnackbar();
+        // Close it together with every alert queued behind it while offline,
+        // so they don't replay one by one now that we are back online.
+        Get.closeAllSnackbars();
+        for (var i = 0; i < 40 && Get.isSnackbarOpen; i++) {
+          await Future.delayed(const Duration(milliseconds: 50));
+        }
         // ইন্টারনেট ফিরে আসার মেসেজ
         Get.rawSnackbar(message: "Back online!", backgroundColor: Colors.green, duration: const Duration(seconds: 3));
       }

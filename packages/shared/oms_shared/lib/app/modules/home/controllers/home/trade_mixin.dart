@@ -162,7 +162,7 @@ mixin TradeMixin on HomeState {
     isOrderConfirmLoading = true;
     update(['order_confirm_btn']);
 
-    if (!await checkInternet()) {
+    if (!await _orderNetworkAvailable()) {
       _endOrderConfirmLoading();
       return;
     }
@@ -177,11 +177,9 @@ mixin TradeMixin on HomeState {
       // A send on a closed socket is dropped silently; tell the user instead.
       if (!isOrderConfirmConnected) {
         _endOrderConfirmLoading();
-        Get.snackbar(
+        _showOrderAlert(
           "Connection Failed",
           "Unable to connect to the trading server. Please try again.",
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
         );
         return;
       }
@@ -224,11 +222,10 @@ mixin TradeMixin on HomeState {
     _orderResponseTimer = Timer(const Duration(seconds: 15), () {
       if (!isOrderConfirmLoading) return;
       _endOrderConfirmLoading();
-      Get.snackbar(
+      _showOrderAlert(
         "No Response",
         "Order status is unknown. Please check the order list before placing it again.",
-        backgroundColor: Colors.orange,
-        colorText: Colors.white,
+        color: Colors.orange,
       );
     });
   }

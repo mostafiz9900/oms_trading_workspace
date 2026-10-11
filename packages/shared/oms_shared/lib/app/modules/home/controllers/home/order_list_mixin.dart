@@ -292,7 +292,7 @@ mixin OrderListMixin on HomeState {
 
   void orderDuplicateSubmitted(ActionsType action, {UserOrder? order}) async {
     //  ১. ইন্টারনেট চেক
-    if (!await checkInternet()) return;
+    if (!await _orderNetworkAvailable()) return;
 
     //  ২. অর্ডার ডেটা ভ্যালিডেশন
     if (order == null) {
@@ -366,11 +366,9 @@ mixin OrderListMixin on HomeState {
       }
 
       if (!isSocketConnected(AppConfig.orderConfirmSocketId)) {
-        Get.snackbar(
+        await _showOrderAlert(
           "Connection Failed",
           "Unable to connect to the trading server. Please try again.",
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
         );
         return; // ডেটা সেন্ড করবে না
       }
@@ -402,7 +400,7 @@ mixin OrderListMixin on HomeState {
     UserOrder? order,
   }) async {
     //  1. SAFEGUARD: Check internet
-    if (!await checkInternet()) return;
+    if (!await _orderNetworkAvailable()) return;
 
     //  2. SAFEGUARD: A replace order MUST have an existing order to replace.
     if (order == null || order.orderId == null || order.orderId!.isEmpty) {
@@ -499,11 +497,9 @@ mixin OrderListMixin on HomeState {
       }
 
       if (!isSocketConnected(AppConfig.orderConfirmSocketId)) {
-        Get.snackbar(
+        await _showOrderAlert(
           "Connection Failed",
           "Unable to connect to the trading server. Please try again.",
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
         );
         return; // ডেটা সেন্ড করবে না
       }
@@ -529,7 +525,7 @@ mixin OrderListMixin on HomeState {
 
   void orderCancelSubmitted(String action, UserOrder order) async {
     //  ১. ইন্টারনেট চেক
-    if (!await checkInternet()) return;
+    if (!await _orderNetworkAvailable()) return;
 
     if (order.orderId == null || order.orderId!.isEmpty) {
       printLog('❌ Error: Cannot cancel order because Order ID is missing.');
@@ -587,11 +583,9 @@ mixin OrderListMixin on HomeState {
       }
 
       if (!isSocketConnected(AppConfig.orderConfirmSocketId)) {
-        Get.snackbar(
+        await _showOrderAlert(
           "Connection Failed",
           "Unable to connect to the trading server. Please try again.",
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
         );
         return; // ডেটা সেন্ড করবে না
       }
@@ -621,7 +615,7 @@ mixin OrderListMixin on HomeState {
     UserOrder order,
   ) async {
     //  ১. ইন্টারনেট চেক
-    if (!await checkInternet()) return;
+    if (!await _orderNetworkAvailable()) return;
 
     printLog('🔄 Initiating Order Status Change Request...');
 
@@ -667,11 +661,9 @@ mixin OrderListMixin on HomeState {
 
       //  ৫. Final Verification
       if (!isSocketConnected(AppConfig.orderConfirmSocketId)) {
-        Get.snackbar(
+        await _showOrderAlert(
           "Connection Failed",
           "Unable to connect to the trading server. Please try again.",
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
         );
         return; // ডেটা সেন্ড করবে না
       }

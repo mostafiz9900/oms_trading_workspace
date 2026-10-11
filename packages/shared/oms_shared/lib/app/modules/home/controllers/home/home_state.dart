@@ -305,6 +305,29 @@ abstract class HomeState extends SuperController {
     update(['order_confirm_btn']);
   }
 
+  /// Shows an order alert right away. GetX shows one snackbar at a time and
+  /// queues the rest, so behind the persistent "No internet" bar an alert
+  /// stayed hidden and then replayed once per tap after reconnecting.
+  Future<void> _showOrderAlert(
+    String title,
+    String message, {
+    Color color = Colors.red,
+  }) async {
+    if (Get.isSnackbarOpen) await Get.closeCurrentSnackbar();
+    Get.snackbar(title, message, backgroundColor: color, colorText: Colors.white);
+  }
+
+  /// Connectivity check for order actions that always tells the user why
+  /// nothing was sent.
+  Future<bool> _orderNetworkAvailable() async {
+    if (await NetworkUtil.isConnected()) return true;
+    await _showOrderAlert(
+      "No Internet",
+      "Request not sent. Please check your internet connection.",
+    );
+    return false;
+  }
+
   OrderStatusDetailsModel orderStatusDetails = OrderStatusDetailsModel();
 
   // Filter and Sorting state variables (No .obs needed)
