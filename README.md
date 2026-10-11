@@ -85,16 +85,33 @@ folder: a new screen is a new module.
 
 ```text
 lib/app/
-├── modules/<name>/        bindings/, controllers/, views/  (one per screen/flow)
+├── modules/<name>/        bindings/, controllers/, views/ (+ views/local_widgets/)
+│                          home = shell (HomeController + tab mixins); one module per
+│                          tab/screen: market, quote, watchlist, portfolio, orders,
+│                          trade, notifications, global_search, auth, top_share, ...
 ├── data/
 │   ├── models/            request/ and response/ DTOs
 │   ├── providers/         API calls
 │   ├── repositories/      Repositories and repository contracts
 │   └── services/          Sockets, storage, market tick store, aggregators
 ├── routes/                app_routes.dart (route names; pages are in the app)
-├── global_widgets/        Widgets shared by several modules
-└── core/                  theme, utils, values
+├── global_widgets/        Widgets used by several modules (loaders/ = shimmer loaders)
+└── core/                  theme, utils (extensions, helpers), values
 ```
+
+Rules:
+
+- **Import what you use, no barrels.** Import the exact file
+  (`import '../../data/models/response/market_model.dart';`). There is no
+  `app_pkg.dart`; do not add `export` barrels back.
+- **File names are `snake_case`**, one public widget per file. A widget only
+  one screen uses goes in that module's `views/local_widgets/`; a widget two or
+  more modules use goes in `global_widgets/`.
+- **State: GetX.** New controllers are `GetxController`s registered in the
+  module's binding. Riverpod remains only where the live app already uses it
+  (OTP countdown, token refresh, password visibility, clock, order-type lists);
+  do not add new providers. `flutter_hooks` is fine for widget-local state.
+- **Logging:** use `printLog(...)` (debug builds only), never `print`.
 
 To add a screen, run `get create page:<name>` inside
 `packages/shared/oms_shared` (or copy an existing module), then register the
@@ -128,12 +145,12 @@ Secrets, store setup and the release steps: [docs/release.md](docs/release.md).
 | Phase | Scope | Status |
 |---|---|---|
 | 1 | App layout, entry points, routing in app, CI, localization package, live native projects | Done |
-| 2 | Split `core` (network, storage, theme, utils) and `shared/design_system` out of `oms_shared`; remove the `app_pkg.dart` barrel | Planned |
-| 3 | Fold the old `packages/features/*` DTO packages back into `oms_shared/lib/app/data` (GetX CLI layout only) | Done |
-| 4 | Split the `home` module (~30k LOC) into GetX modules: market, orders, portfolio, watchlist, notifications | Planned |
+| 2 | Fold the old `packages/features/*` DTO packages into `oms_shared/lib/app/data` (GetX CLI layout only) | Done |
+| 3 | snake_case file names; split `home` into GetX modules; one widget per file; remove the `app_pkg.dart` barrels | Done |
+| 4 | Move the remaining Riverpod providers to GetX controllers (behaviour change, needs QA) | Planned |
 
-`oms_shared` empties out phase by phase. It has no compile errors but still
-carries ~590 legacy analyzer warnings/info from the original app. Only
-`broker_config` has unit tests.
+`oms_shared` has no compile errors and 27 analyzer infos/warnings left (Radio
+API migration, `BuildContext` across async gaps, protected-member use); each
+of those changes behaviour and needs QA before it is fixed.
 # oms_trading_workspace
 # oms_trading_workspace
