@@ -3,7 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../app_pkg.dart';
+import '../../../../core/utils/extensions/app_context.dart';
+import '../../../../core/utils/extensions/date_time_extensions.dart';
+import '../../../../core/utils/helpers/app_helper.dart';
+import '../../../../core/utils/helpers/log_helper.dart';
+import '../../../../data/models/response/news_model.dart';
 
 class NewsItemWidget extends StatelessWidget {
   final NewsModel model;

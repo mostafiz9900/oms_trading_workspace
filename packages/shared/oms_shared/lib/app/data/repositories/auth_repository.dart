@@ -1,4 +1,12 @@
-import '../../app_pkg.dart';
+import '../../core/utils/helpers/app_helper.dart';
+import '../../core/utils/helpers/log_helper.dart';
+import '../../core/values/api_url.dart';
+import '../../core/values/constants.dart';
+import '../api/api_response.dart';
+import '../api/base_response.dart';
+import '../models/request/login_request.dart';
+import '../models/response/user_profile.dart';
+import '../providers/auth_provider.dart';
 
 import 'authentication_repository.dart' show AuthenticationRepository;
 

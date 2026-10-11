@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../app_pkg.dart'; // context.isDark এর জন্য
+import '../../core/utils/extensions/app_context.dart';
 
 class DistributionChartLoader extends StatelessWidget {
   const DistributionChartLoader({super.key});

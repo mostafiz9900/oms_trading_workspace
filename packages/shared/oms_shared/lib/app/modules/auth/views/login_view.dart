@@ -1,4 +1,16 @@
-import '/app/app_pkg.dart';
+import '../../../core/utils/extensions/app_context.dart';
+import '../../../core/utils/helpers/app_helper.dart';
+import '../../../core/utils/helpers/log_helper.dart';
+import '../../../core/values/assets.dart';
+import '../../../core/values/colors.dart';
+import '../../../core/values/dimens.dart';
+import '../../../core/values/space.dart';
+import '../../../global_widgets/custom_button.dart';
+import '../../../global_widgets/custom_edit_text_form_field.dart';
+import '../controllers/auth_controller.dart';
+import '../../home/controllers/home_controller.dart';
+import '../../../routes/app_routes.dart';
+import 'package:localization/localization.dart';
 import '/app/modules/onboarding/views/local_widgets/create_new_account.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';

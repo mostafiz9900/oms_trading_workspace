@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 
-import '../../app_pkg.dart';
+import '../models/response/market_model.dart';
 import '../../modules/top_share/controllers/top_share_controller.dart';
 
 /// Market feed for the Top Stocks page.

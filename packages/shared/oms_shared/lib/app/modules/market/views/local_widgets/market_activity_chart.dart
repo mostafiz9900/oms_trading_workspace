@@ -1,7 +1,8 @@
 
 import 'package:oms_shared/app/modules/market/controllers/live_index_controller.dart';
 
-import '/app/app_pkg.dart';
+import '../../../../core/utils/extensions/app_context.dart';
+import '../../../../core/values/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';

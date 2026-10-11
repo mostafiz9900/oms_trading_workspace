@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 
-import 'app_pkg.dart';
+import 'core/theme/theme_service.dart';
+import 'data/services/socket_db_service.dart';
+import 'data/services/storage_service.dart';
 import 'data/services/market_socket_service.dart';
 import 'modules/auth/controllers/token_controller.dart';
 

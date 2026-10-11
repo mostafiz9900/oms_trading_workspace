@@ -1,4 +1,8 @@
-import '/app/app_pkg.dart';
+import '../../../../core/utils/extensions/app_context.dart';
+import '../../../../core/utils/helpers/hex_color.dart';
+import '../../../../core/values/colors.dart';
+import '../../../../core/values/dimens.dart';
+import '../../../home/controllers/home_controller.dart';
 
 import 'package:flutter/material.dart';
 import '../../../../data/models/response/market_depth_model.dart' show MarketDepthModel;

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../app_pkg.dart';
+import '../../../../core/utils/extensions/app_context.dart';
+import '../../../../core/values/space.dart';
 
 class TitleAndSubTitleColumWidget extends StatelessWidget {
   const TitleAndSubTitleColumWidget({

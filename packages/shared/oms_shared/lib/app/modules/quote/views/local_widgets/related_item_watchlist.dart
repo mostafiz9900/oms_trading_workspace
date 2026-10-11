@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
-import '/app/app_pkg.dart';
+import '../../../../core/utils/extensions/app_context.dart';
+import '../../../../data/models/response/market_model.dart';
 
 // =========================================================================
 // 🚀 1. Main Watchlist Container

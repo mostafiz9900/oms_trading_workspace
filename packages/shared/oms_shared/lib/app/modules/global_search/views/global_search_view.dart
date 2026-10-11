@@ -3,7 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import '../../../app_pkg.dart';
+import '../../../core/utils/extensions/app_context.dart';
+import '../../../core/utils/extensions/market_model_extensions.dart';
+import '../../../core/utils/helpers/formatter_helper.dart';
+import '../../../core/values/assets.dart';
+import '../../../core/values/space.dart';
+import '../../../core/values/strings.dart';
+import '../../../data/models/response/market_model.dart';
+import '../../../global_widgets/common_market_logic.dart';
+import '../../../global_widgets/shared_market_components.dart';
+import '../controllers/global_search_controller.dart';
+import '../../home/controllers/home_controller.dart';
 import '../../top_share/views/live_value_blinker.dart';
 import '../../../global_widgets/loaders/watchlist_loader.dart';
 

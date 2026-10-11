@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:oms_shared/app/app_pkg.dart';
+import '../helpers/app_helper.dart';
 import 'package:connectivity_plus/connectivity_plus.dart' as connectivity;
 import 'package:get/get.dart';
 

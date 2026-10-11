@@ -1,7 +1,9 @@
 import 'dart:async';
 
 
-import '/app/app_pkg.dart';
+import '../../../../core/utils/extensions/app_context.dart';
+import '../../../../core/values/space.dart';
+import '../../../home/controllers/home_controller.dart';
 import '/app/data/models/marquee_holder.dart';
 import 'package:flutter/material.dart';
 

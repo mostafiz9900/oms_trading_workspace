@@ -5,7 +5,9 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-import '../../../../app_pkg.dart';
+import '../../../../core/values/colors.dart';
+import '../../../../data/models/response/time_sales_model.dart';
+import '../../../home/controllers/home_controller.dart';
 import '../../controllers/historical_volume_controller.dart';
 import 'fast_line_with_bar_chart.dart';
 

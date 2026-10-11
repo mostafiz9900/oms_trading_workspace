@@ -2,7 +2,12 @@ import '../models/request/add_fav_item_request.dart' show AddFavItemRequest;
 import '../models/response/fav_market_response.dart' show FavMarketResponse, favMarketResponseFromMap;
 import 'market_favorites_repository.dart' show MarketFavoritesRepository;
 
-import '../../app_pkg.dart';
+import '../../core/utils/helpers/log_helper.dart';
+import '../../core/values/api_url.dart';
+import '../../core/values/constants.dart';
+import '../api/api_response.dart';
+import '../models/response/favourite_model.dart';
+import '../providers/home_provider.dart';
 
 /// API-backed adapter for the shared market watchlist contract.
 class ApiMarketFavoritesRepository implements MarketFavoritesRepository {

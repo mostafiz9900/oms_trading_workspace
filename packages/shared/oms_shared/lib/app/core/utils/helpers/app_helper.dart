@@ -16,7 +16,18 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../app_pkg.dart';
+import '../extensions/app_context.dart';
+import 'hex_color.dart';
+import 'log_helper.dart';
+import '../../values/app_config.dart';
+import '../../values/assets.dart';
+import '../../values/colors.dart';
+import '../../values/dimens.dart';
+import '../../values/space.dart';
+import '../../values/storage.dart';
+import '../../../data/models/response/user_profile.dart';
+import '../../../data/services/storage_service.dart';
+import '../../../routes/app_routes.dart';
 
 final uuid = Uuid();
 

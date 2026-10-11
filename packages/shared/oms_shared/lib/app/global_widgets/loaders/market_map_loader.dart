@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../app_pkg.dart'; // context.isDark এর জন্য
+import '../../core/utils/extensions/app_context.dart';
 
 class MarketMapLoader extends StatelessWidget {
   final double height;

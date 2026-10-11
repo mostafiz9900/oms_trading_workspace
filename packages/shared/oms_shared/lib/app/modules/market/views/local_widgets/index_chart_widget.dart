@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../app_pkg.dart';
+import '../../../../core/utils/extensions/app_context.dart';
+import '../../../../core/values/space.dart';
+import '../../../../global_widgets/visible_get_builder.dart';
 
 import '../../controllers/live_index_controller.dart';
 import '../../../../global_widgets/loaders/full_index_chart_shimmer.dart';

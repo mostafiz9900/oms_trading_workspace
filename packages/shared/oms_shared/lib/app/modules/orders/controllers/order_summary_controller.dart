@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../app_pkg.dart';
+import '../../../core/values/app_config.dart';
+import '../../../data/models/response/order_summary_model.dart';
+import '../../../data/services/socket_db_service.dart';
+import '../../home/controllers/home_controller.dart';
 
 class OrderSummaryController extends GetxController {
   final String _socketId = 'order_summary_socket';

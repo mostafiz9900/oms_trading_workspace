@@ -1,4 +1,12 @@
-import 'package:oms_shared/app/app_pkg.dart';
+import '../../../core/utils/extensions/app_context.dart';
+import '../../../core/utils/helpers/log_helper.dart';
+import '../../../core/values/assets.dart';
+import '../../../core/values/colors.dart';
+import '../../../core/values/space.dart';
+import '../../../data/models/response/market_model.dart';
+import '../../../global_widgets/custom_app_bar.dart';
+import '../../../global_widgets/custom_button.dart';
+import '../../../global_widgets/custom_edit_text_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/search_watch_list_controller.dart';

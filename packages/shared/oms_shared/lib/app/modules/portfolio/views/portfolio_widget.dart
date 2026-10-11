@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../app_pkg.dart';
+import '../../../core/utils/extensions/app_context.dart';
+import '../../../core/values/colors.dart';
+import '../../../core/values/space.dart';
+import '../../../global_widgets/common_widget.dart';
+import '../../../global_widgets/custom_app_bar.dart';
+import '../../../global_widgets/custom_drawer.dart';
+import '../../home/controllers/home_controller.dart';
 import 'local_widgets/account_summary_tab_widget.dart';
 import '../../../global_widgets/appbar_right_search_tap.dart';
 import '../../orders/views/order_list_tab_widget.dart';

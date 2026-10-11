@@ -10,7 +10,12 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'app/app_pkg.dart';
+import 'app/core/utils/helpers/log_helper.dart';
+import 'app/core/values/app_config.dart';
+import 'app/core/values/colors.dart';
+import 'app/core/values/storage.dart';
+import 'app/data/services/storage_service.dart';
+import 'app/di.dart';
 import 'app/data/services/notification_service.dart';
 
 final providerContainer = ProviderContainer();

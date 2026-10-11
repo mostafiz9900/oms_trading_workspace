@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 
-import '../../../app_pkg.dart';
+import '../../../data/repositories/home_repository.dart';
+import '../controllers/home_controller.dart';
+import '../../orders/controllers/order_summary_controller.dart';
 import '../../market/controllers/companies_controller.dart';
 import '../../quote/controllers/historical_volume_controller.dart';
 import '../../market/controllers/live_index_controller.dart';

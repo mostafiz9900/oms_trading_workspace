@@ -7,7 +7,12 @@ import 'market_chart_repository.dart' show MarketChartRepository;
 import 'market_favorites_repository.dart' show MarketFavoritesRepository;
 import '../models/response/historical_volume.dart' show PriceTableResponse;
 
-import '../../app_pkg.dart';
+import '../../core/utils/helpers/log_helper.dart';
+import '../../core/values/api_url.dart';
+import '../../core/values/constants.dart';
+import '../api/api_response.dart';
+import '../models/response/favourite_model.dart';
+import '../providers/home_provider.dart';
 import 'api_market_favorites_repository.dart';
 import 'api_market_chart_repository.dart';
 import '../models/request/withdraw_request.dart';

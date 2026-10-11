@@ -1,4 +1,4 @@
-import 'package:oms_shared/app/core/core.dart';
+import '../core/values/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 

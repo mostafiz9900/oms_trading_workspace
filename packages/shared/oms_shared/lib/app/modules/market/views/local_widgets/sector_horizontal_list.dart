@@ -3,7 +3,15 @@ import 'package:get/get.dart';
 import '../../../../global_widgets/empty_widget.dart';
 import '../../../../global_widgets/appbar_right_search_tap.dart';
 import '../../../../global_widgets/responsive_wrap_widget.dart';
-import '/app/app_pkg.dart';
+import '../../../../core/utils/extensions/app_context.dart';
+import '../../../../core/utils/helpers/formatter_helper.dart';
+import '../../../../core/values/dimens.dart';
+import '../../../../data/models/response/market_model.dart';
+import '../../../../global_widgets/common_market_logic.dart';
+import '../../../../global_widgets/custom_app_bar.dart';
+import '../../../../global_widgets/shared_market_components.dart';
+import '../../../../global_widgets/visible_get_builder.dart';
+import '../../../home/controllers/home_controller.dart';
 import '../../../quote/views/local_widgets/quote_ui_helper.dart';
 
 // ========================================================

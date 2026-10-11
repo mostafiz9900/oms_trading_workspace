@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../app_pkg.dart';
+import '../../../../core/utils/extensions/app_context.dart';
+import '../../../../core/utils/helpers/formatter_helper.dart';
+import '../../../../core/values/colors.dart';
+import '../../../../core/values/dimens.dart';
+import '../../../../data/models/response/index_model.dart';
+import '../../../../global_widgets/visible_get_builder.dart';
+import '../../../../routes/app_routes.dart';
 import '../../controllers/live_index_controller.dart';
 import '../../../../global_widgets/loaders/index_value_loader.dart';
 import '../../../../global_widgets/loaders/index_list_loader.dart';

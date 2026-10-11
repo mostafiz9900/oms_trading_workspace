@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../core/core.dart';
+import '../core/utils/helpers/app_popover.dart';
 
 class InfoTooltipIcon extends StatelessWidget {
   const InfoTooltipIcon({super.key, required this.infoText, this.size = 15.0, this.color = Colors.blue});

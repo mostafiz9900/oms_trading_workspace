@@ -1,7 +1,10 @@
 
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '/app/app_pkg.dart';
+import '../../../../core/utils/extensions/string_extensions.dart';
+import '../../../../core/values/colors.dart';
+import '../../../../core/values/dimens.dart';
+import '../../../home/controllers/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';

@@ -3,7 +3,18 @@ import 'package:oms_shared/app/modules/market/controllers/live_index_controller.
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 import '/app/modules/market/views/local_widgets/watchlist_distribution_page.dart';
-import '/app/app_pkg.dart';
+import '../../../core/utils/extensions/app_context.dart';
+import '../../../core/utils/helpers/log_helper.dart';
+import '../../../core/values/app_config.dart';
+import '../../../core/values/assets.dart';
+import '../../../core/values/colors.dart';
+import '../../../core/values/space.dart';
+import '../../../data/models/response/index_model.dart';
+import '../../../global_widgets/custom_app_bar.dart';
+import '../../../global_widgets/custom_drawer.dart';
+import '../../global_search/controllers/global_search_controller.dart';
+import '../../home/controllers/home_controller.dart';
+import '../../../routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';

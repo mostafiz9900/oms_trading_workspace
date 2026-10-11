@@ -3,7 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-import '../../../app_pkg.dart';
+import '../../../core/utils/extensions/app_context.dart';
+import '../../../core/values/assets.dart';
+import '../../../core/values/colors.dart';
+import '../../../core/values/constants.dart';
+import '../../../core/values/space.dart';
+import '../../home/controllers/home_controller.dart';
 import 'local_widgets/title_and_sub_title_column_widget.dart';
 import 'local_widgets/order_history_widget.dart';
 

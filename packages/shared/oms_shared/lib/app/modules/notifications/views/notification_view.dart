@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../app_pkg.dart';
+import '../../../core/utils/extensions/app_context.dart';
+import '../../../core/values/app_config.dart';
+import '../../../data/models/response/news_model.dart';
+import '../../../global_widgets/custom_app_bar.dart';
+import '../../home/controllers/home_controller.dart';
 
 import '../../quote/views/local_widgets/news_item_widget.dart';
 

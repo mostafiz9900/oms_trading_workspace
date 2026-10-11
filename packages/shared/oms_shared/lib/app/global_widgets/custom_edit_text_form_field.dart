@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-import '../app_pkg.dart';
+import '../core/utils/extensions/app_context.dart';
+import '../core/values/colors.dart';
+import '../core/values/dimens.dart';
 
 class CustomEditTextFormField extends StatelessWidget {
   final String? hintText;

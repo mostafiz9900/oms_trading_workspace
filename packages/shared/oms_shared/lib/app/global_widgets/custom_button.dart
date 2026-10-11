@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-import '../app_pkg.dart';
+import '../core/values/colors.dart';
+import '../core/values/dimens.dart';
 
 class CustomButton extends StatelessWidget {
   final VoidCallback? onPressed;

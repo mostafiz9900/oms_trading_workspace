@@ -3,7 +3,24 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../controllers/watchlist_controller.dart';
-import '/app/app_pkg.dart';
+import '../../../core/utils/extensions/app_context.dart';
+import '../../../core/utils/helpers/app_helper.dart';
+import '../../../core/utils/helpers/log_helper.dart';
+import '../../../core/values/assets.dart';
+import '../../../core/values/colors.dart';
+import '../../../core/values/space.dart';
+import '../../../core/values/storage.dart';
+import '../../../core/values/strings.dart';
+import '../../../data/models/response/market_model.dart';
+import '../../../data/services/storage_service.dart';
+import '../../../global_widgets/common_market_logic.dart';
+import '../../../global_widgets/custom_app_bar.dart';
+import '../../../global_widgets/custom_button.dart';
+import '../../../global_widgets/custom_drawer.dart';
+import '../../../global_widgets/custom_edit_text_form_field.dart';
+import '../../../global_widgets/shared_market_components.dart';
+import '../../../global_widgets/visible_get_builder.dart';
+import '../../home/controllers/home_controller.dart';
 
 import '../../../data/models/request/add_fav_item_request.dart' show AddFavItemRequest;
 

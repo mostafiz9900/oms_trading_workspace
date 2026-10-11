@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ui';
 
 import '../../../data/models/response/order_alert_model.dart';
 import '/app/modules/quote/controllers/historical_volume_controller.dart';
@@ -24,7 +23,32 @@ import '../../../data/services/market_tick_store.dart' show MarketTickStore;
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '/app/data/models/request/update_order_holder.dart';
-import '../../../app_pkg.dart';
+import '../../../core/utils/extensions/market_model_extensions.dart';
+import '../../../core/utils/functions/network_util.dart';
+import '../../../core/utils/helpers/app_helper.dart';
+import '../../../core/utils/helpers/hex_color.dart';
+import '../../../core/utils/helpers/log_helper.dart';
+import '../../../core/utils/helpers/update_throttle.dart';
+import '../../../core/values/app_config.dart';
+import '../../../core/values/colors.dart';
+import '../../../core/values/constants.dart';
+import '../../../core/values/space.dart';
+import '../../../core/values/storage.dart';
+import '../../../data/enums/app_enum.dart';
+import '../../../data/models/request/order_confirm_request.dart';
+import '../../../data/models/response/favourite_model.dart';
+import '../../../data/models/response/index_model.dart';
+import '../../../data/models/response/market_model.dart';
+import '../../../data/models/response/news_model.dart';
+import '../../../data/models/response/time_sales_model.dart';
+import '../../../data/models/response/user_order.dart';
+import '../../../data/models/response/user_profile.dart';
+import '../../../data/repositories/home_repository.dart';
+import '../../../data/services/socket_db_service.dart';
+import '../../../data/services/storage_service.dart';
+import '../../../global_provider.dart';
+import '../../global_search/controllers/global_search_controller.dart';
+import '../../../routes/app_routes.dart';
 import '../../../data/models/marquee_holder.dart';
 
 import '../../../data/models/response/companies_model.dart';

@@ -6,8 +6,9 @@ import 'dart:math';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import '../../../core/utils/extensions/app_context.dart';
 
-import '../../../app_pkg.dart';
+
 
 class MarketIndexController extends GetxController {
   final MarketChartRepository repository;

@@ -3,7 +3,10 @@ import '../models/response/index_chart_model2.dart' show IndexChartModel2, index
 import 'market_chart_repository.dart' show MarketChartRepository;
 import '../models/response/historical_volume.dart' show PriceTableResponse;
 
-import '../../app_pkg.dart';
+import '../../core/utils/helpers/log_helper.dart';
+import '../../core/values/api_url.dart';
+import '../api/api_response.dart';
+import '../providers/home_provider.dart';
 
 /// API-backed adapter for market chart and historical data.
 class ApiMarketChartRepository implements MarketChartRepository {

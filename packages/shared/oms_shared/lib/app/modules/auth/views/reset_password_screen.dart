@@ -3,7 +3,11 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '/app/app_pkg.dart'; // আপনার প্রোজেক্টের ইমপোর্ট পাথ ঠিক রাখবেন
+import '../../../core/utils/extensions/app_context.dart';
+import '../../../core/values/assets.dart';
+import '../../../global_widgets/custom_button.dart';
+import '../../../global_widgets/custom_edit_text_form_field.dart';
+import '../controllers/auth_controller.dart';
 
 // ================== Password Visibility Providers ==================
 final passwordVisibilityProvider = NotifierProvider<PasswordVisibilityNotifier, bool>(() {

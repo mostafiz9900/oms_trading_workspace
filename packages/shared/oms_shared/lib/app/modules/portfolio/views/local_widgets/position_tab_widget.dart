@@ -2,7 +2,15 @@ import 'package:oms_shared/app/data/models/response/position_response.dart';
 import 'package:oms_shared/app/modules/portfolio/controllers/position_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../app_pkg.dart';
+import '../../../../core/utils/extensions/app_context.dart';
+import '../../../../core/utils/extensions/market_model_extensions.dart';
+import '../../../../core/utils/helpers/formatter_helper.dart';
+import '../../../../core/utils/helpers/hex_color.dart';
+import '../../../../data/models/response/market_model.dart';
+import '../../../../global_widgets/custom_loader.dart';
+import '../../../../global_widgets/shared_market_components.dart';
+import '../../../../global_widgets/visible_get_builder.dart';
+import '../../../home/controllers/home_controller.dart';
 import '../../../../global_widgets/loaders/position_loader.dart';
 
 class PositionTabWidget extends StatelessWidget {

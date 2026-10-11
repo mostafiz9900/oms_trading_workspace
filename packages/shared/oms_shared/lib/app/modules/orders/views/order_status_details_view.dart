@@ -2,7 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:oms_shared/app/app_pkg.dart';
+import '../../../core/utils/extensions/app_context.dart';
+import '../../../core/utils/helpers/app_helper.dart';
+import '../../../core/utils/helpers/log_helper.dart';
+import '../../../core/values/space.dart';
+import '../../../global_widgets/custom_app_bar.dart';
 import '/app/data/models/response/order_status_details_model.dart';
 
 class OrderStatusDetailsView extends StatelessWidget {

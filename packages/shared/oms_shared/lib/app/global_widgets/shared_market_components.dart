@@ -4,7 +4,16 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import '../app_pkg.dart';
+import '../core/utils/extensions/app_context.dart';
+import '../core/utils/extensions/market_model_extensions.dart';
+import '../core/utils/helpers/app_helper.dart';
+import '../core/utils/helpers/formatter_helper.dart';
+import '../core/values/assets.dart';
+import '../core/values/colors.dart';
+import '../core/values/space.dart';
+import '../data/models/response/market_model.dart';
+import 'common_market_logic.dart';
+import '../modules/home/controllers/home_controller.dart';
 import 'google_finance_sparkline.dart';
 import '../modules/top_share/views/live_value_blinker.dart';
 

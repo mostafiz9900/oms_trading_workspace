@@ -1,7 +1,10 @@
 import 'package:get/get.dart';
 import '../models/request/add_fav_item_request.dart' show AddFavItemRequest;
 
-import '../../app_pkg.dart';
+import '../../core/values/app_config.dart';
+import '../../core/values/storage.dart';
+import '../api/base_provider.dart';
+import '../services/storage_service.dart';
 import '../models/request/withdraw_request.dart';
 
 class HomeProvider extends BaseProvider {

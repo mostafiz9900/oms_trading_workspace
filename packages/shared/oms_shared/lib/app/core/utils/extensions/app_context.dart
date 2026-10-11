@@ -1,4 +1,7 @@
-import 'package:oms_shared/app/app_pkg.dart';
+import '../functions/network_util.dart';
+import '../helpers/hex_color.dart';
+import '../../values/assets.dart';
+import '../../values/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

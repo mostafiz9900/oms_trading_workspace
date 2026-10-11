@@ -5,7 +5,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../app_pkg.dart';
+import '../../../core/utils/extensions/app_context.dart';
+import '../../../core/utils/helpers/app_helper.dart';
+import '../../../core/utils/helpers/log_helper.dart';
+import '../../../core/values/assets.dart';
+import '../../../core/values/colors.dart';
+import '../../../global_widgets/custom_button.dart';
+import '../controllers/home_controller.dart';
 import '../controllers/update_controller.dart';
 import '../../watchlist/views/fav_market_view.dart';
 import '../../market/views/market_widget.dart';

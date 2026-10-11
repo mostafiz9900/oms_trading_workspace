@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../app_pkg.dart';
+import '../../../core/utils/extensions/market_model_extensions.dart';
+import '../../../data/models/response/market_model.dart';
+import '../views/global_search_view.dart';
+import '../../home/controllers/home_controller.dart';
 import '../../../data/services/recent_search_service.dart';
 
 class GlobalSearchController extends GetxController {

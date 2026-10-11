@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-import '../../../../app_pkg.dart';
+import '../../../../core/utils/extensions/app_context.dart';
+import '../../../../core/utils/helpers/app_helper.dart';
+import '../../../../core/values/colors.dart';
+import '../../../../core/values/space.dart';
 
 // =========================================================================
 // =========================================================================

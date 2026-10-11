@@ -1,4 +1,10 @@
-import '/app/app_pkg.dart';
+import '../../../core/utils/extensions/app_context.dart';
+import '../../../core/values/colors.dart';
+import '../../../core/values/space.dart';
+import '../../../global_widgets/common_widget.dart';
+import '../../../global_widgets/custom_app_bar.dart';
+import '../../../global_widgets/custom_drawer.dart';
+import '../../home/controllers/home_controller.dart';
 import '/app/modules/quote/views/local_widgets/quote_tab_widget.dart';
 import '/app/modules/quote/views/local_widgets/time_sales_tab_history_widget.dart';
 import 'package:flutter/material.dart';

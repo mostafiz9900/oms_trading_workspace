@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 
-import '../app_pkg.dart';
+import '../core/utils/extensions/app_context.dart';
+import '../core/values/dimens.dart';
+import '../global_provider.dart';
 
 class OrderTypeDropdownListWidget extends ConsumerWidget {
   const OrderTypeDropdownListWidget({

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../app_pkg.dart';
+import '../../../core/utils/extensions/market_model_extensions.dart';
+import '../../../data/models/response/market_model.dart';
+import '../../home/controllers/home_controller.dart';
 
 class WatchListController extends GetxController {
   final HomeController homeCon = Get.find<HomeController>();

@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_in_store_app_version_checker/flutter_in_store_app_version_checker.dart';
 import 'package:new_version_plus/new_version_plus.dart';
 
-import '/app/app_pkg.dart';
+import '../../../core/utils/helpers/log_helper.dart';
+import '../../../core/values/app_config.dart';
 import 'package:get/get.dart';
 
 class UpdateController extends GetxController {

@@ -4,7 +4,13 @@ import '../../../../data/models/request/add_fav_item_request.dart' show AddFavIt
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../app_pkg.dart';
+import '../../../../core/utils/extensions/app_context.dart';
+import '../../../../core/utils/helpers/app_helper.dart';
+import '../../../../core/utils/helpers/log_helper.dart';
+import '../../../../core/values/colors.dart';
+import '../../../../core/values/space.dart';
+import '../../../../data/models/response/market_model.dart';
+import '../../../home/controllers/home_controller.dart';
 
 // ==========================================
 // 5. Global/Helper functions

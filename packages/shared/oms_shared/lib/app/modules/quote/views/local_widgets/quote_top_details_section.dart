@@ -5,7 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-import '../../../../app_pkg.dart';
+import '../../../../core/utils/extensions/app_context.dart';
+import '../../../../core/utils/extensions/date_time_extensions.dart';
+import '../../../../core/utils/extensions/market_model_extensions.dart';
+import '../../../../core/utils/helpers/formatter_helper.dart';
+import '../../../../core/utils/helpers/hex_color.dart';
+import '../../../../core/values/assets.dart';
+import '../../../../core/values/colors.dart';
+import '../../../../core/values/dimens.dart';
+import '../../../../core/values/space.dart';
+import '../../../../data/models/response/market_model.dart';
+import '../../../../global_widgets/visible_get_builder.dart';
+import '../../../home/controllers/home_controller.dart';
 import 'quote_ui_helper.dart';
 import '../../../watchlist/views/local_widgets/favourite_bottom_sheet.dart';
 

@@ -3,7 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../app_pkg.dart';
+import '../../../../core/utils/extensions/app_context.dart';
+import '../../../../core/values/colors.dart';
+import '../../../../data/models/response/news_model.dart';
+import '../../../../global_widgets/visible_get_builder.dart';
+import '../../../home/controllers/home_controller.dart';
 import 'candle_series_charts.dart';
 import 'related_item_watchlist.dart';
 import 'market_depth_single_widget.dart';

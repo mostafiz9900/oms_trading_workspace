@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '/app/app_pkg.dart';
+import '../../../core/utils/extensions/app_context.dart';
+import '../../../core/values/app_config.dart';
+import '../../../global_widgets/custom_app_bar.dart';
 import '../controllers/contact_us_controller.dart';
 
 class ContactUsView extends GetView<ContactUsController> {

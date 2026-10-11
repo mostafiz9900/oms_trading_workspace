@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../app_pkg.dart';
+import '../../../core/values/app_config.dart';
+import '../../../core/values/assets.dart';
+import '../../../routes/app_routes.dart';
+import 'package:localization/localization.dart';
 
 class OnboardingController extends GetxController {
   var selectedIndex = 0;

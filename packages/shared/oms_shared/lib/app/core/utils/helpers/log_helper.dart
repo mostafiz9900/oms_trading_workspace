@@ -1,15 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'core/values/app_config.dart';
 
-export '../app/core/core.dart';
-export '../app/data/data.dart';
-export '../app/global_widgets/global_widgets.dart';
-export '../app/modules/modules.dart';
-export '../bootstrap.dart';
-export 'app_binding.dart';
-export 'di.dart';
-export 'routes/routes.dart';
-export 'global_provider.dart';
+import '../../values/app_config.dart';
 
 String get kLOGTAG => "[${AppConfig.houseId}]";
 // Logs only in debug builds; release builds skip formatting and printing.

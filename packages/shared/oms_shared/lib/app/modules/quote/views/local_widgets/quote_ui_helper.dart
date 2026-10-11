@@ -4,7 +4,10 @@ import '../../../../global_widgets/info_tooltip_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../app_pkg.dart';
+import '../../../../core/utils/extensions/app_context.dart';
+import '../../../../core/utils/helpers/formatter_helper.dart';
+import '../../../../core/utils/helpers/hex_color.dart';
+import '../../../../core/values/space.dart';
 
 // ==========================================
 // ==========================================
