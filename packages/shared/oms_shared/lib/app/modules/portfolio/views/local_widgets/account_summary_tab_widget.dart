@@ -16,7 +16,7 @@ class AccountSummaryTabWidget extends StatelessWidget {
     Divider dividerWidget = Divider(height: 1, color: context.dividerColor);
     return GetBuilder<HomeController>(
       id: 'user_balance_update',
-      initState: (___) {
+      initState: (_) {
       },
       builder: (homeCont) {
         if (homeCont.userBalanceData == null) {

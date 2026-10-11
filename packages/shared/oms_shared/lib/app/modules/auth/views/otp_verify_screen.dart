@@ -98,7 +98,7 @@ class OtpVerifyScreen extends HookConsumerWidget {
                                     color: isActive
                                         ? Colors
                                               .blue // একটিভ বক্সের বর্ডার
-                                        : (isFilled ? Colors.blue.withOpacity(0.5) : Colors.grey.shade700),
+                                        : (isFilled ? Colors.blue.withAlpha(128) : Colors.grey.shade700),
                                     width: isActive ? 2 : 1.5,
                                   ),
                                 ),
@@ -220,7 +220,7 @@ class CircularCountdownWidget extends ConsumerWidget {
               child: CircularProgressIndicator(
                 value: progress,
                 strokeWidth: strokeWidth,
-                backgroundColor: Colors.grey.withOpacity(0.2),
+                backgroundColor: Colors.grey.withAlpha(51),
                 valueColor: const AlwaysStoppedAnimation(Colors.blue),
               ),
             ),

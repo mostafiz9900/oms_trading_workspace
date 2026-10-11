@@ -68,7 +68,7 @@ class ProSectorHorizontalList extends StatelessWidget {
                       //  প্রফেশনাল শ্যাডো অ্যাড করা হয়েছে
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(context.isDark ? 0.3 : 0.04),
+                          color: Colors.black.withAlpha((255.0 * (context.isDark ? 0.3 : 0.04)).round()),
                           blurRadius: 8,
                           offset: const Offset(0, 3),
                         ),
@@ -100,7 +100,7 @@ class ProSectorHorizontalList extends StatelessWidget {
                             Container(
                               padding: const .symmetric(horizontal: 4, vertical: 2),
                               decoration: BoxDecoration(
-                                color: changeColor.withOpacity(0.1), //  ব্যাকগ্রাউন্ড টিন্ট
+                                color: changeColor.withAlpha(26), //  ব্যাকগ্রাউন্ড টিন্ট
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Row(
@@ -168,7 +168,7 @@ class SectorDetailsView extends StatelessWidget {
                     border: Border.all(color: context.isDark ? Colors.white10 : Colors.grey.shade200, width: 1),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(context.isDark ? 0.3 : 0.03),
+                        color: Colors.black.withAlpha((255.0 * (context.isDark ? 0.3 : 0.03)).round()),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),
@@ -221,7 +221,7 @@ class SectorDetailsView extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: context.isDark ? Colors.grey.shade900 : Colors.grey.shade50,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: context.isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
+                    border: Border.all(color: context.isDark ? Colors.white10 : Colors.black.withAlpha(13)),
                   ),
                   child: ResponsiveWrap(
                     minItemWidth: 50,
@@ -267,9 +267,9 @@ class SectorDetailsView extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: context.isDark ? Colors.grey.shade900 : Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: context.isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
+                    border: Border.all(color: context.isDark ? Colors.white10 : Colors.black.withAlpha(13)),
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4)),
+                      BoxShadow(color: Colors.black.withAlpha(5), blurRadius: 10, offset: const Offset(0, 4)),
                     ],
                   ),
                   child: BetterResponsiveWrap(
@@ -393,7 +393,7 @@ class _ReusableLiveStockListState extends State<ReusableLiveStockList> {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: displayList.length,
             padding: const .symmetric(vertical: 8), //  লিস্টের বাইরের স্পেস কমানো হয়েছে
-            separatorBuilder: (_, __) => dividerWidget,
+            separatorBuilder: (_, _) => dividerWidget,
             itemBuilder: (context, index) {
               final model = displayList[index];
 

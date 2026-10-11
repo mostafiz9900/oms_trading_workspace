@@ -188,7 +188,7 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
                 TextButton(
                   onPressed: () => setState(() => _show1D = true),
                   style: TextButton.styleFrom(
-                    backgroundColor: _show1D ? context.buttonColor?.withOpacity(0.15) : Colors.transparent,
+                    backgroundColor: _show1D ? context.buttonColor.withAlpha(38) : Colors.transparent,
                     minimumSize: const Size(44, 32),
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                   ),
@@ -205,7 +205,7 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
                 TextButton(
                   onPressed: () => setState(() => _show1D = false),
                   style: TextButton.styleFrom(
-                    backgroundColor: !_show1D ? context.buttonColor?.withOpacity(0.15) : Colors.transparent,
+                    backgroundColor: !_show1D ? context.buttonColor.withAlpha(38) : Colors.transparent,
                     minimumSize: const Size(44, 32),
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                   ),

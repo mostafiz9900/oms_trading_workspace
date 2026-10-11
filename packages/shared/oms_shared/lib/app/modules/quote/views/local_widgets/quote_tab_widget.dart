@@ -120,7 +120,7 @@ class _NewsWidget extends StatelessWidget {
                   Icon(
                     Icons.article_outlined,
                     size: 40,
-                    color: Colors.grey.withOpacity(0.5),
+                    color: Colors.grey.withAlpha(128),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -140,11 +140,12 @@ class _NewsWidget extends StatelessWidget {
         return ListView.separated(
           padding: EdgeInsets.zero,
           itemCount: homeCon.newsSingleItem.length,
-          separatorBuilder: (_, __) => dividerWidget,
+          separatorBuilder: (_, _) => dividerWidget,
           itemBuilder: (context, index) {
             final NewsModel? model = homeCon.newsSingleItem[index];
-            if (model == null || model.tl == null)
+            if (model == null || model.tl == null) {
               return const SizedBox.shrink();
+            }
             return NewsItemWidget(model: model);
           },
         );

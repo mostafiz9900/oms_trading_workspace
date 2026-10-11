@@ -58,7 +58,7 @@ class TopSectorByCategoryWidget extends StatelessWidget {
                     interval: 1,
                     minimum: -0.5,
                     maximum: homeCon.chartDataShareType.isNotEmpty ? homeCon.chartDataShareType.length - 0.5 : null,
-                    majorGridLines: MajorGridLines(width: 0.5, color: Colors.grey.withOpacity(0.3)),
+                    majorGridLines: MajorGridLines(width: 0.5, color: Colors.grey.withAlpha(77)),
                     labelPlacement: LabelPlacement.onTicks,
                     labelIntersectAction: AxisLabelIntersectAction.rotate90,
                     labelAlignment: LabelAlignment.center,
@@ -68,7 +68,7 @@ class TopSectorByCategoryWidget extends StatelessWidget {
                     minimum: 0,
                     // 🚀 CRASH FIX: interval: 5 রিমুভ করা হয়েছে যাতে বড় ভ্যালুতে অ্যাপ ক্র্যাশ না করে
                     // 🚀 FIX: Y-অক্ষ বরাবর গ্রিড লাইন অন রাখা হয়েছে
-                    majorGridLines: MajorGridLines(width: 0.5, color: Colors.grey.withOpacity(0.3)),
+                    majorGridLines: MajorGridLines(width: 0.5, color: Colors.grey.withAlpha(77)),
                   ),
                   legend: Legend(
                     isVisible: true,

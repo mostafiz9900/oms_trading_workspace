@@ -15,7 +15,7 @@ class WatchlistLoader extends StatelessWidget {
       itemCount: 10, // স্ক্রিনে ১০টি শিমার রো দেখাবে
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
       physics: const NeverScrollableScrollPhysics(),
-      separatorBuilder: (_, __) => Divider(height: 1, color: context.dividerColor),
+      separatorBuilder: (_, _) => Divider(height: 1, color: context.dividerColor),
       itemBuilder: (context, index) {
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 4.0),

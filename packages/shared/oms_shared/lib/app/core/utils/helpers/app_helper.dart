@@ -167,7 +167,7 @@ class Helpers {
     }
   }
 
-  static formatDisplayDate(String date) {
+  static dynamic formatDisplayDate(String date) {
     try {
       // ইনপুট ফরম্যাট: 15/07/2026
       final DateFormat inputFormat = DateFormat("dd/MM/yyyy");
@@ -291,7 +291,7 @@ class Helpers {
       context: context,
       barrierDismissible: false,
       barrierLabel: 'custom_dialog',
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: Colors.black.withAlpha(128),
       transitionDuration: const Duration(milliseconds: 350),
       pageBuilder: (context, animation, secondaryAnimation) {
         return SafeArea(
@@ -834,7 +834,7 @@ class Helpers {
     return null;
   }
 
-  static monthYear(String dateStart) {
+  static dynamic monthYear(String dateStart) {
     DateFormat inputFormat = DateFormat('dd/MM/yyyy hh:mm:ss a');
     DateTime input = inputFormat.parse(dateStart);
     String result = DateFormat('MM/yyyy').format(input);
@@ -894,7 +894,7 @@ class Helpers {
     }
   }
 
-  static openAuthAlertDialog(VoidCallback? onPressed) {
+  static dynamic openAuthAlertDialog(VoidCallback? onPressed) {
     Get.dialog(
       AlertDialog(
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
@@ -976,7 +976,7 @@ class Helpers {
   //                                               ? ctx.textColor
   //                                               : topShareControl.activeSortByAscDesc == model
   //                                               ? ColorConstants.blueColor
-  static openDropdownShare(
+  static dynamic openDropdownShare(
     BuildContext ctx, {
     required String title,
     required List<String> menuLists,
@@ -1021,7 +1021,7 @@ class Helpers {
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
                         decoration: BoxDecoration(
-                          border: Border(bottom: BorderSide(color: Colors.grey.withOpacity(0.2))),
+                          border: Border(bottom: BorderSide(color: Colors.grey.withAlpha(51))),
                         ),
                         child: Row(
                           children: [
@@ -1048,7 +1048,7 @@ class Helpers {
     );
   }
 
-  static openLoginAlertDialog(VoidCallback? onPressed) {
+  static dynamic openLoginAlertDialog(VoidCallback? onPressed) {
     Get.dialog(
       AlertDialog(
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
@@ -1136,7 +1136,7 @@ class Helpers {
     });
   }
 
-  static openCustomAlertDialog(VoidCallback? onPressed, {String? title, String? bodyText}) {
+  static dynamic openCustomAlertDialog(VoidCallback? onPressed, {String? title, String? bodyText}) {
     Get.dialog(
       AlertDialog(
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
@@ -1215,7 +1215,7 @@ class Helpers {
     );
   }
 
-  static openWelcomeDialog(VoidCallback? onPressed) {
+  static dynamic openWelcomeDialog(VoidCallback? onPressed) {
     Get.dialog(
       AlertDialog(
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
@@ -1316,7 +1316,7 @@ class Helpers {
     }
   }
 
-  static String handleErrorException(error) {
+  static String handleErrorException(dynamic error) {
     if (error is SocketException) {
       printLog('Network error : $error');
       return "Network error : $error";

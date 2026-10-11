@@ -169,7 +169,7 @@ class CommonLimitItemWidget extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: Colors.blueAccent.withOpacity(0.1),
+                        color: Colors.blueAccent.withAlpha(26),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -211,7 +211,7 @@ class CommonLimitItemWidget extends StatelessWidget {
               const SizedBox(height: 6),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(color: statusColor.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
+                decoration: BoxDecoration(color: statusColor.withAlpha(26), borderRadius: BorderRadius.circular(20)),
                 child: Text(
                   status,
                   style: TextStyle(color: statusColor, fontSize: 10, fontWeight: FontWeight.w800),
@@ -235,7 +235,7 @@ class CommonLimitItemWidget extends StatelessWidget {
         color: context.isDark ? Colors.grey.shade900 : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: context.dividerColor, width: 1),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))],
+        boxShadow: [BoxShadow(color: Colors.black.withAlpha(10), blurRadius: 8, offset: const Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -257,7 +257,7 @@ class CommonLimitItemWidget extends StatelessWidget {
               const SizedBox(width: 12),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(color: statusColor.withOpacity(0.15), borderRadius: BorderRadius.circular(6)),
+                decoration: BoxDecoration(color: statusColor.withAlpha(38), borderRadius: BorderRadius.circular(6)),
                 child: Text(
                   status,
                   style: TextStyle(color: statusColor, fontSize: 12, fontWeight: FontWeight.w800),

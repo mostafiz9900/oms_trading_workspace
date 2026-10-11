@@ -1,3 +1,6 @@
+// Route names keep the GetX CLI generated SCREAMING_CASE style.
+// ignore_for_file: constant_identifier_names
+
 /// Route names shared by every feature. Each app builds its own route table
 /// (GetPage list) from these in `lib/src/routing/`.
 library;

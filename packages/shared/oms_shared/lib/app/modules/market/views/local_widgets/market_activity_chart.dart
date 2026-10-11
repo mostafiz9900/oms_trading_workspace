@@ -28,8 +28,8 @@ class MarketActivityChart extends StatelessWidget {
           decoration: BoxDecoration(
             color: context.isDark ? hexToColor('#161A33') : Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: context.borderSideColor.withOpacity(0.5)),
-            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))],
+            border: Border.all(color: context.borderSideColor.withAlpha(128)),
+            boxShadow: [BoxShadow(color: Colors.black.withAlpha(13), blurRadius: 10, offset: const Offset(0, 4))],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,14 +76,14 @@ class MarketActivityChart extends StatelessWidget {
                       text: 'Turnover (Cr)',
                       textStyle: TextStyle(
                         fontSize: 10,
-                        color: context.textColor.withOpacity(0.5),
+                        color: context.textColor.withAlpha(128),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     majorGridLines: MajorGridLines(
                       width: 1,
                       dashArray: const <double>[4, 4], // স্লিক ড্যাশড লাইন
-                      color: context.dividerColor.withOpacity(0.2),
+                      color: context.dividerColor.withAlpha(51),
                     ),
                     axisLine: const AxisLine(width: 0),
                     labelFormat: '{value}',
@@ -99,7 +99,7 @@ class MarketActivityChart extends StatelessWidget {
                         text: 'Trades',
                         textStyle: TextStyle(
                           fontSize: 10,
-                          color: context.textColor.withOpacity(0.5),
+                          color: context.textColor.withAlpha(128),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -134,7 +134,7 @@ class MarketActivityChart extends StatelessWidget {
                       gradient: LinearGradient(
                         colors: [
                           hexToColor('#177DFF'), // ডিপ ব্লু
-                          hexToColor('#177DFF').withOpacity(0.5), // লাইট ব্লু
+                          hexToColor('#177DFF').withAlpha(128), // লাইট ব্লু
                         ],
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,

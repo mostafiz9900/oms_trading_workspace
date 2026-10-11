@@ -115,7 +115,7 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
     } else if (c < -0.005) {
       return ColorConstants.coralRed;
     } else {
-      return ColorConstants.buttonColorLight.withOpacity(0.8);
+      return ColorConstants.buttonColorLight.withAlpha(204);
     }
   }
 
@@ -162,7 +162,7 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
             child: Center(
               child: Text(
                 'No data available for this sector',
-                style: TextStyle(color: context.textColor.withOpacity(0.7), fontSize: 14),
+                style: TextStyle(color: context.textColor.withAlpha(179), fontSize: 14),
               ),
             ),
           );
@@ -226,7 +226,7 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: Get.theme.scaffoldBackgroundColor,
-                              border: Border.all(color: context.borderSideColor.withOpacity(0.5), width: 1.0),
+                              border: Border.all(color: context.borderSideColor.withAlpha(128), width: 1.0),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -256,13 +256,13 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
                       if (!isZoomed)
                         Row(
                           children: [
-                            Icon(Icons.touch_app_rounded, size: 12, color: context.textColor.withOpacity(0.6)),
+                            Icon(Icons.touch_app_rounded, size: 12, color: context.textColor.withAlpha(153)),
                             const SizedBox(width: 4),
                             Text(
                               "Tap to zoom",
                               style: TextStyle(
                                 fontSize: 10,
-                                color: context.textColor.withOpacity(0.6),
+                                color: context.textColor.withAlpha(153),
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -389,7 +389,7 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
                                                     child: Text(
                                                       chgStr,
                                                       style: TextStyle(
-                                                        color: Colors.white.withOpacity(0.95),
+                                                        color: Colors.white.withAlpha(242),
                                                         fontSize: isZoomed ? 12 : 9.5,
                                                         fontWeight: FontWeight.w600,
                                                       ),

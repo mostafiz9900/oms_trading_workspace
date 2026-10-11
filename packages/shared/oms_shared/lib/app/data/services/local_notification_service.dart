@@ -1,6 +1,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../../core/values/app_config.dart';
+import '../../core/utils/helpers/log_helper.dart';
 
 class LocalNotificationService {
   static final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
@@ -22,7 +23,7 @@ class LocalNotificationService {
   static void _onNotificationTap(NotificationResponse response) {
     final payload = response.payload;
     if (payload != null && payload.isNotEmpty) {
-      print('Notification tapped with payload: $payload');
+      printLog('Notification tapped with payload: $payload');
       // You can handle navigation here
     }
   }

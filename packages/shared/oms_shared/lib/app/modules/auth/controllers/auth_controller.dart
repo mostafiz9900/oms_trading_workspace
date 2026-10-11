@@ -235,14 +235,14 @@ class AuthController extends GetxController {
 
   String? chooseName;
 
-  void setChooseName(name) {
+  void setChooseName(dynamic name) {
     chooseName = name;
     update();
   }
 
   String? chooseFatherName;
 
-  void setChooseFatherName(name) {
+  void setChooseFatherName(dynamic name) {
     chooseFatherName = name;
     update();
   }
@@ -320,7 +320,7 @@ class AuthController extends GetxController {
 
   String? selectedMedia;
 
-  void setSelectMedia(value) {
+  void setSelectMedia(dynamic value) {
     selectedMedia = value;
     update();
     selectMedia();
@@ -360,7 +360,7 @@ class AuthController extends GetxController {
 
   String? selectedAvailablePhoneOrEmail;
 
-  void setSelectedAvailableEmail(value) {
+  void setSelectedAvailableEmail(dynamic value) {
     selectedAvailablePhoneOrEmail = value;
     update();
     inputMediaEmailOrPhone.clear();

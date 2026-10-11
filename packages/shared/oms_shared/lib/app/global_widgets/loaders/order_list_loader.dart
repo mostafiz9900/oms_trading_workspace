@@ -22,7 +22,7 @@ class OrderListLoader extends StatelessWidget {
           decoration: BoxDecoration(
             color: context.tapBg,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: context.borderSideColor.withOpacity(0.4)),
+            border: Border.all(color: context.borderSideColor.withAlpha(102)),
           ),
           child: Shimmer.fromColors(
             baseColor: baseColor,

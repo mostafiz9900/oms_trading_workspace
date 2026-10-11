@@ -38,7 +38,7 @@ class TokenController extends GetxController {
     remainingSeconds.value = expiry.difference(now).inSeconds.clamp(0, 1 << 31);
     printLog('expiry:: $expiry');
     if (!expiry.isAfter(now)) {
-      print('Token already expired.');
+      printLog('Token already expired.');
       _clearSession();
       return;
     }
@@ -47,17 +47,17 @@ class TokenController extends GetxController {
     final durationUntilRefresh = refreshTime.difference(now);
     _refreshTimer?.cancel();
     if (durationUntilRefresh.isNegative) {
-      print('Token already expired or near expiry. Refresh now.');
+      printLog('Token already expired or near expiry. Refresh now.');
       refreshToken();
       return;
     }
 
     _refreshTimer = Timer(durationUntilRefresh, () {
-      print('Refreshing token before expiry...');
+      printLog('Refreshing token before expiry...');
       refreshToken();
     });
 
-    print('Scheduled refresh in: ${durationUntilRefresh.inSeconds} seconds');
+    printLog('Scheduled refresh in: ${durationUntilRefresh.inSeconds} seconds');
   }
 
   Future<void> refreshToken() async {
@@ -107,7 +107,7 @@ class TokenController extends GetxController {
         _clearSession();
       }
     } catch (e) {
-      print('Refresh token failed: $e');
+      printLog('Refresh token failed: $e');
       _clearSession();
     }
   }

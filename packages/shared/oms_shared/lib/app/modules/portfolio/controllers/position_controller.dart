@@ -174,7 +174,9 @@ class PositionController extends GetxController {
         var userProfile = UserProfile.fromJson(userInfoMap);
         return userProfile.userDetail?.boId;
       }
-    } catch (e) {}
+    } catch (e) {
+      // Ignored on purpose: keep the previous value when parsing fails.
+    }
     return null;
   }
 
@@ -222,7 +224,9 @@ class PositionController extends GetxController {
       } else if (messageType == 'position_update') {
         _updatePositions(PositionResponse.fromMap(jsonMap));
       }
-    } catch (e) {}
+    } catch (e) {
+      // Ignored on purpose: keep the previous value when parsing fails.
+    }
   }
 
   void _updatePositions(PositionResponse updateData) {

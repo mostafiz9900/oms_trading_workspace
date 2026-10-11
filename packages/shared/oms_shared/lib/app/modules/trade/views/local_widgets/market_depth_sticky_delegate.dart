@@ -198,8 +198,8 @@ class _QytPriceTableWidget extends StatelessWidget {
           if (showButton)
             Material(
               color: context.isDark
-                  ? HexColor('#223167').withOpacity(0.6)
-                  : HexColor('#EBF2FC').withOpacity(0.8),
+                  ? HexColor('#223167').withAlpha(153)
+                  : HexColor('#EBF2FC').withAlpha(204),
               child: InkWell(
                 onTap: () => homeController.toggleMarketDepth(),
                 child: Container(

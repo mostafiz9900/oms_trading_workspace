@@ -359,8 +359,8 @@ class BidRowItem extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    ColorConstants.success.withOpacity(0.05),
-                    ColorConstants.success.withOpacity(0.25),
+                    ColorConstants.success.withAlpha(13),
+                    ColorConstants.success.withAlpha(64),
                   ],
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
@@ -455,8 +455,8 @@ class AskRowItem extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    ColorConstants.error.withOpacity(0.25),
-                    ColorConstants.error.withOpacity(0.05),
+                    ColorConstants.error.withAlpha(64),
+                    ColorConstants.error.withAlpha(13),
                   ],
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
@@ -628,7 +628,7 @@ class _MarketDepthChart extends StatelessWidget {
           edgeLabelPlacement: EdgeLabelPlacement.shift,
           majorGridLines: MajorGridLines(
             width: 0.5,
-            color: Colors.grey.withOpacity(0.15),
+            color: Colors.grey.withAlpha(38),
             dashArray: const [4, 4],
           ),
           axisLine: const AxisLine(width: 0),
@@ -673,8 +673,8 @@ class _MarketDepthChart extends StatelessWidget {
             animationDuration: 0,
             gradient: LinearGradient(
               colors: [
-                ColorConstants.success.withOpacity(0.3),
-                ColorConstants.success.withOpacity(0.02),
+                ColorConstants.success.withAlpha(77),
+                ColorConstants.success.withAlpha(5),
               ],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
@@ -690,8 +690,8 @@ class _MarketDepthChart extends StatelessWidget {
             animationDuration: 0,
             gradient: LinearGradient(
               colors: [
-                ColorConstants.error.withOpacity(0.3),
-                ColorConstants.error.withOpacity(0.02),
+                ColorConstants.error.withAlpha(77),
+                ColorConstants.error.withAlpha(5),
               ],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
@@ -705,10 +705,10 @@ class _MarketDepthChart extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: context.isDark
-                      ? Colors.grey.shade800.withOpacity(0.8)
-                      : Colors.grey.shade200.withOpacity(0.8),
+                      ? Colors.grey.shade800.withAlpha(204)
+                      : Colors.grey.shade200.withAlpha(204),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.withOpacity(0.3)),
+                  border: Border.all(color: Colors.grey.withAlpha(77)),
                 ),
                 child: Text(
                   'Spread: ${(lowestAsk - highestBid).toStringAsFixed(2)}',

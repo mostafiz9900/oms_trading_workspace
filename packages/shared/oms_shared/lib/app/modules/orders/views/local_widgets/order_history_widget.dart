@@ -11,7 +11,7 @@ import '../../../../data/enums/app_enum.dart';
 import '../../../../data/models/response/user_order.dart';
 import '../../../../global_widgets/custom_container.dart';
 import '../../../home/controllers/home_controller.dart';
-import '../../../../global_widgets/confirm_dialog.dart' hide HexColor;
+import '../../../../global_widgets/confirm_dialog.dart';
 import 'order_form_dialog.dart';
 import '../../../../global_widgets/loaders/order_list_loader.dart';
 
@@ -69,7 +69,7 @@ class OrderHistoryWidget extends StatelessWidget {
                           decoration: BoxDecoration(
                             border: Border.all(color: hexToColor("#DFDFDF")),
                             borderRadius: BorderRadius.circular(6),
-                            color: isActionViewExpanded ? context.buttonColor.withOpacity(0.1) : Colors.transparent,
+                            color: isActionViewExpanded ? context.buttonColor.withAlpha(26) : Colors.transparent,
                           ),
                           child: Icon(
                             isActionViewExpanded ? Icons.splitscreen : Icons.menu_open,
@@ -288,7 +288,7 @@ class OrderHistoryWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: order.side == "BUY" ? Colors.greenAccent.withAlpha(10) : Colors.redAccent.withAlpha(10),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: context.borderSideColor.withOpacity(0.4)),
+        border: Border.all(color: context.borderSideColor.withAlpha(102)),
       ),
       child: Column(
         crossAxisAlignment: .start,
@@ -332,7 +332,7 @@ class OrderHistoryWidget extends StatelessWidget {
                               style: Get.textTheme.bodyLarge?.copyWith(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 11,
-                                color: context.textColor.withOpacity(0.7),
+                                color: context.textColor.withAlpha(179),
                               ),
                             ),
                           ],
@@ -367,7 +367,7 @@ class OrderHistoryWidget extends StatelessWidget {
                         style: Get.textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.w600,
                           fontSize: 11,
-                          color: context.textColor.withOpacity(0.8),
+                          color: context.textColor.withAlpha(204),
                         ),
                       ),
                     ],
@@ -647,7 +647,7 @@ class _OrderActionWrapWidget extends StatelessWidget {
         _ActionChip(
           icon: Icons.info_outline_rounded,
           label: 'Details',
-          color: context.textColor.withOpacity(0.6),
+          color: context.textColor.withAlpha(153),
           onTap: () {
             Get.to(() => OrderDetailsView(userOrder: order));
           },
@@ -673,9 +673,9 @@ class _ActionChip extends StatelessWidget {
       child: Container(
         padding: const .symmetric(horizontal: 6, vertical: 3),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.08),
+          color: color.withAlpha(20),
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: color.withOpacity(0.3), width: 0.5),
+          border: Border.all(color: color.withAlpha(77), width: 0.5),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

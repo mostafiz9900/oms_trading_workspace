@@ -228,12 +228,12 @@ class WatchListWidget extends StatelessWidget {
                             ), // 👈 ড্রপডাউনের সাইজের সাথে মিল রাখা হয়েছে
                             decoration: BoxDecoration(
                               color: context.isDark
-                                  ? Colors.white.withOpacity(0.05)
+                                  ? Colors.white.withAlpha(13)
                                   : Colors.grey.shade100,
                               borderRadius: BorderRadius.circular(6),
                               border: Border.all(
                                 color: context.isDark
-                                    ? Colors.white.withOpacity(0.08)
+                                    ? Colors.white.withAlpha(20)
                                     : Colors.grey.shade200,
                                 width: 1,
                               ),
@@ -280,7 +280,7 @@ class WatchListWidget extends StatelessWidget {
                                   vertical: 10,
                                   horizontal: 8,
                                 ),
-                                separatorBuilder: (_, __) => dividerWidget,
+                                separatorBuilder: (_, _) => dividerWidget,
                                 itemBuilder: (context, index) {
                                   final model = controller.filteredItems[index];
 
@@ -503,7 +503,7 @@ class _WatchListSearchBar extends StatelessWidget {
                     prefixIcon: AssetsConstants.searchIconSvg,
                     hintText: StringConstants.stocksShares,
                     hintStyle: TextStyle(
-                      color: context.textColor.withOpacity(0.5),
+                      color: context.textColor.withAlpha(128),
                       fontSize: 13,
                     ),
                     onChanged: (String value) {

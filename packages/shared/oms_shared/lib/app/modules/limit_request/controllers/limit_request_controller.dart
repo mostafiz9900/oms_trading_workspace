@@ -265,8 +265,8 @@ class LimitRequestController extends GetxController {
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(vertical: 24),
                             decoration: BoxDecoration(
-                              color: Colors.blueAccent.withOpacity(0.05),
-                              border: Border.all(color: Colors.blueAccent.withOpacity(0.3), width: 1.5),
+                              color: Colors.blueAccent.withAlpha(13),
+                              border: Border.all(color: Colors.blueAccent.withAlpha(77), width: 1.5),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Column(
@@ -296,7 +296,7 @@ class LimitRequestController extends GetxController {
                               Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: ColorConstants.success.withOpacity(0.1),
+                                  color: ColorConstants.success.withAlpha(26),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Icon(Icons.image, color: ColorConstants.success, size: 24),

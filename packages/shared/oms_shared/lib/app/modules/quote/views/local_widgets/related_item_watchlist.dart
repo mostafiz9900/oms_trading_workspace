@@ -270,7 +270,7 @@ class GoogleFinanceSparkline extends StatelessWidget {
         ? Colors.grey.shade600
         : (isPositive ? const Color(0xFF137333) : const Color(0xFFA50E0E));
 
-    final Color areaColor = lineColor.withOpacity(0.08);
+    final Color areaColor = lineColor.withAlpha(20);
 
     return SizedBox(
       height: 38,
@@ -287,7 +287,7 @@ class GoogleFinanceSparkline extends StatelessWidget {
                   (index) => Expanded(
                     child: Container(
                       height: 1,
-                      color: index % 2 == 0 ? Colors.grey.withOpacity(0.35) : Colors.transparent,
+                      color: index % 2 == 0 ? Colors.grey.withAlpha(89) : Colors.transparent,
                     ),
                   ),
                 ),

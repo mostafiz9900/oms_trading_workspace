@@ -37,7 +37,7 @@ class OrderDetailsView extends StatelessWidget {
   Widget build(BuildContext context) {
     printLog('OrderDetailsView :: ${userOrder.toJson()}');
 
-    Divider dividerWidget = Divider(height: 1, color: context.dividerColor.withOpacity(0.5));
+    Divider dividerWidget = Divider(height: 1, color: context.dividerColor.withAlpha(128));
 
     // Side Color
     String side = userOrder.side ?? "";
@@ -63,7 +63,7 @@ class OrderDetailsView extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: context.cardColor,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(width: 1, color: context.borderSideColor.withOpacity(0.5)),
+                  border: Border.all(width: 1, color: context.borderSideColor.withAlpha(128)),
                 ),
                 child: Column(
                   children: [
@@ -164,7 +164,7 @@ class _TitleAndValueRowWidget extends StatelessWidget {
           style: Get.textTheme.bodyMedium?.copyWith(
             fontSize: 13,
             fontWeight: FontWeight.w400,
-            color: context.textColor.withOpacity(0.7),
+            color: context.textColor.withAlpha(179),
           ),
         ),
         const SizedBox(width: 15),

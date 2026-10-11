@@ -1,3 +1,6 @@
+// The debug logger itself; print is gated by kLOGENABLE (debug builds only).
+// ignore_for_file: avoid_print
+
 import 'package:flutter/foundation.dart';
 
 import '../../values/app_config.dart';

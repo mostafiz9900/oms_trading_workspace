@@ -45,7 +45,7 @@ class PriceTableLoader extends StatelessWidget {
                 crossAxisSpacing: 10,
               ),
               itemCount: 6,
-              itemBuilder: (_, __) => Shimmer.fromColors(
+              itemBuilder: (_, _) => Shimmer.fromColors(
                 baseColor: baseColor,
                 highlightColor: highlightColor,
                 child: Column(

@@ -275,8 +275,9 @@ class LiveIndexController extends GetxController {
       final jsonResponse = jsonDecode(message);
       final messageType = jsonResponse['message_type'];
 
-      if (messageType == 'connection' || messageType == 'itch_heartbeat')
+      if (messageType == 'connection' || messageType == 'itch_heartbeat') {
         return;
+      }
 
       if (messageType == null) {
         const baseIndices = ['DSEX', 'DSES', 'DS30', 'DSMEX'];

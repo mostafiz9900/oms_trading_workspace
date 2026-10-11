@@ -18,7 +18,7 @@ class IndexChartWidget extends StatelessWidget {
     enable: true,
     activationMode: ActivationMode.longPress,
     lineType: TrackballLineType.vertical,
-    lineColor: Colors.grey.withOpacity(0.4),
+    lineColor: Colors.grey.withAlpha(102),
     lineWidth: 1.2,
     lineDashArray: const [4, 4],
     tooltipDisplayMode: TrackballDisplayMode.nearestPoint,
@@ -121,7 +121,7 @@ class IndexChartWidget extends StatelessWidget {
                                 vertical: 3,
                               ),
                               decoration: BoxDecoration(
-                                color: statusColor.withOpacity(0.12),
+                                color: statusColor.withAlpha(31),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Row(
@@ -186,7 +186,7 @@ class IndexChartWidget extends StatelessWidget {
                               boxShadow: isSelected && !context.isDark
                                   ? [
                                       BoxShadow(
-                                        color: Colors.black.withOpacity(0.05),
+                                        color: Colors.black.withAlpha(13),
                                         blurRadius: 2,
                                         offset: const Offset(0, 1),
                                       ),
@@ -261,14 +261,14 @@ class IndexChartWidget extends StatelessWidget {
                     ? const Color(0xFF00C853)
                     : const Color(0xFFFF3D00);
                 final Color volumeBullColor = const Color(0xFF00C853)
-                    .withOpacity(0.35);
+                    .withAlpha(89);
                 final Color volumeBearColor = const Color(0xFFFF3D00)
-                    .withOpacity(0.35);
+                    .withAlpha(89);
 
                 final LinearGradient areaGradient = LinearGradient(
                   colors: <Color>[
-                    themeColor.withOpacity(0.30),
-                    themeColor.withOpacity(0.0),
+                    themeColor.withAlpha(77),
+                    themeColor.withAlpha(0),
                   ],
                   stops: const <double>[0.0, 1.0],
                   begin: Alignment.topCenter,
@@ -315,7 +315,7 @@ class IndexChartWidget extends StatelessWidget {
                         width: 1,
                         color: context.isDark
                             ? Colors.white10
-                            : Colors.black.withOpacity(0.05),
+                            : Colors.black.withAlpha(13),
                         dashArray: const [5, 5],
                       ),
                       axisLine: const AxisLine(width: 0),

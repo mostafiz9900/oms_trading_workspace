@@ -3,6 +3,7 @@ import '../../../data/repositories/home_repository.dart';
 import '../../../routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/utils/helpers/log_helper.dart';
 
 class PasswordResetController extends GetxController {
   final HomeRepository homeRepository;
@@ -52,7 +53,7 @@ class PasswordResetController extends GetxController {
       }
     } catch (e) {
       isLoading = false; // 🚀 FIX
-      print('Change password error: $e');
+      printLog('Change password error: $e');
       Helpers.snackbarForErorr2(titleText: "Exception", bodyText: "Something went wrong!");
     }
     update();

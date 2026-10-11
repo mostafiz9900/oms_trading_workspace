@@ -18,7 +18,7 @@ class GoogleFinanceSparkline extends StatelessWidget {
         ? Colors.grey.shade600
         : (isPositive ? const Color(0xFF137333) : const Color(0xFFA50E0E));
 
-    final Color areaColor = lineColor.withOpacity(0.08);
+    final Color areaColor = lineColor.withAlpha(20);
 
     return SizedBox(
       height: 38,
@@ -35,7 +35,7 @@ class GoogleFinanceSparkline extends StatelessWidget {
                   (index) => Expanded(
                     child: Container(
                       height: 1,
-                      color: index % 2 == 0 ? Colors.grey.withOpacity(0.35) : Colors.transparent,
+                      color: index % 2 == 0 ? Colors.grey.withAlpha(89) : Colors.transparent,
                     ),
                   ),
                 ),
@@ -84,8 +84,8 @@ class BidAskPressureBar extends StatelessWidget {
     final int bFlex = total == 0 ? 1 : buyQty;
     final int sFlex = total == 0 ? 1 : sellQty;
 
-    final Color bColor = total == 0 ? Colors.grey.withOpacity(0.3) : ColorConstants.upColor;
-    final Color sColor = total == 0 ? Colors.grey.withOpacity(0.3) : ColorConstants.downColor;
+    final Color bColor = total == 0 ? Colors.grey.withAlpha(77) : ColorConstants.upColor;
+    final Color sColor = total == 0 ? Colors.grey.withAlpha(77) : ColorConstants.downColor;
 
     return SizedBox(
       width: width,
@@ -156,7 +156,7 @@ class DayRangeIndicator extends StatelessWidget {
             children: [
               // ব্যাকগ্রাউন্ড লাইন
               Container(
-                decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: BorderRadius.circular(2)),
+                decoration: BoxDecoration(color: Colors.grey.withAlpha(51), borderRadius: BorderRadius.circular(2)),
               ),
               Positioned(
                 left: percentage * 100 > 95 ? null : (percentage * 100), // ডানপাশে ওভারফ্লো বন্ধ করতে
@@ -167,7 +167,7 @@ class DayRangeIndicator extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: color,
                     shape: BoxShape.circle,
-                    boxShadow: [BoxShadow(color: color.withOpacity(0.4), blurRadius: 4, spreadRadius: 1)],
+                    boxShadow: [BoxShadow(color: color.withAlpha(102), blurRadius: 4, spreadRadius: 1)],
                   ),
                 ),
               ),

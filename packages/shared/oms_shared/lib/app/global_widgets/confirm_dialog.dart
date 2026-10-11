@@ -91,7 +91,7 @@ class ConfirmDialog extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: context.textColor.withOpacity(0.7),
+                          color: context.textColor.withAlpha(179),
                         ),
                       ),
                     ),

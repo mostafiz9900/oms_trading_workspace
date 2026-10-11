@@ -144,7 +144,7 @@ class CandleSeriesChartsWidget extends HookWidget {
         hideDelay: 3000,
         tooltipDisplayMode: TrackballDisplayMode.none,
         lineType: TrackballLineType.vertical,
-        lineColor: Theme.of(context).dividerColor.withOpacity(0.6),
+        lineColor: Theme.of(context).dividerColor.withAlpha(153),
         lineWidth: 1.2,
         lineDashArray: const [4, 4],
         shouldAlwaysShow: false,
@@ -236,9 +236,9 @@ class CandleSeriesChartsWidget extends HookWidget {
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor.withOpacity(0.7),
+                        color: Theme.of(context).cardColor.withAlpha(179),
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.2)),
+                        border: Border.all(color: Theme.of(context).dividerColor.withAlpha(51)),
                       ),
                       child: Wrap(
                         spacing: 12,
@@ -253,7 +253,7 @@ class CandleSeriesChartsWidget extends HookWidget {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: candleColor.withOpacity(0.12),
+                              color: candleColor.withAlpha(31),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
@@ -292,13 +292,13 @@ class CandleSeriesChartsWidget extends HookWidget {
                         // 🚀 Prevents the extreme left/right labels from being cut off
                         edgeLabelPlacement: EdgeLabelPlacement.shift,
                         majorGridLines: MajorGridLines(
-                          color: Theme.of(context).dividerColor.withOpacity(0.15),
+                          color: Theme.of(context).dividerColor.withAlpha(38),
                           dashArray: const [4, 4],
                           width: 0.8,
                         ),
                         axisLine: const AxisLine(width: 0),
                         labelStyle: TextStyle(
-                          color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
+                          color: Theme.of(context).textTheme.bodySmall?.color?.withAlpha(179),
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
                         ),
@@ -309,7 +309,7 @@ class CandleSeriesChartsWidget extends HookWidget {
                         opposedPosition: true,
                         numberFormat: NumberFormat("##0.00"),
                         majorGridLines: MajorGridLines(
-                          color: Theme.of(context).dividerColor.withOpacity(0.15),
+                          color: Theme.of(context).dividerColor.withAlpha(38),
                           dashArray: const [4, 4],
                           width: 0.8,
                         ),
@@ -356,7 +356,7 @@ class CandleSeriesChartsWidget extends HookWidget {
                           yValueMapper: (_VolBucket b, _) => b.volume,
                           yAxisName: 'volumeAxis',
                           pointColorMapper: (_VolBucket b, _) =>
-                              b.close >= b.open ? bullColor.withOpacity(0.25) : bearColor.withOpacity(0.25),
+                              b.close >= b.open ? bullColor.withAlpha(64) : bearColor.withAlpha(64),
                           width: candleWidth,
                         ),
                         if (selectedTab.value == '1m') ...[
@@ -365,7 +365,7 @@ class CandleSeriesChartsWidget extends HookWidget {
                             xValueMapper: (_VolBucket b, _) => b.start,
                             yValueMapper: (_VolBucket b, _) => b.close,
                             gradient: LinearGradient(
-                              colors: [liveColor.withOpacity(0.25), liveColor.withOpacity(0.0)],
+                              colors: [liveColor.withAlpha(64), liveColor.withAlpha(0)],
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                             ),
@@ -428,7 +428,7 @@ class CandleSeriesChartsWidget extends HookWidget {
         decoration: BoxDecoration(
           color: Get.theme.cardColor,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Get.theme.dividerColor.withOpacity(0.3)),
+          border: Border.all(color: Get.theme.dividerColor.withAlpha(77)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -454,7 +454,7 @@ class CandleSeriesChartsWidget extends HookWidget {
                       child: Text(
                         t,
                         style: TextStyle(
-                          color: isSelected ? Colors.white : Get.theme.textTheme.bodyMedium?.color?.withOpacity(0.8),
+                          color: isSelected ? Colors.white : Get.theme.textTheme.bodyMedium?.color?.withAlpha(204),
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                           fontSize: 12,
                         ),
@@ -477,7 +477,7 @@ class CandleSeriesChartsWidget extends HookWidget {
         Text(
           '$label: ',
           style: TextStyle(
-            color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.6),
+            color: Theme.of(context).textTheme.bodySmall?.color?.withAlpha(153),
             fontSize: 11,
             fontWeight: FontWeight.w600,
           ),

@@ -23,8 +23,8 @@ class CartesianChartLoader extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Get.theme.dividerColor.withOpacity(0.1)),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 8, offset: const Offset(0, 4))],
+        border: Border.all(color: Get.theme.dividerColor.withAlpha(26)),
+        boxShadow: [BoxShadow(color: Colors.black.withAlpha(8), blurRadius: 8, offset: const Offset(0, 4))],
       ),
       child: Shimmer.fromColors(
         baseColor: baseColor,
@@ -57,7 +57,7 @@ class CartesianChartLoader extends StatelessWidget {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: List.generate(5, (index) {
-                      return Container(height: 1, width: double.infinity, color: shapeColor.withOpacity(0.5));
+                      return Container(height: 1, width: double.infinity, color: shapeColor.withAlpha(128));
                     }),
                   ),
 

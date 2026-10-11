@@ -103,8 +103,12 @@ class UpdateController extends GetxController {
     final l = latest.split('.').map((e) => int.tryParse(e) ?? 0).toList();
 
     // normalize length
-    while (c.length < l.length) c.add(0);
-    while (l.length < c.length) l.add(0);
+    while (c.length < l.length) {
+      c.add(0);
+    }
+    while (l.length < c.length) {
+      l.add(0);
+    }
 
     for (int i = 0; i < l.length; i++) {
       if (c[i] < l[i]) return true;

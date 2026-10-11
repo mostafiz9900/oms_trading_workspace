@@ -151,7 +151,7 @@ class CommonHorizontalTabList extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.tapBg,
         border: Border(
-          bottom: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade200, width: 1),
+          bottom: BorderSide(color: isDark ? Colors.white.withAlpha(13) : Colors.grey.shade200, width: 1),
         ),
       ),
       child: ListView.separated(
@@ -164,7 +164,7 @@ class CommonHorizontalTabList extends StatelessWidget {
               width: 1,
               height: 14,
               margin: EdgeInsets.symmetric(horizontal: dynamicGap),
-              color: isDark ? Colors.white.withOpacity(0.15) : Colors.grey.shade300,
+              color: isDark ? Colors.white.withAlpha(38) : Colors.grey.shade300,
             ),
           );
         },
@@ -358,7 +358,7 @@ class SharedMarketListItem extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   model.sector ?? model.group ?? "",
-                  style: TextStyle(fontSize: 11, color: context.textColor.withOpacity(0.5)),
+                  style: TextStyle(fontSize: 11, color: context.textColor.withAlpha(128)),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -450,11 +450,11 @@ class SharedMarketListItem extends StatelessWidget {
                   children: [
                     Text(
                       "Vol:${NumberFormatter.bdFormat((model.volume ?? 0).toDouble())}, ",
-                      style: TextStyle(fontSize: 9, color: context.textColor.withOpacity(0.6)),
+                      style: TextStyle(fontSize: 9, color: context.textColor.withAlpha(153)),
                     ),
                     Text(
                       "Val:${NumberFormatter.croreFormat(model.val ?? 0.0)}",
-                      style: TextStyle(fontSize: 9, color: context.textColor.withOpacity(0.6)),
+                      style: TextStyle(fontSize: 9, color: context.textColor.withAlpha(153)),
                     ),
                   ],
                 ),
@@ -462,7 +462,7 @@ class SharedMarketListItem extends StatelessWidget {
                 // 🚀 Bid/Ask Pressure Bar যুক্ত করা হলো
                 Row(
                   children: [
-                    Text("B/A: ", style: TextStyle(fontSize: 9, color: context.textColor.withOpacity(0.5))),
+                    Text("B/A: ", style: TextStyle(fontSize: 9, color: context.textColor.withAlpha(128))),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(right: 8.0),
@@ -672,7 +672,7 @@ class SharedMarketListItem extends StatelessWidget {
           vertical: viewMode == 'Small' ? 10.0 : (viewMode == 'Classic' ? 12.0 : 8.0),
         ),
         decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: context.borderColor.withOpacity(0.5), width: 1)),
+          border: Border(bottom: BorderSide(color: context.borderColor.withAlpha(128), width: 1)),
         ),
         child: childWidget,
       ),

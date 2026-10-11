@@ -26,8 +26,8 @@ class MarketSentimentRatioChart extends StatelessWidget {
           decoration: BoxDecoration(
             color: context.isDark ? hexToColor('#161A33') : Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: context.borderSideColor.withOpacity(0.5)),
-            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))],
+            border: Border.all(color: context.borderSideColor.withAlpha(128)),
+            boxShadow: [BoxShadow(color: Colors.black.withAlpha(13), blurRadius: 10, offset: const Offset(0, 4))],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,7 +139,7 @@ class MarketSentimentRatioChart extends StatelessWidget {
         RichText(
           text: TextSpan(
             text: '$title ',
-            style: TextStyle(fontSize: 11, color: context.textColor.withOpacity(0.7)),
+            style: TextStyle(fontSize: 11, color: context.textColor.withAlpha(179)),
             children: [
               TextSpan(
                 text: '${pct.toStringAsFixed(1)}%',

@@ -29,7 +29,7 @@ class NotificationView extends StatelessWidget {
 
           return ListView.separated(
             itemCount: controller.news.length,
-            separatorBuilder: (_, __) => Divider(height: 1, color: context.dividerColor),
+            separatorBuilder: (_, _) => Divider(height: 1, color: context.dividerColor),
             padding: .zero,
             itemBuilder: (context, index) {
               NewsModel? model = controller.news[index];

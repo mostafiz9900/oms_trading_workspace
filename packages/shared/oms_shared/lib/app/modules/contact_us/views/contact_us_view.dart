@@ -41,7 +41,7 @@ class ContactUsView extends GetView<ContactUsController> {
               child: Text(
                 "Have questions about your trades, account, or the market? Our team at ${AppConfig.houseName} is here to assist you.",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: context.textColor.withOpacity(0.6), height: 1.5),
+                style: TextStyle(fontSize: 14, color: context.textColor.withAlpha(153), height: 1.5),
               ),
             ),
             const SizedBox(height: 32),
@@ -149,14 +149,14 @@ class ContactUsView extends GetView<ContactUsController> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100,
+                color: isDark ? Colors.white.withAlpha(13) : Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(color: context.textColor.withOpacity(0.05), shape: BoxShape.circle),
+                    decoration: BoxDecoration(color: context.textColor.withAlpha(13), shape: BoxShape.circle),
                     child: Icon(Icons.access_time_filled_rounded, color: Colors.grey.shade500, size: 24),
                   ),
                   const SizedBox(width: 16),
@@ -171,7 +171,7 @@ class ContactUsView extends GetView<ContactUsController> {
                         const SizedBox(height: 4),
                         Text(
                           controller.tradingHours,
-                          style: TextStyle(color: context.textColor.withOpacity(0.6), fontSize: 12),
+                          style: TextStyle(color: context.textColor.withAlpha(153), fontSize: 12),
                         ),
                       ],
                     ),
@@ -203,7 +203,7 @@ class _SectionTitle extends StatelessWidget {
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w800,
-            color: context.textColor.withOpacity(0.4),
+            color: context.textColor.withAlpha(102),
             letterSpacing: 1.2,
           ),
         ),
@@ -244,15 +244,15 @@ class _ContactCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF161A33) : Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade200),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 8, offset: const Offset(0, 2))],
+          border: Border.all(color: isDark ? Colors.white.withAlpha(13) : Colors.grey.shade200),
+          boxShadow: [BoxShadow(color: Colors.black.withAlpha(5), blurRadius: 8, offset: const Offset(0, 2))],
         ),
         child: Row(
           children: [
             // Left Icon
             Container(
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(color: iconColor.withOpacity(0.1), shape: BoxShape.circle),
+              decoration: BoxDecoration(color: iconColor.withAlpha(26), shape: BoxShape.circle),
               child: Icon(icon, color: iconColor, size: 22),
             ),
             const SizedBox(width: 16),
@@ -275,7 +275,7 @@ class _ContactCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12.5,
                       height: 1.4,
-                      color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
+                      color: Theme.of(context).textTheme.bodyMedium?.color?.withAlpha(153),
                     ),
                   ),
                 ],
@@ -293,17 +293,17 @@ class _ContactCard extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100,
+                        color: isDark ? Colors.white.withAlpha(13) : Colors.grey.shade100,
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(Icons.copy_rounded, size: 16, color: context.textColor.withOpacity(0.6)),
+                      child: Icon(Icons.copy_rounded, size: 16, color: context.textColor.withAlpha(153)),
                     ),
                   ),
                   const SizedBox(width: 8),
                 ],
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                  decoration: BoxDecoration(color: iconColor.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
+                  decoration: BoxDecoration(color: iconColor.withAlpha(26), borderRadius: BorderRadius.circular(20)),
                   child: Text(
                     actionText,
                     style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: iconColor),

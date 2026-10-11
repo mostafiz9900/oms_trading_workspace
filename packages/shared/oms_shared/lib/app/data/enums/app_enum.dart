@@ -1,3 +1,6 @@
+// Enum values match the server API strings; renaming them would change requests.
+// ignore_for_file: constant_identifier_names
+
 
 // Order types
 

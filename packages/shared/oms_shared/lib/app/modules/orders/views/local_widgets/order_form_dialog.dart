@@ -119,7 +119,7 @@ void showOrderFormDialog(UserOrder order) {
                                 style: TextStyle(color: context.textColor),
                                 decoration: InputDecoration(
                                   hintText: 'Disclosed Qty.',
-                                  hintStyle: TextStyle(fontSize: 14.0, color: context.textColor.withOpacity(0.5)),
+                                  hintStyle: TextStyle(fontSize: 14.0, color: context.textColor.withAlpha(128)),
                                   border: InputBorder.none,
                                   enabledBorder: InputBorder.none,
                                   focusedBorder: InputBorder.none,
@@ -165,7 +165,7 @@ void showOrderFormDialog(UserOrder order) {
                                 style: TextStyle(color: context.textColor),
                                 decoration: InputDecoration(
                                   hintText: 'Qty.',
-                                  hintStyle: TextStyle(fontSize: 14.0, color: context.textColor.withOpacity(0.5)),
+                                  hintStyle: TextStyle(fontSize: 14.0, color: context.textColor.withAlpha(128)),
                                   border: InputBorder.none,
                                   enabledBorder: InputBorder.none,
                                   focusedBorder: InputBorder.none,
@@ -189,7 +189,7 @@ void showOrderFormDialog(UserOrder order) {
                                 style: TextStyle(color: context.textColor),
                                 decoration: InputDecoration(
                                   hintText: 'Min Qty.',
-                                  hintStyle: TextStyle(fontSize: 14.0, color: context.textColor.withOpacity(0.5)),
+                                  hintStyle: TextStyle(fontSize: 14.0, color: context.textColor.withAlpha(128)),
                                   border: InputBorder.none,
                                   enabledBorder: InputBorder.none,
                                   focusedBorder: InputBorder.none,
@@ -217,7 +217,7 @@ void showOrderFormDialog(UserOrder order) {
                               decoration: BoxDecoration(
                                 color: context.tapBg,
                                 borderRadius: BorderRadius.circular(6),
-                                border: Border.all(color: context.textColor.withOpacity(0.1)),
+                                border: Border.all(color: context.textColor.withAlpha(26)),
                               ),
                               child: Row(
                                 children: [
@@ -312,7 +312,7 @@ void showOrderFormDialog(UserOrder order) {
                               homeCon.tradPriceTextEditField.clear();
                             },
                             style: OutlinedButton.styleFrom(
-                              side: BorderSide(color: context.textColor.withOpacity(0.3)),
+                              side: BorderSide(color: context.textColor.withAlpha(77)),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
                             ),
                             child: Text("Cancel", style: TextStyle(color: context.textColor)),

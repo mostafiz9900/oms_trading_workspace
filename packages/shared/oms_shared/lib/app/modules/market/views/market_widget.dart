@@ -76,8 +76,8 @@ class MarketWidget extends StatelessWidget {
                             final result = await SearchHelper.open();
 
                             if (result != null) {
-                              print("Selected Market: ${result.shortName}");
-                              print("Selected Market to map: ${result.toJson()}");
+                              printLog("Selected Market: ${result.shortName}");
+                              printLog("Selected Market to map: ${result.toJson()}");
                               if (result.orderBook != null && result.shortName != null) {
                                 homeNotifyCont.goBottomNabBarPage(1, result.orderBook!);
                               }
@@ -281,7 +281,7 @@ class _IndicesTabWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: ctx.cardColor, // 🚀 ব্যাকগ্রাউন্ড কালার ডাইনামিক
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: ctx.borderSideColor.withOpacity(0.5)),
+          border: Border.all(color: ctx.borderSideColor.withAlpha(128)),
         ),
         child: SfCartesianChart(
           plotAreaBorderWidth: 0, // 🚀 চার্টের ভেতরের চারপাশের বর্ডার লাইন রিমুভ করা হয়েছে
@@ -307,7 +307,7 @@ class _IndicesTabWidget extends StatelessWidget {
           primaryYAxis: NumericAxis(
             title: AxisTitle(
               text: 'Index Value',
-              textStyle: TextStyle(fontSize: 12, color: ctx.textColor.withOpacity(0.6)),
+              textStyle: TextStyle(fontSize: 12, color: ctx.textColor.withAlpha(153)),
             ),
             numberFormat: NumberFormat('#,##0.00'),
             minimum: null,
@@ -317,9 +317,9 @@ class _IndicesTabWidget extends StatelessWidget {
             majorGridLines: MajorGridLines(
               width: 1,
               dashArray: const <double>[5, 5],
-              color: ctx.dividerColor.withOpacity(0.4),
+              color: ctx.dividerColor.withAlpha(102),
             ),
-            labelStyle: TextStyle(fontWeight: FontWeight.w500, color: ctx.textColor.withOpacity(0.8)),
+            labelStyle: TextStyle(fontWeight: FontWeight.w500, color: ctx.textColor.withAlpha(204)),
           ),
           tooltipBehavior: TooltipBehavior(
             enable: true,
@@ -331,7 +331,7 @@ class _IndicesTabWidget extends StatelessWidget {
                   color: ctx.isDark ? Colors.grey.shade800 : Colors.white,
                   borderRadius: BorderRadius.circular(6),
                   boxShadow: [
-                    BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 6, offset: const Offset(0, 3)),
+                    BoxShadow(color: Colors.black.withAlpha(38), blurRadius: 6, offset: const Offset(0, 3)),
                   ],
                 ),
                 child: Text(

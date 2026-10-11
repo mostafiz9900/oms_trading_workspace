@@ -133,7 +133,7 @@ class CustomEditTextFormField extends StatelessWidget {
         hintStyle:
             hintStyle ??
             Get.textTheme.bodyMedium?.copyWith(
-              color: hintTextColor ?? context.textColor?.withValues(alpha: 0.50), //  Deprecated API Fixed
+              color: hintTextColor ?? context.textColor.withValues(alpha: 0.50), //  Deprecated API Fixed
               fontSize: fontSize ?? 14,
             ),
         errorMaxLines: 2,

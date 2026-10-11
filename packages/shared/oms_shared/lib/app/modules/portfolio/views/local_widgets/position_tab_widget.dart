@@ -201,7 +201,9 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
       } else if (parts.length == 2) {
         return "${parts[0].padLeft(2, '0')}:${parts[1].padLeft(2, '0')}:00";
       }
-    } catch (e) {}
+    } catch (e) {
+      // Ignored on purpose: keep the previous value when parsing fails.
+    }
     return rawTime;
   }
 
@@ -391,7 +393,7 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
     String dayTrendText = '$dayIcon ${dayAbsChg.abs().toStringAsFixed(2)} (${dayPctChg.abs().toStringAsFixed(2)}%)';
     Color dayTrendColor = dayAbsChg > 0
         ? HexColor("#22C665")
-        : (dayAbsChg < 0 ? HexColor("#F70042") : context.textColor.withOpacity(0.6));
+        : (dayAbsChg < 0 ? HexColor("#F70042") : context.textColor.withAlpha(153));
 
     Color unPnLColor = unrealizedPnL >= 0 ? HexColor("#22C665") : HexColor("#F70042");
     Color realPnLColor = realizedPnL >= 0 ? HexColor("#22C665") : HexColor("#F70042");
@@ -427,7 +429,7 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
               bottomText: NumberFormatter.bdFormat(remQty, decimalPlaces: 0),
               alignment: CrossAxisAlignment.end,
               topBold: true,
-              bottomColor: context.textColor.withOpacity(0.7),
+              bottomColor: context.textColor.withAlpha(179),
             ),
           ),
 
@@ -439,7 +441,7 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
               bottomText: NumberFormatter.bdFormat(intSellQty, decimalPlaces: 0),
               alignment: CrossAxisAlignment.end,
               topBold: true,
-              bottomColor: context.textColor.withOpacity(0.7),
+              bottomColor: context.textColor.withAlpha(179),
             ),
           ),
 
@@ -498,17 +500,17 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
         col2DataTop = NumberFormatter.bdFormat(totalQty, decimalPlaces: 0);
         col2DataBottom = '${avgPrice.toStringAsFixed(2)} BDT';
         col2TopBold = true;
-        col2BottomColor = context.textColor.withOpacity(0.7);
+        col2BottomColor = context.textColor.withAlpha(179);
         col3DataTop = activeLast.toStringAsFixed(2);
         col3DataBottom = _formatTime(marketData.lastTradeTime);
         col3TopColor = (marketData.d ?? 0) >= 0 ? HexColor("#22C665") : HexColor("#F70042");
         col3TopBold = true;
-        col3BottomColor = context.textColor.withOpacity(0.7);
+        col3BottomColor = context.textColor.withAlpha(179);
       } else if (viewMode == 2) {
         col2DataTop = NumberFormatter.bdFormat(marketValue);
         col2DataBottom = NumberFormatter.bdFormat(model.totalCost);
         col2TopBold = true;
-        col2BottomColor = context.textColor.withOpacity(0.7);
+        col2BottomColor = context.textColor.withAlpha(179);
         col3DataTop = '${weightPct.toStringAsFixed(2)}%';
         col3DataBottom = '';
         col3TopBold = true;
@@ -516,7 +518,7 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
         col2DataTop = NumberFormatter.bdFormat(totalQty, decimalPlaces: 0);
         col2DataBottom = '${avgPrice.toStringAsFixed(2)} BDT';
         col2TopBold = true;
-        col2BottomColor = context.textColor.withOpacity(0.7);
+        col2BottomColor = context.textColor.withAlpha(179);
         col3DataTop = '$unPnLSign${gainLossPct.abs().toStringAsFixed(2)}%';
         col3DataBottom = unrealizedPnL.abs() >= 1000
             ? '$unPnLSign${(unrealizedPnL.abs() / 1000).toStringAsFixed(2)}K'
@@ -591,7 +593,7 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: isEven ? Get.theme.scaffoldBackgroundColor : context.tapBg,
-          border: Border(bottom: BorderSide(color: context.borderSideColor.withOpacity(0.5))),
+          border: Border(bottom: BorderSide(color: context.borderSideColor.withAlpha(128))),
         ),
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: rowContent,
@@ -626,7 +628,7 @@ class _HeaderCell2Line extends StatelessWidget {
             const SizedBox(height: 3),
             Text(
               bottomTitle,
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: context.textColor.withOpacity(0.7)),
+              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: context.textColor.withAlpha(179)),
             ),
           ],
         ],

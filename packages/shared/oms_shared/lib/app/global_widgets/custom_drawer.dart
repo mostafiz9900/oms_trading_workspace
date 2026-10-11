@@ -525,7 +525,7 @@ class CheckTokenWidget extends ConsumerWidget {
     return tokenAsync.when(
       data: (refreshToken) => refreshToken != null ? child : const SizedBox(),
       loading: () => const SizedBox(),
-      error: (_, __) => const SizedBox(),
+      error: (_, _) => const SizedBox(),
     );
   }
 }

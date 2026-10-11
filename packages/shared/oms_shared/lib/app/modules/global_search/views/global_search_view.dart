@@ -39,9 +39,9 @@ class GlobalSearchScreen extends HookWidget {
             customButton: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100,
+                color: isDark ? Colors.white.withAlpha(13) : Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: isDark ? Colors.white.withOpacity(0.08) : Colors.grey.shade200, width: 1),
+                border: Border.all(color: isDark ? Colors.white.withAlpha(20) : Colors.grey.shade200, width: 1),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -66,7 +66,7 @@ class GlobalSearchScreen extends HookWidget {
                     border: isLast
                         ? null
                         : Border(
-                            bottom: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade200),
+                            bottom: BorderSide(color: isDark ? Colors.white.withAlpha(13) : Colors.grey.shade200),
                           ),
                   ),
                   child: Row(
@@ -97,7 +97,7 @@ class GlobalSearchScreen extends HookWidget {
                 borderRadius: BorderRadius.circular(10),
                 color: ctx.cardColor,
                 boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 4)),
+                  BoxShadow(color: Colors.black.withAlpha(26), blurRadius: 10, offset: const Offset(0, 4)),
                 ],
               ),
             ),
@@ -166,7 +166,7 @@ class GlobalSearchScreen extends HookWidget {
                 const SizedBox(height: 2),
                 Text(
                   model.sector ?? model.group ?? "",
-                  style: TextStyle(fontSize: 11, color: context.textColor.withOpacity(0.5)),
+                  style: TextStyle(fontSize: 11, color: context.textColor.withAlpha(128)),
                 ),
               ],
             ),
@@ -227,11 +227,11 @@ class GlobalSearchScreen extends HookWidget {
                   children: [
                     Text(
                       "Vol:${NumberFormatter.bdFormat((model.volume ?? 0).toDouble())}, ",
-                      style: TextStyle(fontSize: 10, color: context.textColor.withOpacity(0.6)),
+                      style: TextStyle(fontSize: 10, color: context.textColor.withAlpha(153)),
                     ),
                     Text(
                       "Val:${NumberFormatter.croreFormat(model.val ?? 0.0)}",
-                      style: TextStyle(fontSize: 10, color: context.textColor.withOpacity(0.6)),
+                      style: TextStyle(fontSize: 10, color: context.textColor.withAlpha(153)),
                     ),
                   ],
                 ),
@@ -408,7 +408,7 @@ class GlobalSearchScreen extends HookWidget {
           vertical: viewMode == 'Small' ? 8.0 : (viewMode == 'Classic' ? 12.0 : 10.0),
         ),
         decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: context.borderColor.withOpacity(0.5), width: 1)),
+          border: Border(bottom: BorderSide(color: context.borderColor.withAlpha(128), width: 1)),
         ),
         child: childWidget,
       ),
@@ -474,9 +474,9 @@ class GlobalSearchScreen extends HookWidget {
                     cursorColor: context.buttonColor,
                     decoration: InputDecoration(
                       hintText: StringConstants.stocksShares,
-                      hintStyle: TextStyle(color: context.textColor.withOpacity(0.5), fontSize: 13),
+                      hintStyle: TextStyle(color: context.textColor.withAlpha(128), fontSize: 13),
                       border: InputBorder.none,
-                      prefixIcon: Icon(Icons.search, color: context.textColor.withOpacity(0.5), size: 20),
+                      prefixIcon: Icon(Icons.search, color: context.textColor.withAlpha(128), size: 20),
                       contentPadding: const EdgeInsets.symmetric(vertical: 10),
                       isDense: true,
                     ),
@@ -573,7 +573,7 @@ class GlobalSearchScreen extends HookWidget {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
-                          color: context.textColor.withOpacity(0.5),
+                          color: context.textColor.withAlpha(128),
                           letterSpacing: 0.5,
                         ),
                       ),
@@ -584,7 +584,7 @@ class GlobalSearchScreen extends HookWidget {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: context.textColor.withOpacity(0.6),
+                            color: context.textColor.withAlpha(153),
                           ),
                         ),
                       ),
@@ -606,12 +606,12 @@ class GlobalSearchScreen extends HookWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.search_off_rounded, size: 60, color: context.textColor.withOpacity(0.2)),
+                          Icon(Icons.search_off_rounded, size: 60, color: context.textColor.withAlpha(51)),
                           const SizedBox(height: 12),
                           Text(
                             "No stock found",
                             style: TextStyle(
-                              color: context.textColor.withOpacity(0.5),
+                              color: context.textColor.withAlpha(128),
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                             ),

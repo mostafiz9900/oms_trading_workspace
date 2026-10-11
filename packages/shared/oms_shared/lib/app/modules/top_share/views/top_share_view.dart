@@ -119,7 +119,7 @@ class TopShareView extends GetView<TopShareController> {
                       },
                     );
                   },
-                  separatorBuilder: (_, __) => dividerWidget,
+                  separatorBuilder: (_, _) => dividerWidget,
                 ),
               ),
             ],
@@ -333,7 +333,7 @@ class _ShareSituationWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.tapBg,
         border: Border(
-          bottom: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade200, width: 1),
+          bottom: BorderSide(color: isDark ? Colors.white.withAlpha(13) : Colors.grey.shade200, width: 1),
         ),
       ),
       // গ্যাপ এবং আইটেম আলাদাভাবে ম্যানেজ করার জন্য ListView.separated বেস্ট
@@ -349,7 +349,7 @@ class _ShareSituationWidget extends StatelessWidget {
               width: 1,
               height: 14, // স্লিক ডিভাইডার হাইট
               margin: EdgeInsets.symmetric(horizontal: dynamicGap), // ডাইনামিক গ্যাপ
-              color: isDark ? Colors.white.withOpacity(0.15) : Colors.grey.shade300,
+              color: isDark ? Colors.white.withAlpha(38) : Colors.grey.shade300,
             ),
           );
         },
@@ -357,11 +357,11 @@ class _ShareSituationWidget extends StatelessWidget {
         // মেইন মেনু আইটেম
         itemBuilder: (context, index) {
           final model = topShareCon.shareSituationList[index];
-          final isSelected = topShareCon.activeTopMenuTopShare == model?.name;
+          final isSelected = topShareCon.activeTopMenuTopShare == model.name;
 
           return GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => topShareCon.setActiveTopMenuTopShare(model?.name ?? ""),
+            onTap: () => topShareCon.setActiveTopMenuTopShare(model.name ?? ""),
             child: Center(
               // আইটেমকে ভার্টিক্যালি সেন্টারে রাখার জন্য
               child: AnimatedContainer(
