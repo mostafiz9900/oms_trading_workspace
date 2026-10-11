@@ -78,6 +78,8 @@ cd apps/fakhrul && flutterfire configure && cd ../..
   `ios/Runner/GoogleService-Info.plist`.
 - For iOS push notifications, upload the house's Apple APNs key in the
   Firebase console.
+- Open **Crashlytics** in the house's Firebase console once. The app already
+  reports uncaught errors from release builds (`lib/src/run.dart`).
 - App icon:
   - Android: replace `android/app/src/main/res/mipmap-*/` (Android Studio →
     Image Asset generates all sizes).
