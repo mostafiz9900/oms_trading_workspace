@@ -7,7 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../app_pkg.dart';
 import '/app/modules/auth/views/otp_verify_screen.dart';
-import '/app/modules/auth/views/reset_password_sereen.dart';
+import '/app/modules/auth/views/reset_password_screen.dart';
 import '/app/modules/auth/views/signup_verify.dart';
 import '../../../data/models/response/forgot_password_model.dart';
 import '../../../data/models/response/register_model.dart';
@@ -16,7 +16,7 @@ import '../../../data/models/response/verify_boid.dart';
 import '../../../data/models/response/verify_otp.dart';
 import '../../../data/models/response/verify_selected_media.dart';
 import '../views/signup_verify_otp.dart';
-import '../views/signup_verify_userself_media.dart';
+import '../views/signup_verify_input_media.dart';
 import 'biometric_controller.dart';
 import 'token_controller.dart';
 

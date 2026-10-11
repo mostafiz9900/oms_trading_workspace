@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import '../../../../data/models/response/market_depth_model.dart' show MarketDepthModel;
 
 import 'appbar_right_search_tap.dart';
-import 'market_dept_single_widget.dart';
+import 'market_depth_single_widget.dart';
 
 class TradeWidget extends StatelessWidget {
   const TradeWidget({super.key});
@@ -44,7 +44,7 @@ class TradeWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const _ClineCodeWidget(),
+                        const _ClientCodeWidget(),
                         AppSpace.spaceH6,
                         // শুধুমাত্র সকেটের রিয়েল-টাইম ডেটা আসলে এটি আপডেট হবে
                         VisibleGetBuilder<HomeController>(
@@ -557,8 +557,8 @@ class TradeWidget extends StatelessWidget {
   }
 }
 
-class _ClineCodeWidget extends StatelessWidget {
-  const _ClineCodeWidget();
+class _ClientCodeWidget extends StatelessWidget {
+  const _ClientCodeWidget();
 
   @override
   Widget build(BuildContext context) {

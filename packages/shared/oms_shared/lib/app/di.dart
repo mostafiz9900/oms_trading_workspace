@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
 import 'app_pkg.dart';
-import 'data/services/market_socket.service.dart';
+import 'data/services/market_socket_service.dart';
 import 'modules/auth/controllers/token_controller.dart';
 
 class DependencyInjection {

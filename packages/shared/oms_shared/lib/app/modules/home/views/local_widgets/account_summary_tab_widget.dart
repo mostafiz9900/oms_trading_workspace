@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import '../../../../app_pkg.dart';
 import 'index_value_loader.dart';
 
-class AccountSummeryTabWidget extends StatelessWidget {
-  const AccountSummeryTabWidget({super.key});
+class AccountSummaryTabWidget extends StatelessWidget {
+  const AccountSummaryTabWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class AccountSummeryTabWidget extends StatelessWidget {
         final user = homeCont.userBalanceData;
         return Column(
           children: [
-            const _ClineCodeWidget(),
+            const _ClientCodeWidget(),
             AppSpace.spaceH20,
             Divider(height: 1, color: context.dividerColor),
             AppSpace.spaceH10,
@@ -106,8 +106,8 @@ class _TitleAndValueRowWidget extends StatelessWidget {
   }
 }
 
-class _ClineCodeWidget extends StatelessWidget {
-  const _ClineCodeWidget();
+class _ClientCodeWidget extends StatelessWidget {
+  const _ClientCodeWidget();
 
   @override
   Widget build(BuildContext context) {

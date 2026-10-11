@@ -1,5 +1,5 @@
 import '/app/app_pkg.dart';
-import '/app/modules/onboarding/views/local_widget/create_new_account.dart';
+import '/app/modules/onboarding/views/local_widgets/create_new_account.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';

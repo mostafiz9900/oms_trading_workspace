@@ -1,4 +1,4 @@
-import '../enums/app.enum.dart';
+import '../enums/app_enum.dart';
 
 import 'response/market_model.dart' show MarketModel;
 

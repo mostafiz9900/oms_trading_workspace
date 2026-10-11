@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-import '../../onboarding/views/local_widget/create_new_account.dart';
+import '../../onboarding/views/local_widgets/create_new_account.dart';
 
 class SignupVerifyInputMedia extends GetView<AuthController> {
   const SignupVerifyInputMedia({super.key});

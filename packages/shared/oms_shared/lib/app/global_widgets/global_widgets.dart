@@ -1,10 +1,10 @@
-export 'common.widget.dart';
+export 'common_widget.dart';
 export 'custom_loader.dart';
 export 'custom_button.dart';
 export 'custom_edit_text_form_field.dart';
 export 'custom_app_bar.dart';
 export 'custom_container.dart';
-export 'responsive.widget.dart';
+export 'responsive_widget.dart';
 export 'custom_dropdown.dart';
 export 'custom_drawer.dart';
 export 'shared_market_components.dart';

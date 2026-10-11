@@ -1,6 +1,6 @@
 import '../../../../data/models/request/add_fav_item_request.dart' show AddFavItemRequest;
 
-import '../../../../global_widgets/InfoTooltipIcon.dart';
+import '../../../../global_widgets/info_tooltip_icon.dart';
 import '/app/modules/home/views/local_widgets/responsive_wrap_widget.dart';
 
 import 'package:flutter/material.dart';
@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 import '../../../../app_pkg.dart';
 import 'candle_series_charts.dart';
 import 'historical/related_item_watchlist.dart';
-import 'market_dept_single_widget.dart';
+import 'market_depth_single_widget.dart';
 
 class QuoteTabWidget extends StatelessWidget {
   const QuoteTabWidget({super.key});
@@ -84,7 +84,7 @@ class QuoteTabWidget extends StatelessWidget {
         // ৩. Tab Views
         body: const TabBarView(
           children: [
-            MarketDeptSingleWidget(),
+            MarketDepthSingleWidget(),
             _NewsWidget(),
             CandleSeriesChartsWidget(),
           ],

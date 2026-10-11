@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../app_pkg.dart';
-import '../modules/home/views/local_widgets/historical/GoogleFinanceSparkline.dart';
+import '../modules/home/views/local_widgets/historical/google_finance_sparkline.dart';
 import '../modules/top_share/views/live_value_blinker.dart';
 
 // ==========================================

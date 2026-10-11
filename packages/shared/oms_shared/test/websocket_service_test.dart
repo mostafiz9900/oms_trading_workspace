@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
-import 'package:oms_shared/app/data/services/socket_db.service.dart';
+import 'package:oms_shared/app/data/services/socket_db_service.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 /// In-memory websocket: the test decides when it opens, fails or drops.

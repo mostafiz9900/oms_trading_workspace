@@ -13,10 +13,10 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import '../../controllers/clock_controller.dart';
-import 'historical/HomePieChart.dart';
-import 'historical/SectorHorizontalList.dart';
-import 'historical/TopSectorByCategoryWidget.dart';
-import 'historical/TopSectorByGainerWidget.dart';
+import 'historical/home_pie_chart.dart';
+import 'historical/sector_horizontal_list.dart';
+import 'historical/top_sector_by_category_widget.dart';
+import 'historical/top_sector_by_gainer_widget.dart';
 import 'index_value_loader.dart';
 
 import 'market_index_list_widget.dart';

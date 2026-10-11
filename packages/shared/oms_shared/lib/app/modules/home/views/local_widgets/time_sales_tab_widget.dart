@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../../app_pkg.dart';
 import '../../../../global_widgets/empty_widget.dart';
-import 'historical/TimeSalesChartsView.dart';
+import 'historical/time_sales_charts_view.dart';
 import 'index_value_loader.dart';
 
 // =========================================================================

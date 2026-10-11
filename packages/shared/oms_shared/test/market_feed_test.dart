@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
-import 'package:oms_shared/app/data/services/market_socket.service.dart';
+import 'package:oms_shared/app/data/services/market_socket_service.dart';
 
 void main() {
   late MarketSocketService service;

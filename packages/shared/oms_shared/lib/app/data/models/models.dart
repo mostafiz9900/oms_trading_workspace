@@ -1,4 +1,4 @@
-export 'response/user.model.dart';
+export 'response/user_model.dart';
 export 'response/user_profile.dart';
 export 'response/error_response.dart';
 export 'response/share_situation.dart';

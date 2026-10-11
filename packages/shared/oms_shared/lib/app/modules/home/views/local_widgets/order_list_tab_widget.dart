@@ -37,7 +37,7 @@ class _OrderListTabWidgetState extends State<OrderListTabWidget> with AutomaticK
     super.build(context); // 👈 Required for KeepAlive
     return Column(
       children: [
-        const _ClineCodeWidget(),
+        const _ClientCodeWidget(),
         AppSpace.spaceH8,
 
         //  Dynamic Title: Shows Original OR New Header based on state
@@ -817,8 +817,8 @@ class _ActionChip extends StatelessWidget {
 // ----------------------------------------------------------------------
 //  Client Code & Instrument Dropdown
 // ----------------------------------------------------------------------
-class _ClineCodeWidget extends ConsumerWidget {
-  const _ClineCodeWidget();
+class _ClientCodeWidget extends ConsumerWidget {
+  const _ClientCodeWidget();
 
   @override
   Widget build(BuildContext context, ref) {

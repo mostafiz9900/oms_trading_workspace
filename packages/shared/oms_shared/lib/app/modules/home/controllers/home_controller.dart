@@ -32,7 +32,7 @@ import '../../../data/models/response/dividend_model.dart';
 import '../../../data/models/response/eps_model.dart';
 import '../../../data/models/response/order_status_details_model.dart';
 import '../../../data/models/response/user_balance.dart';
-import '../../../data/services/market_socket.service.dart';
+import '../../../data/services/market_socket_service.dart';
 import '../../auth/controllers/biometric_controller.dart';
 import '../../auth/controllers/token_controller.dart';
 import '../views/order_status_details_view.dart';

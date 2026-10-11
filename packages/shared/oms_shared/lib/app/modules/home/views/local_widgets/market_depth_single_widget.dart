@@ -9,8 +9,8 @@ import '../../../top_share/views/live_value_blinker.dart';
 // =============================================================================
 // Main Market Depth Widget (Ultra Responsive & Overflow-Proof)
 // =============================================================================
-class MarketDeptSingleWidget extends StatelessWidget {
-  const MarketDeptSingleWidget({super.key});
+class MarketDepthSingleWidget extends StatelessWidget {
+  const MarketDepthSingleWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

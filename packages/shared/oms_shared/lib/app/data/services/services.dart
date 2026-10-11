@@ -1,2 +1,2 @@
-export 'storage.service.dart';
-export 'socket_db.service.dart';
+export 'storage_service.dart';
+export 'socket_db_service.dart';

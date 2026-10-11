@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../../data/models/response/register_model.dart';
-import '../../onboarding/views/local_widget/create_new_account.dart';
+import '../../onboarding/views/local_widgets/create_new_account.dart';
 
 class SignupVerify extends GetView<AuthController> {
   const SignupVerify({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../app_pkg.dart';
-import 'account_summery_tab_widget.dart';
+import 'account_summary_tab_widget.dart';
 import 'appbar_right_search_tap.dart';
 import 'order_list_tab_widget.dart';
 import 'position_tab_widget.dart';
@@ -94,7 +94,7 @@ class _CustomTabWidgetState extends State<_CustomTabWidget> with SingleTickerPro
           child: TabBarView(
             controller: _tabController,
             physics: const NeverScrollableScrollPhysics(),
-            children: const [PositionTabWidget(), OrderListTabWidget(), AccountSummeryTabWidget()],
+            children: const [PositionTabWidget(), OrderListTabWidget(), AccountSummaryTabWidget()],
           ),
         ),
       ],
