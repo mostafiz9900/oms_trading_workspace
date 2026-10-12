@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 
-import 'package:oms_shared/app/app_pkg.dart';
+import 'package:oms_shared/app/app_binding.dart';
+import 'package:oms_shared/app/core/theme/app_theme.dart';
+import 'package:oms_shared/app/core/theme/theme_service.dart';
+import 'package:oms_shared/app/core/values/app_config.dart';
+import 'package:localization/localization.dart';
 
 import 'routing/app_pages.dart';
 

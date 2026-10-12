@@ -352,8 +352,6 @@ mixin HomeSocketMixin on HomeState {
     tooltipBehavior = TooltipBehavior(enable: true);
     _initializeAllWebSockets();
 
-    await tradingChart();
-
   }
 
 }

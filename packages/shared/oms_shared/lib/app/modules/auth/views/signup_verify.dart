@@ -1,11 +1,19 @@
-import 'package:oms_shared/app/app_pkg.dart';
+import '../../../core/utils/extensions/app_context.dart';
+import '../../../core/utils/helpers/log_helper.dart';
+import '../../../core/values/assets.dart';
+import '../../../core/values/colors.dart';
+import '../../../core/values/dimens.dart';
+import '../../../core/values/space.dart';
+import '../../../global_widgets/custom_button.dart';
+import '../controllers/auth_controller.dart';
+import 'login_view.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../../data/models/response/register_model.dart';
-import '../../onboarding/views/local_widget/create_new_account.dart';
+import '../../onboarding/views/local_widgets/create_new_account.dart';
 
 class SignupVerify extends GetView<AuthController> {
   const SignupVerify({super.key});
@@ -51,15 +59,17 @@ class SignupVerify extends GetView<AuthController> {
                           child: Row(
                             mainAxisAlignment: .start,
                             children: [
-                              Radio(
-                                value: model.name,
+                              RadioGroup<String?>(
                                 groupValue: authCon.chooseName,
-                                activeColor: context.buttonColor,
                                 onChanged: (value) {
                                   printLog(value);
                                   authCon.setChooseName(value);
                                 },
-                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                child: Radio<String?>(
+                                  value: model.name,
+                                  activeColor: context.buttonColor,
+                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                ),
                               ),
                               Text(
                                 '${model.name}',
@@ -92,14 +102,16 @@ class SignupVerify extends GetView<AuthController> {
                           child: Row(
                             mainAxisAlignment: .start,
                             children: [
-                              Radio(
-                                value: model.fathersName,
+                              RadioGroup<String?>(
                                 groupValue: authCon.chooseFatherName,
-                                activeColor: context.buttonColor,
                                 onChanged: (value) {
                                   authCon.setChooseFatherName(value);
                                 },
-                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                child: Radio<String?>(
+                                  value: model.fathersName,
+                                  activeColor: context.buttonColor,
+                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                ),
                               ),
                               Text(
                                 '${model.fathersName}',

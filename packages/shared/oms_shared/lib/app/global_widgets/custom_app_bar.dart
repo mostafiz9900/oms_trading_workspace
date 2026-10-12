@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-import '../app_pkg.dart';
+import '../core/utils/extensions/app_context.dart';
+import '../core/values/assets.dart';
+import '../routes/app_routes.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool? isBackButtonIcon;

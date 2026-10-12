@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-import '../../app_pkg.dart';
+import 'storage_service.dart';
 // import 'package:your_app/services/storage_service.dart'; // আপনার StorageService ফাইলের পাথ দিন
 
 class RecentSearchService extends GetxService {

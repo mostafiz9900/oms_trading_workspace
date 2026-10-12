@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../app_pkg.dart';
+import '../../../core/values/app_config.dart';
+import '../../../core/values/assets.dart';
+import '../../../routes/app_routes.dart';
+import 'package:localization/localization.dart';
 
 class OnboardingController extends GetxController {
   var selectedIndex = 0;
@@ -31,7 +34,7 @@ class OnboardingController extends GetxController {
     {
       "illustration": AssetsConstants.onboard_01Png,
       "title": AppTranslations.manageYourStocks.tr,
-      "text": AppTranslations.growYourInvestmentsWithBenemoy.tr.replaceAll(
+      "text": AppTranslations.growYourInvestmentsWithHouse.tr.replaceAll(
         'Benemoy',
         AppConfig.house.displayName,
       ),
@@ -39,7 +42,7 @@ class OnboardingController extends GetxController {
     {
       "illustration": AssetsConstants.onboard_02Png,
       "title": AppTranslations.getStarted.tr,
-      "text": AppTranslations.growYourInvestmentsWithBenemoy.tr.replaceAll(
+      "text": AppTranslations.growYourInvestmentsWithHouse.tr.replaceAll(
         'Benemoy',
         AppConfig.house.displayName,
       ),

@@ -21,18 +21,10 @@ melos:
   scripts:
     analyze:
       exec:
-        command: fvm dart analyze .
+        command: fvm dart analyze --fatal-infos .
         concurrency: 4
         failFast: true
-      packageFilters:
-        ignore: oms_shared
-      description: Analyze every package strictly (warnings fail), except oms_shared.
-    analyze:legacy:
-      exec:
-        command: fvm dart analyze --no-fatal-warnings .
-      packageFilters:
-        scope: oms_shared
-      description: Analyze oms_shared, failing only on errors (legacy warnings remain).
+      description: Analyze every package strictly (warnings and infos fail).
     test:
       exec:
         command: fvm flutter test

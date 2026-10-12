@@ -23,34 +23,12 @@
   deployable app.
 - `packages/core/trading_ui` owns broker-neutral responsive layout and surface
   container widgets; broker-specific colors and presentation stay in apps.
-- `packages/features/market` owns market/index/depth/watchlist/chart DTOs,
-  time-and-sales/market-feed/marquee models, repository contracts, live tick
-  stores, sector filtering/aggregation, and market calculations. Benemoy uses
-  compatibility exports at migrated paths and app-owned adapters for its
-  existing API and storage implementations.
-- `packages/features/auth` owns login, profile, registration, OTP, and media
-  DTOs plus the `AuthenticationRepository` contract. Benemoy keeps compatibility
-  exports and implements the contract in its app-owned API adapter; auth
-  screens, state, providers, and API orchestration still live in `oms_shared`.
-- `packages/features/orders` owns reusable order submission/cancellation DTOs
-  and order list/status/summary response models plus the `OrderRepository`
-  command contract. Benemoy's websocket service implements that contract;
-  controllers and UI keep importing through compatibility exports.
-- `packages/features/withdrawals` owns withdrawal request/history DTOs. The
-  existing Benemoy API, validation, controller, and UI remain in `oms_shared`.
-- `packages/features/portfolio` owns cash/balance and position response DTOs;
-  its position payload reuses the market security model. Benemoy's portfolio
-  controllers, API integration, calculations, and UI remain in `oms_shared`.
-- `packages/features/notifications` owns notification feed and order-alert
-  DTOs. Push/local notification services, websocket lifecycle, app routing,
-  state, and screens remain in `oms_shared`.
-- `packages/features/research` owns issuer profile/fundamental, dividend, EPS,
-  and issuer news DTOs. Benemoy's fetch/caching logic and research UI remain in
-  the app.
-- `packages/features/limits` owns the client limit response DTO. Limit request
-  networking, pagination, form state, and presentation stay in `oms_shared`.
-- `trading_core` owns the generic API error DTO; `auth` owns the general user
-  profile DTO alongside the authentication DTOs.
+- There is no `packages/features/` folder. All DTOs, repository contracts,
+  the live market tick store and market calculations live in `oms_shared`
+  under the GetX CLI layout: `app/data/models/{request,response}`,
+  `app/data/repositories`, `app/data/services`. Screens are GetX modules under
+  `app/modules/<name>/{bindings,controllers,views}`.
+- `trading_core` owns the generic API error DTO.
 - `packages/core/broker_config` owns the typed runtime view of broker-house
   identity, endpoints, logo/splash assets, locale, theme colors, and contract
   URL. Apps supply it only through `--dart-define-from-file`; the legacy
@@ -60,8 +38,7 @@
 
 ## Dependency direction
 
-Dependencies flow `apps` → `packages/shared` → `packages/features` →
-`packages/core`. `apps/` contains only deployable broker shells; all common
+Dependencies flow `apps` → `packages/shared` → `packages/core`. `apps/` contains only deployable broker shells; all common
 code lives under `packages/`. Core packages must not depend on app packages. House identity,
 API endpoints, and Firebase registration are deployment configuration, not
 copies of the live UI.
@@ -69,7 +46,7 @@ copies of the live UI.
 ## Safe migration rule
 
 Keep the live app stable while introducing workspace/tooling configuration.
-Move one cohesive feature at a time only when its package boundary, imports,
+Move one cohesive GetX module at a time only when its package boundary, imports,
 platform dependencies, and rollback plan are clear. Do not make broker-specific
 forks of the full app; use house profiles for configuration and isolated
 adapters for behavior that is genuinely different.

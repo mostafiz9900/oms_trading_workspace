@@ -1,10 +1,18 @@
-import 'package:oms_shared/app/app_pkg.dart';
+import '../../../core/utils/extensions/app_context.dart';
+import '../../../core/utils/extensions/market_model_extensions.dart';
+import '../../../core/utils/helpers/app_helper.dart';
+import '../../../core/values/colors.dart';
+import '../../../core/values/space.dart';
+import '../../../global_widgets/common_market_logic.dart';
+import '../../../global_widgets/custom_app_bar.dart';
+import '../../../global_widgets/shared_market_components.dart';
+import '../../home/controllers/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../home/views/local_widgets/appbar_right_search_tap.dart';
-import '../../home/views/local_widgets/index_value_loader.dart';
+import '../../../global_widgets/appbar_right_search_tap.dart';
 import '../controllers/top_share_controller.dart';
+import '../../../global_widgets/loaders/watchlist_loader.dart';
 
 class TopShareView extends GetView<TopShareController> {
   const TopShareView({super.key});
@@ -111,7 +119,7 @@ class TopShareView extends GetView<TopShareController> {
                       },
                     );
                   },
-                  separatorBuilder: (_, __) => dividerWidget,
+                  separatorBuilder: (_, _) => dividerWidget,
                 ),
               ),
             ],
@@ -325,7 +333,7 @@ class _ShareSituationWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.tapBg,
         border: Border(
-          bottom: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade200, width: 1),
+          bottom: BorderSide(color: isDark ? Colors.white.withAlpha(13) : Colors.grey.shade200, width: 1),
         ),
       ),
       // গ্যাপ এবং আইটেম আলাদাভাবে ম্যানেজ করার জন্য ListView.separated বেস্ট
@@ -341,7 +349,7 @@ class _ShareSituationWidget extends StatelessWidget {
               width: 1,
               height: 14, // স্লিক ডিভাইডার হাইট
               margin: EdgeInsets.symmetric(horizontal: dynamicGap), // ডাইনামিক গ্যাপ
-              color: isDark ? Colors.white.withOpacity(0.15) : Colors.grey.shade300,
+              color: isDark ? Colors.white.withAlpha(38) : Colors.grey.shade300,
             ),
           );
         },
@@ -349,11 +357,11 @@ class _ShareSituationWidget extends StatelessWidget {
         // মেইন মেনু আইটেম
         itemBuilder: (context, index) {
           final model = topShareCon.shareSituationList[index];
-          final isSelected = topShareCon.activeTopMenuTopShare == model?.name;
+          final isSelected = topShareCon.activeTopMenuTopShare == model.name;
 
           return GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => topShareCon.setActiveTopMenuTopShare(model?.name ?? ""),
+            onTap: () => topShareCon.setActiveTopMenuTopShare(model.name ?? ""),
             child: Center(
               // আইটেমকে ভার্টিক্যালি সেন্টারে রাখার জন্য
               child: AnimatedContainer(

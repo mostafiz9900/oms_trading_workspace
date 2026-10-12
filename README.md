@@ -68,16 +68,69 @@ oms_trading_workspace/
 │   ├── core/                    trading_core, trading_ui, broker_config
 │   ├── shared/
 │   │   ├── localization/        Translations
-│   │   └── oms_shared/          Screens, controllers, services (transitional)
-│   └── features/                auth, market, orders, portfolio, notifications,
-│                                research, withdrawals, limits
+│   │   └── oms_shared/          The app itself, in GetX CLI layout (below)
 ├── tool/                        new_app.dart, validate_apps.dart
 ├── Makefile                     Day-to-day commands
 └── pubspec.yaml                 Workspace root + Melos config
 ```
 
-Dependencies only point downward: `apps` → `shared` → `features` → `core`.
+Dependencies only point downward: `apps` → `shared` → `core`.
 Nothing in `packages/` may import an app.
+
+## Where code goes (GetX CLI layout)
+
+All screens and logic live in `packages/shared/oms_shared/lib/app/`, in the
+same layout `get create page` produces. There is no separate `features/`
+folder: a new screen is a new module.
+
+```text
+lib/app/
+├── modules/<name>/        bindings/, controllers/, views/ (+ views/local_widgets/)
+│                          home = shell (HomeController + tab mixins); one module per
+│                          tab/screen: market, quote, watchlist, portfolio, orders,
+│                          trade, notifications, global_search, auth, top_share, ...
+├── data/
+│   ├── models/            request/ and response/ DTOs
+│   ├── providers/         API calls
+│   ├── repositories/      Repositories and repository contracts
+│   └── services/          Sockets, storage, market tick store, aggregators
+├── routes/                app_routes.dart (route names; pages are in the app)
+├── global_widgets/        Widgets used by several modules (loaders/ = shimmer loaders)
+└── core/                  theme, utils (extensions, helpers), values
+```
+
+Rules:
+
+- **Import what you use, no barrels.** Import the exact file
+  (`import '../../data/models/response/market_model.dart';`). There is no
+  `app_pkg.dart`; do not add `export` barrels back.
+- **File names are `snake_case`**, one public widget per file. A widget only
+  one screen uses goes in that module's `views/local_widgets/`; a widget two or
+  more modules use goes in `global_widgets/`.
+- **State: GetX.** New controllers are `GetxController`s registered in the
+  module's binding. Riverpod remains only where the live app already uses it
+  (OTP countdown, token refresh, password visibility, clock, order-type lists);
+  do not add new providers. `flutter_hooks` is fine for widget-local state.
+- **Logging:** use `printLog(...)` (debug builds only), never `print`.
+
+To add a screen, run `get create page:<name>` inside
+`packages/shared/oms_shared` (or copy an existing module), then register the
+route in `apps/<house>/lib/src/routing/`.
+
+## Tests
+
+`make test` runs every suite. `oms_shared/test/` mirrors `lib/app/` (a test
+for `lib/app/data/services/x.dart` lives in `test/data/services/x_test.dart`).
+
+Covered trading flows: the order wire format and gateway codes, placing an
+order end to end over a fake order socket (exact JSON, double-tap guard, slow
+socket, offline, 15 s no-answer timeout, server success/error), token refresh
+and forced logout, market quote maths and sector aggregation, websocket
+reconnects.
+
+Shared fakes in `test/helpers/`: `initTestStorage()` (real GetStorage in a temp
+folder), `initTestAppConfig()` (house config without dart-defines),
+`setTestNetwork('none')` (connectivity), `FakeChannel` (websocket).
 
 ## Adding a broker house
 
@@ -92,24 +145,26 @@ remaining checklist: env files, brand images, contact details, `flutterfire
 configure`, launcher icons and signing. `make validate` reports whatever is
 still missing. Full step-by-step guide: [docs/new-app.md](docs/new-app.md).
 
-## CI
+## CI/CD
 
-`.github/workflows/ci.yml` analyzes every package in parallel, runs tests and
-`make validate`, then builds Benemoy for Android and iOS. It needs one
-repository secret, `BENEMOY_UAT_PROFILE_JSON`, with the contents of
-`apps/benemoy/env/uat.json`.
+- **Every branch and PR** (`.github/workflows/ci.yml`): analyze every package,
+  all tests, `make validate`, Benemoy Android + iOS debug builds.
+- **Push to `prod`** (`.github/workflows/release.yml`): the same checks, then
+  fastlane uploads Benemoy to **Google Play** (production, as a draft to roll
+  out) and **TestFlight**.
+
+Secrets, store setup and the release steps: [docs/release.md](docs/release.md).
 
 ## Migration status
 
 | Phase | Scope | Status |
 |---|---|---|
 | 1 | App layout, entry points, routing in app, CI, localization package, live native projects | Done |
-| 2 | Split `core` (network, storage, theme, utils) and `shared/design_system` out of `oms_shared`; remove the `app_pkg.dart` barrel | Planned |
-| 3 | Move small modules into `features/*/lib/src/{data,domain,presentation}` | Planned |
-| 4 | Split the `home` module (~30k LOC) into market, orders, portfolio, watchlist, notifications | Planned |
+| 2 | Fold the old `packages/features/*` DTO packages into `oms_shared/lib/app/data` (GetX CLI layout only) | Done |
+| 3 | snake_case file names; split `home` into GetX modules; one widget per file; remove the `app_pkg.dart` barrels | Done |
+| 4 | Move the remaining Riverpod providers to GetX controllers (behaviour change, needs QA) | Planned |
 
-`oms_shared` empties out phase by phase. It has no compile errors but still
-carries ~590 legacy analyzer warnings/info from the original app. Only
-`broker_config` has unit tests.
+Every package, `oms_shared` included, analyzes with zero issues and CI runs
+`dart analyze --fatal-infos`, so any new warning or info fails the build.
 # oms_trading_workspace
 # oms_trading_workspace

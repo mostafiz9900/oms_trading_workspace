@@ -1,6 +1,6 @@
 import 'package:trading_core/trading_core.dart';
 
-import '../../../data/services/storage.service.dart';
+import '../../../data/services/storage_service.dart';
 import '../../values/storage.dart';
 
 class JWTHelper {

@@ -24,6 +24,9 @@ import 'package:oms_shared/app/modules/top_share/views/top_share_view.dart';
 import 'package:oms_shared/app/modules/withdrawal_request/bindings/withdrawal_request_binding.dart';
 import 'package:oms_shared/app/modules/withdrawal_request/views/withdrawal_request_view.dart';
 
+// AppPages.INITIAL keeps the GetX CLI generated name.
+// ignore_for_file: non_constant_identifier_names
+
 class AppPages {
   AppPages._();
 

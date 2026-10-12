@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
-import '../../../app_pkg.dart';
-import '../../../data/services/market_socket.service.dart';
+import '../../../core/utils/extensions/market_model_extensions.dart';
+import '../../../data/models/response/market_model.dart';
+import '../../../data/models/response/share_situation.dart';
+import '../../../data/services/market_socket_service.dart';
 // আপনার MarketModelExtensions ইম্পোর্ট করে নিবেন
 
 class TopShareController extends GetxController {

@@ -1,13 +1,16 @@
+# Checks for every branch and pull request: analyze, tests, debug builds.
+# The prod branch runs these same checks from release.yml before releasing.
 name: CI
 
 on:
   pull_request:
   push:
-    branches: [main]
+    branches-ignore: [prod]
+  workflow_call:
 
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/prod' }}
 
 jobs:
   analyze:
@@ -16,25 +19,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Clean packages fail on warnings; oms_shared still carries legacy
-        # warnings, so it only fails on errors until those are cleaned up.
+        # Every package is analyzed strictly: any error, warning or info fails.
         package:
           - packages/core/trading_core
           - packages/core/trading_ui
           - packages/core/broker_config
           - packages/shared/localization
-          - packages/features/auth
-          - packages/features/market
-          - packages/features/notifications
-          - packages/features/orders
-          - packages/features/portfolio
-          - packages/features/research
-          - packages/features/withdrawals
+          - packages/shared/oms_shared
           - apps/benemoy
-          - apps/app_fakhrul
-        include:
-          - package: packages/shared/oms_shared
-            flags: --no-fatal-warnings
     steps:
       - uses: actions/checkout@v4
       - id: fvm
@@ -44,7 +36,7 @@ jobs:
           flutter-version: ${{ steps.fvm.outputs.flutter }}
           cache: true
       - run: flutter pub get
-      - run: dart analyze ${{ matrix.flags }} .
+      - run: dart analyze --fatal-infos .
         working-directory: ${{ matrix.package }}
 
   test:
@@ -91,16 +83,19 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - name: Write UAT house profile
+      - name: Write UAT env
         working-directory: apps/benemoy
         env:
           PROFILE: ${{ secrets.BENEMOY_UAT_PROFILE_JSON }}
         run: |
-          if [ -z "$PROFILE" ]; then
-            echo "::error::Set the BENEMOY_UAT_PROFILE_JSON repository secret"
-            exit 1
+          # Pull requests from forks get no secrets: build with placeholders,
+          # which still proves that everything compiles.
+          if [ -n "$PROFILE" ]; then
+            printf '%s' "$PROFILE" > env/uat.json
+          else
+            echo "::warning::BENEMOY_UAT_PROFILE_JSON not set; building with env/example.json"
+            cp env/example.json env/uat.json
           fi
-          printf '%s' "$PROFILE" > env/uat.json
       - run: flutter pub get
       - run: >-
           ${{ matrix.command }} -t lib/main_uat.dart

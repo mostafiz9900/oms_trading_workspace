@@ -104,6 +104,18 @@ void main(List<String> args) {
       'INFOPLIST_KEY_CFBundleDisplayName = $quotedName;',
     ),
   ]);
+  // Store release lanes: the new house's ids; its own Apple team.
+  for (final file in ['fastlane/Fastfile', 'fastlane/Appfile']) {
+    if (!File('$target/$file').existsSync()) continue;
+    _edit('$target/$file', [
+      (RegExp(RegExp.escape('"$sourceAndroidId"')), '"$androidId"'),
+      (RegExp(RegExp.escape('"$sourceIosId"')), '"$iosId"'),
+      (
+        RegExp(r'(?<=(IOS_TEAM_ID = |team_id\())"[A-Z0-9]+"'),
+        '"TODO_TEAM_ID"',
+      ),
+    ]);
+  }
   _edit('$target/ios/Runner/Info.plist', [
     (
       RegExp('<string>${RegExp.escape(sourceName)}</string>'),
@@ -205,7 +217,9 @@ Still to do before it can run:
   4. cd $target && flutterfire configure   (Firebase project for $androidId / $iosId)
   5. Launcher icons: android/app/src/main/res/mipmap-*, ios/Runner/Assets.xcassets/AppIcon.appiconset
   6. Release signing: $target/android/key.properties + keystore; Apple team in Xcode
-  7. fvm dart run melos bootstrap && make check
+  7. Store releases: set TODO_TEAM_ID in $target/fastlane/, add a release
+     workflow and secrets for $id (docs/release.md)
+  8. fvm dart run melos bootstrap && make check
 ''');
 }
 

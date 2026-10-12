@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../app_pkg.dart';
+import 'dimens.dart';
 
 class AppSpace {
   AppSpace._();

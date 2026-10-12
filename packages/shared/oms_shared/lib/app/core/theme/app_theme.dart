@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../app_pkg.dart';
+import '../utils/helpers/hex_color.dart';
+import '../values/colors.dart';
+import '../values/dimens.dart';
 
 class AppTheme {
   static const List<FontFeature> stockFontFeatures = [

@@ -5,9 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../app_pkg.dart';
+import '../../../core/utils/functions/network_util.dart';
+import '../../../core/utils/helpers/app_helper.dart';
+import '../../../core/utils/helpers/log_helper.dart';
+import '../../../core/values/storage.dart';
+import '../../../data/models/request/login_request.dart';
+import '../../../data/repositories/auth_repository.dart';
+import '../../../data/services/storage_service.dart';
+import '../views/login_view.dart';
+import '../../home/controllers/home_controller.dart';
+import '../../../routes/app_routes.dart';
+import 'package:localization/localization.dart';
 import '/app/modules/auth/views/otp_verify_screen.dart';
-import '/app/modules/auth/views/reset_password_sereen.dart';
+import '/app/modules/auth/views/reset_password_screen.dart';
 import '/app/modules/auth/views/signup_verify.dart';
 import '../../../data/models/response/forgot_password_model.dart';
 import '../../../data/models/response/register_model.dart';
@@ -16,7 +26,7 @@ import '../../../data/models/response/verify_boid.dart';
 import '../../../data/models/response/verify_otp.dart';
 import '../../../data/models/response/verify_selected_media.dart';
 import '../views/signup_verify_otp.dart';
-import '../views/signup_verify_userself_media.dart';
+import '../views/signup_verify_input_media.dart';
 import 'biometric_controller.dart';
 import 'token_controller.dart';
 
@@ -190,9 +200,11 @@ class AuthController extends GetxController {
     // 3. Authenticate with backend
     // Assuming loginBiometric returns a boolean indicating success!
     // If it doesn't return a bool, you need to adjust this to check the response.
-    final apiSuccess = await loginBiometric(decureDeviceId);
+    // loginBiometric navigates on success and shows its own error otherwise;
+    // it returns nothing, and returning that null as a bool threw here.
+    await loginBiometric(decureDeviceId);
 
-    return apiSuccess;
+    return true;
   }
 
   /// BiometricController function to enable or disable based on current status
@@ -223,14 +235,14 @@ class AuthController extends GetxController {
 
   String? chooseName;
 
-  void setChooseName(name) {
+  void setChooseName(dynamic name) {
     chooseName = name;
     update();
   }
 
   String? chooseFatherName;
 
-  void setChooseFatherName(name) {
+  void setChooseFatherName(dynamic name) {
     chooseFatherName = name;
     update();
   }
@@ -308,7 +320,7 @@ class AuthController extends GetxController {
 
   String? selectedMedia;
 
-  void setSelectMedia(value) {
+  void setSelectMedia(dynamic value) {
     selectedMedia = value;
     update();
     selectMedia();
@@ -348,7 +360,7 @@ class AuthController extends GetxController {
 
   String? selectedAvailablePhoneOrEmail;
 
-  void setSelectedAvailableEmail(value) {
+  void setSelectedAvailableEmail(dynamic value) {
     selectedAvailablePhoneOrEmail = value;
     update();
     inputMediaEmailOrPhone.clear();
@@ -600,6 +612,9 @@ class CountDownNotifier extends Notifier<int> {
   }
 
   bool get isRunning => state > 0;
+
+  /// Seconds left; lets widgets read the value without touching [state].
+  int get seconds => state;
 }
 
 final countDownProvider = NotifierProvider.family<CountDownNotifier, int, int>(

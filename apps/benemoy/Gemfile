@@ -1,0 +1,4 @@
+source "https://rubygems.org"
+
+# Store releases (fastlane/Fastfile). CI installs this with bundler.
+gem "fastlane", "~> 2.241"

@@ -1,6 +1,7 @@
-import 'package:oms_shared/app/app_pkg.dart';
+import '../../../data/services/storage_service.dart';
 import 'package:get/get.dart';
 import 'package:local_auth/local_auth.dart';
+import '../../../core/utils/helpers/log_helper.dart';
 // Note: You no longer need services.dart for PlatformException. local_auth 3.0 uses LocalAuthException.
 
 class BiometricController extends GetxController implements GetxService {
@@ -29,11 +30,11 @@ class BiometricController extends GetxController implements GetxService {
       final enrolled = await _auth.getAvailableBiometrics();
 
       isAvailable = canCheck && supported && enrolled.isNotEmpty;
-      print('Biometric available: $isAvailable');
+      printLog('Biometric available: $isAvailable');
       update(); // Important: Update GetX UI after async check completes
     } catch (e) {
       isAvailable = false;
-      print('Error checking biometrics: $e');
+      printLog('Error checking biometrics: $e');
       update();
     }
   }
@@ -43,7 +44,7 @@ class BiometricController extends GetxController implements GetxService {
     await StorageService.save(_storageKey, 'true');
     isEnabled = true;
     update();
-    print('Biometric enabled locally');
+    printLog('Biometric enabled locally');
   }
 
   /// Disable biometric
@@ -51,7 +52,7 @@ class BiometricController extends GetxController implements GetxService {
     await StorageService.save(_storageKey, 'false');
     isEnabled = false;
     update();
-    print('Biometric disabled locally');
+    printLog('Biometric disabled locally');
   }
 
   /// Check if biometric is enabled
@@ -73,14 +74,14 @@ class BiometricController extends GetxController implements GetxService {
       return result;
     } on LocalAuthException catch (e) {
       // Handles local_auth specific errors (e.g., user locked out)
-      print('Authentication LocalAuthException: ${e.code} - ${e.details}');
+      printLog('Authentication LocalAuthException: ${e.code} - ${e.details}');
 
       if (e.code == LocalAuthExceptionCode.biometricLockout) {
-        print('User is temporarily locked out due to too many attempts.');
+        printLog('User is temporarily locked out due to too many attempts.');
       }
       return false;
     } catch (e) {
-      print('Authentication error: $e');
+      printLog('Authentication error: $e');
       return false;
     }
   }
