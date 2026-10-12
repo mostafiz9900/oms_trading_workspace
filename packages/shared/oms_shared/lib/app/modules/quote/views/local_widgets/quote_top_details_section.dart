@@ -1,4 +1,3 @@
-
 import '/app/global_widgets/responsive_wrap_widget.dart';
 
 import 'package:flutter/material.dart';
@@ -489,7 +488,6 @@ class _DetailedStatsWrap extends StatelessWidget {
           'Div Yield ${cData?.corporateActions?.financialYear ?? ""}',
           '${(cData?.marketData?.valuation?.dividendYieldPct ?? 0.0).toStringAsFixed(2)}% csh',
         ),
-
       ],
     );
   }

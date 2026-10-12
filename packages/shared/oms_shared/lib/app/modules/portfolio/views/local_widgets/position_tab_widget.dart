@@ -2,6 +2,7 @@ import 'package:oms_shared/app/data/models/response/position_response.dart';
 import 'package:oms_shared/app/modules/portfolio/controllers/position_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/utils/extensions/market_model_extensions.dart';
 import '../../../../core/utils/helpers/formatter_helper.dart';
@@ -37,20 +38,30 @@ class PositionTabWidget extends StatelessWidget {
                 physics: const AlwaysScrollableScrollPhysics(),
                 slivers: [
                   SliverToBoxAdapter(
-                    child: _TopSummaryDashboard(positionCont: positionCont, homeCont: homeController),
+                    child: _TopSummaryDashboard(
+                      positionCont: positionCont,
+                      homeCont: homeController,
+                    ),
                   ),
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             'Holdings (${positionCont.filteredPositions.length})',
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
                           ),
                           Obx(() {
-                            String currentView = positionCont.selectedViewMode.value == 0
+                            String currentView =
+                                positionCont.selectedViewMode.value == 0
                                 ? 'All'
                                 : positionCont.selectedViewMode.value == 2
                                 ? 'Value'
@@ -62,7 +73,13 @@ class PositionTabWidget extends StatelessWidget {
 
                             return CommonMinimalDropdown(
                               currentValue: currentView,
-                              items: const ['All', 'Last', 'Value', 'P&L', 'Change'],
+                              items: const [
+                                'All',
+                                'Last',
+                                'Value',
+                                'P&L',
+                                'Change',
+                              ],
                               onSelected: (val) {
                                 if (val == 'All') {
                                   positionCont.selectedViewMode.value = 0;
@@ -73,7 +90,7 @@ class PositionTabWidget extends StatelessWidget {
                                 } else if (val == 'Change') {
                                   positionCont.selectedViewMode.value = 4;
                                 } else {
-                                  positionCont.selectedViewMode.value = 1; // Default: Last
+                                  positionCont.selectedViewMode.value = 1;
                                 }
                               },
                               widthDropdown: 105,
@@ -110,14 +127,14 @@ class PositionTabWidget extends StatelessWidget {
   }
 }
 
-// ----------------------------------------------------------------------
-//  Top Dashboard Widget
-// ----------------------------------------------------------------------
 class _TopSummaryDashboard extends StatelessWidget {
   final PositionController positionCont;
   final HomeController homeCont;
 
-  const _TopSummaryDashboard({required this.positionCont, required this.homeCont});
+  const _TopSummaryDashboard({
+    required this.positionCont,
+    required this.homeCont,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +142,9 @@ class _TopSummaryDashboard extends StatelessWidget {
     double unrealizedAmount = positionCont.totalUnrealizedPnL;
     double unrealizedPct = positionCont.totalUnrealizedPnLPercentage;
 
-    Color pnlColor = unrealizedAmount >= 0 ? HexColor("#22C665") : HexColor("#F70042");
+    Color pnlColor = unrealizedAmount >= 0
+        ? HexColor("#22C665")
+        : HexColor("#F70042");
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -141,27 +160,47 @@ class _TopSummaryDashboard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Text('Market Value', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+              const Text(
+                'Market Value',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              ),
               const SizedBox(height: 3),
               Text(
                 NumberFormatter.bdFormat(totalValue),
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              const Text('BDT', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+              const Text(
+                'BDT',
+                style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+              ),
             ],
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              const Text('Gain', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+              const Text(
+                'Gain',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              ),
               const SizedBox(height: 3),
               Text(
                 '${unrealizedPct > 0 ? "+" : ""}${unrealizedPct.toStringAsFixed(2)}%',
-                style: TextStyle(color: pnlColor, fontSize: 14, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: pnlColor,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               Text(
                 '${unrealizedAmount > 0 ? "+" : ""}${NumberFormatter.bdFormat(unrealizedAmount)}',
-                style: TextStyle(color: pnlColor, fontSize: 12, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: pnlColor,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -171,39 +210,35 @@ class _TopSummaryDashboard extends StatelessWidget {
   }
 }
 
-// ----------------------------------------------------------------------
-// ----------------------------------------------------------------------
 class _Pro2LineHorizontalTable extends StatelessWidget {
   final PositionController positionCont;
   final HomeController homeCont;
   final int viewMode;
 
-  //  আপনার অরিজিনাল কলামগুলো একটু অ্যাডজাস্ট করা হলো নতুন ডেটা বসানোর জন্য
   final double colInstrument = 100.0;
   final double colPositions = 90.0;
-  final double colIntraday = 90.0; //  নতুন: Intraday Buy/Sell এর জন্য
+  final double colIntraday = 90.0;
   final double colPrices = 90.0;
   final double colCostValue = 110.0;
   final double colUnrealized = 100.0;
-  final double colRealized = 100.0; //  নতুন: Realized P&L এবং Weight% এর জন্য
+  final double colRealized = 100.0;
 
-  const _Pro2LineHorizontalTable({required this.positionCont, required this.homeCont, required this.viewMode});
+  const _Pro2LineHorizontalTable({
+    required this.positionCont,
+    required this.homeCont,
+    required this.viewMode,
+  });
 
   String _formatTime(String? rawTime) {
     if (rawTime == null || rawTime.isEmpty) return "14:05:29";
     try {
       final parts = rawTime.split(':');
       if (parts.length >= 3) {
-        String hour = parts[0].padLeft(2, '0');
-        String min = parts[1].padLeft(2, '0');
-        String sec = parts[2].split('.')[0].padLeft(2, '0');
-        return "$hour:$min:$sec";
+        return "${parts[0].padLeft(2, '0')}:${parts[1].padLeft(2, '0')}:${parts[2].split('.')[0].padLeft(2, '0')}";
       } else if (parts.length == 2) {
         return "${parts[0].padLeft(2, '0')}:${parts[1].padLeft(2, '0')}:00";
       }
-    } catch (e) {
-      // Ignored on purpose: keep the previous value when parsing fails.
-    }
+    } catch (_) {}
     return rawTime;
   }
 
@@ -211,57 +246,90 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
   Widget build(BuildContext context) {
     if (viewMode == 0) {
       double totalTableWidth =
-          colInstrument + colPositions + colIntraday + colPrices + colCostValue + colUnrealized + colRealized;
+          colInstrument +
+          colPositions +
+          colIntraday +
+          colPrices +
+          colCostValue +
+          colUnrealized +
+          colRealized;
 
       return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
         child: ConstrainedBox(
-          constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width),
+          constraints: BoxConstraints(
+            minWidth: MediaQuery.of(context).size.width,
+          ),
           child: SizedBox(
             width: totalTableWidth,
             child: Column(
               children: [
                 Container(
-                  color: context.isDark ? HexColor('#151D3B') : HexColor('#D3E0F3'),
+                  color: context.isDark
+                      ? HexColor('#151D3B')
+                      : HexColor('#D3E0F3'),
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Row(
                     children: [
                       SizedBox(
                         width: colInstrument,
-                        child: _HeaderCell2Line(
+                        child: const _HeaderCell2Line(
                           'Ticker',
                           'Trend',
                           CrossAxisAlignment.start,
-                          padding: const EdgeInsets.only(left: 10),
+                          padding: EdgeInsets.only(left: 10),
                         ),
                       ),
                       SizedBox(
                         width: colPositions,
-                        child: _HeaderCell2Line('Total Pos', 'Rem. Pos', CrossAxisAlignment.end),
+                        child: const _HeaderCell2Line(
+                          'Total Pos',
+                          'Rem. Pos',
+                          CrossAxisAlignment.end,
+                        ),
                       ),
                       SizedBox(
                         width: colIntraday,
-                        child: _HeaderCell2Line('Int. Buy', 'Int. Sell', CrossAxisAlignment.end),
-                      ), //  নতুন
-                      SizedBox(width: colPrices, child: _HeaderCell2Line('Avg Cost', 'LTP', CrossAxisAlignment.end)),
+                        child: const _HeaderCell2Line(
+                          'Int. Buy',
+                          'Int. Sell',
+                          CrossAxisAlignment.end,
+                        ),
+                      ),
+                      SizedBox(
+                        width: colPrices,
+                        child: const _HeaderCell2Line(
+                          'Avg Cost',
+                          'LTP',
+                          CrossAxisAlignment.end,
+                        ),
+                      ),
                       SizedBox(
                         width: colCostValue,
-                        child: _HeaderCell2Line('Total Cost', 'Market Val', CrossAxisAlignment.end),
+                        child: const _HeaderCell2Line(
+                          'Total Cost',
+                          'Market Val',
+                          CrossAxisAlignment.end,
+                        ),
                       ),
                       SizedBox(
                         width: colUnrealized,
-                        child: _HeaderCell2Line('Unrealized', 'P&L (%)', CrossAxisAlignment.end),
+                        child: const _HeaderCell2Line(
+                          'Unrealized',
+                          'P&L (%)',
+                          CrossAxisAlignment.end,
+                        ),
                       ),
                       SizedBox(
                         width: colRealized,
-                        child: _HeaderCell2Line(
+                        child: const _HeaderCell2Line(
                           'Realized',
                           'Weight %',
                           CrossAxisAlignment.end,
-                          padding: const EdgeInsets.only(right: 10),
+                          padding: EdgeInsets.only(right: 10),
                         ),
-                      ), //  নতুন
+                      ),
                     ],
                   ),
                 ),
@@ -270,7 +338,12 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: positionCont.filteredPositions.length,
                   itemBuilder: (context, index) {
-                    return _buildRowItem(context, positionCont.filteredPositions[index], index, isScrollable: true);
+                    return _buildRowItem(
+                      context,
+                      positionCont.filteredPositions[index],
+                      index,
+                      isScrollable: true,
+                    );
                   },
                 ),
               ],
@@ -345,7 +418,12 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: positionCont.filteredPositions.length,
             itemBuilder: (context, index) {
-              return _buildRowItem(context, positionCont.filteredPositions[index], index, isScrollable: false);
+              return _buildRowItem(
+                context,
+                positionCont.filteredPositions[index],
+                index,
+                isScrollable: false,
+              );
             },
           ),
         ],
@@ -353,60 +431,64 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
     }
   }
 
-  Widget _buildRowItem(BuildContext context, PositionModel model, int index, {required bool isScrollable}) {
+  Widget _buildRowItem(
+    BuildContext context,
+    PositionModel model,
+    int index, {
+    required bool isScrollable,
+  }) {
     MarketModel marketData = positionCont.getMarketData(model.isin);
     bool isEven = index % 2 == 0;
 
-    //  Exact Calculations
-    int remQty = model.quantity ?? 0;
+    // Direct values from model
+    int totalQty = model.totalQty ?? 0;
+    int intQty = model.initialQuantity ?? 0;
+    int remQty = model.sellablePosition ?? 0; // Rem. Pos = sellablePosition
     int intBuyQty = model.intradayBuyQuantity ?? 0;
     int intSellQty = model.intradaySellQuantity ?? 0;
 
     double avgPrice = model.avgPrice ?? 0.0;
-    double intBuyAvgPrice = model.intradayBuyPriceAvg ?? 0.0;
-    double intSellAvgPrice = model.intradaySellPriceAvg ?? 0.0;
+    double totalCost = model.totalCost ?? 0.0;
+    double realizedPnL = model.realizedPnl ?? 0.0; // Direct from response
 
-    //  2. JS Logic: closeOrSettle and Last
+    // Calculations
     double activeLast = marketData.activeLast;
+    double marketValue = (intQty + intBuyQty) * activeLast;
 
-    double marketValue = remQty * activeLast;
+    double unrealizedPnL = marketValue - totalCost;
+    double gainLossPct = totalCost > 0
+        ? (unrealizedPnL / totalCost) * 100
+        : 0.0;
 
-    //  4. JS Logic: Unrealized PnL
-    double unrealizedPnL = ((remQty + intBuyQty) * activeLast) - ((remQty * avgPrice) + (intBuyQty * intBuyAvgPrice));
-
-    // Total Cost Calculation for Gain/Loss Percentage
-    double totalCostCalculated = model.totalCost ?? 0.0; //(remQty * avgPrice) + (intBuyQty * intBuyAvgPrice)
-    double gainLossPct = totalCostCalculated > 0 ? (unrealizedPnL / totalCostCalculated) * 100 : 0.0;
-
-    //  5. JS Logic: Realized PnL
-    double realizedPnL = (intSellQty * intSellAvgPrice) - (intSellQty * avgPrice);
-
-    //  6. Weight Percentage
     double totalPortfolioValue = positionCont.currentPortfolioValue;
-    double weightPct = totalPortfolioValue > 0 ? (marketValue / totalPortfolioValue) * 100 : 0.0;
+    double weightPct = totalPortfolioValue > 0
+        ? (marketValue / totalPortfolioValue) * 100
+        : 0.0;
 
     String instrumentName = model.securityCode?.toUpperCase() ?? "N/A";
     double dayAbsChg = marketData.activePrice - (marketData.reference ?? 0.0);
     double dayPctChg = marketData.d?.toDouble() ?? 0.0;
 
     String dayIcon = dayAbsChg > 0 ? "▲" : (dayAbsChg < 0 ? "▼" : "▬");
-    String dayTrendText = '$dayIcon ${dayAbsChg.abs().toStringAsFixed(2)} (${dayPctChg.abs().toStringAsFixed(2)}%)';
+    String dayTrendText =
+        '$dayIcon ${dayAbsChg.abs().toStringAsFixed(2)} (${dayPctChg.abs().toStringAsFixed(2)}%)';
     Color dayTrendColor = dayAbsChg > 0
         ? HexColor("#22C665")
-        : (dayAbsChg < 0 ? HexColor("#F70042") : context.textColor.withAlpha(153));
+        : (dayAbsChg < 0
+              ? HexColor("#F70042")
+              : context.textColor.withAlpha(153));
 
-    Color unPnLColor = unrealizedPnL >= 0 ? HexColor("#22C665") : HexColor("#F70042");
-    Color realPnLColor = realizedPnL >= 0 ? HexColor("#22C665") : HexColor("#F70042");
+    Color unPnLColor = unrealizedPnL >= 0
+        ? HexColor("#22C665")
+        : HexColor("#F70042");
+    Color realPnLColor = realizedPnL >= 0
+        ? HexColor("#22C665")
+        : HexColor("#F70042");
     String unPnLSign = unrealizedPnL > 0 ? "+" : (unrealizedPnL < 0 ? "-" : "");
     String realPnLSign = realizedPnL > 0 ? "+" : (realizedPnL < 0 ? "-" : "");
-
-    //  JS code fallback: UI displaying 'Total Qty' should be Rem Qty + Intraday Buy
-    int totalQty = remQty + intBuyQty;
-
     Widget rowContent;
 
     if (isScrollable) {
-      // 🟢 'All' View Row - অরিজিনাল UI, নতুন ডেটা
       rowContent = Row(
         children: [
           SizedBox(
@@ -420,8 +502,6 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
               padding: const EdgeInsets.only(left: 10),
             ),
           ),
-
-          //  Total & Rem. Pos
           SizedBox(
             width: colPositions,
             child: _DataCell2Line(
@@ -432,19 +512,19 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
               bottomColor: context.textColor.withAlpha(179),
             ),
           ),
-
-          //  Int. Buy & Int. Sell
           SizedBox(
             width: colIntraday,
             child: _DataCell2Line(
               topText: NumberFormatter.bdFormat(intBuyQty, decimalPlaces: 0),
-              bottomText: NumberFormatter.bdFormat(intSellQty, decimalPlaces: 0),
+              bottomText: NumberFormatter.bdFormat(
+                intSellQty,
+                decimalPlaces: 0,
+              ),
               alignment: CrossAxisAlignment.end,
               topBold: true,
               bottomColor: context.textColor.withAlpha(179),
             ),
           ),
-
           SizedBox(
             width: colPrices,
             child: _DataCell2Line(
@@ -462,12 +542,11 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
               bottomBold: true,
             ),
           ),
-
-          //  Unrealized
           SizedBox(
             width: colUnrealized,
             child: _DataCell2Line(
-              topText: '$unPnLSign${NumberFormatter.bdFormat(unrealizedPnL.abs())}',
+              topText:
+                  '$unPnLSign${NumberFormatter.bdFormat(unrealizedPnL.abs())}',
               bottomText: '$unPnLSign${gainLossPct.abs().toStringAsFixed(2)}%',
               alignment: CrossAxisAlignment.end,
               topColor: unPnLColor,
@@ -476,12 +555,11 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
               bottomBold: true,
             ),
           ),
-
-          //  Realized & Weight
           SizedBox(
             width: colRealized,
             child: _DataCell2Line(
-              topText: '$realPnLSign${NumberFormatter.bdFormat(realizedPnL.abs())}',
+              topText:
+                  '$realPnLSign${NumberFormatter.bdFormat(realizedPnL.abs())}',
               bottomText: '${weightPct.toStringAsFixed(2)}%',
               alignment: CrossAxisAlignment.end,
               topColor: realPnLColor,
@@ -493,7 +571,10 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
       );
     } else {
       String col2DataTop, col2DataBottom, col3DataTop, col3DataBottom;
-      bool col2TopBold = false, col2BottomBold = false, col3TopBold = false, col3BottomBold = false;
+      bool col2TopBold = false,
+          col2BottomBold = false,
+          col3TopBold = false,
+          col3BottomBold = false;
       Color? col2TopColor, col2BottomColor, col3TopColor, col3BottomColor;
 
       if (viewMode == 1) {
@@ -503,7 +584,9 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
         col2BottomColor = context.textColor.withAlpha(179);
         col3DataTop = activeLast.toStringAsFixed(2);
         col3DataBottom = _formatTime(marketData.lastTradeTime);
-        col3TopColor = (marketData.d ?? 0) >= 0 ? HexColor("#22C665") : HexColor("#F70042");
+        col3TopColor = (marketData.d ?? 0) >= 0
+            ? HexColor("#22C665")
+            : HexColor("#F70042");
         col3TopBold = true;
         col3BottomColor = context.textColor.withAlpha(179);
       } else if (viewMode == 2) {
@@ -531,7 +614,8 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
         col2DataTop = avgPrice.toStringAsFixed(2);
         col2DataBottom = activeLast.toStringAsFixed(2);
         col3DataTop = NumberFormatter.bdFormat(marketValue);
-        col3DataBottom = '${realizedPnL > 0 ? "+" : ""}${NumberFormatter.bdFormat(realizedPnL)}';
+        col3DataBottom =
+            '${realizedPnL > 0 ? "+" : ""}${NumberFormatter.bdFormat(realizedPnL)}';
         col3TopColor = HexColor("#007BFF");
         col3TopBold = true;
         col3BottomColor = realPnLColor;
@@ -583,17 +667,23 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        if (marketData.isValidShare) {
-          if (marketData.orderBook != null && marketData.shortName != null) {
-            Get.find<HomeController>().goBottomNabBarPage(5, marketData.orderBook!);
-            Get.find<HomeController>().tradPriceTextEditField.text = (marketData.last?.toStringAsFixed(2) ?? '0.00');
-          }
+        if (marketData.isValidShare &&
+            marketData.orderBook != null &&
+            marketData.shortName != null) {
+          Get.find<HomeController>().goBottomNabBarPage(
+            5,
+            marketData.orderBook!,
+          );
+          Get.find<HomeController>().tradPriceTextEditField.text =
+              (marketData.last?.toStringAsFixed(2) ?? '0.00');
         }
       },
       child: Container(
         decoration: BoxDecoration(
           color: isEven ? Get.theme.scaffoldBackgroundColor : context.tapBg,
-          border: Border(bottom: BorderSide(color: context.borderSideColor.withAlpha(128))),
+          border: Border(
+            bottom: BorderSide(color: context.borderSideColor.withAlpha(128)),
+          ),
         ),
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: rowContent,
@@ -602,16 +692,18 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
   }
 }
 
-// ----------------------------------------------------------------------
-//  Table Cell Helpers (অপরিবর্তিত)
-// ----------------------------------------------------------------------
 class _HeaderCell2Line extends StatelessWidget {
   final String topTitle;
   final String bottomTitle;
   final CrossAxisAlignment alignment;
   final EdgeInsetsGeometry? padding;
 
-  const _HeaderCell2Line(this.topTitle, this.bottomTitle, this.alignment, {this.padding});
+  const _HeaderCell2Line(
+    this.topTitle,
+    this.bottomTitle,
+    this.alignment, {
+    this.padding,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -622,13 +714,21 @@ class _HeaderCell2Line extends StatelessWidget {
         children: [
           Text(
             topTitle,
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: context.textColor),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: context.textColor,
+            ),
           ),
           if (bottomTitle.isNotEmpty) ...[
             const SizedBox(height: 3),
             Text(
               bottomTitle,
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: context.textColor.withAlpha(179)),
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+                color: context.textColor.withAlpha(179),
+              ),
             ),
           ],
         ],
@@ -667,7 +767,9 @@ class _DataCell2Line extends StatelessWidget {
         children: [
           FittedBox(
             fit: BoxFit.scaleDown,
-            alignment: alignment == CrossAxisAlignment.end ? Alignment.centerRight : Alignment.centerLeft,
+            alignment: alignment == CrossAxisAlignment.end
+                ? Alignment.centerRight
+                : Alignment.centerLeft,
             child: Text(
               topText,
               style: TextStyle(
@@ -681,7 +783,9 @@ class _DataCell2Line extends StatelessWidget {
             const SizedBox(height: 4),
             FittedBox(
               fit: BoxFit.scaleDown,
-              alignment: alignment == CrossAxisAlignment.end ? Alignment.centerRight : Alignment.centerLeft,
+              alignment: alignment == CrossAxisAlignment.end
+                  ? Alignment.centerRight
+                  : Alignment.centerLeft,
               child: Text(
                 bottomText,
                 style: TextStyle(

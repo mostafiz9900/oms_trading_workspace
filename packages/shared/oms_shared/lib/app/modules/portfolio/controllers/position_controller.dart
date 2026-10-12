@@ -1,4 +1,7 @@
 import 'dart:convert';
+
+import 'package:oms_shared/app/core/utils/helpers/log_helper.dart';
+
 import '../../../core/utils/extensions/market_model_extensions.dart';
 import '../../../core/values/app_config.dart';
 import '../../../core/values/storage.dart';
@@ -7,6 +10,7 @@ import '../../../data/models/response/user_profile.dart';
 import '../../../data/services/socket_db_service.dart';
 import '../../../data/services/storage_service.dart';
 import '../../home/controllers/home_controller.dart';
+
 import 'package:oms_shared/app/data/models/response/position_response.dart';
 import 'package:get/get.dart';
 
@@ -52,8 +56,14 @@ class PositionController extends GetxController {
       list.sort((a, b) {
         var marketA = getMarketData(a.isin);
         var marketB = getMarketData(b.isin);
-        var pnlA = calculationMarketValuePercentage(last: marketA.activePrice, reference: a.avgPrice);
-        var pnlB = calculationMarketValuePercentage(last: marketB.activePrice, reference: b.avgPrice);
+        var pnlA = calculationMarketValuePercentage(
+          last: marketA.activePrice,
+          reference: a.avgPrice,
+        );
+        var pnlB = calculationMarketValuePercentage(
+          last: marketB.activePrice,
+          reference: b.avgPrice,
+        );
         return pnlB.compareTo(pnlA);
       });
     }
@@ -65,20 +75,12 @@ class PositionController extends GetxController {
   // =======================================================
 
   int getTotalQuantity(PositionModel item) {
-    int matureQty = item.quantity ?? 0;
-    int intradayBuy = item.intradayBuyQuantity ?? 0;
-    return matureQty + intradayBuy;
+    return (item.quantity ?? 0) + (item.intradayBuyQuantity ?? 0);
   }
 
   double get totalInvestment {
     return positions.data?.fold(0.0, (sum, item) {
-          int remQty = item.quantity ?? 0;
-          double avgPrice = item.avgPrice ?? 0.0;
-          int intBuyQty = item.intradayBuyQuantity ?? 0;
-          double intBuyAvgPrice = item.intradayBuyPriceAvg ?? 0.0;
-
-          double cost = (remQty * avgPrice) + (intBuyQty * intBuyAvgPrice);
-          return sum! + cost;
+          return sum! + (item.totalCost ?? 0.0);
         }) ??
         0.0;
   }
@@ -86,27 +88,17 @@ class PositionController extends GetxController {
   double get currentPortfolioValue {
     return positions.data?.fold(0.0, (sum, item) {
           var marketData = getMarketData(item.isin);
-          double closeOrSettle = marketData.activeLast;
-          double marketValue = (item.quantity ?? 0).toDouble() * closeOrSettle;
+          int intQty = item.initialQuantity ?? 0;
+          int intBuyQty = item.intradayBuyQuantity ?? 0;
+          double marketValue =
+              (intQty + intBuyQty).toDouble() * marketData.activeLast;
           return sum! + marketValue;
         }) ??
         0.0;
   }
 
   double get totalUnrealizedPnL {
-    return positions.data?.fold(0.0, (sum, item) {
-          var marketData = getMarketData(item.isin);
-          double closeOrSettle = marketData.activeLast;
-
-          int remQty = item.quantity ?? 0;
-          double avgPrice = item.avgPrice ?? 0.0;
-          int intBuyQty = item.intradayBuyQuantity ?? 0;
-          double intBuyAvgPrice = item.intradayBuyPriceAvg ?? 0.0;
-
-          double unPnl = ((remQty + intBuyQty) * closeOrSettle) - ((remQty * avgPrice) + (intBuyQty * intBuyAvgPrice));
-          return sum! + unPnl;
-        }) ??
-        0.0;
+    return currentPortfolioValue - totalInvestment;
   }
 
   double get totalUnrealizedPnLPercentage {
@@ -116,7 +108,9 @@ class PositionController extends GetxController {
 
   double getItemUnrealizedPnL(PositionModel item) {
     var marketData = getMarketData(item.isin);
-    double activeLast = (marketData.activePrice > 0) ? marketData.activePrice : (marketData.reference ?? 0.0);
+    double activeLast = (marketData.activePrice > 0)
+        ? marketData.activePrice
+        : (marketData.reference ?? 0.0);
     double marketValue = getTotalQuantity(item).toDouble() * activeLast;
     return marketValue - (item.totalCost ?? 0.0);
   }
@@ -142,10 +136,12 @@ class PositionController extends GetxController {
         homeCont.getUserInfo();
         await Future.delayed(const Duration(milliseconds: 500));
       }
-      var boId = homeCont.userInfo.userDetail?.boId ?? await _getBoIdFromStorage();
+      var investorCode =
+          homeCont.userInfo.userDetail?.investorCode ??
+          await _getInvestorCodeFromStorage();
       var token = await StorageService.read(StorageConstants.token);
 
-      if (boId == null || token == null) {
+      if (investorCode == null || token == null) {
         isLoading = false;
         isInitialized = false;
         update();
@@ -155,36 +151,36 @@ class PositionController extends GetxController {
         isLoading = true;
         isInitialized = true;
         update();
-        connectWebSocket(boId, token);
+        connectWebSocket(investorCode, token);
       } else {
         isLoading = false;
         update();
       }
-    } catch (e) {
+    } catch (_) {
       isLoading = false;
       isInitialized = false;
       update();
     }
   }
 
-  Future<String?> _getBoIdFromStorage() async {
+  Future<String?> _getInvestorCodeFromStorage() async {
     try {
       var userInfoMap = StorageService.getMap(StorageConstants.userInfo);
       if (userInfoMap != null) {
         var userProfile = UserProfile.fromJson(userInfoMap);
-        return userProfile.userDetail?.boId;
+        return userProfile.userDetail?.investorCode;
       }
-    } catch (e) {
-      // Ignored on purpose: keep the previous value when parsing fails.
-    }
+    } catch (_) {}
     return null;
   }
 
-  void connectWebSocket(String boId, String token) async {
+  void connectWebSocket(String investorCode, String token) async {
     try {
       isLoading = true;
       update();
-      final url = '${AppConfig.socketBaseUrl}position/$boId/?token=$token';
+      final url =
+          '${AppConfig.socketBaseUrl}report_position/$investorCode/?token=$token';
+      printLog('position socket url: $url');
       webSocketService.connect(
         socketId: socketId,
         url: url,
@@ -193,7 +189,7 @@ class PositionController extends GetxController {
         onDisconnected: _onSocketDisconnected,
         onError: _onSocketError,
       );
-    } catch (e) {
+    } catch (_) {
       isLoading = false;
       update();
     }
@@ -218,28 +214,60 @@ class PositionController extends GetxController {
     try {
       final jsonMap = json.decode(event);
       final messageType = jsonMap["message_type"];
+      printWrapped("Socket Response position::: $jsonMap");
+
       if (messageType == 'position') {
-        positions = PositionResponse.fromMap(jsonMap);
+        positions = PositionResponse.fromJson(jsonMap);
         update();
+        printWrapped(
+          "Socket Response position: model datt:: ${positions.toJson()}",
+        );
       } else if (messageType == 'position_update') {
-        _updatePositions(PositionResponse.fromMap(jsonMap));
+        final updateResponse = PositionResponse.fromJson(jsonMap);
+        _updatePositions(updateResponse);
       }
-    } catch (e) {
-      // Ignored on purpose: keep the previous value when parsing fails.
+    } catch (e, stackTrace) {
+      printLog("Error parsing socket response: $e\n$stackTrace");
     }
   }
 
   void _updatePositions(PositionResponse updateData) {
-    if (updateData.data == null) return;
+    if (updateData.data == null || updateData.data!.isEmpty) return;
+
     List<PositionModel> updatedList = List.from(positions.data ?? []);
+
     for (var updatedItem in updateData.data!) {
       final index = updatedList.indexWhere((item) => item.id == updatedItem.id);
+
       if (index != -1) {
-        updatedList[index] = updatedItem;
+        // Purono item ti nilam
+        final oldItem = updatedList[index];
+
+        // Old item er sathe notun update asha field gulo merge korchi
+        updatedList[index] = oldItem.copyWith(
+          id: updatedItem.id,
+          investorName: updatedItem.investorName,
+          clientCode: updatedItem.clientCode,
+          securityCode: updatedItem.securityCode,
+          isin: updatedItem.isin,
+          initialQuantity: updatedItem.initialQuantity,
+          quantity: updatedItem.quantity,
+          totalCost: updatedItem.totalCost,
+          avgPrice: updatedItem.avgPrice,
+          sellablePosition: updatedItem.sellablePosition,
+          intradayBuyQuantity: updatedItem.intradayBuyQuantity,
+          intradayBuyPriceAvg: updatedItem.intradayBuyPriceAvg,
+          intradaySellQuantity: updatedItem.intradaySellQuantity,
+          intradaySellPriceAvg: updatedItem.intradaySellPriceAvg,
+          realizedPnl: updatedItem.realizedPnl,
+          totalQty: updatedItem.totalQty,
+        );
       } else {
+        // Notun position asle list e add hobe
         updatedList.add(updatedItem);
       }
     }
+
     positions = positions.copyWith(data: updatedList);
     update();
   }
@@ -248,15 +276,19 @@ class PositionController extends GetxController {
     if (isin == null) return MarketModel();
     try {
       return homeCont.marketList.firstWhere(
-        (market) => market.isinCode?.trim() == isin.trim() && market.group == 'PUBLIC',
+        (market) =>
+            market.isinCode?.trim() == isin.trim() && market.group == 'PUBLIC',
         orElse: () => MarketModel(),
       );
-    } catch (e) {
+    } catch (_) {
       return MarketModel();
     }
   }
 
-  double calculationMarketValuePercentage({required double last, required double? reference}) {
+  double calculationMarketValuePercentage({
+    required double last,
+    required double? reference,
+  }) {
     if (reference == null || reference == 0.0 || last <= 0.0) return 0.0;
     return ((last - reference) / reference) * 100;
   }
