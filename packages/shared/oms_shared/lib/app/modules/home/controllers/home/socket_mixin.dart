@@ -119,11 +119,9 @@ mixin HomeSocketMixin on HomeState {
     }
   }
 
-  void _initializeNotificationWebSocket() {
-  }
+  void _initializeNotificationWebSocket() {}
 
-  void _initializeNewsWebSocket() {
-  }
+  void _initializeNewsWebSocket() {}
 
   void _initializeMarketDepthWebSocket() {
     _initializeSocket(
@@ -170,14 +168,14 @@ mixin HomeSocketMixin on HomeState {
   Future<void> _initializeUserBalanceWebSocket() async {
     printLog('Initializing User Balance WebSocket...');
     var token = await StorageService.read(StorageConstants.token);
-    final boId = userInfo.userDetail?.boId;
+    final boId = userInfo.userDetail?.investorCode;
 
     if (token == null || boId == null) {
       printLog('❌ Cannot connect balance socket. Missing token or boId');
       return;
     }
 
-    final url = '${AppConfig.socketBaseUrl}cash/$boId/?token=$token';
+    final url = '${AppConfig.socketBaseUrl}report_cash/$boId/?token=$token';
     printLog('🔗 Initializing Balance Socket: $url');
 
     // 🚀 আপনার কমন _initializeSocket ফাংশনটি ব্যবহার করা হলো
@@ -234,8 +232,7 @@ mixin HomeSocketMixin on HomeState {
     _webSocketService.sendMessage(socketId, message);
   }
 
-  void reconnectSocket(String socketId) {
-  }
+  void reconnectSocket(String socketId) {}
 
   // Reinitialize specific socket
   void _reinitializeSocket(String socketId) {
@@ -310,7 +307,9 @@ mixin HomeSocketMixin on HomeState {
   bool get isLoading {
     // _disconnectAll clears _socketStatus but keeps _socketUrls, so a missing
     // status means "not connected" (the `!` used to throw here).
-    return _socketUrls.keys.any((socketId) => !(_socketStatus[socketId] ?? false));
+    return _socketUrls.keys.any(
+      (socketId) => !(_socketStatus[socketId] ?? false),
+    );
   }
 
   // Refresh all sockets
@@ -351,7 +350,5 @@ mixin HomeSocketMixin on HomeState {
     );
     tooltipBehavior = TooltipBehavior(enable: true);
     _initializeAllWebSockets();
-
   }
-
 }

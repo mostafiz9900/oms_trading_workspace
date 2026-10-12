@@ -1,48 +1,53 @@
-// To parse this JSON data, do
-//
-//     final userBalance = userBalanceFromJson(jsonString);
-
 import 'dart:convert';
 
-List<UserBalance> userBalanceFromJson(dynamic str) => List<UserBalance>.from(
-  (str as List<dynamic>).map((x) => UserBalance.fromJson(x)),
-);
+UserBalance userBalanceFromJson(String str) =>
+    UserBalance.fromJson(json.decode(str));
 
-String userBalanceToJson(List<UserBalance> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String userBalanceToJson(UserBalance data) => json.encode(data.toJson());
 
 class UserBalance {
   final int? id;
   final String? clientCode;
-  final dynamic initialAmount;
-  final dynamic amount;
-  final dynamic percentage;
-  final dynamic intradayAmount;
+  final double? amount;
+  final double? intradayAmount; // Fixed: Changed from int? to double?
+  final bool? canUsedIntradayAmount;
 
   UserBalance({
     this.id,
     this.clientCode,
-    this.initialAmount,
     this.amount,
-    this.percentage,
     this.intradayAmount,
+    this.canUsedIntradayAmount,
   });
+
+  UserBalance copyWith({
+    int? id,
+    String? clientCode,
+    double? amount,
+    double? intradayAmount, // Fixed: Changed from int? to double?
+    bool? canUsedIntradayAmount,
+  }) => UserBalance(
+    id: id ?? this.id,
+    clientCode: clientCode ?? this.clientCode,
+    amount: amount ?? this.amount,
+    intradayAmount: intradayAmount ?? this.intradayAmount,
+    canUsedIntradayAmount: canUsedIntradayAmount ?? this.canUsedIntradayAmount,
+  );
 
   factory UserBalance.fromJson(Map<String, dynamic> json) => UserBalance(
     id: json["id"],
     clientCode: json["client_code"],
-    initialAmount: json["initial_amount"],
-    amount: json["amount"],
-    percentage: json["percentage"],
-    intradayAmount: json["intraday_amount"],
+    amount: json["amount"]?.toDouble(),
+    intradayAmount: json["intraday_amount"]
+        ?.toDouble(), // Fixed: Added ?.toDouble()
+    canUsedIntradayAmount: json["can_used_intraday_amount"],
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
     "client_code": clientCode,
-    "initial_amount": initialAmount,
     "amount": amount,
-    "percentage": percentage,
     "intraday_amount": intradayAmount,
+    "can_used_intraday_amount": canUsedIntradayAmount,
   };
 }

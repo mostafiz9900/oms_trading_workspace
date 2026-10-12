@@ -70,12 +70,10 @@ mixin PortfolioMixin on HomeState {
 
       if (data != null) {
         printLog('🧾 User Balance Data :: $data');
-        var response = userBalanceFromJson(data);
+        var response = UserBalance.fromJson(data);
 
         // সেফটি চেক: রেসপন্স List ফাঁকা কি না চেক করা
-        if (response.isNotEmpty) {
-          userBalanceData = response.first;
-        }
+        userBalanceData = response;
       }
     } catch (e) {
       printLog('❌ Error parsing user balance socket data: $e');
@@ -106,5 +104,4 @@ mixin PortfolioMixin on HomeState {
       isUserInfoLoaded = true;
     }
   }
-
 }
