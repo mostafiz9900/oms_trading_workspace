@@ -27,7 +27,7 @@ make setup
 ```sh
 rm -rf apps/app_fakhrul        # only for Fakhrul: remove the old starter app
 make new-app ID=fakhrul NAME="Fakhrul Securities" \
-  ANDROID_ID=com.fakhrulsecurities.app IOS_ID=com.fakhrulsecurities.app
+  ANDROID_ID=com.fisbd.app IOS_ID=com.fakhrulsecurities.app
 ```
 
 This copies Benemoy's app and sets the new name, Android package id, iOS

@@ -7,7 +7,9 @@
       "type": "dart",
       "cwd": "${workspaceFolder}/apps/benemoy",
       "program": "${workspaceFolder}/apps/benemoy/lib/main_uat.dart",
-      "args": ["--dart-define-from-file=env/uat.json"]
+      "args": [
+        "--dart-define-from-file=env/uat.json"
+      ]
     },
     {
       "name": "Benemoy Prod",
@@ -15,7 +17,29 @@
       "type": "dart",
       "cwd": "${workspaceFolder}/apps/benemoy",
       "program": "${workspaceFolder}/apps/benemoy/lib/main_prod.dart",
-      "args": ["--dart-define-from-file=env/prod.json"]
+      "args": [
+        "--dart-define-from-file=env/prod.json"
+      ]
+    },
+    {
+      "name": "Fakhrul Securities UAT",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "${workspaceFolder}/apps/fakhrul",
+      "program": "${workspaceFolder}/apps/fakhrul/lib/main_uat.dart",
+      "args": [
+        "--dart-define-from-file=env/uat.json"
+      ]
+    },
+    {
+      "name": "Fakhrul Securities PROD",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "${workspaceFolder}/apps/fakhrul",
+      "program": "${workspaceFolder}/apps/fakhrul/lib/main_prod.dart",
+      "args": [
+        "--dart-define-from-file=env/prod.json"
+      ]
     }
   ]
 }

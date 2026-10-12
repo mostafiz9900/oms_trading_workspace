@@ -1,0 +1,32 @@
+name: fakhrul
+description: Fakhrul Securities trading application.
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: ^3.13.5
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  oms_shared:
+    path: ../../packages/shared/oms_shared
+  localization:
+    path: ../../packages/shared/localization
+  firebase_core: ^4.15.0
+  firebase_messaging: ^16.7.0
+  get: ^4.7.3
+  flutter_easyloading: ^3.0.5
+  firebase_crashlytics: ^5.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/brand/

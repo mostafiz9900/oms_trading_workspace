@@ -1,0 +1,3 @@
+package_name("com.fisbd.oms.app")
+app_identifier("com.fisbd.oms.app")
+team_id("TODO_TEAM_ID")
