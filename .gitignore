@@ -43,3 +43,11 @@ apps/*/fastlane/test_output/
 apps/*/fastlane/README.md
 **/*.p8
 **/*service-account*.json
+
+# ─────────────────────────────────────────────────────
+# Claude AI Memory System
+# Shared with team: everything in .claude/ except below
+# ─────────────────────────────────────────────────────
+.claude/settings.local.json
+.claude/tasks/eod/
+
