@@ -99,7 +99,12 @@ class WatchListController extends GetxController {
 
   void applyFilters() {
     _generateFilteredList();
-    update(['watchListUI', 'sortCategoryDropdown', 'sortOrderDropdown', 'marketList']);
+    update([
+      'watchListUI',
+      'sortCategoryDropdown',
+      'sortOrderDropdown',
+      'marketList',
+    ]);
   }
 
   // --- Pure Data Processing Logic ---
@@ -110,11 +115,17 @@ class WatchListController extends GetxController {
       return;
     }
     isLoading = false;
-    List<MarketModel> sourceList = homeCon.marketList.isNotEmpty ? homeCon.marketList : homeCon.marketListAll;
+    List<MarketModel> sourceList = homeCon.marketList.isNotEmpty
+        ? homeCon.marketList
+        : homeCon.marketListAll;
 
     // Main Board & PUBLIC Group Filter
     List<MarketModel> results = sourceList
-        .where((m) => m.group == "PUBLIC" && m.board == "Main Board" || m.board == "Small Cap Board")
+        .where(
+          (m) =>
+              m.group == "PUBLIC" &&
+              (m.board == "Main Board" || m.board == "Small Cap Board"),
+        )
         .toList();
 
     if (selectedBoard != 'All') {
@@ -129,19 +140,31 @@ class WatchListController extends GetxController {
       results = results
           .where(
             (m) =>
-                (m.marketType ?? "").toLowerCase() == selectedMarketType.toLowerCase() ||
-                (m.group ?? "").toLowerCase() == selectedMarketType.toLowerCase(),
+                (m.marketType ?? "").toLowerCase() ==
+                    selectedMarketType.toLowerCase() ||
+                (m.group ?? "").toLowerCase() ==
+                    selectedMarketType.toLowerCase(),
           )
           .toList();
     }
 
     if (selectedShareType != 'All') {
-      results = results.where((m) => (m.shareType ?? "").toUpperCase() == selectedShareType.toUpperCase()).toList();
+      results = results
+          .where(
+            (m) =>
+                (m.shareType ?? "").toUpperCase() ==
+                selectedShareType.toUpperCase(),
+          )
+          .toList();
     }
 
     if (currentSearchQuery.isNotEmpty) {
       results = results
-          .where((item) => item.displayName.toLowerCase().contains(currentSearchQuery.toLowerCase()))
+          .where(
+            (item) => item.displayName.toLowerCase().contains(
+              currentSearchQuery.toLowerCase(),
+            ),
+          )
           .toList();
     }
     //A,B,N,P,S,Z
@@ -149,7 +172,11 @@ class WatchListController extends GetxController {
     // ২. সেক্টর ফিল্টার
     if (selectSector != 'All' && selectSector.isNotEmpty) {
       results = results
-          .where((item) => (item.sector ?? "").toLowerCase().contains(selectSector.toLowerCase()))
+          .where(
+            (item) => (item.sector ?? "").toLowerCase().contains(
+              selectSector.toLowerCase(),
+            ),
+          )
           .toList();
     }
 

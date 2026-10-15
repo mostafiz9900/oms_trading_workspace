@@ -368,7 +368,7 @@ class _PortfolioCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: 4,
                   children: [
-                    const _Label('Total Investment'),
+                    const _Label('Investment'),
                     _Amount(value: invested, fontSize: 16, showCurrency: false),
                   ],
                 ),

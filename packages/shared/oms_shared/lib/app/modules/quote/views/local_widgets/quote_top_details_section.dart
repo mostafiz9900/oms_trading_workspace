@@ -426,13 +426,19 @@ class _DetailedStatsWrap extends StatelessWidget {
           'NAV:',
           '${cData?.financials?.perShareMetrics?.navTk ?? 0.0}',
         ),
-        QuoteUIHelper.buildPerformanceItemWithTooltip(
+        // QuoteUIHelper.buildPerformanceItemWithTooltip(
+        //   context,
+        //   'Ttl Share:',
+        //   // '${cData?.shareholding?.totalSharesMillions ?? 0.0}',
+        //   '${mData.trades ?? 0}',
+        //   showInfo: true,
+        //   infoText:
+        //       'Total no of Share : ${NumberFormatter.croreFormat("${cData?.shareholding?.totalSharesMillions}")}',
+        // ),
+        QuoteUIHelper.buildPerformanceItem(
           context,
-          'Ttl Share:',
-          '${cData?.shareholding?.totalSharesMillions ?? 0.0}',
-          showInfo: true,
-          infoText:
-              'Total no of Share : ${NumberFormatter.croreFormat("${cData?.shareholding?.totalSharesMillions}")}',
+          'Trade:',
+          NumberFormatter.bdFormatInt(mData.trades?.toInt() ?? 0),
         ),
         QuoteUIHelper.buildPerformanceItem(
           context,

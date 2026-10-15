@@ -36,9 +36,15 @@ class MarketSocketService extends GetxService {
       // লিস্ট ফিল্টার করার ভারী কাজটা প্রতি সেকেন্ডে মাত্র ১ বার হবে।
       if (_listUpdateTimer == null || !_listUpdateTimer!.isActive) {
         _listUpdateTimer = Timer(const Duration(milliseconds: 1000), () {
+          // final filtered = _marketMap.values
+          //   ..where((m) => m.group == "PUBLIC" && m.board == "Main Board" || m.board == "Small Cap Board").toList();
           final filtered = _marketMap.values
-            ..where((m) => m.group == "PUBLIC" && m.board == "Main Board" || m.board == "Small Cap Board").toList();
-
+              .where(
+                (m) =>
+                    m.group == "PUBLIC" &&
+                    (m.board == "Main Board" || m.board == "Small Cap Board"),
+              )
+              .toList();
           marketFeedList.assignAll(filtered);
         });
       }

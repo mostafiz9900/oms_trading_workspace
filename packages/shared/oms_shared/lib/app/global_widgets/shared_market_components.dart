@@ -4,6 +4,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+
 import '../core/utils/extensions/app_context.dart';
 import '../core/utils/extensions/market_model_extensions.dart';
 import '../core/utils/helpers/app_helper.dart';
@@ -49,13 +50,24 @@ class CommonMinimalDropdown extends StatelessWidget {
           width: isExpanded ? double.infinity : null,
           padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            color: isDark ? Colors.white.withValues(alpha: 0.05) : context.tapBg,
-            borderRadius: BorderRadius.circular(heightDropdownButton! >= 50 ? 14 : 8),
-            border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.grey.shade200, width: 1),
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.05)
+                : context.tapBg,
+            borderRadius: BorderRadius.circular(
+              heightDropdownButton! >= 50 ? 14 : 8,
+            ),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Colors.grey.shade200,
+              width: 1,
+            ),
           ),
           child: Row(
             mainAxisSize: isExpanded ? MainAxisSize.max : MainAxisSize.min,
-            mainAxisAlignment: isExpanded ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
+            mainAxisAlignment: isExpanded
+                ? MainAxisAlignment.spaceBetween
+                : MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
@@ -87,7 +99,9 @@ class CommonMinimalDropdown extends StatelessWidget {
                     ? null
                     : Border(
                         bottom: BorderSide(
-                          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade200,
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : Colors.grey.shade200,
                         ),
                       ),
               ),
@@ -99,10 +113,17 @@ class CommonMinimalDropdown extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       color: isSelected ? Colors.blueAccent : context.textColor,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w400,
                     ),
                   ),
-                  if (isSelected) const Icon(Icons.check_rounded, color: Colors.blueAccent, size: 16),
+                  if (isSelected)
+                    const Icon(
+                      Icons.check_rounded,
+                      color: Colors.blueAccent,
+                      size: 16,
+                    ),
                 ],
               ),
             ),
@@ -139,7 +160,12 @@ class CommonHorizontalTabList extends StatelessWidget {
   final String selectedItem;
   final Function(String) onSelected;
 
-  const CommonHorizontalTabList({super.key, required this.items, required this.selectedItem, required this.onSelected});
+  const CommonHorizontalTabList({
+    super.key,
+    required this.items,
+    required this.selectedItem,
+    required this.onSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +177,10 @@ class CommonHorizontalTabList extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.tapBg,
         border: Border(
-          bottom: BorderSide(color: isDark ? Colors.white.withAlpha(13) : Colors.grey.shade200, width: 1),
+          bottom: BorderSide(
+            color: isDark ? Colors.white.withAlpha(13) : Colors.grey.shade200,
+            width: 1,
+          ),
         ),
       ),
       child: ListView.separated(
@@ -179,10 +208,15 @@ class CommonHorizontalTabList extends StatelessWidget {
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 curve: Curves.easeOutCubic,
-                padding: EdgeInsets.symmetric(horizontal: dynamicGap * 1.5, vertical: 6),
+                padding: EdgeInsets.symmetric(
+                  horizontal: dynamicGap * 1.5,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? (isDark ? ColorConstants.buttonColorDark : ColorConstants.buttonColorLight)
+                      ? (isDark
+                            ? ColorConstants.buttonColorDark
+                            : ColorConstants.buttonColorLight)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -231,13 +265,25 @@ class SharedMarketListItem extends StatelessWidget {
     this.customAbsoluteChange,
   });
 
-  List<num> _generateSparklineData(MarketModel item, double currentPrice, double absoluteChange) {
-    final double ycp = (item.reference != null && item.reference! > 0) ? item.reference! : currentPrice;
+  List<num> _generateSparklineData(
+    MarketModel item,
+    double currentPrice,
+    double absoluteChange,
+  ) {
+    final double ycp = (item.reference != null && item.reference! > 0)
+        ? item.reference!
+        : currentPrice;
     if (ycp == 0 || currentPrice == 0) return [10, 10, 10];
 
-    final double open = (item.open != null && item.open! > 0) ? item.open! : ycp;
-    double high = (item.high != null && item.high! > 0) ? item.high! : math.max(open, currentPrice);
-    double low = (item.low != null && item.low! > 0) ? item.low! : math.min(open, currentPrice);
+    final double open = (item.open != null && item.open! > 0)
+        ? item.open!
+        : ycp;
+    double high = (item.high != null && item.high! > 0)
+        ? item.high!
+        : math.max(open, currentPrice);
+    double low = (item.low != null && item.low! > 0)
+        ? item.low!
+        : math.min(open, currentPrice);
 
     if (low > high) {
       double temp = low;
@@ -295,7 +341,8 @@ class SharedMarketListItem extends StatelessWidget {
       double localT = segment - idx;
 
       double smoothT = (1 - math.cos(localT * math.pi)) / 2;
-      double point = keyAnchors[idx] + (keyAnchors[nextIdx] - keyAnchors[idx]) * smoothT;
+      double point =
+          keyAnchors[idx] + (keyAnchors[nextIdx] - keyAnchors[idx]) * smoothT;
 
       if (i > 0 && i < totalSteps) {
         double noise = ((random.nextDouble() * 2) - 1) * ((high - low) * 0.15);
@@ -331,7 +378,12 @@ class SharedMarketListItem extends StatelessWidget {
                 RichText(
                   text: TextSpan(
                     children: [
-                      ...SharedMarketLogic.buildHighlightText(model.displayName, searchQuery, context, fontSize: 14),
+                      ...SharedMarketLogic.buildHighlightText(
+                        model.displayName,
+                        searchQuery,
+                        context,
+                        fontSize: 14,
+                      ),
                       if (model.shareType != null)
                         TextSpan(
                           text: ' [${model.shareType}]',
@@ -358,7 +410,10 @@ class SharedMarketListItem extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   model.sector ?? model.group ?? "",
-                  style: TextStyle(fontSize: 11, color: context.textColor.withAlpha(128)),
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: context.textColor.withAlpha(128),
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -372,7 +427,11 @@ class SharedMarketListItem extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: GoogleFinanceSparkline(
-                data: _generateSparklineData(model, currentPrice, absoluteChange),
+                data: _generateSparklineData(
+                  model,
+                  currentPrice,
+                  absoluteChange,
+                ),
                 change: absoluteChange,
               ),
             ),
@@ -388,7 +447,11 @@ class SharedMarketListItem extends StatelessWidget {
                   trackValue: currentPrice,
                   child: Text(
                     currentPrice.toStringAsFixed(2),
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: context.textColor),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: context.textColor,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -421,7 +484,12 @@ class SharedMarketListItem extends StatelessWidget {
                 RichText(
                   text: TextSpan(
                     children: [
-                      ...SharedMarketLogic.buildHighlightText(model.displayName, searchQuery, context, fontSize: 14),
+                      ...SharedMarketLogic.buildHighlightText(
+                        model.displayName,
+                        searchQuery,
+                        context,
+                        fontSize: 14,
+                      ),
                       if (model.shareType != null)
                         TextSpan(
                           text: ' [${model.shareType}]',
@@ -450,11 +518,17 @@ class SharedMarketListItem extends StatelessWidget {
                   children: [
                     Text(
                       "Vol:${NumberFormatter.bdFormat((model.volume ?? 0).toDouble())}, ",
-                      style: TextStyle(fontSize: 9, color: context.textColor.withAlpha(153)),
+                      style: TextStyle(
+                        fontSize: 9,
+                        color: context.textColor.withAlpha(153),
+                      ),
                     ),
                     Text(
                       "Val:${NumberFormatter.croreFormat(model.val ?? 0.0)}",
-                      style: TextStyle(fontSize: 9, color: context.textColor.withAlpha(153)),
+                      style: TextStyle(
+                        fontSize: 9,
+                        color: context.textColor.withAlpha(153),
+                      ),
                     ),
                   ],
                 ),
@@ -462,11 +536,20 @@ class SharedMarketListItem extends StatelessWidget {
                 // 🚀 Bid/Ask Pressure Bar যুক্ত করা হলো
                 Row(
                   children: [
-                    Text("B/A: ", style: TextStyle(fontSize: 9, color: context.textColor.withAlpha(128))),
+                    Text(
+                      "B/A: ",
+                      style: TextStyle(
+                        fontSize: 9,
+                        color: context.textColor.withAlpha(128),
+                      ),
+                    ),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(right: 8.0),
-                        child: BidAskPressureBar(buyQty: model.bq ?? 0, sellQty: model.aq ?? 0),
+                        child: BidAskPressureBar(
+                          buyQty: model.bq ?? 0,
+                          sellQty: model.aq ?? 0,
+                        ),
                       ),
                     ),
                   ],
@@ -498,7 +581,11 @@ class SharedMarketListItem extends StatelessWidget {
               child: Center(
                 child: isFav
                     ? const Icon(Icons.favorite, color: Colors.red, size: 16)
-                    : SvgPicture.asset(AssetsConstants.loveIconSvg, width: 14, height: 14),
+                    : SvgPicture.asset(
+                        AssetsConstants.loveIconSvg,
+                        width: 14,
+                        height: 14,
+                      ),
               ),
             ),
           ),
@@ -513,7 +600,11 @@ class SharedMarketListItem extends StatelessWidget {
                   trackValue: currentPrice,
                   child: Text(
                     currentPrice.toStringAsFixed(2),
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: context.textColor),
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: context.textColor,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -559,7 +650,9 @@ class SharedMarketListItem extends StatelessWidget {
                               style: Get.textTheme.bodySmall?.copyWith(
                                 fontSize: 8,
                                 color: context.textColor,
-                                fontFeatures: const [FontFeature.superscripts()],
+                                fontFeatures: const [
+                                  FontFeature.superscripts(),
+                                ],
                               ),
                             ),
                             TextSpan(
@@ -567,7 +660,9 @@ class SharedMarketListItem extends StatelessWidget {
                               style: Get.textTheme.bodySmall?.copyWith(
                                 fontSize: 8,
                                 color: context.textColor,
-                                fontFeatures: const [FontFeature.superscripts()],
+                                fontFeatures: const [
+                                  FontFeature.superscripts(),
+                                ],
                               ),
                             ),
                           ],
@@ -588,33 +683,45 @@ class SharedMarketListItem extends StatelessWidget {
                   ],
                 ),
                 AppSpace.spaceH2,
-                Row(
-                  children: [
-                    LiveProBlinker(
-                      trackValue: (model.volume ?? 0).toDouble(),
-                      child: Text(
-                        "${index + 1} | Vol:${NumberFormatter.fixedDecimal2(model.volume ?? 0.0, decimal: 0)}, ",
-                        style: Get.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500, fontSize: 12),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    children: [
+                      LiveProBlinker(
+                        trackValue: (model.volume ?? 0).toDouble(),
+                        child: Text(
+                          "${index + 1} | Vol:${NumberFormatter.fixedDecimal2(model.volume ?? 0.0, decimal: 0)}, ",
+                          style: Get.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                          ),
+                        ),
                       ),
-                    ),
-                    LiveProBlinker(
-                      trackValue: model.val ?? 0.0,
-                      child: Text(
-                        "Val:${NumberFormatter.croreFormat(model.val ?? 0.0)}, ",
-                        style: Get.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500, fontSize: 12),
+                      LiveProBlinker(
+                        trackValue: model.val ?? 0.0,
+                        child: Text(
+                          "Val:${NumberFormatter.croreFormat(model.val ?? 0.0)}, ",
+                          style: Get.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                          ),
+                        ),
                       ),
-                    ),
-                    Flexible(
-                      child: LiveProBlinker(
+                      // 🚀 Ehan theke Flexible remove kora hoyeche, FittedBox auto adjust korbe
+                      LiveProBlinker(
                         trackValue: (model.trades ?? 0).toDouble(),
                         child: Text(
                           'Trd:${(model.trades ?? 0).toStringAsFixed(0)}',
                           maxLines: 1,
-                          style: Get.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500, fontSize: 12),
+                          style: Get.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -627,7 +734,11 @@ class SharedMarketListItem extends StatelessWidget {
               onTap: onFavoriteTap,
               child: isFav
                   ? const Icon(Icons.favorite, color: Colors.red, size: 20)
-                  : SvgPicture.asset(AssetsConstants.loveIconSvg, width: 16, height: 16),
+                  : SvgPicture.asset(
+                      AssetsConstants.loveIconSvg,
+                      width: 16,
+                      height: 16,
+                    ),
             ),
           ),
           AppSpace.spaceW6,
@@ -639,7 +750,10 @@ class SharedMarketListItem extends StatelessWidget {
                 trackValue: currentPrice,
                 child: Text(
                   currentPrice.toStringAsFixed(2),
-                  style: Get.textTheme.titleSmall!.copyWith(fontSize: 12, fontWeight: FontWeight.w600),
+                  style: Get.textTheme.titleSmall!.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               AppSpace.spaceH2,
@@ -669,10 +783,17 @@ class SharedMarketListItem extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: 8.0,
-          vertical: viewMode == 'Small' ? 10.0 : (viewMode == 'Classic' ? 12.0 : 8.0),
+          vertical: viewMode == 'Small'
+              ? 10.0
+              : (viewMode == 'Classic' ? 12.0 : 8.0),
         ),
         decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: context.borderColor.withAlpha(128), width: 1)),
+          border: Border(
+            bottom: BorderSide(
+              color: context.borderColor.withAlpha(128),
+              width: 1,
+            ),
+          ),
         ),
         child: childWidget,
       ),
@@ -708,9 +829,16 @@ class SharedMarketGridItem extends StatelessWidget {
       onLongPress: onLongPress,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: context.isDark ? ColorConstants.tapBgDark : ColorConstants.tapBgLight,
+          color: context.isDark
+              ? ColorConstants.tapBgDark
+              : ColorConstants.tapBgLight,
           borderRadius: BorderRadius.circular(8),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 4)],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 4,
+            ),
+          ],
         ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -737,8 +865,16 @@ class SharedMarketGridItem extends StatelessWidget {
                     behavior: HitTestBehavior.translucent,
                     onTap: onFavoriteTap,
                     child: isFav
-                        ? const Icon(Icons.favorite, color: Colors.red, size: 20)
-                        : SvgPicture.asset(AssetsConstants.loveIconSvg, width: 18, height: 18),
+                        ? const Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                            size: 20,
+                          )
+                        : SvgPicture.asset(
+                            AssetsConstants.loveIconSvg,
+                            width: 18,
+                            height: 18,
+                          ),
                   ),
                 ],
               ),
@@ -757,21 +893,30 @@ class SharedMarketGridItem extends StatelessWidget {
                             trackValue: (model.volume ?? 0).toDouble(),
                             child: Text(
                               'Vol: ${model.volume ?? '0'}',
-                              style: Get.textTheme.bodyMedium?.copyWith(fontSize: 11, fontWeight: FontWeight.w300),
+                              style: Get.textTheme.bodyMedium?.copyWith(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w300,
+                              ),
                             ),
                           ),
                           LiveProBlinker(
                             trackValue: model.val ?? 0.0,
                             child: Text(
                               'Val: ${NumberFormatter.croreFormat(model.val ?? 0.0)}',
-                              style: Get.textTheme.bodyMedium?.copyWith(fontSize: 11, fontWeight: FontWeight.w300),
+                              style: Get.textTheme.bodyMedium?.copyWith(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w300,
+                              ),
                             ),
                           ),
                           LiveProBlinker(
                             trackValue: (model.trades ?? 0).toDouble(),
                             child: Text(
                               'Trd: ${model.trades ?? "0"}',
-                              style: Get.textTheme.bodyMedium?.copyWith(fontSize: 11, fontWeight: FontWeight.w300),
+                              style: Get.textTheme.bodyMedium?.copyWith(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w300,
+                              ),
                             ),
                           ),
                           AppSpace.spaceH4,
@@ -779,7 +924,10 @@ class SharedMarketGridItem extends StatelessWidget {
                             trackValue: percentChange,
                             defaultColor: NumberHelper.getColor(percentChange),
                             borderRadius: BorderRadius.circular(6),
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 4,
+                            ),
                             child: Text(
                               '${percentChange.toStringAsFixed(2)}%',
                               style: Get.textTheme.bodyMedium?.copyWith(
@@ -802,25 +950,38 @@ class SharedMarketGridItem extends StatelessWidget {
                             trackValue: currentPrice,
                             child: Text(
                               NumberFormatter.bdFormat(currentPrice),
-                              style: Get.textTheme.bodyMedium?.copyWith(fontSize: 11, fontWeight: FontWeight.w500),
+                              style: Get.textTheme.bodyMedium?.copyWith(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                           AppSpace.spaceH2,
                           Text(
-                            Helpers.formatTimeToString(model.lastTradeTime ?? ''),
-                            style: Get.textTheme.bodyMedium?.copyWith(fontSize: 11),
+                            Helpers.formatTimeToString(
+                              model.lastTradeTime ?? '',
+                            ),
+                            style: Get.textTheme.bodyMedium?.copyWith(
+                              fontSize: 11,
+                            ),
                           ),
                           AppSpace.spaceH2,
                           Text(
                             model.group ?? "",
-                            style: Get.textTheme.bodyMedium?.copyWith(fontSize: 11, fontWeight: FontWeight.w300),
+                            style: Get.textTheme.bodyMedium?.copyWith(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w300,
+                            ),
                           ),
                           AppSpace.spaceH4,
                           LiveProBlinker(
                             trackValue: absoluteChange,
                             defaultColor: NumberHelper.getColor(absoluteChange),
                             borderRadius: BorderRadius.circular(6),
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 4,
+                            ),
                             child: Text(
                               absoluteChange.toStringAsFixed(2),
                               style: Get.textTheme.bodyMedium?.copyWith(

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/request/add_fav_item_request.dart' show AddFavItemRequest;
 import '../models/response/fav_market_response.dart' show FavMarketResponse;
 import '../models/response/index_chart_model.dart' show IndexChartModel;
@@ -21,6 +22,7 @@ import '../models/response/withdraw_model.dart';
 final homeProvider = Provider<HomeProvider>((ref) {
   return HomeProvider();
 });
+
 class HomeRepository
     implements MarketFavoritesRepository, MarketChartRepository {
   HomeRepository({required this.homeProvider})
@@ -204,7 +206,7 @@ class HomeRepository
         var result = res.body;
         printLog('createWithdraw success :: $result');
 
-        // 🚀 সার্ভার থেকে আসা সাকসেস মেসেজটি রিটার্ন করা হলো
+        //  সার্ভার থেকে আসা সাকসেস মেসেজটি রিটার্ন করা হলো
         String successMsg =
             result[AppConstants.message] ??
             'Withdraw request submitted successfully';
@@ -231,14 +233,14 @@ class HomeRepository
 
     try {
       if (res.statusCode == 200) {
-        // 🚀 ১. GetConnect অটোমেটিক JSON কে Map এ কনভার্ট করে ফেলে
+        //  ১. GetConnect অটোমেটিক JSON কে Map এ কনভার্ট করে ফেলে
         var responseData = res.body['data'];
         printLog('getWithdrawList data :: $responseData');
 
         List<WithdrawModel> withdrawList = [];
 
         if (responseData != null && responseData is List) {
-          // 🚀 ৩. যেহেতু এটি অলরেডি একটি List, তাই স্ট্রিং পার্সার (withdrawModelFromJson) এর বদলে সরাসরি ম্যাপ করা হলো
+          //  ৩. যেহেতু এটি অলরেডি একটি List, তাই স্ট্রিং পার্সার (withdrawModelFromJson) এর বদলে সরাসরি ম্যাপ করা হলো
           withdrawList = List<WithdrawModel>.from(
             responseData.map((x) => WithdrawModel.fromJson(x)),
           );
