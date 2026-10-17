@@ -107,6 +107,15 @@ class TopShareController extends GetxController {
     }
   }
 
+  MarketModel resolveMarketModelForRow(MarketModel initialModel) {
+    if (initialModel.orderBook == null) return initialModel;
+
+    return marketFeedSortList.firstWhere(
+      (element) => element.orderBook == initialModel.orderBook,
+      orElse: () => initialModel,
+    );
+  }
+
   void setCompanySectorList() {
     final sectors = marketFeedList
         .map((e) => e.sector?.toString().trim() ?? '')

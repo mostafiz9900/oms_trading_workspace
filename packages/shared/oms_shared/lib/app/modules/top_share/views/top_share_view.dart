@@ -66,21 +66,17 @@ class TopShareView extends GetView<TopShareController> {
                   itemBuilder: (context, index) {
                     final initialModel = topShareCon.marketFeedSortList[index];
 
-                    if (initialModel.orderBook == null)
+                    if (initialModel.orderBook == null) {
                       return const SizedBox.shrink();
+                    }
 
                     return GetBuilder<TopShareController>(
                       id: '${initialModel.orderBook}',
                       builder: (controller) {
-                        // ইনডেক্সের ওপর ভরসা না করে সরাসরি orderBook দিয়ে লেটেস্ট ডাটা খুঁজুন
-                        // final latestModel = controller.marketFeedSortList.firstWhere(
-                        //   (e) => e.orderBook == initialModel.orderBook,
-                        //   orElse: () => initialModel, // যদি কোনো কারণে না পায়, তবে আগেরটাই দেখাবে
-                        // );
-                        final latestModel =
-                            controller.marketFeedSortList[index];
+                        final latestModel = controller.resolveMarketModelForRow(
+                          initialModel,
+                        );
 
-                        //  SharedMarketListItem কল করা হলো
                         return SharedMarketListItem(
                           model: latestModel,
                           index: index,
