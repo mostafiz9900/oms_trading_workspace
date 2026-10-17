@@ -1,10 +1,19 @@
-import 'package:oms_shared/app/app_pkg.dart';
+import '../../../core/utils/extensions/app_context.dart';
+import '../../../core/utils/extensions/market_model_extensions.dart';
+import '../../../core/utils/helpers/app_helper.dart';
+import '../../../core/values/colors.dart';
+import '../../../core/values/space.dart';
+import '../../../global_widgets/common_market_logic.dart';
+import '../../../global_widgets/custom_app_bar.dart';
+import '../../../global_widgets/shared_market_components.dart';
+import '../../home/controllers/home_controller.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../home/views/local_widgets/appbar_right_search_tap.dart';
-import '../../home/views/local_widgets/index_value_loader.dart';
+import '../../../global_widgets/appbar_right_search_tap.dart';
 import '../controllers/top_share_controller.dart';
+import '../../../global_widgets/loaders/watchlist_loader.dart';
 
 class TopShareView extends GetView<TopShareController> {
   const TopShareView({super.key});
@@ -50,51 +59,43 @@ class TopShareView extends GetView<TopShareController> {
               Expanded(
                 child: ListView.separated(
                   itemCount: topShareCon.marketFeedSortList.length,
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 8,
+                  ),
                   itemBuilder: (context, index) {
                     final initialModel = topShareCon.marketFeedSortList[index];
 
-                    if (initialModel.orderBook == null) return const SizedBox.shrink();
+                    if (initialModel.orderBook == null) {
+                      return const SizedBox.shrink();
+                    }
 
                     return GetBuilder<TopShareController>(
                       id: '${initialModel.orderBook}',
                       builder: (controller) {
-                        // ইনডেক্সের ওপর ভরসা না করে সরাসরি orderBook দিয়ে লেটেস্ট ডাটা খুঁজুন
-                        final latestModel = controller.marketFeedSortList.firstWhere(
-                          (e) => e.orderBook == initialModel.orderBook,
-                          orElse: () => initialModel, // যদি কোনো কারণে না পায়, তবে আগেরটাই দেখাবে
+                        final latestModel = controller.resolveMarketModelForRow(
+                          initialModel,
                         );
 
-                        // 🚀 UI এর ডিউরেশন স্ট্রিং কে এক্সটেনশনের ফরমেটে ম্যাপ করার হেল্পার
-                        String mapDurationToExt(String duration) {
-                          switch (duration) {
-                            case "Weekly":
-                              return "1W";
-                            case "15 Day":
-                              return "2W";
-                            case "Monthly":
-                              return "1M";
-                            case "6 Month":
-                              return "6M";
-                            case "Yearly":
-                              return "1Y";
-                            case "Daily":
-                            default:
-                              return "1D";
-                          }
-                        }
-
-                        // 🚀 SharedMarketListItem কল করা হলো
                         return SharedMarketListItem(
                           model: latestModel,
                           index: index,
-                          viewMode: controller.currentViewMode, // 🚀 কন্ট্রোলার থেকে ডাইনামিক ভিউ মোড
+                          viewMode: controller.currentViewMode,
+                          //  2. Controller theke public function call kora holo
                           customPercentChange: latestModel.getChangeByDuration(
-                            mapDurationToExt(controller.activeDurationFilter),
-                          ), // 🚀 কাস্টম ডিউরেশনের ভ্যালু
+                            controller.mapDurationToExtensionFormat(
+                              controller.activeDurationFilter,
+                            ),
+                          ),
                           onTap: () {
-                            Get.find<HomeController>().goBottomNabBarPage(1, latestModel.orderBook!);
-                            Get.find<HomeController>().loadComanyDividentEPS('${latestModel.shortName}');
+                            // print("Top Share Tapped: ${latestModel.toJson()} ");
+                            Get.find<HomeController>().goBottomNabBarPage(
+                              1,
+                              latestModel.orderBook!,
+                            );
+                            Get.find<HomeController>().loadComanyDividentEPS(
+                              '${latestModel.shortName}',
+                            );
                             Get.back();
                           },
                           onLongPress: () {
@@ -105,13 +106,16 @@ class TopShareView extends GetView<TopShareController> {
                             );
                           },
                           onFavoriteTap: () {
-                            MarketDialogHelper.showFavouriteBottomSheet(context, latestModel);
+                            MarketDialogHelper.showFavouriteBottomSheet(
+                              context,
+                              latestModel,
+                            );
                           },
                         );
                       },
                     );
                   },
-                  separatorBuilder: (_, __) => dividerWidget,
+                  separatorBuilder: (_, _) => dividerWidget,
                 ),
               ),
             ],
@@ -129,10 +133,17 @@ class _DurationFilterWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<TopShareController>(
       builder: (controller) {
-        final List<String> mainFilters = const ["Daily", "Weekly", "15 Day", "Monthly"];
+        final List<String> mainFilters = const [
+          "Daily",
+          "Weekly",
+          "15 Day",
+          "Monthly",
+        ];
         final List<String> moreItems = const ["6 Month", "Yearly"];
 
-        bool isMoreSelected = moreItems.contains(controller.activeDurationFilter);
+        bool isMoreSelected = moreItems.contains(
+          controller.activeDurationFilter,
+        );
 
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -146,18 +157,29 @@ class _DurationFilterWidget extends StatelessWidget {
                   child: ChoiceChip(
                     label: Text(filter),
                     selected: isSelected,
-                    onSelected: (bool selected) => controller.setActiveDurationFilter(filter),
+                    onSelected: (bool selected) =>
+                        controller.setActiveDurationFilter(filter),
                     selectedColor: context.bgColor,
                     backgroundColor: context.bgColor,
-                    visualDensity: const VisualDensity(horizontal: -2.0, vertical: -2.0),
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                    visualDensity: const VisualDensity(
+                      horizontal: -2.0,
+                      vertical: -2.0,
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 0,
+                    ),
                     labelStyle: TextStyle(
                       color: isSelected ? Colors.green : context.textColor,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
-                      side: BorderSide(color: isSelected ? Colors.green : context.borderColor),
+                      side: BorderSide(
+                        color: isSelected ? Colors.green : context.borderColor,
+                      ),
                     ),
                     showCheckmark: false,
                   ),
@@ -166,27 +188,49 @@ class _DurationFilterWidget extends StatelessWidget {
 
               PopupMenuButton<String>(
                 offset: const Offset(0, 45),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                onSelected: (String value) => controller.setActiveDurationFilter(value),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                onSelected: (String value) =>
+                    controller.setActiveDurationFilter(value),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.transparent,
-                    border: Border.all(color: isMoreSelected ? Colors.green : context.borderColor),
+                    border: Border.all(
+                      color: isMoreSelected
+                          ? Colors.green
+                          : context.borderColor,
+                    ),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        isMoreSelected ? controller.activeDurationFilter : "More",
+                        isMoreSelected
+                            ? controller.activeDurationFilter
+                            : "More",
                         style: TextStyle(
-                          color: isMoreSelected ? Colors.green : context.textColor,
-                          fontWeight: isMoreSelected ? FontWeight.bold : FontWeight.normal,
+                          color: isMoreSelected
+                              ? Colors.green
+                              : context.textColor,
+                          fontWeight: isMoreSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                         ),
                       ),
                       const SizedBox(width: 4),
-                      Icon(Icons.unfold_more, size: 16, color: isMoreSelected ? Colors.green : Colors.blue.shade600),
+                      Icon(
+                        Icons.unfold_more,
+                        size: 16,
+                        color: isMoreSelected
+                            ? Colors.green
+                            : Colors.blue.shade600,
+                      ),
                     ],
                   ),
                 ),
@@ -195,7 +239,10 @@ class _DurationFilterWidget extends StatelessWidget {
                     enabled: false,
                     child: Text(
                       "More Options",
-                      style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   const PopupMenuDivider(),
@@ -205,8 +252,12 @@ class _DurationFilterWidget extends StatelessWidget {
                       child: Text(
                         item,
                         style: TextStyle(
-                          fontWeight: controller.activeDurationFilter == item ? FontWeight.bold : FontWeight.normal,
-                          color: controller.activeDurationFilter == item ? Colors.green : context.textColor,
+                          fontWeight: controller.activeDurationFilter == item
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                          color: controller.activeDurationFilter == item
+                              ? Colors.green
+                              : context.textColor,
                         ),
                       ),
                     );
@@ -244,7 +295,9 @@ class _CustomShareFilterWidget extends StatelessWidget {
                 );
               },
               child: _CustomChip(
-                name: topShareCon.activeSector.isNotEmpty ? topShareCon.activeSector : "All",
+                name: topShareCon.activeSector.isNotEmpty
+                    ? topShareCon.activeSector
+                    : "All",
                 isShowIcon: true,
               ),
             ),
@@ -256,10 +309,14 @@ class _CustomShareFilterWidget extends StatelessWidget {
                   title: "Sort By",
                   menuLists: topShareCon.sortByMenuList,
                   selectedValue: topShareCon.activeSortByCompany,
-                  onSelected: (value) => topShareCon.setActiveSortByCompany(value),
+                  onSelected: (value) =>
+                      topShareCon.setActiveSortByCompany(value),
                 );
               },
-              child: _CustomChip(name: topShareCon.activeSortByCompany, isShowIcon: true),
+              child: _CustomChip(
+                name: topShareCon.activeSortByCompany,
+                isShowIcon: true,
+              ),
             ),
             InkWell(
               onTap: () {
@@ -269,10 +326,14 @@ class _CustomShareFilterWidget extends StatelessWidget {
                   title: "Order By",
                   menuLists: topShareCon.sortByAscDescMenuList,
                   selectedValue: topShareCon.activeSortByAscDesc,
-                  onSelected: (value) => topShareCon.setActiveSortByAscDesc(value),
+                  onSelected: (value) =>
+                      topShareCon.setActiveSortByAscDesc(value),
                 );
               },
-              child: _CustomChip(name: topShareCon.activeSortByAscDesc, isShowIcon: true),
+              child: _CustomChip(
+                name: topShareCon.activeSortByAscDesc,
+                isShowIcon: true,
+              ),
             ),
           ],
         );
@@ -299,10 +360,20 @@ class _CustomChip extends StatelessWidget {
       label: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(name, style: Get.textTheme.bodyMedium?.copyWith(color: context.buttonColor, height: 1.1)),
+          Text(
+            name,
+            style: Get.textTheme.bodyMedium?.copyWith(
+              color: context.buttonColor,
+              height: 1.1,
+            ),
+          ),
           if (isShowIcon) ...[
             AppSpace.spaceW6,
-            Icon(Icons.unfold_more_outlined, color: context.isDark ? Colors.white : hexToColor('#184A94'), size: 16),
+            Icon(
+              Icons.unfold_more_outlined,
+              color: context.isDark ? Colors.white : hexToColor('#184A94'),
+              size: 16,
+            ),
           ],
         ],
       ),
@@ -318,14 +389,18 @@ class _ShareSituationWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = context.isDark;
 
-    final double dynamicGap = MediaQuery.of(context).size.width * 0.02; // স্ক্রিনের ২%
+    final double dynamicGap =
+        MediaQuery.of(context).size.width * 0.02; // স্ক্রিনের ২%
 
     return Container(
       height: 40, // প্রফেশনাল হাইট
       decoration: BoxDecoration(
         color: context.tapBg,
         border: Border(
-          bottom: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade200, width: 1),
+          bottom: BorderSide(
+            color: isDark ? Colors.white.withAlpha(13) : Colors.grey.shade200,
+            width: 1,
+          ),
         ),
       ),
       // গ্যাপ এবং আইটেম আলাদাভাবে ম্যানেজ করার জন্য ListView.separated বেস্ট
@@ -340,8 +415,10 @@ class _ShareSituationWidget extends StatelessWidget {
             child: Container(
               width: 1,
               height: 14, // স্লিক ডিভাইডার হাইট
-              margin: EdgeInsets.symmetric(horizontal: dynamicGap), // ডাইনামিক গ্যাপ
-              color: isDark ? Colors.white.withOpacity(0.15) : Colors.grey.shade300,
+              margin: EdgeInsets.symmetric(
+                horizontal: dynamicGap,
+              ), // ডাইনামিক গ্যাপ
+              color: isDark ? Colors.white.withAlpha(38) : Colors.grey.shade300,
             ),
           );
         },
@@ -349,21 +426,26 @@ class _ShareSituationWidget extends StatelessWidget {
         // মেইন মেনু আইটেম
         itemBuilder: (context, index) {
           final model = topShareCon.shareSituationList[index];
-          final isSelected = topShareCon.activeTopMenuTopShare == model?.name;
+          final isSelected = topShareCon.activeTopMenuTopShare == model.name;
 
           return GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => topShareCon.setActiveTopMenuTopShare(model?.name ?? ""),
+            onTap: () => topShareCon.setActiveTopMenuTopShare(model.name ?? ""),
             child: Center(
               // আইটেমকে ভার্টিক্যালি সেন্টারে রাখার জন্য
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 curve: Curves.easeOutCubic,
                 // বাটনের ভেতরের প্যাডিংও ডাইনামিক করা হয়েছে
-                padding: EdgeInsets.symmetric(horizontal: dynamicGap * 1.5, vertical: 6),
+                padding: EdgeInsets.symmetric(
+                  horizontal: dynamicGap * 1.5,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? (isDark ? ColorConstants.buttonColorDark : ColorConstants.buttonColorLight)
+                      ? (isDark
+                            ? ColorConstants.buttonColorDark
+                            : ColorConstants.buttonColorLight)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -384,4 +466,3 @@ class _ShareSituationWidget extends StatelessWidget {
     );
   }
 }
-

@@ -42,11 +42,11 @@ class _LiveProBlinkerState extends State<LiveProBlinker> with SingleTickerProvid
 
       if (widget.defaultColor == Colors.transparent) {
         targetColor = isUp
-            ? const Color(0xFF00C853).withOpacity(0.4) // Vivid Green
-            : const Color(0xFFD50000).withOpacity(0.4); // Vivid Red
+            ? const Color(0xFF00C853).withAlpha(102) // Vivid Green
+            : const Color(0xFFD50000).withAlpha(102); // Vivid Red
       } else {
         // ⚪ % বক্সের জন্য স্ট্যান্ডার্ড সাদা ফ্ল্যাশ
-        targetColor = Colors.white.withOpacity(0.6);
+        targetColor = Colors.white.withAlpha(153);
       }
 
       // 🚀 ২. Organic Animation: easeOutQuad দিলে ব্লিংকটা হুট করে নিভে না গিয়ে খুব স্মুথলি ফেড আউট হয়

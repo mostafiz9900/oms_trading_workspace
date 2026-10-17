@@ -1,0 +1,19 @@
+{
+  "OMS_HOUSE_ID": "fakhrul",
+  "OMS_HOUSE_NAME": "Fakhrul Securities",
+  "OMS_ENV": "uat",
+  "OMS_API_BASE_URL": "https://api.your-house.com/",
+  "OMS_API_CHART_BASE_URL": "https://chart.your-house.com/",
+  "OMS_API_ITCH_BASE_URL": "https://itch.your-house.com/",
+  "OMS_SOCKET_BASE_URL": "wss://api.your-house.com/",
+  "OMS_SOCKET_MARKET_URL": "wss://itch.your-house.com/market",
+  "OMS_SOCKET_NEWS_URL": "wss://news.your-house.com/socket-api/v1/news/ws",
+  "OMS_SOCKET_INDEX_URL": "wss://itch.your-house.com/index",
+  "OMS_SOCKET_MARKET_DEPTH_URL": "wss://itch.your-house.com/market-depth",
+  "OMS_SOCKET_NEWS_TIME_SALES_URL": "wss://news.your-house.com/news-time-sales",
+  "OMS_DEFAULT_LOCALE": "en_US",
+  "OMS_BRAND_PRIMARY_COLOR": "#184A94",
+  "OMS_BRAND_ACCENT_COLOR": "#177DFF",
+  "OMS_BRAND_BUTTON_COLOR": "#177DFF",
+  "OMS_CONTRACT_URL": "https://www.example.com/contract"
+}

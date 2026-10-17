@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../app_pkg.dart';
+import '../utils/helpers/hex_color.dart';
+import 'app_config.dart';
 
 class ColorConstants {
   static Color lightScaffoldBackgroundColor = hexToColor('#F9F9F9');

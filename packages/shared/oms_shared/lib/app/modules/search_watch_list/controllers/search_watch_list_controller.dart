@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '/app/app_pkg.dart';
+import '../../../core/utils/helpers/log_helper.dart';
+import '../../../data/models/response/market_model.dart';
+import '../../home/controllers/home_controller.dart';
 import 'package:get/get.dart';
 
 class SearchWatchListController extends GetxController {

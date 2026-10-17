@@ -1,0 +1,3 @@
+package_name("com.benemoysecurity.app")
+app_identifier("com.benemoysecurities.app")
+team_id("VGW88Y8A73")

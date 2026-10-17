@@ -27,7 +27,7 @@ make setup
 ```sh
 rm -rf apps/app_fakhrul        # only for Fakhrul: remove the old starter app
 make new-app ID=fakhrul NAME="Fakhrul Securities" \
-  ANDROID_ID=com.fakhrulsecurities.app IOS_ID=com.fakhrulsecurities.app
+  ANDROID_ID=com.fisbd.app IOS_ID=com.fakhrulsecurities.app
 ```
 
 This copies Benemoy's app and sets the new name, Android package id, iOS
@@ -78,6 +78,8 @@ cd apps/fakhrul && flutterfire configure && cd ../..
   `ios/Runner/GoogleService-Info.plist`.
 - For iOS push notifications, upload the house's Apple APNs key in the
   Firebase console.
+- Open **Crashlytics** in the house's Firebase console once. The app already
+  reports uncaught errors from release builds (`lib/src/run.dart`).
 - App icon:
   - Android: replace `android/app/src/main/res/mipmap-*/` (Android Studio →
     Image Asset generates all sizes).

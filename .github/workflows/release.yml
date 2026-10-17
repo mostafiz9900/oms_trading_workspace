@@ -1,0 +1,118 @@
+# Push to `prod` = release Benemoy: run all CI checks, then build the signed
+# production apps and upload them with fastlane (apps/benemoy/fastlane).
+#   Android -> Google Play, production track as a draft (press "Roll out")
+#   iOS     -> TestFlight (submit for App Store review by hand)
+# Secrets and setup: docs/release.md
+name: Release Benemoy
+
+on:
+  push:
+    branches: [prod]
+  workflow_dispatch:
+
+# Never run two releases at once, and never cancel one half-way.
+concurrency:
+  group: release-benemoy
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    uses: ./.github/workflows/ci.yml
+    secrets: inherit
+
+  android:
+    name: Google Play
+    needs: checks
+    runs-on: ubuntu-latest
+    environment: production
+    defaults:
+      run:
+        working-directory: apps/benemoy
+    steps:
+      - uses: actions/checkout@v4
+      - id: fvm
+        run: echo "flutter=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
+        working-directory: .
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm.outputs.flutter }}
+          cache: true
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+          working-directory: apps/benemoy
+      - name: Write prod env and signing key
+        env:
+          PROD_ENV: ${{ secrets.BENEMOY_PROD_ENV_JSON }}
+          KEYSTORE_BASE64: ${{ secrets.BENEMOY_ANDROID_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.BENEMOY_ANDROID_STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.BENEMOY_ANDROID_KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.BENEMOY_ANDROID_KEY_ALIAS }}
+        run: |
+          set -euo pipefail
+          for v in PROD_ENV KEYSTORE_BASE64 STORE_PASSWORD KEY_PASSWORD KEY_ALIAS; do
+            if [ -z "${!v}" ]; then echo "::error::Missing secret for $v (docs/release.md)"; exit 1; fi
+          done
+          printf '%s' "$PROD_ENV" > env/prod.json
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > android/oms-app-release-key.jks
+          {
+            echo "storePassword=$STORE_PASSWORD"
+            echo "keyPassword=$KEY_PASSWORD"
+            echo "keyAlias=$KEY_ALIAS"
+            echo "storeFile=../oms-app-release-key.jks"
+          } > android/key.properties
+      - run: flutter pub get
+      - run: bundle exec fastlane android deploy
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.BENEMOY_PLAY_SERVICE_ACCOUNT_JSON }}
+          FLUTTER: flutter
+      - name: Remove signing files
+        if: always()
+        run: rm -f android/key.properties android/oms-app-release-key.jks env/prod.json
+
+  ios:
+    name: TestFlight
+    needs: checks
+    runs-on: macos-latest
+    environment: production
+    defaults:
+      run:
+        working-directory: apps/benemoy
+    steps:
+      - uses: actions/checkout@v4
+      - id: fvm
+        run: echo "flutter=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
+        working-directory: .
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm.outputs.flutter }}
+          cache: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+          working-directory: apps/benemoy
+      - name: Write prod env
+        env:
+          PROD_ENV: ${{ secrets.BENEMOY_PROD_ENV_JSON }}
+        run: |
+          if [ -z "$PROD_ENV" ]; then echo "::error::Missing secret BENEMOY_PROD_ENV_JSON"; exit 1; fi
+          printf '%s' "$PROD_ENV" > env/prod.json
+      - run: flutter pub get
+      - run: bundle exec fastlane ios deploy
+        env:
+          FLUTTER: flutter
+          ASC_KEY_ID: ${{ secrets.BENEMOY_ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.BENEMOY_ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.BENEMOY_ASC_KEY_P8 }}
+          IOS_DIST_CERT_P12_BASE64: ${{ secrets.BENEMOY_IOS_DIST_CERT_P12_BASE64 }}
+          IOS_DIST_CERT_PASSWORD: ${{ secrets.BENEMOY_IOS_DIST_CERT_PASSWORD }}
+          IOS_PROVISION_PROFILE_BASE64: ${{ secrets.BENEMOY_IOS_PROVISION_PROFILE_BASE64 }}
+      - name: Remove env file
+        if: always()
+        run: rm -f env/prod.json

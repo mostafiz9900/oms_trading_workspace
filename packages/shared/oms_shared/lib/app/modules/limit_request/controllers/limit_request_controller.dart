@@ -1,6 +1,15 @@
 import 'dart:io';
 
-import 'package:oms_shared/app/app_pkg.dart';
+import '../../../core/utils/extensions/app_context.dart';
+import '../../../core/utils/helpers/app_helper.dart';
+import '../../../core/utils/helpers/log_helper.dart';
+import '../../../core/values/app_config.dart';
+import '../../../core/values/colors.dart';
+import '../../../core/values/storage.dart';
+import '../../../data/services/storage_service.dart';
+import '../../../global_widgets/custom_edit_text_form_field.dart';
+import '../../../global_widgets/shared_market_components.dart';
+import '../../home/controllers/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -256,8 +265,8 @@ class LimitRequestController extends GetxController {
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(vertical: 24),
                             decoration: BoxDecoration(
-                              color: Colors.blueAccent.withOpacity(0.05),
-                              border: Border.all(color: Colors.blueAccent.withOpacity(0.3), width: 1.5),
+                              color: Colors.blueAccent.withAlpha(13),
+                              border: Border.all(color: Colors.blueAccent.withAlpha(77), width: 1.5),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Column(
@@ -287,7 +296,7 @@ class LimitRequestController extends GetxController {
                               Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: ColorConstants.success.withOpacity(0.1),
+                                  color: ColorConstants.success.withAlpha(26),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Icon(Icons.image, color: ColorConstants.success, size: 24),

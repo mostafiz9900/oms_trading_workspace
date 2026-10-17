@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "498276884869",
+    "firebase_url": "https://benemoy-c5dae-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "benemoy-c5dae",
+    "storage_bucket": "benemoy-c5dae.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:498276884869:android:0beb527285436f29b3e4ec",
+        "android_client_info": {
+          "package_name": "com.benemoysecurity.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD407FioNzAEHUsItbk8Uaq-IkhbuVsxgQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:498276884869:android:a6c082f461b0a894b3e4ec",
+        "android_client_info": {
+          "package_name": "com.fisbd.oms.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD407FioNzAEHUsItbk8Uaq-IkhbuVsxgQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,35 +1,54 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ui';
 
 import '../../../data/models/response/order_alert_model.dart';
-import '/app/modules/home/controllers/historical_volume_controller.dart';
+import '/app/modules/quote/controllers/historical_volume_controller.dart';
 
-import '/app/modules/home/controllers/position_controller.dart';
+import '/app/modules/portfolio/controllers/position_controller.dart';
 
 import 'package:flutter/material.dart' hide Actions;
 import 'package:get/get.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:market/market.dart'
-    show
-        AddFavItemRequest,
-        FavMarketResponse,
-        MarketDepthData,
-        MarketDepthModel,
-        MarketStatisticsAggregator,
-        MarketFavoritesRepository,
-        MarketSectorFilterStore,
-        MarketSectorSummaryAggregator,
-        MarketSnapshotAnalytics,
-        SectorDataModel,
-        MarketTickKind,
-        MarketTickMessage,
-        MarketTickStore,
-        TradingChartModel;
+import '../../../data/models/request/add_fav_item_request.dart' show AddFavItemRequest;
+import '../../../data/models/response/fav_market_response.dart' show FavMarketResponse;
+import '../../../data/models/response/market_depth_model.dart' show MarketDepthData, MarketDepthModel;
+import '../../../data/services/market_statistics_aggregator.dart' show MarketStatisticsAggregator;
+import '../../../data/repositories/market_favorites_repository.dart' show MarketFavoritesRepository;
+import '../../../data/services/market_sector_filter_store.dart' show MarketSectorFilterStore;
+import '../../../data/services/market_sector_summary_aggregator.dart' show MarketSectorSummaryAggregator;
+import '../../../data/services/market_snapshot_analytics.dart' show MarketSnapshotAnalytics;
+import '../../../data/models/response/sector_data_model.dart' show SectorDataModel;
+import '../../../data/models/response/market_tick_message.dart' show MarketTickKind, MarketTickMessage;
+import '../../../data/services/market_tick_store.dart' show MarketTickStore;
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '/app/data/models/request/update_order_holder.dart';
-import '../../../app_pkg.dart';
+import '../../../core/utils/extensions/market_model_extensions.dart';
+import '../../../core/utils/functions/network_util.dart';
+import '../../../core/utils/helpers/app_helper.dart';
+import '../../../core/utils/helpers/hex_color.dart';
+import '../../../core/utils/helpers/log_helper.dart';
+import '../../../core/utils/helpers/update_throttle.dart';
+import '../../../core/values/app_config.dart';
+import '../../../core/values/colors.dart';
+import '../../../core/values/constants.dart';
+import '../../../core/values/space.dart';
+import '../../../core/values/storage.dart';
+import '../../../data/enums/app_enum.dart';
+import '../../../data/models/request/order_confirm_request.dart';
+import '../../../data/models/response/favourite_model.dart';
+import '../../../data/models/response/index_model.dart';
+import '../../../data/models/response/market_model.dart';
+import '../../../data/models/response/news_model.dart';
+import '../../../data/models/response/time_sales_model.dart';
+import '../../../data/models/response/user_order.dart';
+import '../../../data/models/response/user_profile.dart';
+import '../../../data/repositories/home_repository.dart';
+import '../../../data/services/socket_db_service.dart';
+import '../../../data/services/storage_service.dart';
+import '../../../global_provider.dart';
+import '../../global_search/controllers/global_search_controller.dart';
+import '../../../routes/app_routes.dart';
 import '../../../data/models/marquee_holder.dart';
 
 import '../../../data/models/response/companies_model.dart';
@@ -37,14 +56,13 @@ import '../../../data/models/response/dividend_model.dart';
 import '../../../data/models/response/eps_model.dart';
 import '../../../data/models/response/order_status_details_model.dart';
 import '../../../data/models/response/user_balance.dart';
-import '../../../data/services/market_socket.service.dart';
+import '../../../data/services/market_socket_service.dart';
 import '../../auth/controllers/biometric_controller.dart';
 import '../../auth/controllers/token_controller.dart';
-import '../views/order_status_details_view.dart';
-import 'candle_chart_controller.dart';
-import 'companies_controller.dart';
-import 'market_index_controller.dart';
-import 'watchlist_controller.dart';
+import '../../orders/views/order_status_details_view.dart';
+import '../../market/controllers/companies_controller.dart';
+import '../../market/controllers/market_index_controller.dart';
+import '../../watchlist/controllers/watchlist_controller.dart';
 
 part 'home/home_state.dart';
 part 'home/socket_mixin.dart';
@@ -64,7 +82,8 @@ part 'home/account_mixin.dart';
 final userInfoProvider = Provider<UserProfile>((ref) {
   printLog('user profile:: ');
   var res = StorageService.getMap(StorageConstants.userInfo);
-  UserProfile? user = UserProfile.fromJson(res!);
+  // Guest mode / after logout there is no stored profile; `res!` threw.
+  UserProfile? user = res == null ? UserProfile() : UserProfile.fromJson(res);
   printLog(user.toJson());
   printLog('user profile:: ');
   return user;
@@ -105,9 +124,7 @@ class HomeController extends HomeState
   @override
   void onInit() async {
     super.onInit();
-    if (!searchController.hasListeners) {
-      searchController.addListener(_onSearchChanged);
-    }
+    searchController.addListener(_onSearchChanged);
     printLog('home repository :: ${homeRepository.hashCode}');
     if (Get.arguments != null) {
       currentIndex = Get.arguments;
@@ -147,7 +164,6 @@ class HomeController extends HomeState
 
   @override
   void onClose() {
-    _chartClient.dispose();
     _marketUpdateTimer?.cancel();
     _indexUpdateTimer?.cancel();
     _orderResponseTimer?.cancel();

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 abstract class AppDimens {
   AppDimens._();
 
-  static pagePadding({double? horizontal, double? vertical}) => EdgeInsets.symmetric(horizontal: horizontal ?? 15, vertical: vertical ?? 15);
+  static EdgeInsets pagePadding({double? horizontal, double? vertical}) => EdgeInsets.symmetric(horizontal: horizontal ?? 15, vertical: vertical ?? 15);
   static const double mobileScreenSize = 340;
   static const double tabletScreenSize = 640;
   static const double desktopScreenSize = 1440;

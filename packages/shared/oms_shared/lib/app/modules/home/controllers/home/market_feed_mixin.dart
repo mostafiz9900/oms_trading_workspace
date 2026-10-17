@@ -71,11 +71,6 @@ mixin MarketFeedMixin on HomeState {
       if (Get.isRegistered<GlobalSearchController>()) {
         Get.find<GlobalSearchController>().syncLiveData();
       }
-      if (Get.isRegistered<CandleChartController>()) {
-        Get.find<CandleChartController>().updateLiveMarketData(
-          marketData,
-        ); //  Fix applied
-      }
 
       update(['marketList', 'indexList']);
     }

@@ -2,7 +2,7 @@ part of '../home_controller.dart';
 
 /// Drawer account actions for custom_drawer: biometrics, token refresh, logout.
 mixin AccountMixin on HomeState {
-  Future<bool> enableDisableBiometric(BuildContext ctx) async {
+  Future<bool> enableDisableBiometric() async {
     try {
       // Safely check if user has biometric enabled on backend (defaults to false if null)
       bool isBioUser = userInfo.b ?? false;
@@ -46,7 +46,7 @@ mixin AccountMixin on HomeState {
       // Step 4: Handle Logout
       // NOTE: Consider removing this unless your app strictly requires
       // a fresh login immediately after toggling biometrics.
-      await logout(ctx);
+      await logout();
 
       return true;
     } catch (e) {
@@ -98,28 +98,28 @@ mixin AccountMixin on HomeState {
     }
   }
 
-  Future<void> logout(BuildContext context) async {
+  Future<void> logout() async {
     final refreshToken = await StorageService.read(
       StorageConstants.refreshToken,
     );
     if (refreshToken == null) {
-      _clearLocal(context);
+      _clearLocal();
       return;
     }
     try {
       var response = await homeRepository.logout();
       if (response.success) {
-        _clearLocal(context);
+        _clearLocal();
       } else {
         throw Exception('Logout failed');
       }
     } catch (e) {
       printLog('Logout error: $e');
-      _clearLocal(context); // still logout locally on error
+      _clearLocal(); // still logout locally on error
     }
   }
 
-  void _clearLocal(BuildContext context) {
+  void _clearLocal() {
     // ১. লোকাল স্টোরেজ ক্লিয়ার করা
     StorageService.remove(StorageConstants.token);
     StorageService.remove(StorageConstants.refreshToken);

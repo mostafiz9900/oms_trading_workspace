@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 
-import '../app_pkg.dart';
+import '../core/utils/extensions/app_context.dart';
+import '../core/values/dimens.dart';
+import '../global_provider.dart';
 
 class OrderTypeDropdownListWidget extends ConsumerWidget {
   const OrderTypeDropdownListWidget({
@@ -216,7 +218,7 @@ class TypeDropdownListWidget extends ConsumerWidget {
             decoration: BoxDecoration(
               color: context.cardColor,
               borderRadius: BorderRadius.circular(8),
-              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4, offset: const Offset(0, 2))],
+              boxShadow: [BoxShadow(color: Colors.black.withAlpha(26), blurRadius: 4, offset: const Offset(0, 2))],
             ),
             scrollbarTheme: ScrollbarThemeData(
               radius: const Radius.circular(40),

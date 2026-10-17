@@ -1,4 +1,6 @@
-import 'package:oms_shared/app/app_pkg.dart';
+import '../../../core/utils/extensions/app_context.dart';
+import '../../../global_widgets/custom_button.dart';
+import '../controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
@@ -96,7 +98,7 @@ class OtpVerifyScreen extends HookConsumerWidget {
                                     color: isActive
                                         ? Colors
                                               .blue // একটিভ বক্সের বর্ডার
-                                        : (isFilled ? Colors.blue.withOpacity(0.5) : Colors.grey.shade700),
+                                        : (isFilled ? Colors.blue.withAlpha(128) : Colors.grey.shade700),
                                     width: isActive ? 2 : 1.5,
                                   ),
                                 ),
@@ -165,7 +167,7 @@ class OtpVerifyScreen extends HookConsumerWidget {
                         return const Text("Failed to fetch OTP duration");
                       }
                       final notifier = ref.read(countDownProvider(2).notifier);
-                      if (!notifier.state.isFinite || notifier.state == minutes * 60) {
+                      if (!notifier.seconds.isFinite || notifier.seconds == minutes * 60) {
                         notifier.start();
                       }
                       return CircularCountdownWidget(apiMinutes: minutes, email: email);
@@ -218,7 +220,7 @@ class CircularCountdownWidget extends ConsumerWidget {
               child: CircularProgressIndicator(
                 value: progress,
                 strokeWidth: strokeWidth,
-                backgroundColor: Colors.grey.withOpacity(0.2),
+                backgroundColor: Colors.grey.withAlpha(51),
                 valueColor: const AlwaysStoppedAnimation(Colors.blue),
               ),
             ),

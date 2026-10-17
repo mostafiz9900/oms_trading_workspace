@@ -1,23 +1,26 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
-import 'dart:ui' as ui;
 import 'dart:ui';
 
 import 'package:crypto/crypto.dart' as crypto_info;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:image/image.dart' as img;
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:popover/popover.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../app_pkg.dart';
+import '../extensions/app_context.dart';
+import 'hex_color.dart';
+import 'log_helper.dart';
+import '../../values/app_config.dart';
+import '../../values/colors.dart';
+import '../../values/dimens.dart';
+import '../../values/space.dart';
+import '../../values/storage.dart';
+import '../../../data/models/response/user_profile.dart';
+import '../../../data/services/storage_service.dart';
+import '../../../routes/app_routes.dart';
 
 final uuid = Uuid();
 
@@ -36,7 +39,8 @@ class Helpers {
   }
 
   static Future<String> getSecureDeviceIdLogin() async {
-    String deviceId = await StorageService.read(StorageConstants.deviceSecIdKey);
+    // Missing key → empty id (the server rejects it) instead of a TypeError.
+    String deviceId = await StorageService.read(StorageConstants.deviceSecIdKey) ?? '';
     printLog('shat key:: $deviceId');
     return deviceId;
   }
@@ -90,19 +94,6 @@ class Helpers {
     }
   }
 
-  static Color getChangeColor(num? d) {
-    if (d == null) return Colors.grey; // default
-    if (d > 0) return Colors.green; // gain
-    if (d < 0) return Colors.red; // loss
-    return Colors.grey; // unchanged / zero
-  }
-
-  static IconData getTrendIcon(num? d) {
-    if (d == null || d == 0) return Icons.remove; // neutral
-    if (d > 0) return Icons.arrow_drop_up; // up arrow
-    return Icons.arrow_drop_down; // down arrow
-  }
-
   static List<T> sortByTstDesc<T>(List<T> list, String Function(T) getTst) {
     // Parse each timestamp once, not twice per comparison.
     final keyed = [for (final e in list) (e, parseTst(getTst(e)))];
@@ -111,11 +102,6 @@ class Helpers {
       list[i] = keyed[i].$1;
     }
     return list;
-  }
-
-  // Save biometric enabled flag
-  static Future<void> setBiometricEnabled(bool enabled) async {
-    await StorageService.save(StorageConstants.biometricEnabled, enabled ? 'true' : 'false');
   }
 
   // Check if biometric is enabled
@@ -156,25 +142,6 @@ class Helpers {
     }
   }
 
-  static formatDisplayDate(String date) {
-    try {
-      // ইনপুট ফরম্যাট: 15/07/2026
-      final DateFormat inputFormat = DateFormat("dd/MM/yyyy");
-      // আউটপুট ফরম্যাট: 15-Jul-26
-      final DateFormat outputFormat = DateFormat("dd-MMM-yy");
-
-      final DateTime dateTime = inputFormat.parse(date);
-      return outputFormat.format(dateTime);
-    } catch (e) {
-      // এরর হলে মূল স্ট্রিংটিই রিটার্ন করবে
-      return date;
-    }
-  }
-
-  static String formatNumber(num number) {
-    return NumberFormat.compact().format(number);
-  }
-
   static String formatDouble(double value) {
     return value.toStringAsFixed(2);
   }
@@ -192,42 +159,6 @@ class Helpers {
     } catch (e) {
       printLog('Error parsing timestamp "$timestamp": $e');
       return null;
-    }
-  }
-
-  static int calculateHoursAgo(String timeString) {
-    // Get the current date and time
-    DateTime now = DateTime.now();
-
-    // Split the time string into hours, minutes, seconds, and milliseconds
-    List<String> timeParts = timeString.split(":");
-    int hours = int.parse(timeParts[0]);
-    int minutes = int.parse(timeParts[1]);
-    List<String> secondsParts = timeParts[2].split(".");
-    int seconds = int.parse(secondsParts[0]);
-    int milliseconds = int.parse(secondsParts[1]);
-
-    // Create a DateTime object for the provided time, using today's date
-    DateTime parsedTime = DateTime(now.year, now.month, now.day, hours, minutes, seconds, milliseconds);
-
-    // Calculate the difference in hours
-    Duration difference = now.difference(parsedTime);
-
-    // Return the difference in hours
-    return difference.inHours;
-  }
-
-  static String calculateTimeDifferenceBetween({required DateTime startDate, DateTime? endDate}) {
-    DateTime currentDate = endDate ?? DateTime.now();
-    int seconds = currentDate.difference(startDate).inSeconds;
-    if (seconds < 60) {
-      return '$seconds second';
-    } else if (seconds >= 60 && seconds < 3600) {
-      return '${currentDate.difference(startDate).inMinutes.abs()} minute';
-    } else if (seconds >= 3600 && seconds < 86400) {
-      return '${currentDate.difference(startDate).inHours} hour';
-    } else {
-      return '${currentDate.difference(startDate).inDays} days';
     }
   }
 
@@ -255,15 +186,6 @@ class Helpers {
     }
   }
 
-  static List<DateTime> getNextNDays(int n) {
-    List<DateTime> dates = [];
-    DateTime now = DateTime.now();
-    for (int i = 1; i <= n; i++) {
-      dates.add(now.add(Duration(days: i)));
-    }
-    return dates;
-  }
-
   static double? toDouble(dynamic value) {
     if (value == null) return null;
     if (value is num) return value.toDouble();
@@ -271,16 +193,12 @@ class Helpers {
     return null;
   }
 
-  static BoxDecoration customCircularDecoretion(BuildContext context, Color? color, double value) {
-    return BoxDecoration(color: color, borderRadius: BorderRadius.circular(value));
-  }
-
   static void showCustomDialog(BuildContext context, {required Widget child}) {
     showGeneralDialog(
       context: context,
       barrierDismissible: false,
       barrierLabel: 'custom_dialog',
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: Colors.black.withAlpha(128),
       transitionDuration: const Duration(milliseconds: 350),
       pageBuilder: (context, animation, secondaryAnimation) {
         return SafeArea(
@@ -389,115 +307,6 @@ class Helpers {
     }
   }
 
-  static void openDialog(void Function()? onPressed) {
-    Get.dialog(
-      AlertDialog(
-        title: const Text("sebaghar"),
-        content: const Text("yourAreNotOldPatient"),
-        actions: [
-          TextButton(onPressed: onPressed, child: const Text("ok")),
-        ],
-      ),
-    );
-  }
-
-  static AppBar customAppBar({
-    String? title,
-    bool? search,
-    bool? appointmentBack,
-    onPressed,
-    bool? searchDoctor,
-    closeSearch,
-    searchSaved,
-    hintText,
-    enabled,
-    editController,
-    keyboardType,
-    clearSearch,
-    onchangeSearch,
-  }) {
-    return AppBar(
-      backgroundColor: Get.theme.primaryColor,
-      centerTitle: false,
-      scrolledUnderElevation: 0.0,
-      automaticallyImplyLeading: false,
-      title: searchDoctor == true
-          ? Row(
-              children: [
-                IconButton(
-                  onPressed: closeSearch,
-                  icon: Icon(Icons.arrow_back, color: Get.theme.iconTheme.color),
-                ),
-                //change
-                Flexible(
-                  child: TextFormField(
-                    keyboardType: keyboardType,
-                    controller: editController,
-                    autofocus: true,
-                    onChanged: onchangeSearch,
-                    enabled: enabled,
-                    cursorColor: Colors.white,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintStyle: const TextStyle(color: Colors.white),
-                      hintText: hintText,
-                      border: InputBorder.none,
-                    ),
-                    onSaved: searchSaved,
-                  ),
-                ),
-                IconButton(
-                  onPressed: clearSearch,
-                  icon: Icon(Icons.close, color: Get.theme.iconTheme.color),
-                ),
-              ],
-            )
-          : Row(
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: Row(
-                    children: [
-                      IconButton(
-                        onPressed: () => appointmentBack == true ? Get.offNamed(Routes.HOME) : Get.back(),
-                        icon: Icon(Icons.arrow_back, color: Get.theme.iconTheme.color),
-                      ),
-                      Text(title!.tr, style: Get.theme.appBarTheme.titleTextStyle),
-                    ],
-                  ),
-                ),
-                search == true
-                    ? IconButton(
-                        onPressed: onPressed,
-                        icon: Icon(Icons.search, color: Get.theme.iconTheme.color),
-                      )
-                    : Container(),
-              ],
-            ),
-    );
-  }
-
-  static BoxDecoration createButtonDecoration({double? radius}) {
-    return BoxDecoration(
-      borderRadius: BorderRadius.circular(radius ?? 0.0),
-      color: Colors.grey.withAlpha((0.13 * 255).toInt()),
-    );
-  }
-
-  static BoxDecoration createDropdownButtonDecoration({double? radius}) {
-    return BoxDecoration(
-      borderRadius: BorderRadius.circular(radius ?? 0.0),
-      color: Colors.white,
-    );
-  }
-
-  static Color fromHex(String hexString) {
-    final buffer = StringBuffer();
-    if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
-    buffer.write(hexString.replaceFirst('#', ''));
-    return Color(int.parse(buffer.toString(), radix: 16));
-  }
-
   static void snackbarForErorr({String? titleText, required String bodyText, double? topMargin}) {
     Get.snackbar(
       "",
@@ -546,28 +355,6 @@ class Helpers {
     );
   }
 
-  static void snackBarForSuccess({dynamic titleText, dynamic bodyText, double? topMargin}) {
-    Get.snackbar(
-      titleText,
-      bodyText,
-      snackPosition: SnackPosition.TOP,
-      margin: .only(top: topMargin ?? Get.height * 0.0, left: Get.width * 0.05, right: Get.width * 0.05),
-      backgroundColor: Colors.black,
-      colorText: Colors.white,
-    );
-  }
-
-  static void showSnackBarBuild({required BuildContext context, required String message}) {
-    final snackBar = SnackBar(
-      backgroundColor: Get.theme.primaryColor,
-      content: Text(
-        message,
-        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 15),
-      ),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
   static void snackbarForErorr2({String? titleText, required String bodyText, double? topMargin}) {
     Get.snackbar(
       "",
@@ -600,351 +387,6 @@ class Helpers {
     );
   }
 
-  //Time Of Day
-  static Future dayOfTime(BuildContext context) async {
-    final TimeOfDay? timePicker = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            datePickerTheme: DatePickerThemeData(
-              headerBackgroundColor: Get.theme.primaryColor,
-              headerForegroundColor: Colors.white,
-              backgroundColor: Colors.white,
-            ),
-            colorScheme: ColorScheme.light(
-              primary: Get.theme.primaryColor,
-              // <-- SEE HERE  onPrimary: Colors.white, // <-- SEE HERE
-              onSecondary: Get.theme.primaryColor, // <-- SEE HERE  secondary: Get.theme.primaryColor, // <-- SEE HERE
-            ),
-            textButtonTheme: const TextButtonThemeData(
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    return '${int.parse(timePicker!.hourOfPeriod.toString().split('.')[0]) <= 9 ? "0${int.parse(timePicker.hourOfPeriod.toString().split('.')[0])}" : int.parse(timePicker.hourOfPeriod.toString().split('.')[0])} :${timePicker.minute <= 9 ? "0${timePicker.minute}" : timePicker.minute} ${timePicker.period.toString().split('.')[1]}';
-  }
-
-  //Time Of Day
-  static Future dayOfTimeDiagonstic(BuildContext context) async {
-    final TimeOfDay? timePicker = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            datePickerTheme: DatePickerThemeData(
-              headerBackgroundColor: Get.theme.primaryColor,
-              headerForegroundColor: Colors.white,
-              backgroundColor: Colors.white,
-            ),
-            colorScheme: ColorScheme.light(
-              primary: Get.theme.primaryColor,
-              // <-- SEE HERE  onPrimary: Colors.white, // <-- SEE HERE
-              onSecondary: Get.theme.primaryColor, // <-- SEE HERE  secondary: Get.theme.primaryColor, // <-- SEE HERE
-            ),
-            textButtonTheme: const TextButtonThemeData(
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    return '${int.parse(timePicker!.hourOfPeriod.toString().split('.')[0]) <= 9 ? "0${int.parse(timePicker.hourOfPeriod.toString().split('.')[0])}" : int.parse(timePicker.hourOfPeriod.toString().split('.')[0])} :${timePicker.minute <= 9 ? "0${timePicker.minute}" : timePicker.minute} ${timePicker.period.toString().split('.')[1]}';
-  }
-
-  // Date picker
-  static Future<String?> datePickerShow([String? dateFormate]) async {
-    DateTime? pickedDate = await showDatePicker(
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            datePickerTheme: DatePickerThemeData(
-              headerBackgroundColor: Get.theme.primaryColor,
-              headerForegroundColor: Colors.white,
-              backgroundColor: Colors.white,
-            ),
-            colorScheme: ColorScheme.light(
-              primary: Get.theme.primaryColor,
-              // <-- SEE HERE  onPrimary: Colors.white, // <-- SEE HERE
-              onSecondary: Get.theme.primaryColor, // <-- SEE HERE  secondary: Get.theme.primaryColor, // <-- SEE HERE
-            ),
-            textButtonTheme: const TextButtonThemeData(
-            ),
-          ),
-          child: child!,
-        );
-      },
-      context: Get.overlayContext!,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1950),
-      lastDate: DateTime(2100),
-    );
-
-    if (pickedDate != null) {
-      printLog(pickedDate);
-      String formattedDate = DateFormat(dateFormate ?? 'yyyy-MM-dd').format(pickedDate);
-      printLog(formattedDate);
-
-      return formattedDate;
-    } else {}
-    return null;
-  }
-
-  static Future<DateTime?> showDateTimePicker({
-    required BuildContext context,
-    DateTime? initialDate,
-    DateTime? firstDate,
-    DateTime? lastDate,
-  }) async {
-    initialDate ??= DateTime.now();
-    firstDate ??= initialDate.subtract(const Duration(days: 365 * 100));
-    lastDate ??= firstDate.add(const Duration(days: 365 * 200));
-
-    final DateTime? selectedDate = await showDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: firstDate,
-      lastDate: lastDate,
-      barrierDismissible: false,
-      helpText: "selectDate.",
-      cancelText: "cancel",
-      confirmText: "ok",
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            datePickerTheme: DatePickerThemeData(
-              headerBackgroundColor: Get.theme.primaryColor,
-              headerForegroundColor: Colors.white,
-              backgroundColor: Colors.white,
-            ),
-            colorScheme: ColorScheme.light(
-              primary: Get.theme.primaryColor,
-              // <-- SEE HERE  onPrimary: Colors.white, // <-- SEE HERE
-              onSecondary: Get.theme.primaryColor, // <-- SEE HERE  secondary: Get.theme.primaryColor, // <-- SEE HERE
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: ButtonStyle(
-                backgroundColor: WidgetStateColor.resolveWith((states) => ColorConstants.primaryColorLight),
-                foregroundColor: WidgetStateColor.resolveWith((states) => Colors.white),
-                overlayColor: WidgetStateColor.resolveWith((states) => ColorConstants.primaryColorLight),
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (selectedDate == null) return null;
-
-    if (!context.mounted) return selectedDate;
-
-    final TimeOfDay? selectedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.fromDateTime(selectedDate),
-      barrierDismissible: false,
-      cancelText: "cancel",
-      confirmText: "ok",
-      helpText: "selectDate",
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            // This uses the _timePickerTheme defined above
-            timePickerTheme: timePickerTheme,
-            textButtonTheme: TextButtonThemeData(
-              style: ButtonStyle(
-                backgroundColor: WidgetStateColor.resolveWith((states) => ColorConstants.primaryColorLight),
-                foregroundColor: WidgetStateColor.resolveWith((states) => Colors.white),
-                overlayColor: WidgetStateColor.resolveWith((states) => ColorConstants.primaryColorLight),
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    var result = selectedTime == null
-        ? selectedDate
-        : DateTime(selectedDate.year, selectedDate.month, selectedDate.day, selectedTime.hour, selectedTime.minute);
-    return result;
-  }
-
-  static final timePickerTheme = TimePickerThemeData(
-    hourMinuteShape: RoundedRectangleBorder(
-      borderRadius: const BorderRadius.all(Radius.circular(8)),
-      side: BorderSide(color: ColorConstants.primaryColorLight, width: 2),
-    ),
-    dayPeriodBorderSide: BorderSide(color: ColorConstants.primaryColorLight, width: 4),
-    hourMinuteColor: WidgetStateColor.resolveWith(
-      (states) => states.contains(WidgetState.selected) ? ColorConstants.primaryColorLight : Colors.blueGrey.shade200,
-    ),
-    hourMinuteTextColor: WidgetStateColor.resolveWith(
-      (states) => states.contains(WidgetState.selected) ? Colors.white : ColorConstants.primaryColorLight,
-    ),
-    dialHandColor: ColorConstants.primaryColorLight,
-    entryModeIconColor: ColorConstants.primaryColorLight,
-  );
-
-  static Future<String?> datePickerShowForBirthDay([String? dateFormate]) async {
-    DateTime? pickedDate = await showDatePicker(
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: ColorConstants.primaryColorLight,
-              onPrimary: Colors.white,
-              onSurface: ColorConstants.primaryColorLight,
-            ),
-            textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(foregroundColor: Colors.red)),
-          ),
-          child: child!,
-        );
-      },
-      context: Get.overlayContext!,
-      initialDate: DateTime(DateTime.now().year - 18),
-      firstDate: DateTime(1950),
-      lastDate: DateTime(DateTime.now().year - 18),
-    );
-
-    if (pickedDate != null) {
-      printLog(pickedDate);
-      String formattedDate = DateFormat(dateFormate ?? 'yyyy-MM-dd').format(pickedDate);
-      printLog(formattedDate);
-
-      return formattedDate;
-    } else {}
-    return null;
-  }
-
-  static monthYear(String dateStart) {
-    DateFormat inputFormat = DateFormat('dd/MM/yyyy hh:mm:ss a');
-    DateTime input = inputFormat.parse(dateStart);
-    String result = DateFormat('MM/yyyy').format(input);
-    return result;
-  }
-
-  static String formatTime(String time) {
-    String dateTime = DateFormat.jm().format(DateFormat("hh:mm:ss").parse(time));
-    return dateTime;
-  }
-
-  static String checkCardNumber(String cardnumber) {
-    String number = "";
-    final String stripped = cardnumber.replaceAll(RegExp(r'[^\d]'), '');
-    if (stripped.length > 8) {
-      final String middle = cardnumber.substring(4, 6).trim();
-      final String middle1 = cardnumber.substring(6, cardnumber.length - 8).trim().replaceAll(RegExp(r'\d'), 'X');
-      final String middle2 = cardnumber.substring(8, cardnumber.length - 4).trim().replaceAll(RegExp(r'\d'), 'X');
-      number =
-          stripped.substring(0, 4) +
-          " " +
-          middle +
-          "" +
-          middle1 +
-          " " +
-          middle2 +
-          ' ' +
-          stripped.substring(stripped.length - 4);
-    }
-
-    return number;
-  }
-
-  static String cardMaskingStart(String cardnumber) {
-    String number = "";
-
-    final String stripped = cardnumber.replaceAll(RegExp(r'[^\d]'), '');
-    if (stripped.length > 8) {
-      final String middle = cardnumber
-          .trim()
-          .substring(6, cardnumber.length - 4)
-          .replaceAll(RegExp(r'\d'), '*')
-          .replaceAll(" ", "");
-
-      number = stripped.substring(0, 6) + middle + stripped.substring(stripped.length - 4);
-    }
-    return number.trim();
-  }
-
-  static void checkLogin({required VoidCallback onPressed}) async {
-    if (await StorageService.read(StorageConstants.userInfo) == null) {
-      Helpers.openAuthAlertDialog(() {
-        Get.offAndToNamed(Routes.LOGIN);
-      });
-    } else {
-      onPressed();
-    }
-  }
-
-  static openAuthAlertDialog(VoidCallback? onPressed) {
-    Get.dialog(
-      AlertDialog(
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
-        elevation: 0.0,
-        titlePadding: .zero,
-
-        //আপনাকে লগইন করতে হবে।\n আপনি কি রাজি?
-        insetPadding: .zero,
-        contentPadding: .zero,
-        actionsPadding: .zero,
-        actions: [
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AppSpace.spaceH10,
-              const Text("youUstLoginDoYouAgree", textAlign: TextAlign.center),
-              AppSpace.spaceH10,
-              Container(
-                padding: const .only(right: 10, left: 10, top: 10),
-                child: Row(
-                  mainAxisAlignment: .spaceAround,
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () => Get.back(),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey.shade300,
-                          minimumSize: const Size(80, 40),
-                          padding: const .symmetric(vertical: 5),
-                          textStyle: const TextStyle(fontSize: 15),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22.0)),
-                        ),
-                        child: const Text("no", style: TextStyle(color: Colors.black)),
-                      ),
-                    ),
-                    AppSpace.spaceW20,
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: onPressed,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Get.theme.primaryColor,
-                          minimumSize: const Size(80, 40),
-                          padding: const .symmetric(vertical: 5),
-                          textStyle: const TextStyle(fontSize: 15),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22.0)),
-                        ),
-                        child: const Text("yes", style: TextStyle(color: Colors.white)),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              AppSpace.spaceH10,
-            ],
-          ),
-        ],
-      ),
-      barrierDismissible: false,
-    );
-  }
-
   //                                             ? ctx.textColor
   //                                             : topShareControl.activeSector == model
   //                                             ? ColorConstants.blueColor
@@ -965,7 +407,7 @@ class Helpers {
   //                                               ? ctx.textColor
   //                                               : topShareControl.activeSortByAscDesc == model
   //                                               ? ColorConstants.blueColor
-  static openDropdownShare(
+  static dynamic openDropdownShare(
     BuildContext ctx, {
     required String title,
     required List<String> menuLists,
@@ -1010,7 +452,7 @@ class Helpers {
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
                         decoration: BoxDecoration(
-                          border: Border(bottom: BorderSide(color: Colors.grey.withOpacity(0.2))),
+                          border: Border(bottom: BorderSide(color: Colors.grey.withAlpha(51))),
                         ),
                         child: Row(
                           children: [
@@ -1037,7 +479,7 @@ class Helpers {
     );
   }
 
-  static openLoginAlertDialog(VoidCallback? onPressed) {
+  static dynamic openLoginAlertDialog(VoidCallback? onPressed) {
     Get.dialog(
       AlertDialog(
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
@@ -1125,7 +567,7 @@ class Helpers {
     });
   }
 
-  static openCustomAlertDialog(VoidCallback? onPressed, {String? title, String? bodyText}) {
+  static dynamic openCustomAlertDialog(VoidCallback? onPressed, {String? title, String? bodyText}) {
     Get.dialog(
       AlertDialog(
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
@@ -1204,58 +646,6 @@ class Helpers {
     );
   }
 
-  static openWelcomeDialog(VoidCallback? onPressed) {
-    Get.dialog(
-      AlertDialog(
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
-        elevation: 0.0,
-        titlePadding: .zero,
-        insetPadding: .zero,
-        contentPadding: .zero,
-        actionsPadding: .zero,
-        actions: [
-          SizedBox(
-            width: Get.width - 40,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                AppSpace.spaceH30,
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(60 / 2),
-                  child: Image.asset(AssetsConstants.appLogo, height: 60, width: 60),
-                ),
-                AppSpace.spaceH10,
-                const Text("welcomeToSebaGhar"),
-                AppSpace.spaceH10,
-                const Text("youHaveSuccessfullyChangedYourFamilyAccount", textAlign: TextAlign.center),
-                AppSpace.spaceH10,
-                Row(
-                  mainAxisAlignment: .spaceAround,
-                  children: [
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          Get.back();
-                        },
-                        child: Container(
-                          height: 50,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(color: ColorConstants.primaryColorLight),
-                          child: const Text("ok", style: TextStyle(color: Colors.white)),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      barrierDismissible: false,
-    );
-  }
-
   //passwordVisivilityMethod
   static IconButton passwordVisivilityMethod(void Function()? onPressed, bool isVisible) {
     return IconButton(
@@ -1265,226 +655,4 @@ class Helpers {
     );
   }
 
-  static String? validateEmail(String? value) {
-    const pattern =
-        r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'"
-        r'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-'
-        r'\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*'
-        r'[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4]'
-        r'[0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9]'
-        r'[0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\'
-        r'x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])';
-    final regex = RegExp(pattern);
-    return value!.isNotEmpty && !regex.hasMatch(value) ? 'Enter a valid email address' : null;
-  }
-
-  static Text appDiveder() {
-    return Text(
-      "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------",
-      style: TextStyle(color: Colors.grey.shade300),
-      maxLines: 1,
-      overflow: TextOverflow.visible,
-    );
-  }
-
-  static String handleErrorApi(Response response) {
-    var statusCode = response.statusCode;
-    switch (statusCode) {
-      case 400:
-        printLog('Bad request status code : $statusCode');
-        return "Bad request status code : $statusCode";
-      case 401:
-        printLog('Unauthorized status code : $statusCode');
-        return "Unauthorized status code : $statusCode";
-      case 404:
-        printLog('Not found status code : $statusCode');
-        return "Not found status code : $statusCode";
-      default:
-        printLog('Unknown error occurred status code : $statusCode');
-        return "Unknown error occurred status code : $statusCode";
-    }
-  }
-
-  static String handleErrorException(error) {
-    if (error is SocketException) {
-      printLog('Network error : $error');
-      return "Network error : $error";
-    } else if (error is TimeoutException) {
-      printLog('Request timed out : $error');
-      return "Request timed out : $error";
-    } else {
-      printLog('Unknown error $error');
-      return "Unknown error : $error";
-    }
-  }
-
-  static Future<String?> picImage(ImageSource type) async {
-    try {
-      final imagePicker = await ImagePicker().pickImage(
-        source: type == ImageSource.camera ? ImageSource.camera : ImageSource.gallery,
-        imageQuality: 80,
-        maxHeight: 500,
-        maxWidth: 450,
-      );
-      if (imagePicker == null) return null;
-      final imageTemp = File(imagePicker.path);
-      final bytes = File(imagePicker.path).readAsBytesSync();
-      String img64 = base64Encode(bytes);
-      var imgDecode64 = base64Decode(img64);
-      printLog(imgDecode64);
-      printLog(imagePicker.path);
-      printLog(imageTemp);
-
-      return img64;
-    } on PlatformException catch (e) {
-      printLog("Failed to pick image: $e");
-    }
-    return null;
-  }
-
-  static Future<File?> tokeImageForFile(ImageSource type) async {
-    try {
-      final ImagePicker picker = ImagePicker();
-      final XFile? imagePicker = await picker.pickImage(
-        source: type == ImageSource.camera ? ImageSource.camera : ImageSource.gallery,
-        imageQuality: 80,
-        maxHeight: 500,
-        maxWidth: 450,
-      );
-      if (imagePicker == null) return null;
-      final imageTemp = File(imagePicker.path);
-      return imageTemp;
-    } on PlatformException catch (e) {
-      printLog("Failed to pick image: $e");
-    }
-    return null;
-  }
-
-  static Future<File?> selectVideo() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? pickedFile = await picker.pickMedia();
-    if (pickedFile != null) {
-      final videoFile = File(pickedFile.path);
-      return videoFile;
-    }
-    return null;
-  }
-
-  static Future<String?> saveBitmapToExtFilesDir(ui.Image bitmap, String fileName) async {
-    final directory = await getExternalStorageDirectory();
-    if (directory == null) {
-      return null; // Handle case where external storage is unavailable
-    }
-    final filePath = '${directory.path}/$fileName';
-    final file = File(filePath);
-
-    try {
-      await file.create(recursive: true); // Ensure directory exists
-      final sink = file.openWrite(mode: FileMode.write);
-      await saveImageToJPEGFile(bitmap, filePath);
-      await sink.flush();
-      await sink.close();
-      return filePath;
-    } catch (e) {
-      printLog('Error saving bitmap: $e'); // Log for debugging
-      return null;
-    }
-  }
-
-  static Future<void> saveImageToJPEGFile(ui.Image image, String filePath, {int quality = 100}) async {
-    Uint8List? bytes = await encodeToJpeg(image, quality);
-    File(filePath).writeAsBytesSync(bytes!);
-  }
-
-  static Future<Uint8List?> encodeToJpeg(ui.Image image, int quality) async {
-    try {
-      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
-      if (byteData == null) {
-        throw Exception("Failed to convert image to byte data.");
-      }
-
-      var byteList = byteData.buffer;
-
-      img.Image imgImage = img.Image.fromBytes(width: image.width, height: image.height, bytes: byteList);
-
-      return img.encodeJpg(imgImage, quality: quality);
-    } catch (e) {
-      printLog("Error encoding image to JPEG: $e");
-      return null;
-    }
-  }
-}
-
-extension ExtendedString on String {
-  bool get isValidName {
-    return !contains(RegExp(r'[0–9]'));
-  }
-}
-
-extension DateTimeFormat on DateTime {
-  String get ddMMyy => DateFormat("dd-MM-yy").format(this);
-
-  String ddMMyyyy(String formate) {
-    return DateFormat(formate).format(this);
-  }
-
-  String get yyyDDmm => DateFormat("yyyy-MM-dd").format(this);
-
-  String get mmYYYY => DateFormat("MM-yyyy").format(this);
-
-  String get eMMMd => DateFormat('E, MMM d').format(this);
-
-  String get mmDDyyHHmmA => DateFormat('MM/dd/yyyy hh:mm a').format(this);
-
-  String get yyyDDmmNumber => DateFormat("yyyyMMdd").format(this);
-  String get fullDateReadable => DateFormat("d MMMM, yyyy").format(this);
-
-  String get standardDate => DateFormat("dd MMM, yyyy").format(this);
-}
-
-extension StringExtension on String {
-  String toCapitalize() {
-    return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
-  }
-}
-
-class HexColor extends Color {
-  HexColor(String hexColor) : super(_getColorFromHex(hexColor));
-
-  static int _getColorFromHex(String hexColor) {
-    hexColor = hexColor.toUpperCase().replaceAll('#', '');
-    if (hexColor.length == 6) {
-      hexColor = 'FF$hexColor';
-    }
-    return int.parse(hexColor, radix: 16);
-  }
-}
-
-class AppPopover {
-  static void show({
-    required BuildContext context,
-    required String text,
-    PopoverDirection direction = PopoverDirection.top,
-    double radius = 10,
-    Color backgroundColor = Colors.white,
-    double arrowHeight = 10,
-    double arrowWidth = 20,
-    TextStyle? textStyle,
-    List<BoxShadow>? shadow,
-  }) {
-    showPopover(
-      context: context,
-      direction: direction,
-      radius: radius,
-      backgroundColor: backgroundColor,
-      barrierColor: Colors.black.withValues(alpha: 0.1),
-      arrowHeight: arrowHeight,
-      arrowWidth: arrowWidth,
-      shadow: shadow ?? const [BoxShadow(color: Colors.black12, blurRadius: 10)],
-      bodyBuilder: (context) => Padding(
-        padding: const EdgeInsets.all(12),
-        child: Text(text, style: textStyle ?? const TextStyle(fontSize: 12, color: Colors.black87, height: 1.4)),
-      ),
-    );
-  }
 }

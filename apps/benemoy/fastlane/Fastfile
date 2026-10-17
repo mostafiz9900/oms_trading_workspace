@@ -1,0 +1,145 @@
+# Benemoy store releases.
+#
+#   cd apps/benemoy
+#   fastlane android deploy     # signed App Bundle -> Google Play
+#   fastlane ios deploy         # signed IPA        -> TestFlight
+#
+# CI runs both on every push to the `prod` branch
+# (.github/workflows/release.yml). Secrets and local setup: docs/release.md.
+#
+# Versions: the version name comes from the app (pubspec.yaml for Android,
+# ios/Runner/Info.plist for iOS, same as the live app). The build number is
+# the highest one already in the store + 1, so it never has to be bumped by
+# hand.
+
+default_platform(:android)
+
+APP_ROOT = File.expand_path("..", __dir__)
+PROD_ENV = "env/prod.json"
+ANDROID_PACKAGE = "com.benemoysecurity.app"
+IOS_BUNDLE_ID = "com.benemoysecurities.app"
+IOS_TEAM_ID = "VGW88Y8A73"
+
+def flutter(args)
+  bin = ENV["FLUTTER"] || (system("command -v fvm > /dev/null") ? "fvm flutter" : "flutter")
+  Dir.chdir(APP_ROOT) { sh("#{bin} #{args}") }
+end
+
+def pubspec_build_number
+  File.read(File.join(APP_ROOT, "pubspec.yaml"))[/^version:\s*[\w.]+\+(\d+)/, 1].to_i
+end
+
+def require_files(*paths)
+  missing = paths.reject { |p| File.exist?(File.join(APP_ROOT, p)) }
+  UI.user_error!("Missing #{missing.join(', ')} (see docs/release.md)") unless missing.empty?
+end
+
+def require_env(*names)
+  missing = names.select { |n| ENV[n].to_s.strip.empty? }
+  UI.user_error!("Missing environment variables: #{missing.join(', ')} (see docs/release.md)") unless missing.empty?
+end
+
+def flutter_prod_build(kind, build_number, extra = "")
+  flutter("build #{kind} --release -t lib/main_prod.dart " \
+          "--dart-define-from-file=#{PROD_ENV} --build-number=#{build_number} #{extra}")
+end
+
+platform :android do
+  desc "Build a signed release App Bundle and upload it to Google Play"
+  lane :deploy do
+    require_files(PROD_ENV, "android/key.properties")
+    json_key = ENV["PLAY_SERVICE_ACCOUNT_JSON"]
+    json_key_path = ENV["PLAY_SERVICE_ACCOUNT_JSON_PATH"]
+    UI.user_error!("Set PLAY_SERVICE_ACCOUNT_JSON or PLAY_SERVICE_ACCOUNT_JSON_PATH") if json_key.to_s.empty? && json_key_path.to_s.empty?
+    play_auth = json_key.to_s.empty? ? { json_key: json_key_path } : { json_key_data: json_key }
+
+    in_store = %w[production beta alpha internal].flat_map do |track|
+      google_play_track_version_codes(package_name: ANDROID_PACKAGE, track: track, **play_auth)
+    rescue StandardError => e
+      UI.important("Could not read #{track} track: #{e.message}")
+      []
+    end
+    build_number = ([pubspec_build_number] + in_store.map(&:to_i)).max + 1
+    UI.message("Android versionCode: #{build_number}")
+
+    flutter_prod_build("appbundle", build_number)
+
+    upload_to_play_store(
+      package_name: ANDROID_PACKAGE,
+      aab: File.join(APP_ROOT, "build/app/outputs/bundle/release/app-release.aab"),
+      track: ENV["PLAY_TRACK"] || "production",
+      # A draft goes nowhere until someone presses "Roll out" in Play Console.
+      release_status: ENV["PLAY_RELEASE_STATUS"] || "draft",
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      **play_auth
+    )
+  end
+end
+
+platform :ios do
+  desc "Build a signed IPA and upload it to TestFlight"
+  lane :deploy do
+    require_files(PROD_ENV)
+    require_env("ASC_KEY_ID", "ASC_ISSUER_ID", "ASC_KEY_P8")
+    key_content = ENV["ASC_KEY_P8"]
+    api_key = app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_content: key_content,
+      is_key_content_base64: !key_content.include?("BEGIN PRIVATE KEY")
+    )
+
+    in_store = latest_testflight_build_number(api_key: api_key, app_identifier: IOS_BUNDLE_ID, initial_build_number: 0)
+    build_number = [pubspec_build_number, in_store.to_i].max + 1
+    UI.message("iOS build number: #{build_number}")
+
+    export = { method: "app-store-connect", teamID: IOS_TEAM_ID }
+    if ENV["IOS_DIST_CERT_P12_BASE64"].to_s.empty?
+      # Local Mac: the project's automatic signing with the Xcode account.
+      export[:signingStyle] = "automatic"
+    else
+      # CI: distribution certificate and App Store profile from secrets.
+      require_env("IOS_DIST_CERT_PASSWORD", "IOS_PROVISION_PROFILE_BASE64")
+      setup_ci
+      tmp = Dir.mktmpdir
+      cert = File.join(tmp, "dist.p12")
+      profile = File.join(tmp, "appstore.mobileprovision")
+      File.binwrite(cert, Base64.decode64(ENV["IOS_DIST_CERT_P12_BASE64"]))
+      File.binwrite(profile, Base64.decode64(ENV["IOS_PROVISION_PROFILE_BASE64"]))
+      import_certificate(
+        certificate_path: cert,
+        certificate_password: ENV["IOS_DIST_CERT_PASSWORD"],
+        keychain_name: ENV["MATCH_KEYCHAIN_NAME"],
+        keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"]
+      )
+      install_provisioning_profile(path: profile)
+      profile_name = FastlaneCore::ProvisioningProfile.name(profile)
+      update_code_signing_settings(
+        path: File.join(APP_ROOT, "ios/Runner.xcodeproj"),
+        use_automatic_signing: false,
+        team_id: IOS_TEAM_ID,
+        targets: ["Runner"],
+        bundle_identifier: IOS_BUNDLE_ID,
+        code_sign_identity: "Apple Distribution",
+        profile_name: profile_name
+      )
+      export[:signingStyle] = "manual"
+      export[:provisioningProfiles] = { IOS_BUNDLE_ID => profile_name }
+    end
+
+    export_plist = File.join(Dir.mktmpdir, "ExportOptions.plist")
+    File.write(export_plist, Plist::Emit.dump(export.transform_keys(&:to_s)))
+
+    flutter_prod_build("ipa", build_number, "--export-options-plist=#{export_plist}")
+
+    upload_to_testflight(
+      api_key: api_key,
+      ipa: Dir[File.join(APP_ROOT, "build/ios/ipa/*.ipa")].first,
+      # Submitting for App Store review stays a manual step.
+      skip_waiting_for_build_processing: true
+    )
+  end
+end

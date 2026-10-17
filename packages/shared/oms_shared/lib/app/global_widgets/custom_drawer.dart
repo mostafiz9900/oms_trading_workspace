@@ -1,7 +1,21 @@
 import 'dart:math';
 
 
-import '/app/app_pkg.dart';
+import '../core/theme/theme_service.dart';
+import '../core/utils/extensions/app_context.dart';
+import '../core/utils/helpers/app_helper.dart';
+import '../core/utils/helpers/log_helper.dart';
+import '../core/values/assets.dart';
+import '../core/values/colors.dart';
+import '../core/values/space.dart';
+import '../core/values/storage.dart';
+import '../data/services/storage_service.dart';
+import 'common_widget.dart';
+import 'custom_button.dart';
+import 'custom_edit_text_form_field.dart';
+import '../modules/home/controllers/home_controller.dart';
+import '../routes/app_routes.dart';
+import 'package:localization/localization.dart';
 
 import 'package:oms_shared/generated/assets.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +23,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../modules/home/controllers/password_reset_controller.dart';
+import '../modules/auth/controllers/password_reset_controller.dart';
 
-import '../modules/home/views/notification_view.dart';
+import '../modules/notifications/views/notification_view.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -225,7 +239,7 @@ class CustomDrawer extends StatelessWidget {
                               Helpers.showLoginRequiredDialog();
                             } else {
                               Get.back();
-                              final success = await homeCon.enableDisableBiometric(context);
+                              final success = await homeCon.enableDisableBiometric();
                               printLog('success:: $success');
                               if (success) {
                                 Helpers.snackBarForSuccess2(bodyText: "Biometric auth seccess");
@@ -511,7 +525,7 @@ class CheckTokenWidget extends ConsumerWidget {
     return tokenAsync.when(
       data: (refreshToken) => refreshToken != null ? child : const SizedBox(),
       loading: () => const SizedBox(),
-      error: (_, __) => const SizedBox(),
+      error: (_, _) => const SizedBox(),
     );
   }
 }

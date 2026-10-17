@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 601 200" width="601" height="200">
+  <defs>
+    <!-- Gold Gradient for Dark Background -->
+    <linearGradient id="goldTextDark" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FCE18D" />
+      <stop offset="40%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#AA8529" />
+    </linearGradient>
+    <!-- Slight drop shadow to make the text pop -->
+    <filter id="shadowDarkText" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="2" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.6" />
+    </filter>
+  </defs>
+
+  <!-- Text Only Logo - Dark Theme -->
+  <text x="300.5" y="85" font-family="'Arial', Helvetica, sans-serif" font-weight="900" font-size="65" fill="url(#goldTextDark)" filter="url(#shadowDarkText)" text-anchor="middle" letter-spacing="2">FAKHRUL ISLAM</text>
+  <text x="300.5" y="165" font-family="'Arial', Helvetica, sans-serif" font-weight="900" font-size="65" fill="url(#goldTextDark)" filter="url(#shadowDarkText)" text-anchor="middle" letter-spacing="2">SECURITIES LTD.</text>
+</svg>

@@ -1,5 +1,12 @@
-import 'package:oms_shared/app/app_pkg.dart';
-import 'package:oms_shared/app/modules/onboarding/views/local_widget/create_new_account.dart';
+import '../../../core/utils/helpers/log_helper.dart';
+import '../../../core/values/assets.dart';
+import '../../../core/values/colors.dart';
+import '../../../core/values/space.dart';
+import '../../../global_widgets/custom_button.dart';
+import '../../../global_widgets/custom_edit_text_form_field.dart';
+import '../controllers/auth_controller.dart';
+import 'login_view.dart';
+import 'package:oms_shared/app/modules/onboarding/views/local_widgets/create_new_account.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 2400" width="1080" height="2400">
+  <defs>
+    <!-- Premium Gold Gradient -->
+    <linearGradient id="goldSplashLight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#EBC860" />
+      <stop offset="50%" stop-color="#C59634" />
+      <stop offset="100%" stop-color="#8F681A" />
+    </linearGradient>
+  </defs>
+
+  <!-- Light Background -->
+  <rect width="1080" height="2400" fill="#FFFFFF"/>
+  
+  <!-- Top Right Decorative Elements (Stock Market Trend Idea) -->
+  <g transform="translate(850, 150)" opacity="0.15">
+    <rect x="0" y="80" width="30" height="100" fill="#142152" rx="15"/>
+    <rect x="60" y="40" width="30" height="140" fill="#142152" rx="15"/>
+    <rect x="120" y="0" width="30" height="180" fill="#142152" rx="15"/>
+  </g>
+
+  <!-- Center Logo & Text -->
+  <g transform="translate(540, 1100)">
+    <!-- Big FIS Logo -->
+    <text x="0" y="0" font-family="'Arial', Helvetica, sans-serif" font-weight="900" font-size="280" font-style="italic" fill="url(#goldSplashLight)" text-anchor="middle" letter-spacing="-5">FIS</text>
+    
+    <!-- Company Name -->
+    <text x="0" y="120" font-family="'Arial', Helvetica, sans-serif" font-weight="900" font-size="60" fill="#142152" text-anchor="middle" letter-spacing="2">MD. FAKHRUL ISLAM</text>
+    <text x="0" y="180" font-family="'Arial', Helvetica, sans-serif" font-weight="bold" font-size="40" fill="#525B73" text-anchor="middle" letter-spacing="8">SECURITIES LIMITED</text>
+  </g>
+
+  <!-- Bottom Footer Info (From Website Ideas) -->
+  <g transform="translate(540, 2200)">
+    <text x="0" y="0" font-family="'Arial', Helvetica, sans-serif" font-size="35" fill="#142152" text-anchor="middle" letter-spacing="1">MEMBER OF DHAKA STOCK EXCHANGE</text>
+    <text x="0" y="60" font-family="'Arial', Helvetica, sans-serif" font-size="30" fill="#8892A8" text-anchor="middle" letter-spacing="3">ESTABLISHED IN 1987</text>
+  </g>
+</svg>

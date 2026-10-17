@@ -1,6 +1,10 @@
 import 'package:get/get.dart';
-import '../../../app_pkg.dart';
-import '../../../data/services/market_socket.service.dart';
+
+import '../../../core/utils/extensions/market_model_extensions.dart';
+import '../../../data/models/response/market_model.dart';
+import '../../../data/models/response/share_situation.dart';
+import '../../../data/services/market_socket_service.dart';
+
 // আপনার MarketModelExtensions ইম্পোর্ট করে নিবেন
 
 class TopShareController extends GetxController {
@@ -22,7 +26,13 @@ class TopShareController extends GetxController {
   String activeSortByAscDesc = "Desc";
 
   List<String> sortByCompanyTypeMenuList = ["All"];
-  List<String> sortByMenuList = ["A-Z", "Change(%)", "Value", "Volume", "Trade"];
+  List<String> sortByMenuList = [
+    "A-Z",
+    "Change(%)",
+    "Value",
+    "Volume",
+    "Trade",
+  ];
   List<String> sortByAscDescMenuList = ["Asc", "Desc"];
 
   List<MarketModel> marketFeedSortList = <MarketModel>[];
@@ -38,14 +48,16 @@ class TopShareController extends GetxController {
 
     _updateShareSituationState();
 
-    _debounceWorker = debounce(marketService.marketFeedList, (List<MarketModel> marketList) {
-      if (marketList.isNotEmpty) {
-        if (sortByCompanyTypeMenuList.length <= 1) {
-          setCompanySectorList();
-        }
-        applyAllFiltersAndSort();
-      }
-    }, time: const Duration(milliseconds: 500));
+    // _debounceWorker = debounce(marketService.marketFeedList, (
+    //   List<MarketModel> marketList,
+    // ) {
+    //   if (marketList.isNotEmpty) {
+    //     if (sortByCompanyTypeMenuList.length <= 1) {
+    //       setCompanySectorList();
+    //     }
+    //     applyAllFiltersAndSort();
+    //   }
+    // }, time: const Duration(milliseconds: 500));
 
     if (marketFeedList.isNotEmpty) {
       setCompanySectorList();
@@ -62,12 +74,46 @@ class TopShareController extends GetxController {
     super.onClose();
   }
 
+  String mapDurationToExtensionFormat(String duration) {
+    switch (duration) {
+      case "Weekly":
+        return "1W";
+      case "15 Day":
+        return "2W";
+      case "Monthly":
+        return "1M";
+      case "6 Month":
+        return "6M";
+      case "Yearly":
+        return "1Y";
+      case "Daily":
+      default:
+        return "1D";
+    }
+  }
+
+  // double _getChangeValue(MarketModel m, String duration) {
+  //   // ekhane public function call hobe
+  //   return m.getChangeByDuration(mapDurationToExtensionFormat(duration));
+  // }
+
   void updateSingleRowFromService(MarketModel updatedModel) {
-    int sortIndex = marketFeedSortList.indexWhere((e) => e.orderBook == updatedModel.orderBook);
+    int sortIndex = marketFeedSortList.indexWhere(
+      (e) => e.orderBook == updatedModel.orderBook,
+    );
     if (sortIndex != -1) {
       marketFeedSortList[sortIndex] = updatedModel;
       update(['${updatedModel.orderBook}']);
     }
+  }
+
+  MarketModel resolveMarketModelForRow(MarketModel initialModel) {
+    if (initialModel.orderBook == null) return initialModel;
+
+    return marketFeedSortList.firstWhere(
+      (element) => element.orderBook == initialModel.orderBook,
+      orElse: () => initialModel,
+    );
   }
 
   void setCompanySectorList() {
@@ -88,7 +134,9 @@ class TopShareController extends GetxController {
   void setActiveTopMenuTopShare(String? value) {
     if (value == null || value == activeTopMenuTopShare) return;
     activeTopMenuTopShare = value;
-    activeSortByCompany = "Change(%)";
+    activeSortByCompany = "Sort By";
+    activeSortByAscDesc = "Desc";
+
     _updateShareSituationState();
     applyAllFiltersAndSort();
   }
@@ -119,31 +167,58 @@ class TopShareController extends GetxController {
   void applyAllFiltersAndSort() {
     List<MarketModel> filteredList = List<MarketModel>.from(marketFeedList);
 
+    // 1. Sector Filter
     if (activeSector.toLowerCase() != "all" && activeSector.isNotEmpty) {
       filteredList = filteredList
-          .where((e) => (e.sector?.trim().toUpperCase() ?? '') == activeSector.trim().toUpperCase())
+          .where(
+            (e) =>
+                (e.sector?.trim().toUpperCase() ?? '') ==
+                activeSector.trim().toUpperCase(),
+          )
           .toList();
     }
 
+    // 2. Base Filters based on Top Menu (DSE rules: exclude 0 volume/value)
     switch (activeTopMenuTopShare) {
       case "Gainer":
         filteredList = filteredList
-            .where((e) => _getChangeValue(e, activeDurationFilter) > 0 && (e.volume ?? 0) > 0)
+            .where(
+              (e) =>
+                  _getChangeValue(e, activeDurationFilter) > 0 &&
+                  (e.volume ?? 0) > 0,
+            )
             .toList();
         break;
       case "Loser":
         filteredList = filteredList
-            .where((e) => _getChangeValue(e, activeDurationFilter) < 0 && (e.volume ?? 0) > 0)
+            .where(
+              (e) =>
+                  _getChangeValue(e, activeDurationFilter) < 0 &&
+                  (e.volume ?? 0) > 0,
+            )
             .toList();
         break;
       case "Unchanged":
-        filteredList = filteredList.where((e) => _getChangeValue(e, activeDurationFilter) == 0).toList();
+        filteredList = filteredList
+            .where(
+              (e) =>
+                  _getChangeValue(e, activeDurationFilter) == 0 &&
+                  (e.volume ?? 0) > 0,
+            )
+            .toList();
+        break;
+      case "Value":
+        filteredList = filteredList.where((e) => (e.val ?? 0) > 0).toList();
+        break;
+      case "Volume":
+        filteredList = filteredList.where((e) => (e.volume ?? 0) > 0).toList();
         break;
       case "Trade":
         filteredList = filteredList.where((e) => (e.trades ?? 0) > 0).toList();
         break;
     }
 
+    // 3. Determine Sort Type
     String currentSort = activeSortByCompany;
     if (currentSort == "Sort By") {
       switch (activeTopMenuTopShare) {
@@ -159,36 +234,49 @@ class TopShareController extends GetxController {
         case "A-Z":
           currentSort = "A-Z";
           break;
+        case "Gainer":
+        case "Loser":
+        case "Unchanged":
         default:
           currentSort = "Change(%)";
           break;
       }
     }
 
+    // 4. Execute Sorting
     filteredList.sort((a, b) {
       int sortResult = 0;
       switch (currentSort) {
         case "A-Z":
-          // 🚀 Extension এর displayName প্রোপার্টি ব্যবহার করা হলো
           sortResult = a.displayName.compareTo(b.displayName);
           break;
         case "Value":
           sortResult = (a.val ?? 0.0).compareTo(b.val ?? 0.0);
           break;
         case "Volume":
-          sortResult = _getVolumeValue(a, activeDurationFilter).compareTo(_getVolumeValue(b, activeDurationFilter));
+          sortResult = _getVolumeValue(
+            a,
+            activeDurationFilter,
+          ).compareTo(_getVolumeValue(b, activeDurationFilter));
           break;
         case "Trade":
           sortResult = (a.trades ?? 0).compareTo(b.trades ?? 0);
           break;
         case "Change(%)":
         default:
-          sortResult = _getChangeValue(a, activeDurationFilter).compareTo(_getChangeValue(b, activeDurationFilter));
+          sortResult = _getChangeValue(
+            a,
+            activeDurationFilter,
+          ).compareTo(_getChangeValue(b, activeDurationFilter));
           break;
       }
+
+      // 🚀 DSE Logic for Losers: Losers should show the most negative value at the top (Ascending mathematical order)
       if (activeTopMenuTopShare == "Loser" && currentSort == "Change(%)") {
         return activeSortByAscDesc == "Desc" ? sortResult : -sortResult;
       }
+
+      // For others, Descending means Largest to Smallest
       return activeSortByAscDesc == "Desc" ? -sortResult : sortResult;
     });
 
