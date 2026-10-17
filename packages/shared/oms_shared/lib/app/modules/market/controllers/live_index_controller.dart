@@ -27,7 +27,6 @@ class LiveIndexController extends GetxController {
   DateTime _lastIndexUIUpdateTime = DateTime.now();
   Timer? _indexUpdateTimer;
   final _chartThrottle = UpdateThrottle();
-  DateTime? _lastStaleSessionReload;
 
   // Exact param list from UI
   final List<String> chartParamList = ["1D", "1W", "1M", "1Y"];
@@ -142,26 +141,30 @@ class LiveIndexController extends GetxController {
     await Future.delayed(const Duration(milliseconds: 10));
 
     try {
-      List<IndexCandleModel> tempList = await _fetchCandles(
-        getCandleEndpoint(symbol, param),
-      );
+      final String url = getCandleEndpoint(symbol, param);
+      printLog('Fetching Index Chart Data: $url');
 
-      // 1D on a closed day (holiday, weekend, before the open) has no
-      // candles yet: show the last session that traded. Driven by the data,
-      // not by weekday, because Fri/Sat are sometimes declared trading days.
-      if (tempList.isEmpty && param == "1D") {
-        final to = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-        final from = to - _lastSessionLookback.inSeconds;
-        tempList = _lastSessionOnly(
-          await _fetchCandles(
-            getCandleEndpoint(symbol, param, fromTime: from, toTime: to),
-          ),
-        );
-      }
+      final response = await _connection.get(url);
+      printLog(response.body);
+      if (response.isOk) {
+        final data = response.body;
+        List<IndexCandleModel> tempList = [];
 
-      if (tempList.isNotEmpty) {
-        indexCandleList.clear();
-        indexCandleList.addAll(tempList);
+        if (data != null && data is List) {
+          tempList = indexCandleModelFromJson(data);
+        } else if (data != null && data is String) {
+          List<dynamic> parsedData = jsonDecode(data);
+          tempList = indexCandleModelFromJson(parsedData);
+        }
+
+        if (tempList.isNotEmpty) {
+          tempList.sort(
+            (a, b) => (a.timestamp ?? 0).compareTo(b.timestamp ?? 0),
+          );
+
+          indexCandleList.clear();
+          indexCandleList.addAll(tempList);
+        }
       }
     } catch (e) {
       printLog('❌ Exception: $e');
@@ -169,50 +172,6 @@ class LiveIndexController extends GetxController {
       isChartLoading = false;
       update(['index_chart']);
     }
-  }
-
-  /// Long enough to reach back over the longest Eid closure.
-  static const Duration _lastSessionLookback = Duration(days: 15);
-
-  /// DSE trades on Dhaka time (UTC+6, no DST), whatever the device zone.
-  static DateTime _dhakaDay(int epochSeconds) {
-    final t = DateTime.fromMillisecondsSinceEpoch(
-      epochSeconds * 1000,
-      isUtc: true,
-    ).add(const Duration(hours: 6));
-    return DateTime.utc(t.year, t.month, t.day);
-  }
-
-  Future<List<IndexCandleModel>> _fetchCandles(String url) async {
-    printLog('Fetching Index Chart Data: $url');
-
-    final response = await _connection.get(url);
-    printLog(response.body);
-    if (!response.isOk) return [];
-
-    final data = response.body;
-    List<IndexCandleModel> tempList = [];
-
-    if (data != null && data is List) {
-      tempList = indexCandleModelFromJson(data);
-    } else if (data != null && data is String) {
-      List<dynamic> parsedData = jsonDecode(data);
-      tempList = indexCandleModelFromJson(parsedData);
-    }
-
-    // 🚀 FIX: Array time onujayi perfectly sort kora holo jate elomolo point na ashe
-    tempList.sort((a, b) => (a.timestamp ?? 0).compareTo(b.timestamp ?? 0));
-    return tempList;
-  }
-
-  /// Keeps only the candles of the latest day in a sorted list.
-  static List<IndexCandleModel> _lastSessionOnly(
-    List<IndexCandleModel> sorted,
-  ) {
-    final candles = sorted.where((c) => c.timestamp != null).toList();
-    if (candles.isEmpty) return [];
-    final lastDay = _dhakaDay(candles.last.timestamp!);
-    return candles.where((c) => _dhakaDay(c.timestamp!) == lastDay).toList();
   }
 
   // ================= User Actions =================
@@ -267,20 +226,6 @@ class LiveIndexController extends GetxController {
     final lastDataPoint = indexCandleList.last;
     final lastDataTimestamp =
         lastDataPoint.timestamp ?? (now.millisecondsSinceEpoch ~/ 1000);
-
-    // The chart still shows an earlier session (market was closed when it
-    // loaded). Never glue today's ticks onto that day: reload instead, at
-    // most once a minute, so today's candles replace it once they exist.
-    if (_dhakaDay(lastDataTimestamp) !=
-        _dhakaDay(now.millisecondsSinceEpoch ~/ 1000)) {
-      final last = _lastStaleSessionReload;
-      if (!isChartLoading &&
-          (last == null || now.difference(last).inSeconds >= 60)) {
-        _lastStaleSessionReload = now;
-        fetchIndexCandleData(selectedSn, selectedChartParam);
-      }
-      return;
-    }
 
     // 🚀 Update running minute candle if it's the same minute
     if (lastDataTimestamp >= currentMinuteTimestamp) {
