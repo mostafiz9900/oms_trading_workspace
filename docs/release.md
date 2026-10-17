@@ -1,4 +1,14 @@
 # Releasing Benemoy (CI/CD)
+# 1. App Store Connect → Users and Access → Integrations → App Store Connect API
+#    Create a key with the "App Manager" role. The .p8 file downloads only once.
+gh secret set BENEMOY_ASC_KEY_ID                                  # paste the Key ID
+gh secret set BENEMOY_ASC_ISSUER_ID                               # paste the Issuer ID
+gh secret set BENEMOY_ASC_KEY_P8 < ~/keys/AuthKey_XXXX.p8
+
+# 2. Distribution certificate (.p12, exported from Keychain) + App Store provisioning profile
+base64 -i dist.p12 | gh secret set BENEMOY_IOS_DIST_CERT_P12_BASE64
+gh secret set BENEMOY_IOS_DIST_CERT_PASSWORD                      # the .p12 export password
+base64 -i Benemoy_AppStore.mobileprovision | gh secret set BENEMOY_IOS_PROVISION_PROFILE_BASE64
 
 ## What runs where
 
