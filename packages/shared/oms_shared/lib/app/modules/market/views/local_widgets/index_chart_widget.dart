@@ -1,4 +1,6 @@
-import '../../../../data/models/response/index_candle_model.dart' show IndexCandleModel;
+import '../../../../data/models/response/index_candle_model.dart'
+    show IndexCandleModel;
+
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
@@ -223,13 +225,11 @@ class IndexChartWidget extends StatelessWidget {
             // Professional Stock Chart
             Builder(
               builder: (context) {
+                // No weekday filter: the government sometimes declares a
+                // Friday/Saturday a trading day, and the server only returns
+                // candles for days that actually traded.
                 final List<IndexCandleModel> activeData = cont.indexCandleList
-                    .where((data) {
-                      if (data.time == null) return false;
-                      final int weekday = data.time!.weekday;
-                      return weekday != DateTime.friday &&
-                          weekday != DateTime.saturday;
-                    })
+                    .where((data) => data.time != null)
                     .toList();
 
                 if (activeData.isEmpty) {
