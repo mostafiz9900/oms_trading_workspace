@@ -1,6 +1,5 @@
 import 'dart:math';
 
-
 import '../core/theme/theme_service.dart';
 import '../core/utils/extensions/app_context.dart';
 import '../core/utils/helpers/app_helper.dart';
@@ -15,6 +14,7 @@ import 'custom_button.dart';
 import 'custom_edit_text_form_field.dart';
 import '../modules/home/controllers/home_controller.dart';
 import '../routes/app_routes.dart';
+
 import 'package:localization/localization.dart';
 
 import 'package:oms_shared/generated/assets.dart';
@@ -35,7 +35,13 @@ class CustomDrawer extends StatelessWidget {
     Get.find<HomeController>();
     final ThemeServices themeController = Get.find();
     bool isDark = Get.isDarkMode;
-    Widget customDivider = Divider(color: Colors.grey.shade300, height: 1, thickness: 1, indent: 1, endIndent: 1);
+    Widget customDivider = Divider(
+      color: Colors.grey.shade300,
+      height: 1,
+      thickness: 1,
+      indent: 1,
+      endIndent: 1,
+    );
     return GetBuilder<HomeController>(
       builder: (homeCon) {
         return Drawer(
@@ -161,7 +167,10 @@ class CustomDrawer extends StatelessWidget {
                         onTap: () {
                           Get.back();
                           int uniqueId = Random().nextInt(1000000);
-                          homeCon.subscribeTimeAndSalesNews('news', '$uniqueId');
+                          homeCon.subscribeTimeAndSalesNews(
+                            'news',
+                            '$uniqueId',
+                          );
                           Get.to(() => NotificationView());
                         },
                       ),
@@ -212,7 +221,10 @@ class CustomDrawer extends StatelessWidget {
                         onTap: () {
                           Get.back();
                           int uniqueId = Random().nextInt(1000000);
-                          Get.find<HomeController>().subscribeTimeAndSalesNews('news', '$uniqueId');
+                          Get.find<HomeController>().subscribeTimeAndSalesNews(
+                            'news',
+                            '$uniqueId',
+                          );
                           Get.to(() => NotificationView());
                         },
                       ),
@@ -230,21 +242,33 @@ class CustomDrawer extends StatelessWidget {
                       if (homeCon.userInfo.id != null) ...[
                         customDrawerItem(
                           context,
-                          image: GetPlatform.isIOS ? Assets.svgImageFaceId : Assets.svgImageFingerScan,
-                          title: homeCon.userInfo.b == false ? "Biometric Enable" : 'Biometric Disable',
+                          image: GetPlatform.isIOS
+                              ? Assets.svgImageFaceId
+                              : Assets.svgImageFingerScan,
+                          title: homeCon.userInfo.b == false
+                              ? "Biometric Enable"
+                              : 'Biometric Disable',
                           onTap: () async {
                             printLog('${homeCon.userInfo.b}');
                             Get.back();
-                            if (await StorageService.read(StorageConstants.token) == null) {
+                            if (await StorageService.read(
+                                  StorageConstants.token,
+                                ) ==
+                                null) {
                               Helpers.showLoginRequiredDialog();
                             } else {
                               Get.back();
-                              final success = await homeCon.enableDisableBiometric();
+                              final success = await homeCon
+                                  .enableDisableBiometric();
                               printLog('success:: $success');
                               if (success) {
-                                Helpers.snackBarForSuccess2(bodyText: "Biometric auth seccess");
+                                Helpers.snackBarForSuccess2(
+                                  bodyText: "Biometric auth seccess",
+                                );
                               } else {
-                                Helpers.snackbarForErorr2(bodyText: "Biometric auth failed");
+                                Helpers.snackbarForErorr2(
+                                  bodyText: "Biometric auth failed",
+                                );
                               }
                             }
                           },
@@ -291,7 +315,9 @@ class CustomDrawer extends StatelessWidget {
                       customDrawerItem(
                         context,
                         image: Assets.svgImageLogout,
-                        title: homeCon.userInfo.id == null ? 'Login' : 'Log out',
+                        title: homeCon.userInfo.id == null
+                            ? 'Login'
+                            : 'Log out',
                         onTap: () {
                           Get.back();
                           if (homeCon.userInfo.id == null) {
@@ -316,7 +342,9 @@ class CustomDrawer extends StatelessWidget {
 
   void showChangePasswordBottomSheet(BuildContext context) {
     // 🚀 1. Controller ইনিশিয়ালাইজ করা হলো এবং HomeRepository পাস করা হলো
-    final passResetCon = Get.put(PasswordResetController(Get.find<HomeController>().homeRepository));
+    final passResetCon = Get.put(
+      PasswordResetController(Get.find<HomeController>().homeRepository),
+    );
 
     // 🚀 2. ডায়ালগ ওপেন হওয়ার আগে আগের ডেটা ক্লিয়ার করা হলো
     passResetCon.oldPasswordController.clear();
@@ -346,7 +374,13 @@ class CustomDrawer extends StatelessWidget {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text('Change Password', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            const Text(
+                              'Change Password',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             const SizedBox(height: 16),
 
                             // 🟢 Old Password
@@ -383,13 +417,20 @@ class CustomDrawer extends StatelessWidget {
                                   : AssetsConstants.passwordVisibleSvg,
                               suffixOnTap: controller.togglePassword,
                               validator: (value) {
-                                if (value == null || value.isEmpty) return 'Password is required';
-                                if (value.length < 8) return 'Must be at least 8 characters long';
+                                if (value == null || value.isEmpty) {
+                                  return 'Password is required';
+                                }
+                                if (value.length < 8) {
+                                  return 'Must be at least 8 characters long';
+                                }
                                 if (!RegExp(r'(?=.*?[A-Z])').hasMatch(value)) {
                                   return 'Must contain at least 1 uppercase letter';
                                 }
-                                if (!RegExp(r'(?=.*?[0-9])').hasMatch(value)) return 'Must contain at least 1 number';
-                                if (!RegExp(r'(?=.*?[!@#\$&*~])').hasMatch(value)) {
+                                if (!RegExp(r'(?=.*?[0-9])').hasMatch(value)) {
+                                  return 'Must contain at least 1 number';
+                                }
+                                if (!RegExp(r'(?=.*?[!@#\$&*~])')
+                                    .hasMatch(value)) {
                                   return 'Must contain at least 1 special character';
                                 }
                                 return null;
@@ -402,7 +443,8 @@ class CustomDrawer extends StatelessWidget {
                               controller: controller.confirmPasswordController,
                               hintText: 'Confirm Password',
                               onChanged: (value) {},
-                              passwordVisible: !controller.confirmPasswordVisible,
+                              passwordVisible:
+                                  !controller.confirmPasswordVisible,
                               keyboardType: TextInputType.text,
                               prefixIcon: AssetsConstants.passwordIconSvg,
                               suffixIcon: controller.confirmPasswordVisible
@@ -410,8 +452,12 @@ class CustomDrawer extends StatelessWidget {
                                   : AssetsConstants.passwordVisibleSvg,
                               suffixOnTap: controller.toggleConfirmPassword,
                               validator: (value) {
-                                if (value == null || value.isEmpty) return 'Please confirm your password';
-                                if (value != controller.passwordController.text) return 'Passwords do not match';
+                                if (value == null || value.isEmpty) {
+                                  return 'Please confirm your password';
+                                }
+                                if (value != controller.passwordController.text) {
+                                  return 'Passwords do not match';
+                                }
                                 return null;
                               },
                             ),
@@ -422,7 +468,9 @@ class CustomDrawer extends StatelessWidget {
                             CustomButton(
                               isLoading: controller.isLoading,
                               onPressed: () {
-                                if (controller.formKey.currentState?.validate() ?? false) {
+                                if (controller.formKey.currentState
+                                        ?.validate() ??
+                                    false) {
                                   controller.changePassword();
                                 }
                               },
@@ -462,7 +510,11 @@ class CustomDrawer extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: Text(
         title.toUpperCase(),
-        style: Get.textTheme.titleMedium!.copyWith(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white),
+        style: Get.textTheme.titleMedium!.copyWith(
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: Colors.white,
+        ),
       ),
     );
   }
@@ -511,7 +563,8 @@ class CustomDrawer extends StatelessWidget {
 }
 
 final refreshTokenProvider = FutureProvider<String?>((ref) {
-  return StorageService.read(StorageConstants.refreshToken).then((value) => value as String?);
+  return StorageService.read(StorageConstants.refreshToken)
+      .then((value) => value as String?);
 });
 
 class CheckTokenWidget extends ConsumerWidget {

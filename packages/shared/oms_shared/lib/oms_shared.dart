@@ -4,7 +4,13 @@
 library;
 
 export 'package:broker_config/broker_config.dart'
-    show HouseProfile, HouseContact, HouseStoreListing, OmsEnvironment;
+    show
+        HouseProfile,
+        HouseContact,
+        HouseStoreListing,
+        OmsEnvironment,
+        StockExchange,
+        ExchangeMode;
 
 export 'app/data/services/notification_service.dart' show NotificationService;
 export 'bootstrap.dart' show OmsErrorReporter, runOmsApp;

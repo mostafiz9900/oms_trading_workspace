@@ -48,3 +48,10 @@
 - **Problem**: no tests on trading flows; some current behaviour looks wrong
 - **Decision**: tests lock CURRENT behaviour (incl. 3 questionable ones, see gotchas); behaviour changes only with user approval
 - **Tradeoffs**: tests must be updated when a questionable behaviour is fixed
+
+#### 2026-10-18 — Exchanges per house (DSE / CSE)
+- **Problem**: CSE support is coming; some houses will trade on CSE, most stay on DSE
+- **Options Considered**: `Set<StockExchange>` (allows an empty, invalid set → runtime check); CSE on/off bool (can't express CSE-only); 3-value enum · in `house_profile.dart` vs env JSON
+- **Decision**: `HouseProfile.exchangeMode` = `ExchangeMode.dseOnly` (default) | `cseOnly` | `dseAndCse`, set in each app's `house_profile.dart` (same for UAT and prod) and by `make new-app EXCHANGE=dse|cse|both`. Code reads `AppConfig.hasDse / hasCse / hasBothExchanges / defaultExchange`, never the house id. Flag only for now: no UI uses it. UI design in `.claude/tasks/plans/2026-10-18-exchange-ui-architecture.md`.
+- **Reason**: user's rule — every house DSE by default, DSE+CSE or CSE-only per house; an enum makes the invalid "no exchange" state impossible; committed code is reviewed, unlike git-ignored env files
+- **Revisit If**: a house needs different exchanges in UAT and prod

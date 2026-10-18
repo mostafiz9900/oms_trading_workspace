@@ -67,6 +67,18 @@ Fill in every `TODO`: legal name, phone, WhatsApp, email, website, office
 address. `appStoreId` and `appStoreShareUrl` exist only after the App Store
 listing is created; until then the `TODO` only produces a warning.
 
+**Stock exchanges** (`exchangeMode`), set by `EXCHANGE=` in `make new-app`:
+
+| House trades on | `make new-app …` | `house_profile.dart` |
+|---|---|---|
+| DSE only (default) | `EXCHANGE=dse` or nothing | `exchangeMode: ExchangeMode.dseOnly` |
+| CSE only | `EXCHANGE=cse` | `exchangeMode: ExchangeMode.cseOnly` |
+| DSE and CSE | `EXCHANGE=both` | `exchangeMode: ExchangeMode.dseAndCse` |
+
+Change it later by editing that one line. Shared code reads it through
+`AppConfig.hasDse` / `hasCse` / `hasBothExchanges` (UI does not use it yet; see
+`.claude/tasks/plans/2026-10-18-exchange-ui-architecture.md`).
+
 ## 6. Firebase and app icon
 
 ```sh

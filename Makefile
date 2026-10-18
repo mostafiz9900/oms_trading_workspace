@@ -70,8 +70,8 @@ test: ## Run all tests (unit + widget/UI tests)
 validate: ## Check env files, brand assets and app ids of every app
 	$(DART) run tool/validate_apps.dart
 
-new-app: ## Create a broker app: make new-app ID=x NAME="X Ltd" ANDROID_ID=com.x.app IOS_ID=com.x.app
-	$(DART) run tool/new_app.dart --id "$(ID)" --name "$(NAME)" --android-id "$(ANDROID_ID)" --ios-id "$(IOS_ID)"
+new-app: ## Create a broker app: make new-app ID=x NAME="X Ltd" ANDROID_ID=com.x.app IOS_ID=com.x.app [EXCHANGE=dse|cse|both]
+	$(DART) run tool/new_app.dart --id "$(ID)" --name "$(NAME)" --android-id "$(ANDROID_ID)" --ios-id "$(IOS_ID)" --exchange "$(or $(EXCHANGE),dse)"
 
 pods: ## Reinstall iOS pods when an iOS build complains about pods
 	cd apps/$(APP) && $(FLUTTER) pub get

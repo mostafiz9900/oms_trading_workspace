@@ -25,4 +25,6 @@ const houseProfile = HouseProfile(
         'https://play.google.com/store/apps/details?id=com.benemoysecurity.app&pcampaignid=web_share',
     appStoreShareUrl: 'https://apps.apple.com/us/app/benemoy/id6751455371',
   ),
+  // dseOnly (default) | cseOnly | dseAndCse
+  exchangeMode: ExchangeMode.dseOnly,
 );

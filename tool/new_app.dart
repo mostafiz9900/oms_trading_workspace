@@ -1,7 +1,8 @@
 // Creates a new broker-house app under apps/<id> from an existing app.
 //
 //   make new-app ID=fakhrul NAME="Fakhrul Securities" \
-//     ANDROID_ID=com.fakhrulsecurities.app IOS_ID=com.fakhrulsecurities.app
+//     ANDROID_ID=com.fakhrulsecurities.app IOS_ID=com.fakhrulsecurities.app \
+//     [EXCHANGE=dse|cse|both]   (default dse)
 //
 // Copies the template app's tracked files (never env profiles, signing keys
 // or Firebase files), swaps every native identity, and prints what is left
@@ -16,13 +17,22 @@ void main(List<String> args) {
   final androidId = options['android-id'];
   final iosId = options['ios-id'];
   final from = options['from'] ?? 'benemoy';
+  final exchange = options['exchange'] ?? 'dse';
 
   if (id == null || name == null || androidId == null || iosId == null) {
     _fail(
       'Usage: dart run tool/new_app.dart --id <id> --name "<Display Name>" '
-      '--android-id <com.x.app> --ios-id <com.x.app> [--from benemoy]',
+      '--android-id <com.x.app> --ios-id <com.x.app> '
+      '[--exchange dse|cse|both] [--from benemoy]',
     );
   }
+  const exchangeModes = {
+    'dse': 'dseOnly',
+    'cse': 'cseOnly',
+    'both': 'dseAndCse',
+  };
+  final exchangeMode = exchangeModes[exchange];
+  if (exchangeMode == null) _fail('exchange must be dse, cse or both');
   if (!RegExp(r'^[a-z][a-z0-9_]*$').hasMatch(id)) {
     _fail('id must be lowercase letters, digits and _ (e.g. fakhrul)');
   }
@@ -110,10 +120,7 @@ void main(List<String> args) {
     _edit('$target/$file', [
       (RegExp(RegExp.escape('"$sourceAndroidId"')), '"$androidId"'),
       (RegExp(RegExp.escape('"$sourceIosId"')), '"$iosId"'),
-      (
-        RegExp(r'(?<=(IOS_TEAM_ID = |team_id\())"[A-Z0-9]+"'),
-        '"TODO_TEAM_ID"',
-      ),
+      (RegExp(r'(?<=(IOS_TEAM_ID = |team_id\())"[A-Z0-9]+"'), '"TODO_TEAM_ID"'),
     ]);
   }
   _edit('$target/ios/Runner/Info.plist', [
@@ -178,6 +185,8 @@ const houseProfile = HouseProfile(
         'https://play.google.com/store/apps/details?id=$androidId',
     appStoreShareUrl: 'TODO',
   ),
+  // dseOnly (default) | cseOnly | dseAndCse
+  exchangeMode: ExchangeMode.$exchangeMode,
 );
 ''');
 

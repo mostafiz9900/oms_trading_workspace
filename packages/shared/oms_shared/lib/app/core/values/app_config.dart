@@ -22,8 +22,7 @@ class AppConfig {
         '"${profile.houseId}". Check --dart-define-from-file.',
       );
     }
-    _current = house;
-    _profile = profile;
+    _bind(house, profile);
   }
 
   /// Test-only: binds a config without `--dart-define-from-file`.
@@ -31,7 +30,9 @@ class AppConfig {
   static void initializeForTesting(
     BrokerHouseConfig house,
     HouseProfile profile,
-  ) {
+  ) => _bind(house, profile);
+
+  static void _bind(BrokerHouseConfig house, HouseProfile profile) {
     _current = house;
     _profile = profile;
   }
@@ -48,6 +49,19 @@ class AppConfig {
       _current?.houseId ?? const String.fromEnvironment('OMS_HOUSE_ID');
   static String get houseName =>
       _current?.displayName ?? const String.fromEnvironment('OMS_HOUSE_NAME');
+
+  /// Exchanges of this house (`HouseProfile.exchangeMode`): DSE only (the
+  /// default), CSE only, or both. Use these to show DSE- or CSE-specific UI.
+  static ExchangeMode get exchangeMode => profile.exchangeMode;
+  static Set<StockExchange> get exchanges => exchangeMode.exchanges;
+  static bool get hasDse => exchangeMode.hasDse;
+  static bool get hasCse => exchangeMode.hasCse;
+
+  /// True when the house trades on both, e.g. to show an exchange picker.
+  static bool get hasBothExchanges => exchangeMode.hasBoth;
+
+  /// Exchange the UI starts on: DSE when the house has it, else CSE.
+  static StockExchange get defaultExchange => exchangeMode.defaultExchange;
 
   static String get baseURLChart => house.chartBaseUrl;
   static String get baseURLItch => house.itchBaseUrl;

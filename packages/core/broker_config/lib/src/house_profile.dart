@@ -1,5 +1,7 @@
+import 'stock_exchange.dart';
+
 /// Company-owned details of a broker house that do not change between UAT and
-/// production: contact page content and store listings.
+/// production: contact page content, store listings and its stock exchanges.
 ///
 /// Each deployable app declares one `const HouseProfile` and passes it to the
 /// shared app bootstrap. Endpoint and branding values that vary per
@@ -11,6 +13,7 @@ class HouseProfile {
     required this.companyName,
     required this.contact,
     required this.store,
+    this.exchangeMode = ExchangeMode.dseOnly,
   });
 
   /// Must match `OMS_HOUSE_ID` from the environment profile.
@@ -24,6 +27,10 @@ class HouseProfile {
 
   final HouseContact contact;
   final HouseStoreListing store;
+
+  /// Exchanges this house trades on: [ExchangeMode.dseOnly] (the default),
+  /// [ExchangeMode.cseOnly] or [ExchangeMode.dseAndCse].
+  final ExchangeMode exchangeMode;
 }
 
 /// Content of the "Contact us" page.

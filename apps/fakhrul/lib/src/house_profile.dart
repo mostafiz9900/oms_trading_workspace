@@ -23,4 +23,6 @@ const houseProfile = HouseProfile(
         'https://play.google.com/store/apps/details?id=com.fisbd.oms.app',
     appStoreShareUrl: 'TODO',
   ),
+  // dseOnly (default) | cseOnly | dseAndCse
+  exchangeMode: ExchangeMode.dseOnly,
 );

@@ -1,15 +1,18 @@
 // Enum values match the server API strings; renaming them would change requests.
 // ignore_for_file: constant_identifier_names
 
-
 // Order types
+enum MarketType { dse, cse }
 
 // Side types
 enum SideType { buy, sell }
 
 enum SideType2 { BUY, SELL }
 
-final Map<SideType2, String> sideTypeEnumMap = {SideType2.BUY: "BUY", SideType2.SELL: 'SELL'};
+final Map<SideType2, String> sideTypeEnumMap = {
+  SideType2.BUY: "BUY",
+  SideType2.SELL: 'SELL',
+};
 
 enum OrderType { MARKET, MARKET_AT_BEST, LIMIT }
 
@@ -19,7 +22,14 @@ final Map<OrderType, String> orderTypeMap = {
   OrderType.LIMIT: '2',
 };
 
-enum TimeInForce { DAY, SESSION, IMMEDIATE_OR_CANCEL, FILL_OR_KILL, GOOD_TILL_CANCEL, GOOD_TILL_DATE }
+enum TimeInForce {
+  DAY,
+  SESSION,
+  IMMEDIATE_OR_CANCEL,
+  FILL_OR_KILL,
+  GOOD_TILL_CANCEL,
+  GOOD_TILL_DATE,
+}
 
 final Map<TimeInForce, String> timeInForceMap = {
   TimeInForce.DAY: '0',
@@ -30,7 +40,13 @@ final Map<TimeInForce, String> timeInForceMap = {
   TimeInForce.GOOD_TILL_DATE: '6',
 };
 
-enum ExecInst { SUSPEND, RELEASE, WHOLE_OR_NONE, WHOLE_OR_NONE_AND_SUSPEND, WHOLE_OR_NONE_AND_RELEASE }
+enum ExecInst {
+  SUSPEND,
+  RELEASE,
+  WHOLE_OR_NONE,
+  WHOLE_OR_NONE_AND_SUSPEND,
+  WHOLE_OR_NONE_AND_RELEASE,
+}
 
 final Map<ExecInst, String> execInstMap = {
   ExecInst.SUSPEND: 'S',

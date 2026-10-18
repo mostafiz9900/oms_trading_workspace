@@ -1,4 +1,3 @@
-
 import 'package:oms_shared/app/modules/market/controllers/live_index_controller.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
@@ -15,11 +14,13 @@ import '../../../global_widgets/custom_drawer.dart';
 import '../../global_search/controllers/global_search_controller.dart';
 import '../../home/controllers/home_controller.dart';
 import '../../../routes/app_routes.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+
 import 'local_widgets/home_pie_chart.dart';
 import 'local_widgets/sector_horizontal_list.dart';
 import 'local_widgets/top_sector_by_category_widget.dart';
@@ -77,17 +78,26 @@ class MarketWidget extends StatelessWidget {
 
                             if (result != null) {
                               printLog("Selected Market: ${result.shortName}");
-                              printLog("Selected Market to map: ${result.toJson()}");
-                              if (result.orderBook != null && result.shortName != null) {
-                                homeNotifyCont.goBottomNabBarPage(1, result.orderBook!);
+                              printLog(
+                                "Selected Market to map: ${result.toJson()}",
+                              );
+                              if (result.orderBook != null &&
+                                  result.shortName != null) {
+                                homeNotifyCont.goBottomNabBarPage(
+                                  1,
+                                  result.orderBook!,
+                                );
                               }
                             }
                           },
                           icon: SvgPicture.asset(
                             AssetsConstants.searchIconSvg,
-                            width: 18,
-                            height: 18,
-                            colorFilter: ColorFilter.mode(context.textColor, BlendMode.srcIn),
+                            width: 20,
+                            height: 20,
+                            colorFilter: ColorFilter.mode(
+                              context.iconDefColor,
+                              BlendMode.srcIn,
+                            ),
                           ),
                         ),
                       ],
@@ -95,9 +105,7 @@ class MarketWidget extends StatelessWidget {
                   },
                 ),
               ),
-              body: SizedBox(
-                child: _BodyWidget(),
-              ),
+              body: SizedBox(child: _BodyWidget()),
             ),
           ),
         ],
@@ -155,9 +163,18 @@ class _CustomTabWidget extends HookWidget {
               indicatorSize: TabBarIndicatorSize.tab,
               labelColor: Colors.white,
               unselectedLabelColor: context.textColor,
-              labelStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-              unselectedLabelStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-              indicator: BoxDecoration(borderRadius: BorderRadius.circular(0), color: ColorConstants.buttonColorLight),
+              labelStyle: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+              unselectedLabelStyle: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              ),
+              indicator: BoxDecoration(
+                borderRadius: BorderRadius.circular(0),
+                color: ColorConstants.buttonColorLight,
+              ),
               onTap: (index) {
                 if (index == 1) {
                   // "Top Stocks" এ ক্লিক করলে নতুন পেজে যাবে
@@ -216,7 +233,6 @@ class _MarketTabWidget extends StatelessWidget {
 
           MarketMapWidget(),
           AppSpace.spaceH20,
-
         ],
       ),
     );
@@ -267,7 +283,9 @@ class _IndicesTabWidget extends StatelessWidget {
 
     // 🚀 কালার লজিক সহজ ও নিখুঁত করা হয়েছে
     final bool isUpToday = ivd >= 0;
-    final Color todayColor = isUpToday ? hexToColor('#22C665') : hexToColor('#F54D64');
+    final Color todayColor = isUpToday
+        ? hexToColor('#22C665')
+        : hexToColor('#F54D64');
     final Color yesterdayColor = hexToColor('#177DFF');
 
     return InkWell(
@@ -284,7 +302,8 @@ class _IndicesTabWidget extends StatelessWidget {
           border: Border.all(color: ctx.borderSideColor.withAlpha(128)),
         ),
         child: SfCartesianChart(
-          plotAreaBorderWidth: 0, // 🚀 চার্টের ভেতরের চারপাশের বর্ডার লাইন রিমুভ করা হয়েছে
+          plotAreaBorderWidth:
+              0, // 🚀 চার্টের ভেতরের চারপাশের বর্ডার লাইন রিমুভ করা হয়েছে
           title: ChartTitle(
             text: '${controller.selectedSn} Analysis',
             textStyle: Get.textTheme.titleMedium?.copyWith(
@@ -297,17 +316,28 @@ class _IndicesTabWidget extends StatelessWidget {
             isVisible: true,
             position: LegendPosition.top,
             overflowMode: LegendItemOverflowMode.wrap,
-            textStyle: TextStyle(color: ctx.textColor, fontWeight: FontWeight.w500), // 🚀 লিজেন্ড টেক্সট কালার
+            textStyle: TextStyle(
+              color: ctx.textColor,
+              fontWeight: FontWeight.w500,
+            ), // 🚀 লিজেন্ড টেক্সট কালার
           ),
           primaryXAxis: CategoryAxis(
-            majorGridLines: const MajorGridLines(width: 0), // 🚀 X-অক্ষের গ্রিডলাইন হাইড
+            majorGridLines: const MajorGridLines(
+              width: 0,
+            ), // 🚀 X-অক্ষের গ্রিডলাইন হাইড
             axisLine: const AxisLine(width: 0), // 🚀 X-অক্ষের মূল লাইন হাইড
-            labelStyle: TextStyle(fontWeight: FontWeight.w600, color: ctx.textColor),
+            labelStyle: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: ctx.textColor,
+            ),
           ),
           primaryYAxis: NumericAxis(
             title: AxisTitle(
               text: 'Index Value',
-              textStyle: TextStyle(fontSize: 12, color: ctx.textColor.withAlpha(153)),
+              textStyle: TextStyle(
+                fontSize: 12,
+                color: ctx.textColor.withAlpha(153),
+              ),
             ),
             numberFormat: NumberFormat('#,##0.00'),
             minimum: null,
@@ -319,31 +349,48 @@ class _IndicesTabWidget extends StatelessWidget {
               dashArray: const <double>[5, 5],
               color: ctx.dividerColor.withAlpha(102),
             ),
-            labelStyle: TextStyle(fontWeight: FontWeight.w500, color: ctx.textColor.withAlpha(204)),
+            labelStyle: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: ctx.textColor.withAlpha(204),
+            ),
           ),
           tooltipBehavior: TooltipBehavior(
             enable: true,
-            builder: (dynamic data, dynamic point, dynamic series, int pointIndex, int seriesIndex) {
-              // 🚀 ডার্ক এবং লাইট মোড সাপোর্টেড কাস্টম টুলটিপ
-              return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                decoration: BoxDecoration(
-                  color: ctx.isDark ? Colors.grey.shade800 : Colors.white,
-                  borderRadius: BorderRadius.circular(6),
-                  boxShadow: [
-                    BoxShadow(color: Colors.black.withAlpha(38), blurRadius: 6, offset: const Offset(0, 3)),
-                  ],
-                ),
-                child: Text(
-                  '${series.name}: ${point.y.toStringAsFixed(2)}',
-                  style: TextStyle(
-                    color: ctx.isDark ? Colors.white : Colors.black87,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                  ),
-                ),
-              );
-            },
+            builder:
+                (
+                  dynamic data,
+                  dynamic point,
+                  dynamic series,
+                  int pointIndex,
+                  int seriesIndex,
+                ) {
+                  // 🚀 ডার্ক এবং লাইট মোড সাপোর্টেড কাস্টম টুলটিপ
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: ctx.isDark ? Colors.grey.shade800 : Colors.white,
+                      borderRadius: BorderRadius.circular(6),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withAlpha(38),
+                          blurRadius: 6,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      '${series.name}: ${point.y.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        color: ctx.isDark ? Colors.white : Colors.black87,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                  );
+                },
           ),
           series: <CartesianSeries<IndexModel, String>>[
             ColumnSeries<IndexModel, String>(
@@ -354,7 +401,9 @@ class _IndicesTabWidget extends StatelessWidget {
               color: yesterdayColor,
               width: 0.5,
               spacing: 0.2, // 🚀 কলামগুলোর মাঝের দূরত্ব ঠিক করা হয়েছে
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(4)), // 🚀 কলামের মাথা রাউন্ড করা হয়েছে
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(4),
+              ), // 🚀 কলামের মাথা রাউন্ড করা হয়েছে
             ),
             ColumnSeries<IndexModel, String>(
               name: 'Today',
@@ -364,7 +413,9 @@ class _IndicesTabWidget extends StatelessWidget {
               color: todayColor,
               width: 0.5,
               spacing: 0.2,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(4)), // 🚀 কলামের মাথা রাউন্ড করা হয়েছে
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(4),
+              ), // 🚀 কলামের মাথা রাউন্ড করা হয়েছে
             ),
           ],
         ),

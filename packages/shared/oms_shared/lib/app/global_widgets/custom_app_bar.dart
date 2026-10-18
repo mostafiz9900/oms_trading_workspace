@@ -40,37 +40,42 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading:
           leading ??
           IconButton(
-            onPressed: backButtonOnClick ?? () => Navigator.of(context).maybePop(),
+            onPressed:
+                backButtonOnClick ?? () => Navigator.of(context).maybePop(),
             icon: isBackButtonIcon == true
                 ? SvgPicture.asset(
                     AssetsConstants.backIconSvg,
                     width: 20,
                     height: 20,
-                    colorFilter: ColorFilter.mode(context.iconDefColor, BlendMode.srcIn),
+                    colorFilter: ColorFilter.mode(
+                      context.iconDefColor,
+                      BlendMode.srcIn,
+                    ),
                   )
-                : SvgPicture.asset(
-                    AssetsConstants.drawerIconSvg,
-                    width: 24,
-                    height: 24,
-                    colorFilter: ColorFilter.mode(context.iconDefColor, BlendMode.srcIn),
-                  ),
+                : Icon(Icons.menu, size: 24, color: context.iconDefColor),
           ),
       title: titleText != null
-          ? Text(titleText!, style: Get.textTheme.titleMedium?.copyWith(fontSize: titleFontSize))
-          : SvgPicture.asset(
-              context.bannerLogo,
-              width: 120,
-              height: 35,
-            ),
+          ? Text(
+              titleText!,
+              style: Get.textTheme.titleMedium?.copyWith(
+                fontSize: titleFontSize,
+              ),
+            )
+          : SvgPicture.asset(context.bannerLogo, width: 120, height: 35),
       actions: [
         right ??
             IconButton(
-              onPressed: searchButtonOnClick ?? () => Get.toNamed(Routes.SEARCH_WATCH_LIST),
+              onPressed:
+                  searchButtonOnClick ??
+                  () => Get.toNamed(Routes.SEARCH_WATCH_LIST),
               icon: SvgPicture.asset(
                 AssetsConstants.searchIconSvg,
                 width: 18,
                 height: 18,
-                colorFilter: ColorFilter.mode(context.iconDefColor, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(
+                  context.iconDefColor,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
       ],
@@ -79,4 +84,3 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 }
 
 //     //automaticallyImplyLeading: true
-

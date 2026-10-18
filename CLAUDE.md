@@ -86,7 +86,8 @@ See .claude/memory/decisions.md.
 - Migrate: n/a (no local database)
 - Seed: n/a
 - Deploy: merge to `prod` → `.github/workflows/release.yml` (Play draft + TestFlight); manual: `make deploy-android` / `make deploy-ios`
-- New broker app: `make new-app ID=x NAME="X Ltd" ANDROID_ID=com.x.app IOS_ID=com.x.app`, then `make validate`
+- New broker app: `make new-app ID=x NAME="X Ltd" ANDROID_ID=com.x.app IOS_ID=com.x.app [EXCHANGE=dse|cse|both]` (default dse), then `make validate`
+- House exchanges: `exchangeMode:` in `apps/<house>/lib/src/house_profile.dart` (`dseOnly` default · `cseOnly` · `dseAndCse`); code reads `AppConfig.hasDse/hasCse/hasBothExchanges`, never the house id
 
 ## ⚙️ Settings
 - .claude/settings.json → shared team settings — always commit

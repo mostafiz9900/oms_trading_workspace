@@ -25,9 +25,9 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final homeController = Get.find<HomeController>();
-    final UpdateController updateController = Get.isRegistered<UpdateController>()
+    final UpdateController updateController =
+        Get.isRegistered<UpdateController>()
         ? Get.find<UpdateController>()
         : Get.put(UpdateController());
     return GetBuilder<UpdateController>(
@@ -51,7 +51,10 @@ class HomeView extends StatelessWidget {
                         onPressed: () async {
                           final url = Uri.parse(updateController.updateUrl);
                           if (await canLaunchUrl(url)) {
-                            await launchUrl(url, mode: LaunchMode.externalApplication);
+                            await launchUrl(
+                              url,
+                              mode: LaunchMode.externalApplication,
+                            );
                           }
                         },
                         title: "Update Now",
@@ -103,7 +106,14 @@ class HomeView extends StatelessWidget {
     return Scaffold(
       body: IndexedStack(
         index: homeCon.currentIndex,
-        children: [MarketWidget(), QuoteWidget(), WatchListWidget(), FavMarketView(), PortfolioWidget(), TradeWidget()],
+        children: [
+          MarketWidget(),
+          QuoteWidget(),
+          WatchListWidget(),
+          FavMarketView(),
+          PortfolioWidget(),
+          TradeWidget(),
+        ],
       ),
 
       bottomNavigationBar: BottomNavigationBar(
@@ -129,11 +139,17 @@ class HomeView extends StatelessWidget {
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               AssetsConstants.marketIconSvg,
-              colorFilter: ColorFilter.mode(context.unselectColor, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(
+                context.unselectColor,
+                BlendMode.srcIn,
+              ),
             ),
             activeIcon: SvgPicture.asset(
               AssetsConstants.marketIconSvg,
-              colorFilter: ColorFilter.mode(ColorConstants.secondaryColorLight, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(
+                ColorConstants.secondaryColorLight,
+                BlendMode.srcIn,
+              ),
             ),
             label: 'Home',
           ),
@@ -141,12 +157,18 @@ class HomeView extends StatelessWidget {
           /// 1️⃣ Quote
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              AssetsConstants.quoteIconSvg,
-              colorFilter: ColorFilter.mode(context.unselectColor, BlendMode.srcIn),
+              AssetsConstants.tradeIconSvg,
+              colorFilter: ColorFilter.mode(
+                context.unselectColor,
+                BlendMode.srcIn,
+              ),
             ),
             activeIcon: SvgPicture.asset(
-              AssetsConstants.quoteIconSvg,
-              colorFilter: ColorFilter.mode(ColorConstants.secondaryColorLight, BlendMode.srcIn),
+              AssetsConstants.tradeIconSvg,
+              colorFilter: ColorFilter.mode(
+                ColorConstants.secondaryColorLight,
+                BlendMode.srcIn,
+              ),
             ),
             label: 'Details',
           ),
@@ -155,11 +177,17 @@ class HomeView extends StatelessWidget {
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               AssetsConstants.watchListIconSvg,
-              colorFilter: ColorFilter.mode(context.unselectColor, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(
+                context.unselectColor,
+                BlendMode.srcIn,
+              ),
             ),
             activeIcon: SvgPicture.asset(
               AssetsConstants.watchListIconSvg,
-              colorFilter: ColorFilter.mode(ColorConstants.secondaryColorLight, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(
+                ColorConstants.secondaryColorLight,
+                BlendMode.srcIn,
+              ),
             ),
             label: 'Watch List',
           ),
@@ -170,13 +198,19 @@ class HomeView extends StatelessWidget {
               AssetsConstants.starIconSvg, // 🔹 তোমার SVG path এখানে দাও
               height: 25,
               width: 25,
-              colorFilter: ColorFilter.mode(context.unselectColor, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(
+                context.unselectColor,
+                BlendMode.srcIn,
+              ),
             ),
             activeIcon: SvgPicture.asset(
               AssetsConstants.starIconSvg,
               height: 25,
               width: 25,
-              colorFilter: ColorFilter.mode(ColorConstants.secondaryColorLight, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(
+                ColorConstants.secondaryColorLight,
+                BlendMode.srcIn,
+              ),
             ),
             label: 'Favorite',
           ),
@@ -185,11 +219,17 @@ class HomeView extends StatelessWidget {
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               AssetsConstants.portfolioIconSvg,
-              colorFilter: ColorFilter.mode(context.unselectColor, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(
+                context.unselectColor,
+                BlendMode.srcIn,
+              ),
             ),
             activeIcon: SvgPicture.asset(
               AssetsConstants.portfolioIconSvg,
-              colorFilter: ColorFilter.mode(ColorConstants.secondaryColorLight, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(
+                ColorConstants.secondaryColorLight,
+                BlendMode.srcIn,
+              ),
             ),
             label: 'Portfolio',
           ),
@@ -197,12 +237,18 @@ class HomeView extends StatelessWidget {
           /// 5️⃣ Trade
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              AssetsConstants.tradeIconSvg,
-              colorFilter: ColorFilter.mode(context.unselectColor, BlendMode.srcIn),
+              AssetsConstants.quoteIconSvg,
+              colorFilter: ColorFilter.mode(
+                context.unselectColor,
+                BlendMode.srcIn,
+              ),
             ),
             activeIcon: SvgPicture.asset(
-              AssetsConstants.tradeIconSvg,
-              colorFilter: ColorFilter.mode(ColorConstants.secondaryColorLight, BlendMode.srcIn),
+              AssetsConstants.quoteIconSvg,
+              colorFilter: ColorFilter.mode(
+                ColorConstants.secondaryColorLight,
+                BlendMode.srcIn,
+              ),
             ),
             label: 'Trade',
           ),
