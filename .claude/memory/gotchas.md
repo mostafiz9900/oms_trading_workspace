@@ -51,11 +51,11 @@
 - **How to Avoid**: put `~/fvm/versions/3.47.6/bin` on PATH before running `get`.
 - **Discovered**: 2026-10-11
 
-#### broker_config — `HouseProfile.exchangeMode` is a flag only
-- **What Happens**: setting a house to `ExchangeMode.cseOnly` changes nothing at runtime; market code still uses DSE index names (DSEX…), DSE hours and DSE board names.
-- **Why**: nothing reads `AppConfig.hasDse` / `hasCse` yet (Phase 0 of .claude/tasks/plans/2026-10-18-exchange-ui-architecture.md).
-- **How to Avoid**: before relying on CSE behaviour, do Phase 1 of that plan; never assume the flag is wired.
-- **Discovered**: 2026-10-18
+#### Exchange — only the Market tab follows the DSE/CSE switch (so far)
+- **What Happens**: `ExchangeService.selected` reloads the market + index sockets (MarketWidget, Top Stocks feed). Everything else (index names DSEX…, boards, sessions, quote/trade/watchlist/orders) is still DSE-hardcoded.
+- **Why**: delivered step by step (plan: .claude/tasks/plans/2026-10-18-dse-cse-exchange-support.md, "User decisions 2026-10-19").
+- **How to Avoid**: CSE uses the DSE socket URLs until `OMS_CSE_SOCKET_MARKET_URL` / `OMS_CSE_SOCKET_INDEX_URL` are set; order book ids can be the same on both exchanges, so always clear per-exchange caches on switch.
+- **Discovered**: 2026-10-19
 
 ## Template
 #### [Module] — [Title]

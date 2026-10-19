@@ -1,3 +1,5 @@
+import 'stock_exchange.dart';
+
 /// Build-time identity, branding, localization, and endpoint configuration
 /// shared by OMS broker-house applications.
 class BrokerHouseConfig {
@@ -26,6 +28,8 @@ class BrokerHouseConfig {
     required this.accentColor,
     required this.buttonColor,
     required this.contractUrl,
+    this.cseMarketSocketUrl = '',
+    this.cseIndexSocketUrl = '',
   });
 
   final String houseId;
@@ -52,6 +56,27 @@ class BrokerHouseConfig {
   final String accentColor;
   final String buttonColor;
   final String contractUrl;
+
+  /// CSE market / index feeds (`OMS_CSE_SOCKET_MARKET_URL`,
+  /// `OMS_CSE_SOCKET_INDEX_URL`). Optional: empty means "same as DSE" until
+  /// the CSE feed exists. Read them through [marketSocketUrlFor] /
+  /// [indexSocketUrlFor].
+  final String cseMarketSocketUrl;
+  final String cseIndexSocketUrl;
+
+  /// Market feed of [exchange]; CSE falls back to the DSE feed when no CSE
+  /// URL is configured.
+  String marketSocketUrlFor(StockExchange exchange) =>
+      exchange == StockExchange.cse && cseMarketSocketUrl.isNotEmpty
+      ? cseMarketSocketUrl
+      : marketSocketUrl;
+
+  /// Index feed of [exchange]; CSE falls back to the DSE feed when no CSE
+  /// URL is configured.
+  String indexSocketUrlFor(StockExchange exchange) =>
+      exchange == StockExchange.cse && cseIndexSocketUrl.isNotEmpty
+      ? cseIndexSocketUrl
+      : indexSocketUrl;
 
   factory BrokerHouseConfig.load({
     required String environment,
@@ -169,13 +194,15 @@ class BrokerHouseConfig {
         '',
         '#177DFF',
       ),
-      contractUrl: (() {
-        final compileTimeValue = _compileTimeValue('OMS_CONTRACT_URL');
-        if (compileTimeValue.isNotEmpty) {
-          return compileTimeValue;
-        }
-        return (fallbackValues['OMS_CONTRACT_URL'] ?? '').trim();
-      })(),
+      contractUrl: _optionalValue('OMS_CONTRACT_URL', fallbackValues),
+      cseMarketSocketUrl: _optionalValue(
+        'OMS_CSE_SOCKET_MARKET_URL',
+        fallbackValues,
+      ),
+      cseIndexSocketUrl: _optionalValue(
+        'OMS_CSE_SOCKET_INDEX_URL',
+        fallbackValues,
+      ),
     );
     config._validate();
     return config;
@@ -197,6 +224,17 @@ class BrokerHouseConfig {
       throw StateError('Missing configuration "$define".');
     }
     return value;
+  }
+
+  /// A key that may be absent: the compile-time define, else the fallback
+  /// map, else empty.
+  static String _optionalValue(
+    String define,
+    Map<String, String> fallbackValues,
+  ) {
+    final compileTimeValue = _compileTimeValue(define);
+    if (compileTimeValue.isNotEmpty) return compileTimeValue;
+    return (fallbackValues[define] ?? '').trim();
   }
 
   static String _compileTimeValue(String name) {
@@ -252,6 +290,10 @@ class BrokerHouseConfig {
         return const String.fromEnvironment('OMS_BRAND_BUTTON_COLOR').trim();
       case 'OMS_CONTRACT_URL':
         return const String.fromEnvironment('OMS_CONTRACT_URL').trim();
+      case 'OMS_CSE_SOCKET_MARKET_URL':
+        return const String.fromEnvironment('OMS_CSE_SOCKET_MARKET_URL').trim();
+      case 'OMS_CSE_SOCKET_INDEX_URL':
+        return const String.fromEnvironment('OMS_CSE_SOCKET_INDEX_URL').trim();
       default:
         throw ArgumentError.value(name, 'name', 'Unknown broker config key');
     }
@@ -288,6 +330,18 @@ class BrokerHouseConfig {
     );
     if (contractUrl.isNotEmpty) {
       _validateUrl('OMS_CONTRACT_URL', contractUrl, const {'http', 'https'});
+    }
+    if (cseMarketSocketUrl.isNotEmpty) {
+      _validateUrl('OMS_CSE_SOCKET_MARKET_URL', cseMarketSocketUrl, const {
+        'ws',
+        'wss',
+      });
+    }
+    if (cseIndexSocketUrl.isNotEmpty) {
+      _validateUrl('OMS_CSE_SOCKET_INDEX_URL', cseIndexSocketUrl, const {
+        'ws',
+        'wss',
+      });
     }
     _validateColor('OMS_BRAND_PRIMARY_COLOR', primaryColor);
     _validateColor('OMS_BRAND_ACCENT_COLOR', accentColor);

@@ -14,6 +14,9 @@ class StorageService extends GetxService {
     return await _box.read(key);
   }
 
+  /// Synchronous read, for values needed while a service is constructed.
+  static T? readSync<T>(String key) => _box.read<T>(key);
+
   // Function to remove a value by its key
   static void remove(String key) {
     _box.remove(key);

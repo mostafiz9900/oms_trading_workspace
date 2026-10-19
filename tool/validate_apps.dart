@@ -31,6 +31,12 @@ const socketKeys = [
   'OMS_SOCKET_NEWS_TIME_SALES_URL',
 ];
 
+/// Optional: CSE feeds. Absent means "CSE uses the DSE feed".
+const optionalSocketKeys = [
+  'OMS_CSE_SOCKET_MARKET_URL',
+  'OMS_CSE_SOCKET_INDEX_URL',
+];
+
 const colorKeys = [
   'OMS_BRAND_PRIMARY_COLOR',
   'OMS_BRAND_ACCENT_COLOR',
@@ -145,6 +151,10 @@ void _validateApp(Directory app) {
       _expectUrl(env[key], where, key, const {'http', 'https'});
     }
     for (final key in socketKeys) {
+      _expectUrl(env[key], where, key, const {'ws', 'wss'});
+    }
+    for (final key in optionalSocketKeys) {
+      if (env[key] == null || '${env[key]}'.isEmpty) continue;
       _expectUrl(env[key], where, key, const {'ws', 'wss'});
     }
     for (final key in colorKeys) {

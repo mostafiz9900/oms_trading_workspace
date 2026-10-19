@@ -55,3 +55,8 @@
 - **Decision**: `HouseProfile.exchangeMode` = `ExchangeMode.dseOnly` (default) | `cseOnly` | `dseAndCse`, set in each app's `house_profile.dart` (same for UAT and prod) and by `make new-app EXCHANGE=dse|cse|both`. Code reads `AppConfig.hasDse / hasCse / hasBothExchanges / defaultExchange`, never the house id. Flag only for now: no UI uses it. UI design in `.claude/tasks/plans/2026-10-18-exchange-ui-architecture.md`.
 - **Reason**: user's rule — every house DSE by default, DSE+CSE or CSE-only per house; an enum makes the invalid "no exchange" state impossible; committed code is reviewed, unlike git-ignored env files
 - **Revisit If**: a house needs different exchanges in UAT and prod
+
+#### 2026-10-19 — DSE/CSE: one switcher, identical UI, step by step
+- **Decision**: Trade Fast-style `DSE ▾` chip in the Market tab app bar (only for houses on both); UI identical for both exchanges; CSE sockets separate but fall back to the DSE URLs until provided; order book ids may collide → clear data on switch; Benemoy is `dseAndCse`.
+- **Reason**: user decision; matches how Bangladesh multi-exchange apps present one app / one login / one portfolio.
+- **Revisit If**: CSE URLs and CSE index/board names arrive (then fill an ExchangeProfile for CSE).

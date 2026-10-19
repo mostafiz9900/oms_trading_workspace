@@ -1,7 +1,24 @@
 # Plan: DSE / CSE exchange support
 
-Status: **Phase 0 done (house flag only). Phases 1–2 not started.**
+Status: **Phase 0 done. Step 1 (MarketWidget switcher) done 2026-10-19. Next steps one screen at a time.**
 Created: 2026-10-18
+
+## User decisions (2026-10-19)
+
+- CSE has **separate sockets**; until its URLs exist, CSE uses the **DSE URLs** (`OMS_CSE_SOCKET_MARKET_URL`, `OMS_CSE_SOCKET_INDEX_URL`, optional).
+- **Order book ids can be the same** on DSE and CSE → clear per-exchange data on every switch; key by (exchange, ob) where both are kept.
+- **UI is identical** for DSE and CSE; only a **Trade Fast-style switcher** is added.
+- Switcher: **app bar chip `DSE ▾` next to search**; shown only when `hasBothExchanges`.
+- **Benemoy = `dseAndCse`**; Fakhrul stays `dseOnly`.
+- Work **step by step, one screen at a time**; start with MarketWidget only.
+
+## Step 1 — MarketWidget (done 2026-10-19)
+
+- `BrokerHouseConfig.cseMarketSocketUrl / cseIndexSocketUrl` (+ `marketSocketUrlFor` / `indexSocketUrlFor`, fallback DSE); `AppConfig.marketUrlFor / indexUrlFor`
+- `ExchangeService` (`data/services/exchange_service.dart`): selected exchange, remembered in GetStorage (`selected_exchange`), registered in `di.dart`
+- `ExchangeSwitcher` (`global_widgets/exchange/exchange_switcher.dart`) in MarketWidget app bar
+- Switch → `HomeController.reloadMarketForExchange()` (clears market + Top Stocks feed, reconnects) and `LiveIndexController.reloadIndexForExchange()`
+- Tests: exchange_service_test, exchange_switcher_test, exchange_reload_test, broker_config cse_socket_url_test (mutation-checked)
 
 ## Phase 0 — house flag (done)
 

@@ -30,6 +30,7 @@ import '../../../core/utils/helpers/hex_color.dart';
 import '../../../core/utils/helpers/log_helper.dart';
 import '../../../core/utils/helpers/update_throttle.dart';
 import '../../../core/values/app_config.dart';
+import '../../../data/services/exchange_service.dart';
 import '../../../core/values/colors.dart';
 import '../../../core/values/constants.dart';
 import '../../../core/values/space.dart';
@@ -125,6 +126,13 @@ class HomeController extends HomeState
   void onInit() async {
     super.onInit();
     searchController.addListener(_onSearchChanged);
+    // DSE/CSE switch: reload the market feed of the chosen exchange.
+    if (Get.isRegistered<ExchangeService>()) {
+      _exchangeWorker = ever(
+        Get.find<ExchangeService>().selected,
+        (_) => reloadMarketForExchange(),
+      );
+    }
     printLog('home repository :: ${homeRepository.hashCode}');
     if (Get.arguments != null) {
       currentIndex = Get.arguments;
@@ -164,6 +172,7 @@ class HomeController extends HomeState
 
   @override
   void onClose() {
+    _exchangeWorker?.dispose();
     _marketUpdateTimer?.cancel();
     _indexUpdateTimer?.cancel();
     _orderResponseTimer?.cancel();

@@ -51,6 +51,14 @@ class MarketSocketService extends GetxService {
     }
   }
 
+  /// Drops every quote, e.g. before switching DSE/CSE (order book ids can be
+  /// the same on both exchanges).
+  void clear() {
+    _listUpdateTimer?.cancel();
+    _marketMap.clear();
+    marketFeedList.clear();
+  }
+
   // 🛡️ মেমোরি লিক ঠেকানোর জন্য GetxService এর ডিফল্ট onClose ব্যবহার করা হলো
   @override
   void onClose() {

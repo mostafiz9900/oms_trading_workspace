@@ -11,6 +11,7 @@ import '../../../core/values/space.dart';
 import '../../../data/models/response/index_model.dart';
 import '../../../global_widgets/custom_app_bar.dart';
 import '../../../global_widgets/custom_drawer.dart';
+import '../../../global_widgets/exchange/exchange_switcher.dart';
 import '../../global_search/controllers/global_search_controller.dart';
 import '../../home/controllers/home_controller.dart';
 import '../../../routes/app_routes.dart';
@@ -66,6 +67,8 @@ class MarketWidget extends StatelessWidget {
                   builder: (homeNotifyCont) {
                     return Row(
                       children: [
+                        // DSE | CSE; shows only for houses on both exchanges.
+                        const ExchangeSwitcher(),
                         NotificationIcon(
                           notificationCount: 0, //homeNotifyCont.news.length,
                           onTap: () {

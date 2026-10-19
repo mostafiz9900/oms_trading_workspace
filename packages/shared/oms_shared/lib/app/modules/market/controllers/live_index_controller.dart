@@ -10,6 +10,7 @@ import '../../../core/utils/helpers/log_helper.dart';
 import '../../../core/utils/helpers/update_throttle.dart';
 import '../../../core/values/app_config.dart';
 import '../../../data/models/response/index_model.dart';
+import '../../../data/services/exchange_service.dart';
 import '../../../data/services/socket_db_service.dart';
 
 class LiveIndexController extends GetxController {
@@ -124,10 +125,29 @@ class LiveIndexController extends GetxController {
     super.onInit();
     _initializeIndexWebSocket();
     fetchIndexCandleData(selectedSn, selectedChartParam);
+    // DSE/CSE switch: reload the indices of the chosen exchange.
+    if (Get.isRegistered<ExchangeService>()) {
+      _exchangeWorker = ever(
+        Get.find<ExchangeService>().selected,
+        (_) => reloadIndexForExchange(),
+      );
+    }
+  }
+
+  Worker? _exchangeWorker;
+
+  /// Drops the old exchange's index values and connects to the new feed.
+  void reloadIndexForExchange() {
+    indexList.clear();
+    newArr = IndexModel(sn: selectedSn);
+    update();
+    _initializeIndexWebSocket();
+    fetchIndexCandleData(selectedSn, selectedChartParam);
   }
 
   @override
   void onClose() {
+    _exchangeWorker?.dispose();
     _indexUpdateTimer?.cancel();
     _chartThrottle.cancel();
     _webSocketService.disconnect(AppConfig.indexSocketId);
@@ -256,11 +276,12 @@ class LiveIndexController extends GetxController {
 
   // ================= Socket Connection & Handler =================
   void _initializeIndexWebSocket() {
-    if (AppConfig.indexUrl.isEmpty || AppConfig.indexUrl == 'null') return;
+    final url = AppConfig.indexUrlFor(ExchangeService.current);
+    if (url.isEmpty || url == 'null') return;
 
     _webSocketService.connect(
       socketId: AppConfig.indexSocketId,
-      url: AppConfig.indexUrl,
+      url: url,
       onMessage: _handleIndexMessage,
       onConnected: () => printLog('✅ Index Socket Connected'),
       onDisconnected: () => printLog('📡 Index Socket Disconnected'),

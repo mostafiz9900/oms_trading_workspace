@@ -70,6 +70,13 @@ class AppConfig {
   static String get marketUrl => house.marketSocketUrl;
   static String get newsUrl => house.newsSocketUrl;
   static String get indexUrl => house.indexSocketUrl;
+
+  /// Market / index feed of [exchange]. CSE uses the DSE feed until
+  /// `OMS_CSE_SOCKET_MARKET_URL` / `OMS_CSE_SOCKET_INDEX_URL` are set.
+  static String marketUrlFor(StockExchange exchange) =>
+      house.marketSocketUrlFor(exchange);
+  static String indexUrlFor(StockExchange exchange) =>
+      house.indexSocketUrlFor(exchange);
   static String get marketDepthUrl => house.marketDepthSocketUrl;
   static String get newsAndTimeAndSalesUrl => house.newsTimeSalesSocketUrl;
   static String get contractUrl => house.contractUrl;

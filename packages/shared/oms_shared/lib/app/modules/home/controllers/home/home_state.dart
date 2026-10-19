@@ -148,6 +148,9 @@ abstract class HomeState extends SuperController {
 
   double tradPrice = 0.0;
 
+  /// Listens to the DSE/CSE selection (see [reloadMarketForExchange]).
+  Worker? _exchangeWorker;
+
   int _priceCents = 0;
 
   var totalAmount = 0.0;

@@ -104,13 +104,14 @@ mixin HomeSocketMixin on HomeState {
 
   // Individual WebSocket initializations
   void _initializeMarketWebSocket() async {
-    printLog(AppConfig.marketUrl);
+    final url = AppConfig.marketUrlFor(ExchangeService.current);
+    printLog(url);
     try {
       _resetMarketState();
       _initializeFilters();
       _initializeSocket(
         socketId: AppConfig.marketSocketId,
-        url: AppConfig.marketUrl,
+        url: url,
         messageHandler: _handleMarketMessage,
       );
     } catch (e) {
@@ -256,6 +257,14 @@ mixin HomeSocketMixin on HomeState {
         );
       });
     }
+  }
+
+  /// Called when the user switches DSE/CSE: order book ids can be the same on
+  /// both exchanges, so the old exchange's quotes are dropped before the new
+  /// feed connects.
+  void reloadMarketForExchange() {
+    marketService.clear();
+    _initializeMarketWebSocket();
   }
 
   // Refresh methods for public use
