@@ -57,6 +57,6 @@
 - **Revisit If**: a house needs different exchanges in UAT and prod
 
 #### 2026-10-19 — DSE/CSE: one switcher, identical UI, step by step
-- **Decision**: Trade Fast-style `DSE ▾` chip in the Market tab app bar (only for houses on both); UI identical for both exchanges; CSE sockets separate but fall back to the DSE URLs until provided; order book ids may collide → clear data on switch; Benemoy is `dseAndCse`.
+- **Decision**: Trade Fast-style `DSE | CSE` toggle switch (not a dropdown) in the Market tab app bar (only for houses on both); UI identical for both exchanges; CSE sockets separate but fall back to the DSE URLs until provided; order book ids may collide → clear data on switch; Benemoy is `dseAndCse`.
 - **Reason**: user decision; matches how Bangladesh multi-exchange apps present one app / one login / one portfolio.
 - **Revisit If**: CSE URLs and CSE index/board names arrive (then fill an ExchangeProfile for CSE).

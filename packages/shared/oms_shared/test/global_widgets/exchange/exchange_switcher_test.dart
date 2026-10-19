@@ -18,38 +18,78 @@ void main() {
     final service = Get.put(ExchangeService());
     await tester.pumpWidget(
       GetMaterialApp(
-        home: Scaffold(
-          appBar: AppBar(actions: const [ExchangeSwitcher()]),
-        ),
+        home: Scaffold(appBar: AppBar(actions: const [ExchangeSwitcher()])),
       ),
     );
     return service;
   }
 
-  testWidgets('DSE-only house: no switcher, app bar unchanged', (tester) async {
+  /// Horizontal centre of the sliding highlight (the AnimatedAlign child).
+  double highlightX(WidgetTester tester) => tester
+      .getCenter(
+        find.descendant(
+          of: find.byType(AnimatedAlign),
+          matching: find.byType(Container),
+        ),
+      )
+      .dx;
+
+  testWidgets('DSE-only house: no switch, app bar unchanged', (tester) async {
     await pump(tester, ExchangeMode.dseOnly);
     expect(find.byKey(const ValueKey('exchange_switcher')), findsNothing);
     expect(find.text('DSE'), findsNothing);
   });
 
-  testWidgets('CSE-only house: no switcher', (tester) async {
+  testWidgets('CSE-only house: no switch', (tester) async {
     await pump(tester, ExchangeMode.cseOnly);
     expect(find.byKey(const ValueKey('exchange_switcher')), findsNothing);
   });
 
-  testWidgets('DSE + CSE house: shows DSE and switches to CSE', (tester) async {
-    final service = await pump(tester, ExchangeMode.dseAndCse);
+  testWidgets('DSE + CSE house: both sides shown, DSE highlighted', (
+    tester,
+  ) async {
+    await pump(tester, ExchangeMode.dseAndCse);
     expect(find.text('DSE'), findsOneWidget);
+    expect(find.text('CSE'), findsOneWidget);
+    expect(
+      highlightX(tester),
+      tester.getCenter(find.byKey(const ValueKey('exchange_dse'))).dx,
+    );
+    expect(
+      find.byType(PopupMenuButton<StockExchange>),
+      findsNothing,
+      reason: 'a switch, not a dropdown',
+    );
+  });
 
-    await tester.tap(find.byKey(const ValueKey('exchange_switcher')));
-    await tester.pumpAndSettle();
-    expect(find.text('CSE'), findsOneWidget, reason: 'menu lists CSE');
+  testWidgets('tapping CSE selects it and slides the highlight', (
+    tester,
+  ) async {
+    final service = await pump(tester, ExchangeMode.dseAndCse);
 
-    await tester.tap(find.text('CSE'));
+    await tester.tap(find.byKey(const ValueKey('exchange_cse')));
     await tester.pumpAndSettle();
 
     expect(service.selected.value, StockExchange.cse);
-    expect(find.text('CSE'), findsOneWidget, reason: 'chip now shows CSE');
-    expect(find.text('DSE'), findsNothing);
+    expect(
+      highlightX(tester),
+      tester.getCenter(find.byKey(const ValueKey('exchange_cse'))).dx,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('exchange_dse')));
+    await tester.pumpAndSettle();
+    expect(service.selected.value, StockExchange.dse);
+  });
+
+  testWidgets('tapping the selected side changes nothing', (tester) async {
+    final service = await pump(tester, ExchangeMode.dseAndCse);
+    var changes = 0;
+    final worker = ever(service.selected, (_) => changes++);
+
+    await tester.tap(find.byKey(const ValueKey('exchange_dse')));
+    await tester.pumpAndSettle();
+
+    expect(changes, 0, reason: 'no needless socket reload');
+    worker.dispose();
   });
 }

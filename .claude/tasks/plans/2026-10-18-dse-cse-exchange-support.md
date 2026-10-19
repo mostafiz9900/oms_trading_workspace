@@ -8,7 +8,7 @@ Created: 2026-10-18
 - CSE has **separate sockets**; until its URLs exist, CSE uses the **DSE URLs** (`OMS_CSE_SOCKET_MARKET_URL`, `OMS_CSE_SOCKET_INDEX_URL`, optional).
 - **Order book ids can be the same** on DSE and CSE → clear per-exchange data on every switch; key by (exchange, ob) where both are kept.
 - **UI is identical** for DSE and CSE; only a **Trade Fast-style switcher** is added.
-- Switcher: **app bar chip `DSE ▾` next to search**; shown only when `hasBothExchanges`.
+- Switcher: **custom `DSE | CSE` toggle switch (Trade Fast style, not a dropdown) in the app bar next to search**; shown only when `hasBothExchanges`.
 - **Benemoy = `dseAndCse`**; Fakhrul stays `dseOnly`.
 - Work **step by step, one screen at a time**; start with MarketWidget only.
 
