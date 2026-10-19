@@ -26,6 +26,7 @@ import '../../../data/models/request/add_fav_item_request.dart' show AddFavItemR
 
 import '../../../global_widgets/empty_widget.dart';
 import '../../../global_widgets/loaders/watchlist_loader.dart';
+import '../../../global_widgets/exchange/exchange_switcher.dart';
 
 class WatchListWidget extends StatelessWidget {
   const WatchListWidget({super.key});
@@ -53,6 +54,8 @@ class WatchListWidget extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Row(
                 children: [
+                  // DSE | CSE; shows only for houses on both exchanges.
+                  const ExchangeSwitcher(padding: EdgeInsets.only(right: 8)),
                   InkWell(
                     onTap: () async {
                       if (await StorageService.read(StorageConstants.token) ==

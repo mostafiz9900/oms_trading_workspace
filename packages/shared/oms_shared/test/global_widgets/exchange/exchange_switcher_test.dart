@@ -40,6 +40,19 @@ void main() {
     expect(find.text('DSE'), findsNothing);
   });
 
+  testWidgets('hidden switch takes no space, even with padding', (tester) async {
+    initTestAppConfig();
+    Get.put(ExchangeService());
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Row(
+          children: [ExchangeSwitcher(padding: EdgeInsets.only(right: 8))],
+        ),
+      ),
+    );
+    expect(tester.getSize(find.byType(ExchangeSwitcher)).width, 0);
+  });
+
   testWidgets('CSE-only house: no switch', (tester) async {
     await pump(tester, ExchangeMode.cseOnly);
     expect(find.byKey(const ValueKey('exchange_switcher')), findsNothing);

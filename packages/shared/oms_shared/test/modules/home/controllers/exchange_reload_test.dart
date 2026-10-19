@@ -2,6 +2,8 @@ import 'package:broker_config/broker_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
+import 'package:oms_shared/app/data/models/marquee_holder.dart';
+import 'package:oms_shared/app/data/models/response/market_model.dart';
 import 'package:oms_shared/app/data/repositories/home_repository.dart';
 import 'package:oms_shared/app/data/services/exchange_service.dart';
 import 'package:oms_shared/app/data/services/market_socket_service.dart';
@@ -64,16 +66,25 @@ void main() {
     final home = await startHome(tester);
     final feed = Get.find<MarketSocketService>();
 
-    // A DSE quote is on screen.
+    // DSE quotes are on screen (Top Stocks, watchlist/quote lists, marquee).
     feed.onMarketPayload({'ob': 101, 'sn': 'GP', 'g': 'PUBLIC', 'b': 'Main Board'});
     await tester.pump(const Duration(seconds: 1));
     expect(feed.marketFeedList, hasLength(1));
+    const gp = MarketModel(orderBook: 101, shortName: 'GP');
+    home.marketListAll.add(gp);
+    home.marketFeedList.add(gp);
+    home.marketListForDilog.add(gp);
+    home.marqueeList.add(MarqueeHolder(shortName: 'GP'));
 
     Get.find<ExchangeService>().select(StockExchange.cse);
     home.reloadMarketForExchange();
     await tester.pump();
 
     expect(feed.marketFeedList, isEmpty, reason: 'same ob may mean another stock on CSE');
+    expect(home.marketListAll, isEmpty, reason: 'watchlist / quote lookup');
+    expect(home.marketFeedList, isEmpty);
+    expect(home.marketListForDilog, isEmpty, reason: 'search dialog');
+    expect(home.marqueeList, isEmpty, reason: 'marquee is keyed by name');
     expect(sockets.last.uri.toString(), 'wss://cse.test/market');
     await finish(tester);
   });

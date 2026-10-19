@@ -1,6 +1,6 @@
 # Plan: DSE / CSE exchange support
 
-Status: **Phase 0 done. Step 1 (MarketWidget switcher) done 2026-10-19. Next steps one screen at a time.**
+Status: **Phase 0 done. Step 1 (MarketWidget) and Step 2 (Watch List) done 2026-10-19. Connection model A (only the selected exchange is connected) — user decision. Next steps one screen at a time.**
 Created: 2026-10-18
 
 ## User decisions (2026-10-19)
@@ -19,6 +19,12 @@ Created: 2026-10-18
 - `ExchangeSwitcher` (`global_widgets/exchange/exchange_switcher.dart`) in MarketWidget app bar
 - Switch → `HomeController.reloadMarketForExchange()` (clears market + Top Stocks feed, reconnects) and `LiveIndexController.reloadIndexForExchange()`
 - Tests: exchange_service_test, exchange_switcher_test, exchange_reload_test, broker_config cse_socket_url_test (mutation-checked)
+
+## Step 2 — Watch List (done 2026-10-19)
+
+- `ExchangeSwitcher(padding:)` in the Watch List app bar (padding only when shown → single-exchange layouts unchanged)
+- Switch now also clears `marketListAll`, `marketFeedList`, `marketListForDilog`, `marqueeList` (step 1 left them, so watchlist / quote lookup / sector charts / marquee kept the old exchange's prices) and refreshes `WatchListController`
+- Connection model: **A** — only the selected exchange's market + index sockets are open; other exchange's price later via per-instrument subscription if needed
 
 ## Phase 0 — house flag (done)
 

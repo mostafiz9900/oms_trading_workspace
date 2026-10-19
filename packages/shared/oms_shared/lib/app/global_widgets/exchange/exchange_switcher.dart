@@ -13,7 +13,11 @@ import '../../data/services/exchange_service.dart';
 /// Renders nothing unless the house trades on both DSE and CSE, so
 /// single-exchange apps look exactly as before.
 class ExchangeSwitcher extends StatelessWidget {
-  const ExchangeSwitcher({super.key});
+  const ExchangeSwitcher({super.key, this.padding = EdgeInsets.zero});
+
+  /// Space around the switch; applied only when the switch is shown, so
+  /// single-exchange layouts are unchanged.
+  final EdgeInsetsGeometry padding;
 
   static const double _segmentWidth = 33;
   static const double _height = 22;
@@ -37,54 +41,57 @@ class ExchangeSwitcher extends StatelessWidget {
     return Obx(() {
       final selected = service.selected.value;
       final selectedIndex = exchanges.indexOf(selected);
-      return Semantics(
-        label: 'Exchange',
-        value: label(selected),
-        child: Container(
-          key: const ValueKey('exchange_switcher'),
-          width: _segmentWidth * exchanges.length + _padding * 2,
-          height: _height,
-          padding: const EdgeInsets.all(_padding),
-          decoration: BoxDecoration(
-            color: context.isDark
-                ? Colors.white.withAlpha(26)
-                : const Color(0xFFEDEDED),
-            borderRadius: BorderRadius.circular(_height / 2),
-          ),
-          child: Stack(
-            children: [
-              // Sliding highlight under the selected exchange.
-              AnimatedAlign(
-                duration: _slide,
-                curve: Curves.easeOutCubic,
-                alignment: exchanges.length < 2
-                    ? Alignment.center
-                    : Alignment(
-                        -1 + 2 * selectedIndex / (exchanges.length - 1),
-                        0,
-                      ),
-                child: Container(
-                  width: _segmentWidth,
-                  decoration: BoxDecoration(
-                    color: accent,
-                    borderRadius: BorderRadius.circular(_height / 2),
+      return Padding(
+        padding: padding,
+        child: Semantics(
+          label: 'Exchange',
+          value: label(selected),
+          child: Container(
+            key: const ValueKey('exchange_switcher'),
+            width: _segmentWidth * exchanges.length + _padding * 2,
+            height: _height,
+            padding: const EdgeInsets.all(_padding),
+            decoration: BoxDecoration(
+              color: context.isDark
+                  ? Colors.white.withAlpha(26)
+                  : const Color(0xFFEDEDED),
+              borderRadius: BorderRadius.circular(_height / 2),
+            ),
+            child: Stack(
+              children: [
+                // Sliding highlight under the selected exchange.
+                AnimatedAlign(
+                  duration: _slide,
+                  curve: Curves.easeOutCubic,
+                  alignment: exchanges.length < 2
+                      ? Alignment.center
+                      : Alignment(
+                          -1 + 2 * selectedIndex / (exchanges.length - 1),
+                          0,
+                        ),
+                  child: Container(
+                    width: _segmentWidth,
+                    decoration: BoxDecoration(
+                      color: accent,
+                      borderRadius: BorderRadius.circular(_height / 2),
+                    ),
                   ),
                 ),
-              ),
-              Row(
-                children: [
-                  for (final exchange in exchanges)
-                    _Segment(
-                      key: ValueKey('exchange_${exchange.name}'),
-                      text: label(exchange),
-                      selected: exchange == selected,
-                      width: _segmentWidth,
-                      duration: _slide,
-                      onTap: () => service.select(exchange),
-                    ),
-                ],
-              ),
-            ],
+                Row(
+                  children: [
+                    for (final exchange in exchanges)
+                      _Segment(
+                        key: ValueKey('exchange_${exchange.name}'),
+                        text: label(exchange),
+                        selected: exchange == selected,
+                        width: _segmentWidth,
+                        duration: _slide,
+                        onTap: () => service.select(exchange),
+                      ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       );

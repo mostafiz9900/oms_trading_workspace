@@ -264,7 +264,17 @@ mixin HomeSocketMixin on HomeState {
   /// feed connects.
   void reloadMarketForExchange() {
     marketService.clear();
+    // Every list built from the old feed (watchlist, quote lookup, sector
+    // charts, search dialog, marquee) would otherwise keep the old
+    // exchange's prices until each stock ticks again.
+    marketListAll.clear();
+    marketFeedList.clear();
+    marketListForDilog.clear();
+    marqueeList.clear();
     _initializeMarketWebSocket();
+    if (Get.isRegistered<WatchListController>()) {
+      Get.find<WatchListController>().applyFilters();
+    }
   }
 
   // Refresh methods for public use
