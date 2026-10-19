@@ -15,9 +15,9 @@ import '../../data/services/exchange_service.dart';
 class ExchangeSwitcher extends StatelessWidget {
   const ExchangeSwitcher({super.key});
 
-  static const double _segmentWidth = 36;
-  static const double _height = 26;
-  static const double _padding = 2;
+  static const double _segmentWidth = 33;
+  static const double _height = 22;
+  static const double _padding = 0;
   static const Duration _slide = Duration(milliseconds: 200);
 
   static String label(StockExchange exchange) => switch (exchange) {
@@ -46,7 +46,9 @@ class ExchangeSwitcher extends StatelessWidget {
           height: _height,
           padding: const EdgeInsets.all(_padding),
           decoration: BoxDecoration(
-            color: accent.withAlpha(26),
+            color: context.isDark
+                ? Colors.white.withAlpha(26)
+                : const Color(0xFFEDEDED),
             borderRadius: BorderRadius.circular(_height / 2),
           ),
           child: Stack(
@@ -66,13 +68,6 @@ class ExchangeSwitcher extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: accent,
                     borderRadius: BorderRadius.circular(_height / 2),
-                    boxShadow: [
-                      BoxShadow(
-                        color: accent.withAlpha(77),
-                        blurRadius: 4,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
                   ),
                 ),
               ),
@@ -126,12 +121,10 @@ class _Segment extends StatelessWidget {
             // Start from the theme so the app's font family is kept.
             style: (Theme.of(context).textTheme.labelLarge ?? const TextStyle())
                 .copyWith(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.5,
-                  color: selected
-                      ? Colors.white
-                      : context.textColor.withAlpha(166),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0,
+                  color: selected ? Colors.white : context.textColor,
                 ),
             child: Text(text),
           ),
