@@ -1,5 +1,6 @@
 import '../../../core/utils/helpers/log_helper.dart';
 import '../../../core/values/app_config.dart';
+
 import 'package:get/get.dart';
 
 import '../../../data/models/response/companies_model.dart';
@@ -26,22 +27,40 @@ class CompaniesController extends GetxController {
       isLoading = true;
       error = '';
       update(); // notify GetBuilder: show loader
-      var url = '${AppConfig.baseURLChart}companies/symbol/$symbol';
+
+      var url = '${AppConfig.baseURLItch}api/company/fundamentals?code=$symbol';
       printLog('url:::get companies:$url');
+
       final response = await _connect.get(url);
-      printLog('response:: companies:: ${response.statusCode}');
-      printLog('response:: companies:: ${response.body}');
-      if (response.statusCode == 200) {
-        // response.body may be Map or String depending on GetConnect setup
+      // printLog('response:: companies:: ${response.statusCode}');
+      // printLog('response:: companies:: ${response.body}');
+
+      if (response.statusCode == 200 && response.body != null) {
+        // ১. response.body যদি String হিসেবে আসে (যেমন প্লেন টেক্সট বা এনকোডেড JSON)
         if (response.body is String) {
-          companies = companiesModelFromMap(response.body as String);
+          companies = companiesModelFromJson(response.body as String);
           return companies;
-        } else if (response.body is Map<String, dynamic>) {
-          companies = CompaniesModel.fromMap(Map<String, dynamic>.from(response.body));
+        }
+        // ২. response.body যদি অলরেডি Map/JSON অবজেক্ট হয় (GetConnect সাধারণত অটো-পার্স করে)
+        else if (response.body is Map<String, dynamic>) {
+          companies = CompaniesModel.fromJson(
+            Map<String, dynamic>.from(response.body),
+          );
           return companies;
-        } else {
-          companies = CompaniesModel.fromMap(response.body ?? '');
-          return companies;
+        }
+        // ৩. ফ্যালব্যাক কেস: যদি কোনো কারণে অন্য ফরম্যাটে আসে, ডাইনামিক হ্যান্ডলিং
+        else {
+          try {
+            // যদি বডি অলরেডি ম্যাপের মতো বিহেভ করে কিন্তু টাইপ এক্সপ্লিসিট না থাকে
+            companies = CompaniesModel.fromJson(
+              Map<String, dynamic>.from(response.body),
+            );
+            return companies;
+          } catch (e) {
+            error =
+                'Parsing Error: Unexpected data format (${response.body.runtimeType})';
+            printLog('error::: $error');
+          }
         }
       } else {
         error = 'Error: ${response.statusCode} ${response.statusText ?? ''}';
@@ -51,7 +70,7 @@ class CompaniesController extends GetxController {
     } finally {
       isLoading = false;
       printLog('error::: $error');
-      update(); // notify GetBuilder to refresh UI with new state
+      update(); // notify GetBuilder to refresh UI with new state (Data or Error)
     }
     return null;
   }
@@ -72,7 +91,9 @@ class CompaniesController extends GetxController {
           var dividend = dividendModelFromMap(response.body as String);
           return dividend;
         } else if (response.body is Map<String, dynamic>) {
-          var dividend = DividendModel.fromMap(Map<String, dynamic>.from(response.body));
+          var dividend = DividendModel.fromMap(
+            Map<String, dynamic>.from(response.body),
+          );
           return dividend;
         } else {
           var dividend = DividendModel.fromMap(response.body ?? '');
@@ -91,7 +112,11 @@ class CompaniesController extends GetxController {
     return null;
   }
 
-  Future<EpsModel?> fetchQuarterEPS({required String symbol, required String quarter, required int year}) async {
+  Future<EpsModel?> fetchQuarterEPS({
+    required String symbol,
+    required String quarter,
+    required int year,
+  }) async {
     final url =
         "${AppConfig.baseURLChart}financial-reports_spetials/$symbol/$year/eps?quarter=$quarter&use_cumulative=false&search_previous_years=true";
 
@@ -109,7 +134,11 @@ class CompaniesController extends GetxController {
     List<String> quarters = ["Q1", "Q2", "Q3", "Q4"];
 
     for (var q in quarters) {
-      final data = await fetchQuarterEPS(symbol: symbol, quarter: q, year: year);
+      final data = await fetchQuarterEPS(
+        symbol: symbol,
+        quarter: q,
+        year: year,
+      );
       if (data != null) {
         epsMap[q] = data;
       }

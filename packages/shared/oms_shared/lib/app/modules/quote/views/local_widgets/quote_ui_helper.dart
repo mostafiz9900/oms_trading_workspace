@@ -1,4 +1,3 @@
-
 import '../../../../global_widgets/info_tooltip_icon.dart';
 
 import 'package:flutter/material.dart';
@@ -84,6 +83,7 @@ class QuoteUIHelper {
               Flexible(
                 child: Text(
                   NumberFormatter.croreFormat(value),
+                  // value,
                   overflow: TextOverflow.ellipsis,
                   style: Get.textTheme.bodySmall?.copyWith(
                     color: context.textColor,

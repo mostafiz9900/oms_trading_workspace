@@ -1,12 +1,17 @@
 import '../extensions/app_context.dart';
 import '../../values/colors.dart';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class NumberFormatter {
   // NumberFormat parses its pattern on construction; these run for every
   // visible row on every live tick, so the instances are created once.
-  static final _inr2 = NumberFormat.currency(locale: 'en_IN', symbol: '', decimalDigits: 2);
+  static final _inr2 = NumberFormat.currency(
+    locale: 'en_IN',
+    symbol: '',
+    decimalDigits: 2,
+  );
   static final _compact = NumberFormat.compact(locale: 'en');
   static final _us2 = NumberFormat('#,##0.00', 'en_US');
   static final _usUpTo2 = NumberFormat('#,##0.##', 'en_US');
@@ -35,7 +40,7 @@ class NumberFormatter {
 
   static String croreFormat(dynamic value) {
     try {
-      if (value == null) return "0.0cr";
+      if (value == null) return "0.0";
 
       double parsedValue = 0.0;
 
@@ -45,13 +50,22 @@ class NumberFormatter {
         // কমা (,) থাকলে সেটি সরিয়ে পার্স করবে
         parsedValue = double.tryParse(value.replaceAll(',', '')) ?? 0.0;
       }
+
       if (parsedValue.isNaN || parsedValue.isInfinite) {
-        return "0.0cr";
+        return "0.0";
       }
+
+      // 💡 মিনিমাম কন্ডিশন (Threshold Check):
+      // ভ্যালুর পরম মান (Absolute Value) যদি ১ কোটির কম হয়, তবে নরমাল ফরম্যাটে দেখাবে
+      if (parsedValue.abs() < 10000000) {
+        return _us2.format(parsedValue); // যেমন: -101.2545555 বা 5,500
+      }
+
+      // ভ্যালু ১ কোটি বা তার বেশি হলে কোটি (cr) ফরম্যাটে কনভার্ট হবে
       final inCrore = parsedValue / 10000000;
       return "${_us2.format(inCrore)}cr";
     } catch (e) {
-      return "0.0cr";
+      return "0.0";
     }
   }
 
@@ -127,9 +141,14 @@ class NumberFormatter {
       if (parsedValue.isNaN || parsedValue.isInfinite) {
         return fallbackValue;
       }
-      String pattern = safeDecimal > 0 ? '#,##,##0.${'0' * safeDecimal}' : '#,##,##0';
+      String pattern = safeDecimal > 0
+          ? '#,##,##0.${'0' * safeDecimal}'
+          : '#,##,##0';
       // 'en_IN' বাংলাদেশের ১,০০,০০০ ফরম্যাটের জন্য কাজ করবে
-      final formatter = _bdByPattern.putIfAbsent(pattern, () => NumberFormat(pattern, 'en_IN'));
+      final formatter = _bdByPattern.putIfAbsent(
+        pattern,
+        () => NumberFormat(pattern, 'en_IN'),
+      );
       return formatter.format(parsedValue);
     } catch (e) {
       return fallbackValue;
@@ -142,7 +161,11 @@ class NumberFormatter {
 
   /// Currency format with symbol
   static String withCurrency(num value, {String symbol = '₹'}) {
-    final formatter = NumberFormat.currency(locale: 'en_IN', symbol: symbol, decimalDigits: 2);
+    final formatter = NumberFormat.currency(
+      locale: 'en_IN',
+      symbol: symbol,
+      decimalDigits: 2,
+    );
     return formatter.format(value);
   }
 
@@ -189,7 +212,10 @@ class NumberHelper {
     return v.toStringAsFixed(decimals); // zero
   }
 
-  static ({String text, Color color}) formatPriceChange(double? changeValue, BuildContext context) {
+  static ({String text, Color color}) formatPriceChange(
+    double? changeValue,
+    BuildContext context,
+  ) {
     final value = changeValue ?? 0.0;
 
     if (value > 0) {

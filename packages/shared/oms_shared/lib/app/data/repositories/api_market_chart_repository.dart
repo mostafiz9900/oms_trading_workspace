@@ -1,5 +1,7 @@
-import '../models/response/index_chart_model.dart' show IndexChartModel, indexChartModelFromJson;
-import '../models/response/index_chart_model2.dart' show IndexChartModel2, indexChartModel2FromJson;
+import '../models/response/index_chart_model.dart'
+    show IndexChartModel, indexChartModelFromJson;
+import '../models/response/index_chart_model2.dart'
+    show IndexChartModel2, indexChartModel2FromJson;
 import 'market_chart_repository.dart' show MarketChartRepository;
 import '../models/response/historical_volume.dart' show PriceTableResponse;
 
@@ -24,6 +26,10 @@ class ApiMarketChartRepository implements MarketChartRepository {
       tickerName,
       orderBook,
     );
+    // printLog(
+    //   'getHistoricalVolume response;:: ${ApiUrl.getHistoricalVolumeData}',
+    // );
+    // printLog('getHistoricalVolume    $tickerName response;:: ${orderBook}');
     printLog('getHistoricalVolume response;:: ${response.body}');
     try {
       if (response.statusCode == 200) {

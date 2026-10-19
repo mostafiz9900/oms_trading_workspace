@@ -162,7 +162,7 @@ class LiveIndexController extends GetxController {
 
     try {
       final String url = getCandleEndpoint(symbol, param);
-      printLog('Fetching Index Chart Data: $url');
+      // printLog('Fetching Index Chart Data: $url');
 
       final response = await _connection.get(url);
       printLog(response.body);

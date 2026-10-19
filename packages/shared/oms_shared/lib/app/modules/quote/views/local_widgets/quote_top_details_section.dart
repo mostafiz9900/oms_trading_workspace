@@ -1,3 +1,5 @@
+import 'package:oms_shared/app/core/utils/helpers/log_helper.dart';
+
 import '/app/global_widgets/responsive_wrap_widget.dart';
 
 import 'package:flutter/material.dart';
@@ -346,13 +348,19 @@ class _DetailedStatsWrap extends StatelessWidget {
   Widget build(BuildContext context) {
     final mData = homeCon.marketData;
     final cData = homeCon.company;
-    final double epsQ1 = homeCon.epsData['Q1']?.epsContinuing ?? 0.0;
-    final double epsQ2 = homeCon.epsData['Q2']?.epsContinuing ?? 0.0;
-    final double epsQ3 = homeCon.epsData['Q3']?.epsContinuing ?? 0.0;
-    final double epsQ4 = homeCon.epsData['Q4']?.epsContinuing ?? 0.0;
-
-    // সবগুলো কোয়ার্টারের EPS যোগ করে TTM (Trailing Twelve Months) তৈরি
-    final double epsTTM = epsQ1 + epsQ2 + epsQ3 + epsQ4;
+    final double epsQ1 = cData?.fundamentals?.eps?.q1 ?? 0.0;
+    final double epsQ2 = cData?.fundamentals?.eps?.q2 ?? 0.0;
+    final double epsQ3 = cData?.fundamentals?.eps?.q3 ?? 0.0;
+    final double epsAnn = cData?.fundamentals?.eps?.ann ?? 0.0;
+    final double divident = cData?.fundamentals?.dividend ?? 0.0;
+    final double divYield = cData?.fundamentals?.divYield ?? 0.0;
+    final double cashDividend = cData?.fundamentals?.cashDividend ?? 0.0;
+    final double annNocfps = cData?.fundamentals?.nocfps?.ann ?? 0.0;
+    final double q1Nocfps = cData?.fundamentals?.nocfps?.q1 ?? 0.0;
+    final double q2Nocfps = cData?.fundamentals?.nocfps?.q2 ?? 0.0;
+    final double q3Nocfps = cData?.fundamentals?.nocfps?.q3 ?? 0.0;
+    final double epsTTM = epsQ1 + epsQ2 + epsQ3 + epsAnn;
+    final double peTtm = cData?.fundamentals?.peTtm ?? 0.0;
     return BetterResponsiveWrap(
       minItemWidth: 60,
       children: [
@@ -411,10 +419,9 @@ class _DetailedStatsWrap extends StatelessWidget {
         QuoteUIHelper.buildPerformanceItemWithTooltip(
           context,
           'P/E(TTM):',
-          "${cData?.marketData?.valuation?.peRatio ?? 0.0}",
+          peTtm.toStringAsFixed(2),
           showInfo: true,
-          infoText:
-              'Unaudited P/E : ${NumberFormatter.bdFormat(cData?.marketData?.valuation?.peRatio ?? 0.0)}',
+          infoText: 'Unaudited P/E : ${NumberFormatter.bdFormat(peTtm)}',
         ),
         QuoteUIHelper.buildPerformanceItem(
           context,
@@ -424,75 +431,75 @@ class _DetailedStatsWrap extends StatelessWidget {
         QuoteUIHelper.buildPerformanceItem(
           context,
           'NAV:',
-          '${cData?.financials?.perShareMetrics?.navTk ?? 0.0}',
+          '${cData?.fundamentals?.nav ?? 0.0}',
         ),
-        // QuoteUIHelper.buildPerformanceItemWithTooltip(
+        QuoteUIHelper.buildPerformanceItemWithTooltip(
+          context,
+          'Ttl Share:',
+          // '${cData?.shareholding?.totalSharesMillions ?? 0.0}',
+          '${cData?.fundamentals?.ttlShare ?? 0}',
+          showInfo: true,
+          infoText:
+              'Total no of Share : ${NumberFormatter.croreFormat("${cData?.fundamentals?.ttlShare}")}',
+        ),
+        // QuoteUIHelper.buildPerformanceItem(
         //   context,
-        //   'Ttl Share:',
-        //   // '${cData?.shareholding?.totalSharesMillions ?? 0.0}',
-        //   '${mData.trades ?? 0}',
-        //   showInfo: true,
-        //   infoText:
-        //       'Total no of Share : ${NumberFormatter.croreFormat("${cData?.shareholding?.totalSharesMillions}")}',
+        //   'Trade:',
+        //   NumberFormatter.bdFormatInt(mData.trades?.toInt() ?? 0),
         // ),
         QuoteUIHelper.buildPerformanceItem(
           context,
-          'Trade:',
-          NumberFormatter.bdFormatInt(mData.trades?.toInt() ?? 0),
-        ),
-        QuoteUIHelper.buildPerformanceItem(
-          context,
           'Yr end:',
-          cData?.corporateActions?.financialYearEnd ?? "",
+          cData?.fundamentals?.yrEnd ?? "",
         ),
 
         QuoteUIHelper.buildPerformanceItem(
           context,
-          'EPS Ann-${homeCon.epsData['Q4']?.year ?? ""}',
-          '${homeCon.epsData['Q4']?.epsContinuing ?? 0.0}',
+          'EPS Ann-',
+          epsAnn.toStringAsFixed(2),
         ),
         QuoteUIHelper.buildPerformanceItem(
           context,
-          'EPS ${homeCon.epsData['Q1']?.quarter ?? ""}-${homeCon.epsData['Q1']?.year ?? ""}',
-          '${homeCon.epsData['Q1']?.epsContinuing ?? 0.0}',
+          'EPS Q1-2024',
+          epsQ1.toStringAsFixed(2),
         ),
         QuoteUIHelper.buildPerformanceItem(
           context,
-          'EPS ${homeCon.epsData['Q2']?.quarter ?? ""}-${homeCon.epsData['Q2']?.year ?? ""}',
-          '${homeCon.epsData['Q2']?.epsContinuing ?? 0.0}',
+          'EPS Q2-2024',
+          epsQ2.toStringAsFixed(2),
         ),
         QuoteUIHelper.buildPerformanceItem(
           context,
-          'EPS ${homeCon.epsData['Q3']?.quarter ?? ""}-${homeCon.epsData['Q3']?.year ?? ""}',
-          '${homeCon.epsData['Q3']?.epsContinuing ?? 0.0}',
+          'EPS Q3-2024',
+          epsQ3.toStringAsFixed(2),
         ),
 
         QuoteUIHelper.buildPerformanceItem(
           context,
-          'Div-${homeCon.dividendObj?.fiscalYear?.yearEnd.toString().substring(0, 4)}',
-          '${homeCon.dividendObj?.dividend?.cashPercent ?? 0.0}% csh',
+          'Div-2024',
+          '$divident% csh',
         ),
 
         QuoteUIHelper.buildPerformanceItem(
           context,
           'NOCFPS Ann-2024',
-          '0% csh',
+          '$annNocfps% csh',
         ),
         QuoteUIHelper.buildPerformanceItem(context, 'NOCFPS Q1-2024', '0% csh'),
         QuoteUIHelper.buildPerformanceItem(
           context,
           'NOCFPS Q2-6mnth-',
-          '0% csh',
+          '$q2Nocfps% csh',
         ),
         QuoteUIHelper.buildPerformanceItem(
           context,
           'NOCFPS Q3-9mnth-',
-          '0% csh',
+          '${q3Nocfps.toStringAsFixed(2)}% csh',
         ),
         QuoteUIHelper.buildPerformanceItem(
           context,
-          'Div Yield ${cData?.corporateActions?.financialYear ?? ""}',
-          '${(cData?.marketData?.valuation?.dividendYieldPct ?? 0.0).toStringAsFixed(2)}% csh',
+          'Div Yield 2024',
+          '${divYield.toStringAsFixed(2)}% csh',
         ),
       ],
     );
@@ -554,7 +561,7 @@ class _ShareholdingInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sData = homeCon.company?.shareholding?.ownershipBreakdown;
+    final sData = homeCon.company?.shareHolding;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -570,31 +577,31 @@ class _ShareholdingInfo extends StatelessWidget {
             QuoteUIHelper.build4Item(
               context,
               'Director:',
-              '${NumberFormatter.bdFormat(sData?.sponsorsDirectorsPct ?? 0.0)}%',
+              '${NumberFormatter.bdFormat(sData?.director ?? 0.0)}%',
               '0.0cr',
             ),
             QuoteUIHelper.build4Item(
               context,
               'Govt:',
-              '${NumberFormatter.bdFormat(sData?.governmentPct ?? 0.0)}%',
+              '${NumberFormatter.bdFormat(sData?.govt ?? 0.0)}%',
               '0.0cr',
             ),
             QuoteUIHelper.build4Item(
               context,
               'Institute:',
-              '${NumberFormatter.bdFormat(sData?.institutionalPct ?? 0.0)}%',
+              '${NumberFormatter.bdFormat(sData?.institute ?? 0.0)}%',
               '0.0cr',
             ),
             QuoteUIHelper.build4Item(
               context,
               'Foreign:',
-              '${NumberFormatter.bdFormat(sData?.foreignPct ?? 0.0)}%',
+              '${NumberFormatter.bdFormat(sData?.foreign ?? 0.0)}%',
               '0.0cr',
             ),
             QuoteUIHelper.build4Item(
               context,
               'Public:',
-              '${NumberFormatter.bdFormat(sData?.publicPct ?? 0.0)}%',
+              '${NumberFormatter.bdFormat(sData?.public ?? 0.0)}%',
               '0.0cr',
             ),
           ],

@@ -11,20 +11,17 @@ const houseProfile = HouseProfile(
     whatsApp: '01940660088',
     email: 'contact@benemoysecurities.com',
     websiteUrl: 'https://benemoysecurities.com',
-    officeAddressShort:
-        'Praasad Paltan Square (9th Floor), 3/11 Naya Paltan, Motijheel, Dhaka-1000',
-    officeAddressFull:
-        'Praasad Paltan Square (9th Floor), 3/11 Naya Paltan, Box Culvert Road, Motijheel, Dhaka-1000, Bangladesh',
+    officeAddressShort: 'Praasad Paltan Square (9th Floor), 3/11 Naya Paltan, Motijheel, Dhaka-1000',
+    officeAddressFull: 'Praasad Paltan Square (9th Floor), 3/11 Naya Paltan, Box Culvert Road, Motijheel, Dhaka-1000, Bangladesh',
     tradingHours: 'Sunday - Thursday (10:00 AM - 2:00 PM)',
   ),
   store: HouseStoreListing(
     androidPackageId: 'com.benemoysecurity.app',
     iosBundleId: 'com.benemoysecurities.app',
     appStoreId: '6751455371',
-    playStoreShareUrl:
-        'https://play.google.com/store/apps/details?id=com.benemoysecurity.app&pcampaignid=web_share',
+    playStoreShareUrl: 'https://play.google.com/store/apps/details?id=com.benemoysecurity.app&pcampaignid=web_share',
     appStoreShareUrl: 'https://apps.apple.com/us/app/benemoy/id6751455371',
   ),
   // dseOnly (default) | cseOnly | dseAndCse
-  exchangeMode: ExchangeMode.dseAndCse,
+  exchangeMode: ExchangeMode.dseOnly,
 );

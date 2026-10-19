@@ -34,7 +34,7 @@ mixin QuoteMixin on HomeState {
   Future<void> loadCompany(String symbol) async {
     printLog('model.shortName: == $symbol');
     company = await companiesController.getCompanies(symbol.toUpperCase());
-    printLog('resul====:${company?.toMap()}');
+    printLog('resul====:${company?.toJson()}');
     update(['marketList']);
   }
 
@@ -54,8 +54,8 @@ mixin QuoteMixin on HomeState {
   @override
   void loadComanyDividentEPS(String shortName) async {
     await loadCompany(shortName);
-    await loadDividend(shortName);
-    await loadEPS(shortName);
+    // await loadDividend(shortName);
+    // await loadEPS(shortName);
   }
 
   @override
@@ -102,5 +102,4 @@ mixin QuoteMixin on HomeState {
       orElse: () => MarketModel(),
     );
   }
-
 }
