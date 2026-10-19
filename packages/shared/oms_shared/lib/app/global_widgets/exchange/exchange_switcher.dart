@@ -15,10 +15,9 @@ import '../../data/services/exchange_service.dart';
 class ExchangeSwitcher extends StatelessWidget {
   const ExchangeSwitcher({super.key});
 
-  static const double _segmentWidth = 44;
-  static const double _height = 28;
+  static const double _segmentWidth = 36;
+  static const double _height = 26;
   static const double _padding = 2;
-  static const double _border = 1;
   static const Duration _slide = Duration(milliseconds: 200);
 
   static String label(StockExchange exchange) => switch (exchange) {
@@ -43,12 +42,11 @@ class ExchangeSwitcher extends StatelessWidget {
         value: label(selected),
         child: Container(
           key: const ValueKey('exchange_switcher'),
-          width: _segmentWidth * exchanges.length + (_padding + _border) * 2,
+          width: _segmentWidth * exchanges.length + _padding * 2,
           height: _height,
           padding: const EdgeInsets.all(_padding),
           decoration: BoxDecoration(
             color: accent.withAlpha(26),
-            border: Border.all(color: accent.withAlpha(102), width: _border),
             borderRadius: BorderRadius.circular(_height / 2),
           ),
           child: Stack(
