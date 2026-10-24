@@ -447,4 +447,40 @@ void main() {
       await finish(tester);
     });
   });
+
+  group('single-exchange houses trade as before', () {
+    for (final mode in [ExchangeMode.dseOnly, ExchangeMode.cseOnly]) {
+      testWidgets('${mode.name}: a new order is sent', (tester) async {
+        initTestAppConfig(exchangeMode: mode);
+        addTearDown(initTestAppConfig);
+        await startApp(tester);
+        Get.put(ExchangeService());
+        expect(home.canOrderOnSelectedExchange, isTrue);
+
+        home.orderConfirmSubmitted(SideType2.BUY, ActionsType.ORDER);
+        final socket = await openOrderSocket(tester);
+
+        expect(sentOrder(socket), containsPair('symbol', 'GP'));
+        await finish(tester);
+      });
+
+      testWidgets('${mode.name}: cancel is sent', (tester) async {
+        initTestAppConfig(exchangeMode: mode);
+        addTearDown(initTestAppConfig);
+        await startApp(tester);
+        Get.put(ExchangeService());
+        home.marketListAll.add(home.marketData);
+
+        home.orderCancelSubmitted(
+          'ORDER_CANCEL_REQUEST',
+          UserOrder(orderId: 'OID-1', clientOrderId: 'C-1', orderBookId: 101, side: 'BUY'),
+        );
+        final socket = await openOrderSocket(tester);
+        await pumpFor(tester, const Duration(seconds: 1));
+
+        expect(sentOrder(socket), containsPair('action', 'ORDER_CANCEL_REQUEST'));
+        await finish(tester);
+      });
+    }
+  });
 }

@@ -312,10 +312,12 @@ abstract class HomeState extends SuperController {
     update(['order_confirm_btn']);
   }
 
-  /// Order requests carry no exchange field and every existing order is on
-  /// DSE, so nothing is sent to the gateway while CSE is selected; CSE
-  /// trading opens once the gateway supports it.
+  /// A house on both exchanges: order requests carry no exchange field and
+  /// every existing order is on DSE, so nothing is sent to the gateway while
+  /// CSE is selected; CSE trading opens once the gateway supports it.
+  /// A single-exchange house (DSE only or CSE only) always trades, as before.
   bool get canOrderOnSelectedExchange =>
+      !AppConfig.hasBothExchanges ||
       ExchangeService.current != StockExchange.cse;
 
   /// Shows an order alert right away. GetX shows one snackbar at a time and

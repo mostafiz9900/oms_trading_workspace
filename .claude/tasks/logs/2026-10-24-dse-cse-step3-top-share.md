@@ -13,6 +13,7 @@
 - Step 8: Favourites, sector details, Quote › Price Table. Files: `fav_market_mixin.dart`, `socket_mixin.dart`, `market_feed_mixin.dart`, `home_state.dart`, `quote_mixin.dart`, `fav_market_view.dart`, `sector_horizontal_list.dart`, tests. User rule recorded in memory/rules.md: DSE must stay exactly as is.
 - Full recheck: all 6 bottom tabs + Top Share, Global Search, Sector details have the switch; other screens are account-only or unreachable. Positions: user wants CSE prices on CSE (already so); added redraw during the switch window.
 - Step 9: stock details (depth, T&S) follow the exchange; 2 new optional env keys. Files: `broker_house_config.dart`, `app_config.dart`, `validate_apps.dart`, `socket_mixin.dart`, `quote_mixin.dart`, `home_state.dart`, tests.
+- Step 10: cseOnly order bug fixed (gate only for dseAndCse); per-exchange indices in `live_index_controller.dart`. Pre-CSE tests re-run on current code with dseOnly.
 
 ## Verified
 - `make analyze`: 0 issues; `make test`: oms_shared 147 passed, broker_config +2 (`make check` green); new tests mutation-checked 4/4 (Top Share) + 4/4 (Quote) + 4/4 (Trade) + 4/4 (Orders).

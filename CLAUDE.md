@@ -26,7 +26,7 @@
 - **Current Phase**: Maintenance of a **live production app** (Benemoy) + monorepo hardening
 - **Target Users**: Retail investors of each broker house (Benemoy first)
 - **Critical Paths**: placing/replacing/cancelling orders over the order socket · login, OTP, token refresh · live market/order-book sockets · portfolio and balances
-- **Current Priorities**: release secrets for CI (Play + iOS) · UAT QA of PR #2 (dev → uat) · decisions on the 3 behaviours in .claude/memory/gotchas.md
+- **Current Priorities**: DSE/CSE switch — UI done on `feature/cse_ui`, waiting on backend (CSE URLs, index names, exchange field in orders) · release secrets for CI (Play + iOS) · UAT QA of PR #2 (dev → uat) · decisions on the 3 behaviours in .claude/memory/gotchas.md
 
 ## 📁 Project Structure
 ```text
@@ -66,7 +66,8 @@ tool/new_app.dart, validate_apps.dart · Makefile · .github/workflows/{ci,relea
 See .claude/memory/patterns.md (module layout, HomeController mixins, socket handling, tests with fakes).
 
 ## ⚠️ Gotchas
-See .claude/memory/gotchas.md (route registration per app, open behaviour questions, GetStorage in tests, snackbars in tests).
+See .claude/memory/gotchas.md (route registration per app, open behaviour questions, GetStorage in tests, snackbars in tests, DSE/CSE switch).
+DSE is live: CSE code may run only after the user taps the DSE/CSE switch — see "DSE/CSE Work" in .claude/memory/rules.md.
 
 ## 🧩 Module Map
 `home` = shell (HomeController + 13 mixins, HomeView with 6 tabs) · tabs: `market`, `quote`, `watchlist` (+ favourites), `portfolio`, `trade` · `orders` (order list, details, replace/cancel dialog) · `auth` (login, OTP, signup, biometric, token, password reset) · `notifications` · `global_search` · `top_share`, `search_watch_list`, `order_alert`, `limit_request`, `withdrawal_request`, `contact_us`, `onboarding`, `splash`, `app_network`
@@ -88,6 +89,7 @@ See .claude/memory/decisions.md.
 - Deploy: merge to `prod` → `.github/workflows/release.yml` (Play draft + TestFlight); manual: `make deploy-android` / `make deploy-ios`
 - New broker app: `make new-app ID=x NAME="X Ltd" ANDROID_ID=com.x.app IOS_ID=com.x.app [EXCHANGE=dse|cse|both]` (default dse), then `make validate`
 - House exchanges: `exchangeMode:` in `apps/<house>/lib/src/house_profile.dart` (`dseOnly` default · `cseOnly` · `dseAndCse`); code reads `AppConfig.hasDse/hasCse/hasBothExchanges`, never the house id
+- CSE feeds (optional env keys, empty = use the DSE URL): `OMS_CSE_SOCKET_MARKET_URL`, `OMS_CSE_SOCKET_INDEX_URL`, `OMS_CSE_SOCKET_MARKET_DEPTH_URL`, `OMS_CSE_SOCKET_NEWS_TIME_SALES_URL`
 
 ## ⚙️ Settings
 - .claude/settings.json → shared team settings — always commit

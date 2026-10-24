@@ -81,11 +81,20 @@ Created: 2026-10-18
 - While Quote re-selects after a switch, the auto re-subscribe on (re)connect is skipped (`_quoteReselectPending`), so the old DSE id is never subscribed on the CSE feed
 - Tests: broker_config 2, `exchange_reload_test.dart` "Stock details" 2; mutation-checked 4/4
 
+## Step 10 — single-exchange houses + indices (done 2026-10-24)
+
+- **Bug fixed:** `canOrderOnSelectedExchange` blocked every order of a `cseOnly` house. Now the CSE gate applies only to `dseAndCse` houses; DSE-only and CSE-only always trade (tests for both)
+- Index per exchange (`LiveIndexController.baseIndicesByExchange`): DSE `DSEX, DSES, DS30, DSMEX` (unchanged), CSE `CASPI, CSE30, CSCX, CSE50, CSI` (names to confirm with the CSE feed). Start/switch selects the exchange's main index and clears the old chart
+- CSE only, until the user taps an index: follow the feed (first listed index present, else the first received) — so a different CSE naming still works. DSE untouched
+- HomeController's own index mixin (`selectedSn = 'DSEX'`) is not read by any screen — left as is
+- Tests: `test/modules/market/controllers/live_index_controller_test.dart` (6), 4 in `trade_mixin_test.dart`; mutation-checked 5/5
+- Pre-CSE test suite (`6db7350`) re-run against current code: all pass
+
 ## Remaining gaps
 
 1. ~~Positions~~ — **User decision 2026-10-24: CSE selected → holdings at CSE prices** (as the code does: by ISIN from the selected feed). Position is redrawn on every flush during the 5 s switch window (else only the first flush, with ~1 stock); test "Position is redrawn … and only then"
 2. News: `news` not cleared; one news socket for both exchanges (backend)
-3. Index names hardcoded: `selectedSn = 'DSEX'`, base indices `DSEX/DSES/DS30/DSMEX`, `DSE SME Index` (home_state, index_mixin, live_index_controller, market_index_controller); CSE index names (backend)
+3. CSE index names: app uses CASPI/CSE30/CSCX/CSE50/CSI and follows the feed if they differ — confirm with the CSE feed
 4. REST market URLs carry no exchange (candles, historical volume, minute data, company fundamentals/dividend/EPS) — backend
 5. CSE URLs for depth and time & sales: keys exist now (`OMS_CSE_SOCKET_MARKET_DEPTH_URL`, `OMS_CSE_SOCKET_NEWS_TIME_SALES_URL`) — values from backend
 6. Order JSON / order list exchange field — backend (orders blocked on CSE until then)

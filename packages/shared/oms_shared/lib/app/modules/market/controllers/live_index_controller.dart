@@ -3,6 +3,7 @@ import '../../../data/models/response/index_candle_model.dart'
 
 import 'dart:async';
 import 'dart:convert';
+import 'package:broker_config/broker_config.dart' show StockExchange;
 
 import 'package:get/get.dart';
 
@@ -20,9 +21,23 @@ class LiveIndexController extends GetxController {
   // ================= State Variables =================
   List<IndexModel> indexList = <IndexModel>[];
   List<IndexCandleModel> indexCandleList = <IndexCandleModel>[];
-  String selectedSn = 'DSEX';
+  String selectedSn = defaultIndexFor(ExchangeService.current);
   String selectedChartParam = "1D";
-  IndexModel? newArr = IndexModel(sn: "DSEX");
+  IndexModel? newArr = IndexModel(sn: defaultIndexFor(ExchangeService.current));
+
+  /// Main indices of each exchange, in list order; the first is selected at
+  /// start. CSE names are those CSE publishes; if its feed uses others, the
+  /// first index it sends is selected instead (see [_followCseFeed]).
+  static const Map<StockExchange, List<String>> baseIndicesByExchange = {
+    StockExchange.dse: ['DSEX', 'DSES', 'DS30', 'DSMEX'],
+    StockExchange.cse: ['CASPI', 'CSE30', 'CSCX', 'CSE50', 'CSI'],
+  };
+
+  static String defaultIndexFor(StockExchange exchange) =>
+      baseIndicesByExchange[exchange]!.first;
+
+  /// The user tapped an index; it is not changed for them any more.
+  bool _userPickedIndex = false;
 
   DateTime? lastIndexUpdateTime;
   DateTime _lastIndexUIUpdateTime = DateTime.now();
@@ -139,6 +154,11 @@ class LiveIndexController extends GetxController {
   /// Drops the old exchange's index values and connects to the new feed.
   void reloadIndexForExchange() {
     indexList.clear();
+    // Each exchange has its own indices: start on its main one, without the
+    // old exchange's chart.
+    selectedSn = defaultIndexFor(ExchangeService.current);
+    _userPickedIndex = false;
+    indexCandleList.clear();
     newArr = IndexModel(sn: selectedSn);
     update();
     _initializeIndexWebSocket();
@@ -194,8 +214,30 @@ class LiveIndexController extends GetxController {
     }
   }
 
+  /// CSE only, until the user picks an index: select the main index the
+  /// feed actually sends (the first listed one present, else the first
+  /// index received). DSE keeps DSEX as before.
+  void _followCseFeed(List<String> baseIndices) {
+    if (ExchangeService.current != StockExchange.cse || _userPickedIndex) {
+      return;
+    }
+    final present = visibleIndexList.map((e) => e.sn!).toList();
+    if (present.isEmpty) return;
+    final preferred = baseIndices.firstWhere(
+      present.contains,
+      orElse: () => present.first,
+    );
+    if (preferred == selectedSn) return;
+    selectedSn = preferred;
+    newArr = selectedIndexData ?? IndexModel(sn: preferred);
+    indexCandleList.clear();
+    update(['index_list', 'index_chart']);
+    fetchIndexCandleData(selectedSn, selectedChartParam);
+  }
+
   // ================= User Actions =================
   void selectSn(String sn) {
+    _userPickedIndex = true;
     selectedSn = sn;
     newArr = selectedIndexData ?? IndexModel(sn: sn);
     indexCandleList.clear();
@@ -213,6 +255,7 @@ class LiveIndexController extends GetxController {
 
   void getSumOfAllIndex(IndexModel? newIndexData) {
     if (newIndexData == null || newIndexData.sn == null) return;
+    _userPickedIndex = true;
 
     newArr = newIndexData;
     if (selectedSn != newIndexData.sn) {
@@ -299,7 +342,7 @@ class LiveIndexController extends GetxController {
       }
 
       if (messageType == null) {
-        const baseIndices = ['DSEX', 'DSES', 'DS30', 'DSMEX'];
+        final baseIndices = baseIndicesByExchange[ExchangeService.current]!;
         var index = IndexModel.fromJson(jsonResponse);
 
         if (baseIndices.contains(index.sn)) {
@@ -325,6 +368,7 @@ class LiveIndexController extends GetxController {
         if (newArr?.sn == index.sn) {
           newArr = index;
         }
+        _followCseFeed(baseIndices);
 
         if (selectedChartParam == "1D" &&
             selectedSn == index.sn &&
