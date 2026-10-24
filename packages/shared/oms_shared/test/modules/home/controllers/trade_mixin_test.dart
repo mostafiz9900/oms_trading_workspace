@@ -1,13 +1,16 @@
 import 'dart:convert';
 
+import 'package:broker_config/broker_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:oms_shared/app/core/values/storage.dart';
 import 'package:oms_shared/app/data/enums/app_enum.dart';
 import 'package:oms_shared/app/data/models/response/market_model.dart';
+import 'package:oms_shared/app/data/models/response/user_order.dart';
 import 'package:oms_shared/app/data/models/response/user_profile.dart';
 import 'package:oms_shared/app/data/repositories/home_repository.dart';
+import 'package:oms_shared/app/data/services/exchange_service.dart';
 import 'package:oms_shared/app/data/services/market_socket_service.dart';
 import 'package:oms_shared/app/data/services/socket_db_service.dart';
 import 'package:oms_shared/app/data/services/storage_service.dart';
@@ -349,6 +352,98 @@ void main() {
       home.tradPriceTextEditField.text = '12.50';
       home.calculateTotal();
       expect(home.totalAmount, 2500);
+      await finish(tester);
+    });
+  });
+
+  group('DSE/CSE house', () {
+    // Orders carry no exchange field yet, so none may be sent for CSE.
+    Future<void> onExchange(WidgetTester tester, StockExchange exchange) async {
+      initTestAppConfig(exchangeMode: ExchangeMode.dseAndCse);
+      addTearDown(initTestAppConfig);
+      await startApp(tester);
+      Get.put(ExchangeService()).select(exchange);
+    }
+
+    testWidgets('CSE selected: no order is sent and the user is told why', (
+      tester,
+    ) async {
+      await onExchange(tester, StockExchange.cse);
+
+      home.orderConfirmSubmitted(SideType2.BUY, ActionsType.ORDER);
+      await pumpFor(tester, const Duration(seconds: 1));
+
+      expect(sockets, isEmpty, reason: 'order socket not even opened');
+      expect(home.isOrderConfirmLoading, isFalse);
+      expect(home.canOrderOnSelectedExchange, isFalse);
+      expect(find.text(TradeMixin.cseOrderBlockedMessage), findsOneWidget);
+      await finish(tester);
+    });
+
+    final dseOrder = UserOrder(
+      orderId: 'OID-1',
+      clientOrderId: 'COID-1',
+      orderBookId: 101,
+      side: 'BUY',
+      limit: 300,
+      sentQty: 100,
+    );
+
+    final orderActions = <String, void Function()>{
+      'modify': () => home.orderConfirmSubmittedReplaceOrder(
+        SideType2.BUY,
+        ActionsType.REPLACE_ORDER,
+        order: dseOrder,
+      ),
+      'cancel': () => home.orderCancelSubmitted('ORDER_CANCEL_REQUEST', dseOrder),
+      'duplicate': () =>
+          home.orderDuplicateSubmitted(ActionsType.ORDER, order: dseOrder),
+      'status': () => home.orderStatusChangeConfirmSubmitted(
+        ActionsType.ORDER_STATUS,
+        dseOrder,
+      ),
+    };
+
+    for (final entry in orderActions.entries) {
+      testWidgets('CSE selected: ${entry.key} of a DSE order sends nothing', (
+        tester,
+      ) async {
+        await onExchange(tester, StockExchange.cse);
+        home.marketListAll.add(home.marketData);
+
+        entry.value();
+        await pumpFor(tester, const Duration(seconds: 2));
+
+        expect(sockets, isEmpty, reason: 'order socket not even opened');
+        expect(
+          find.text(OrderListMixin.cseOrderActionBlockedMessage),
+          findsOneWidget,
+        );
+        await finish(tester);
+      });
+    }
+
+    testWidgets('DSE selected: cancel is sent as before', (tester) async {
+      await onExchange(tester, StockExchange.dse);
+      home.marketListAll.add(home.marketData);
+
+      home.orderCancelSubmitted('ORDER_CANCEL_REQUEST', dseOrder);
+      final socket = await openOrderSocket(tester);
+      await pumpFor(tester, const Duration(seconds: 1));
+
+      final sent = jsonDecode(socket.sent.single as String) as Map;
+      expect(sent['action'], 'ORDER_CANCEL_REQUEST');
+      expect(sent['symbol'], 'GP');
+      await finish(tester);
+    });
+
+    testWidgets('DSE selected: the order is sent as before', (tester) async {
+      await onExchange(tester, StockExchange.dse);
+
+      home.orderConfirmSubmitted(SideType2.BUY, ActionsType.ORDER);
+      final socket = await openOrderSocket(tester);
+
+      expect(sentOrder(socket), containsPair('symbol', 'GP'));
       await finish(tester);
     });
   });

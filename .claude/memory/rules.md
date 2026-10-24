@@ -6,6 +6,11 @@
 ✅ DO: refactor only (structure, performance, safety); prove equivalence (verbatim moves, tests, mutation checks)
 ❌ DON'T: change UI or business logic without the user's explicit OK; list the change and ask first
 
+## DSE/CSE Work (user, 2026-10-24)
+✅ DO: keep DSE exactly as it is — DSE is live with real money; CSE code runs only after the user taps the DSE/CSE switch (or for houses set to cseOnly)
+✅ DO: prove it per change: a test that the no-switch / DSE path is unchanged, plus mutation checks
+❌ DON'T: make DSE screens "better" while adding CSE (e.g. live favourites or live sector details) without asking
+
 ## Naming Conventions
 ✅ DO: snake_case file names; one public widget per file; GetX CLI module names (`modules/<name>/{bindings,controllers,views}`)
 ✅ DO: widgets used by one module → `views/local_widgets/`; by several modules → `global_widgets/`

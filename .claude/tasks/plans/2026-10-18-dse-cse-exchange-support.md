@@ -26,6 +26,72 @@ Created: 2026-10-18
 - Switch now also clears `marketListAll`, `marketFeedList`, `marketListForDilog`, `marqueeList` (step 1 left them, so watchlist / quote lookup / sector charts / marquee kept the old exchange's prices) and refreshes `WatchListController`
 - Connection model: **A** — only the selected exchange's market + index sockets are open; other exchange's price later via per-instrument subscription if needed
 
+## Step 3 — Top Share (done 2026-10-24)
+
+- `ExchangeSwitcher` in the Top Share app bar, before search
+- `TopShareController.reloadForExchange()` (worker on `ExchangeService.selected`): clears rows, resets sector to All (sector list is per exchange), keeps top menu / duration / sort, shows the loader
+- List and sectors rebuilt from the first non-empty `MarketSocketService.marketFeedList` after the switch; loader gives up after 10 s (`exchangeLoadTimeout`)
+- Outside a switch, behaviour unchanged (list still built once on open; rows tick via `updateSingleRowFromService`)
+- Tests: `test/modules/top_share/top_share_exchange_test.dart` (mutation-checked 4/4)
+
+## Step 4 — Quote (done 2026-10-24)
+
+- `ExchangeSwitcher` in the Quote app bar (before Buy/Sell)
+- `HomeController.reloadMarketForExchange()` now first calls `_resetQuoteForExchange()`: unsubscribes depth for the old order book, clears depth, time & sales and news-for-stock; **keeps `marketData`** (Trade reads it — never blank it)
+- Every market list flush calls `_selectQuoteAfterExchangeSwitch()`: once the new feed has the same **symbol**, select it (new order book) via `markerInfo()` and re-subscribe T&S; after `QuoteMixin.quoteSwitchFallback` (5 s) take the new exchange's first stock
+- Depth and T&S sockets still use the DSE URLs (no CSE keys yet)
+- Tests: 2 new in `exchange_reload_test.dart` (mutation-checked 4/4)
+
+## Step 5 — Trade (done 2026-10-24)
+
+- `ExchangeSwitcher` in the Trade app bar (before search); stock follows Quote's re-selection (step 4); on Trade the price box is refilled with the new stock's `activePrice` (same as opening Trade)
+- **User decision 2026-10-24: no new orders while CSE is selected.** The order JSON has no exchange field, so a "CSE" order would be identical to a DSE one. Gate: `TradeMixin.canOrderOnSelectedExchange` — checked on the Buy/Sell button (snackbar) and first thing in `orderConfirmSubmitted` for `ActionsType.ORDER` (alert "Order not sent"). Replace/cancel of existing orders not blocked.
+- To open CSE trading: backend must define how the exchange is sent (field + values); then remove the gate
+- Tests: 2 in `trade_mixin_test.dart` ("DSE/CSE house"), 1 in `exchange_reload_test.dart` (price refresh); mutation-checked 4/4
+
+## Step 6 — Orders (done 2026-10-24)
+
+- `ExchangeSwitcher` in the Portfolio app bar (Position / Orders / Account Summary tabs)
+- Order list unchanged: rows show `order.name` from the server; orders have **no exchange field**, so they cannot be split by exchange (all are DSE today)
+- Risk found: modify / duplicate / cancel / status resolve symbol, ISIN, board … from the **selected exchange's** feed by `order_book_id`; with real CSE URLs that id can be another stock
+- **User decision 2026-10-24:** while CSE is selected, modify / cancel / duplicate (and status) send nothing and say "Your orders are on DSE. Switch to DSE …" (`OrderListMixin.cseOrderActionBlockedMessage`); Modify is stopped before its form opens
+- Gate moved to `HomeState.canOrderOnSelectedExchange` (used by Trade and Orders)
+- Tests: 5 in `trade_mixin_test.dart` ("DSE/CSE house"); each of the 4 gates mutation-checked
+
+## Step 7 — Global Search (done 2026-10-24)
+
+- `ExchangeSwitcher` left of the search box; switching re-runs `GlobalSearchController.syncLiveData()` (results empty, refilled from the new feed; query kept)
+- Recent searches per exchange (`RecentSearchService`): DSE keeps the old key `recent_search_ids` (no data lost), CSE uses `recent_search_ids_cse`
+- Tests: `test/data/services/recent_search_service_test.dart` (4) + 1 in `exchange_reload_test.dart`; mutation-checked 4/4
+
+## Step 8 — Favourites, sector details, Price Table (done 2026-10-24)
+
+- Favourites tab + sector details: `ExchangeSwitcher` in the app bar
+- Switch clears `favMarketParseList`, `chartData`, `chartDataShareType`, `sectorSummaryList`, distribution counts
+- Favourites re-matched against the new feed only during a 5 s window after a switch (`_favRebuildWindow` Timer); otherwise a snapshot, as on DSE. Saved by (ticker, DSE order book) → on CSE they show only where both match
+- Sector details (`'sectorSummary'` builder, a snapshot on DSE) refreshed once when the new exchange's sectors exist (`_refreshSectorSummaryAfterSwitch`)
+- Quote › Price Table: if open, `HistoricalVolumeController.loadData` for the re-selected stock
+- Tests: 5 in `exchange_reload_test.dart` (incl. "after the window, favourites are a snapshot again"); mutation-checked 6/6
+
+## Step 9 — Stock details follow the exchange (done 2026-10-24)
+
+- Tapping a stock in search / watch list / top shares / favourites opens Quote with the **selected exchange's** stock (lists only hold that exchange's feed — connection model A)
+- New optional keys `OMS_CSE_SOCKET_MARKET_DEPTH_URL`, `OMS_CSE_SOCKET_NEWS_TIME_SALES_URL` (broker_config, fallback to DSE; validated as ws/wss; listed in `tool/validate_apps.dart`)
+- Depth and news/T&S sockets open on `AppConfig.*UrlFor(ExchangeService.current)`; on a switch they reconnect **only if the URL differs** (`_reconnectIfUrlChanged`)
+- While Quote re-selects after a switch, the auto re-subscribe on (re)connect is skipped (`_quoteReselectPending`), so the old DSE id is never subscribed on the CSE feed
+- Tests: broker_config 2, `exchange_reload_test.dart` "Stock details" 2; mutation-checked 4/4
+
+## Remaining gaps
+
+1. ~~Positions~~ — **User decision 2026-10-24: CSE selected → holdings at CSE prices** (as the code does: by ISIN from the selected feed). Position is redrawn on every flush during the 5 s switch window (else only the first flush, with ~1 stock); test "Position is redrawn … and only then"
+2. News: `news` not cleared; one news socket for both exchanges (backend)
+3. Index names hardcoded: `selectedSn = 'DSEX'`, base indices `DSEX/DSES/DS30/DSMEX`, `DSE SME Index` (home_state, index_mixin, live_index_controller, market_index_controller); CSE index names (backend)
+4. REST market URLs carry no exchange (candles, historical volume, minute data, company fundamentals/dividend/EPS) — backend
+5. CSE URLs for depth and time & sales: keys exist now (`OMS_CSE_SOCKET_MARKET_DEPTH_URL`, `OMS_CSE_SOCKET_NEWS_TIME_SALES_URL`) — values from backend
+6. Order JSON / order list exchange field — backend (orders blocked on CSE until then)
+7. `SearchWatchListView` not refreshed (probably unreachable). Hint `"DSES .."` in watch list / favourites dialogs is an example list name, not exchange data — left as is
+8. Adding a favourite while on CSE saves the CSE order book with no exchange (backend: favourites per exchange?)
+
 ## Phase 0 — house flag (done)
 
 - `ExchangeMode { dseOnly, cseOnly, dseAndCse }` + `StockExchange { dse, cse }` in

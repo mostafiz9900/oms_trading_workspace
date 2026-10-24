@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../global_widgets/empty_widget.dart';
 import '../../../../global_widgets/appbar_right_search_tap.dart';
+import '../../../../global_widgets/exchange/exchange_switcher.dart';
 import '../../../../global_widgets/responsive_wrap_widget.dart';
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/utils/helpers/formatter_helper.dart';
@@ -144,7 +145,14 @@ class SectorDetailsView extends StatelessWidget {
         titleFontSize: 16,
         isBackButtonIcon: true,
         backButtonOnClick: () => Get.back(),
-        right: AppbarRightSearchTapWidget(shouldPop: true),
+        right: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // DSE | CSE; shows only for houses on both exchanges.
+            const ExchangeSwitcher(),
+            AppbarRightSearchTapWidget(shouldPop: true),
+          ],
+        ),
       ),
       body: GetBuilder<HomeController>(
         id: 'sectorSummary',

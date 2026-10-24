@@ -192,6 +192,10 @@ abstract class HomeState extends SuperController {
 
   List<SectorDataModel> sectorSummaryList = [];
 
+  /// Set by a DSE/CSE switch: the sector details screen (a snapshot
+  /// otherwise) is refreshed once the new exchange's sectors are computed.
+  bool _refreshSectorSummaryAfterSwitch = false;
+
   Timer? _marketUpdateTimer;
 
   DateTime _lastListUpdateTime = DateTime.now();
@@ -308,6 +312,12 @@ abstract class HomeState extends SuperController {
     update(['order_confirm_btn']);
   }
 
+  /// Order requests carry no exchange field and every existing order is on
+  /// DSE, so nothing is sent to the gateway while CSE is selected; CSE
+  /// trading opens once the gateway supports it.
+  bool get canOrderOnSelectedExchange =>
+      ExchangeService.current != StockExchange.cse;
+
   /// Shows an order alert right away. GetX shows one snackbar at a time and
   /// queues the rest, so behind the persistent "No internet" bar an alert
   /// stayed hidden and then replayed once per tap after reconnecting.
@@ -368,6 +378,11 @@ abstract class HomeState extends SuperController {
   void loadComanyDividentEPS(String shortName);
   void goBottomNabBarPage(int index, int orderBookId);
   Future<void> markerInfo();
+  void _resetQuoteForExchange();
+  bool get _quoteReselectPending;
+  void _resetFavForExchange();
+  void _rebuildFavAfterExchangeSwitch();
+  Future<void> _selectQuoteAfterExchangeSwitch();
   void getUserInfo();
   MarketModel getMarketByOrderBookId(int orderBookId);
   void _handleOrderConfirmMessage(String message);

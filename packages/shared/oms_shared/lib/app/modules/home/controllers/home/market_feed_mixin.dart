@@ -64,6 +64,8 @@ mixin MarketFeedMixin on HomeState {
         _firstDataLoaded = true;
         _finalizeInitialData();
       }
+      _selectQuoteAfterExchangeSwitch();
+      _rebuildFavAfterExchangeSwitch();
 
       if (Get.isRegistered<WatchListController>()) {
         Get.find<WatchListController>().applyFilters();
@@ -98,6 +100,10 @@ mixin MarketFeedMixin on HomeState {
           'sectorListUpdate',
           'distributionChartUpdate',
         ]);
+        if (_refreshSectorSummaryAfterSwitch && sectorSummaryList.isNotEmpty) {
+          _refreshSectorSummaryAfterSwitch = false;
+          update(['sectorSummary']);
+        }
       });
     }
 

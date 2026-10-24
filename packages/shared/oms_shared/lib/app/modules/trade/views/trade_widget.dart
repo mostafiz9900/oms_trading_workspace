@@ -20,6 +20,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../global_widgets/appbar_right_search_tap.dart';
+import '../../../global_widgets/exchange/exchange_switcher.dart';
 import 'local_widgets/trade_client_code_widget.dart';
 import 'local_widgets/bank_percentage_widget.dart';
 import 'local_widgets/market_depth_sticky_delegate.dart';
@@ -41,7 +42,14 @@ class TradeWidget extends StatelessWidget {
             isBackButtonIcon: true,
             backButtonOnClick: () => homeCon.changeCurrentIndex(0),
             titleText: homeCon.marketData.shortName ?? '',
-            right: AppbarRightSearchTapWidget(),
+            right: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // DSE | CSE; shows only for houses on both exchanges.
+                const ExchangeSwitcher(),
+                AppbarRightSearchTapWidget(),
+              ],
+            ),
           ),
           body: GestureDetector(
             onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -468,7 +476,11 @@ class TradeWidget extends StatelessWidget {
                                 : HexColor("#F70042"),
                             onPressed: () async {
                               FocusManager.instance.primaryFocus?.unfocus();
-                              if (con.selectOrderType == null) {
+                              if (!con.canOrderOnSelectedExchange) {
+                                Helpers.snackbarForErorr2(
+                                  bodyText: TradeMixin.cseOrderBlockedMessage,
+                                );
+                              } else if (con.selectOrderType == null) {
                                 Helpers.snackbarForErorr2(
                                   bodyText: 'Select order type',
                                 );

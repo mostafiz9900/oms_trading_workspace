@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../global_widgets/appbar_right_search_tap.dart';
+import '../../../global_widgets/exchange/exchange_switcher.dart';
 import 'local_widgets/price_table_tab_widget.dart';
 import 'local_widgets/time_sales_tab_widget.dart';
 
@@ -32,6 +33,8 @@ class QuoteWidget extends StatelessWidget {
 
         right: Row(
           children: [
+            // DSE | CSE; shows only for houses on both exchanges.
+            const ExchangeSwitcher(padding: EdgeInsets.only(right: 8)),
             CommonWidget.buySell(context: context, onTap: () => Get.find<HomeController>().changeCurrentIndex(5)),
             AppbarRightSearchTapWidget(),
             AppSpace.spaceW4,

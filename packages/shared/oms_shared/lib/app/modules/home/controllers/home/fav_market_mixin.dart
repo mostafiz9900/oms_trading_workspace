@@ -227,6 +227,37 @@ mixin FavMarketMixin on HomeState {
     return favMarketParseList;
   }
 
+  /// Open for a short while after a DSE/CSE switch: the favourites are
+  /// re-matched against the new feed as it fills (over a few flushes).
+  /// Otherwise they stay a snapshot, as before.
+  Timer? _favRebuildWindow;
+
+  /// DSE/CSE switch: the shown favourites carry the old exchange's prices.
+  /// Favourites are saved by (ticker, order book), so on the other exchange
+  /// they only match where both are the same.
+  @override
+  void _resetFavForExchange() {
+    favMarketParseList = [];
+    _favRebuildWindow?.cancel();
+    _favRebuildWindow = Timer(QuoteMixin.quoteSwitchFallback, () {});
+    update();
+  }
+
+  @override
+  void _rebuildFavAfterExchangeSwitch() {
+    if (_favRebuildWindow?.isActive != true) return;
+    favMarketParseList = parseFavMarketList(
+      marketList: marketList,
+      favMarketData: favMarketData,
+    );
+    update();
+    // Holdings are valued from the selected exchange's feed; redraw them as
+    // it fills (on DSE they redraw on their own updates, as before).
+    if (Get.isRegistered<PositionController>()) {
+      Get.find<PositionController>().update();
+    }
+  }
+
   @override
   void selectTable(int tableId) {
     selectedTableId = tableId;

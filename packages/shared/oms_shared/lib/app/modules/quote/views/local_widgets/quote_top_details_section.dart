@@ -1,5 +1,3 @@
-import 'package:oms_shared/app/core/utils/helpers/log_helper.dart';
-
 import '/app/global_widgets/responsive_wrap_widget.dart';
 
 import 'package:flutter/material.dart';
@@ -354,9 +352,7 @@ class _DetailedStatsWrap extends StatelessWidget {
     final double epsAnn = cData?.fundamentals?.eps?.ann ?? 0.0;
     final double divident = cData?.fundamentals?.dividend ?? 0.0;
     final double divYield = cData?.fundamentals?.divYield ?? 0.0;
-    final double cashDividend = cData?.fundamentals?.cashDividend ?? 0.0;
     final double annNocfps = cData?.fundamentals?.nocfps?.ann ?? 0.0;
-    final double q1Nocfps = cData?.fundamentals?.nocfps?.q1 ?? 0.0;
     final double q2Nocfps = cData?.fundamentals?.nocfps?.q2 ?? 0.0;
     final double q3Nocfps = cData?.fundamentals?.nocfps?.q3 ?? 0.0;
     final double epsTTM = epsQ1 + epsQ2 + epsQ3 + epsAnn;

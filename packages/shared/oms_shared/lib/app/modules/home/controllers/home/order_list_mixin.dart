@@ -2,6 +2,11 @@ part of '../home_controller.dart';
 
 /// Orders for order_list_tab_widget: list, modify, cancel, confirmations.
 mixin OrderListMixin on HomeState {
+  /// Shown when an order action is tapped while CSE is selected (see
+  /// [HomeState.canOrderOnSelectedExchange]).
+  static const cseOrderActionBlockedMessage =
+      'Your orders are on DSE. Switch to DSE to modify, cancel or duplicate them.';
+
   void changeOrderTypeOrderList(String data) {
     selectOrderType = data;
     update([AppConstants.orderList]);
@@ -291,6 +296,10 @@ mixin OrderListMixin on HomeState {
   }
 
   void orderDuplicateSubmitted(ActionsType action, {UserOrder? order}) async {
+    if (!canOrderOnSelectedExchange) {
+      _showOrderAlert('Order not sent', cseOrderActionBlockedMessage);
+      return;
+    }
     //  ১. ইন্টারনেট চেক
     if (!await _orderNetworkAvailable()) return;
 
@@ -399,6 +408,10 @@ mixin OrderListMixin on HomeState {
     ActionsType action, {
     UserOrder? order,
   }) async {
+    if (!canOrderOnSelectedExchange) {
+      _showOrderAlert('Order not sent', cseOrderActionBlockedMessage);
+      return;
+    }
     //  1. SAFEGUARD: Check internet
     if (!await _orderNetworkAvailable()) return;
 
@@ -524,6 +537,10 @@ mixin OrderListMixin on HomeState {
   }
 
   void orderCancelSubmitted(String action, UserOrder order) async {
+    if (!canOrderOnSelectedExchange) {
+      _showOrderAlert('Order not sent', cseOrderActionBlockedMessage);
+      return;
+    }
     //  ১. ইন্টারনেট চেক
     if (!await _orderNetworkAvailable()) return;
 
@@ -614,6 +631,10 @@ mixin OrderListMixin on HomeState {
     ActionsType action,
     UserOrder order,
   ) async {
+    if (!canOrderOnSelectedExchange) {
+      _showOrderAlert('Order not sent', cseOrderActionBlockedMessage);
+      return;
+    }
     //  ১. ইন্টারনেট চেক
     if (!await _orderNetworkAvailable()) return;
 

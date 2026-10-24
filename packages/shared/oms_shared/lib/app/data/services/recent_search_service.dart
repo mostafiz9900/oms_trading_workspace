@@ -1,13 +1,27 @@
+import 'package:broker_config/broker_config.dart';
 import 'package:get/get.dart';
 
+import 'exchange_service.dart';
 import 'storage_service.dart';
-// import 'package:your_app/services/storage_service.dart'; // আপনার StorageService ফাইলের পাথ দিন
 
+/// Last searched stocks (by order book id), kept per exchange: the same
+/// order book id can be another stock on DSE and CSE.
 class RecentSearchService extends GetxService {
   static RecentSearchService get to => Get.find();
 
-  List<int> recentOrderBookIds = [];
-  final String _storageKey = 'recent_search_ids';
+  final Map<StockExchange, List<int>> _recentByExchange = {
+    for (final exchange in StockExchange.values) exchange: <int>[],
+  };
+
+  /// Recent order book ids of the selected exchange, newest first.
+  List<int> get recentOrderBookIds =>
+      _recentByExchange[ExchangeService.current]!;
+
+  /// DSE keeps the original key, so searches saved before CSE stay.
+  static String storageKey(StockExchange exchange) => switch (exchange) {
+    StockExchange.dse => 'recent_search_ids',
+    StockExchange.cse => 'recent_search_ids_cse',
+  };
 
   @override
   void onInit() {
@@ -16,26 +30,28 @@ class RecentSearchService extends GetxService {
   }
 
   Future<void> _loadRecentSearches() async {
-    final savedData = await StorageService.read(_storageKey);
-
-    if (savedData != null) {
-      recentOrderBookIds = List<int>.from(savedData);
+    for (final exchange in StockExchange.values) {
+      final savedData = await StorageService.read(storageKey(exchange));
+      if (savedData != null) {
+        _recentByExchange[exchange] = List<int>.from(savedData);
+      }
     }
   }
 
   void addToRecentSearch(int orderBook) {
-    recentOrderBookIds.removeWhere((id) => id == orderBook);
-    recentOrderBookIds.insert(0, orderBook);
+    final recent = recentOrderBookIds;
+    recent.removeWhere((id) => id == orderBook);
+    recent.insert(0, orderBook);
 
-    if (recentOrderBookIds.length > 10) {
-      recentOrderBookIds.removeLast();
+    if (recent.length > 10) {
+      recent.removeLast();
     }
 
-    StorageService.save(_storageKey, recentOrderBookIds);
+    StorageService.save(storageKey(ExchangeService.current), recent);
   }
 
   void clearRecentSearches() {
     recentOrderBookIds.clear();
-    StorageService.remove(_storageKey);
+    StorageService.remove(storageKey(ExchangeService.current));
   }
 }

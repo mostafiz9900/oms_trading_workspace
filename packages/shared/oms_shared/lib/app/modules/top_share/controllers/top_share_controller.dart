@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 
 import '../../../core/utils/extensions/market_model_extensions.dart';
 import '../../../data/models/response/market_model.dart';
 import '../../../data/models/response/share_situation.dart';
+import '../../../data/services/exchange_service.dart';
 import '../../../data/services/market_socket_service.dart';
 
 // আপনার MarketModelExtensions ইম্পোর্ট করে নিবেন
@@ -66,11 +69,64 @@ class TopShareController extends GetxController {
 
     pageLoad = false;
     update();
+
+    // DSE/CSE switch: HomeController clears the market feed and reconnects;
+    // the list is rebuilt from the new exchange's first feed.
+    if (Get.isRegistered<ExchangeService>()) {
+      _exchangeWorker = ever(
+        Get.find<ExchangeService>().selected,
+        (_) => reloadForExchange(),
+      );
+      _feedWorker = ever<List<MarketModel>>(
+        marketService.marketFeedList,
+        _onFeedAfterExchangeSwitch,
+      );
+    }
+  }
+
+  Worker? _exchangeWorker;
+  Worker? _feedWorker;
+  Timer? _exchangeLoadTimeout;
+  bool _waitingForExchangeFeed = false;
+
+  /// How long the loader waits for the new exchange's feed before showing
+  /// the (empty) list.
+  static const exchangeLoadTimeout = Duration(seconds: 10);
+
+  /// Drops the old exchange's rows (order book ids can be the same on DSE
+  /// and CSE) and shows the loader until the new feed arrives. Filters and
+  /// sorting are kept; the sector is reset because each exchange has its own.
+  void reloadForExchange() {
+    marketFeedSortList.clear();
+    sortByCompanyTypeMenuList = ["All"];
+    activeSector = "All";
+    _waitingForExchangeFeed = true;
+    pageLoad = true;
+    _exchangeLoadTimeout?.cancel();
+    _exchangeLoadTimeout = Timer(exchangeLoadTimeout, () {
+      if (!_waitingForExchangeFeed) return;
+      _waitingForExchangeFeed = false;
+      pageLoad = false;
+      update();
+    });
+    update();
+  }
+
+  void _onFeedAfterExchangeSwitch(List<MarketModel> feed) {
+    if (!_waitingForExchangeFeed || feed.isEmpty) return;
+    _waitingForExchangeFeed = false;
+    _exchangeLoadTimeout?.cancel();
+    pageLoad = false;
+    setCompanySectorList();
+    applyAllFiltersAndSort();
   }
 
   @override
   void onClose() {
     _debounceWorker?.dispose();
+    _exchangeWorker?.dispose();
+    _feedWorker?.dispose();
+    _exchangeLoadTimeout?.cancel();
     super.onClose();
   }
 

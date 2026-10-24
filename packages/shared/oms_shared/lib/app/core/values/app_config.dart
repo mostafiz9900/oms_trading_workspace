@@ -79,6 +79,10 @@ class AppConfig {
       house.indexSocketUrlFor(exchange);
   static String get marketDepthUrl => house.marketDepthSocketUrl;
   static String get newsAndTimeAndSalesUrl => house.newsTimeSalesSocketUrl;
+  static String marketDepthUrlFor(StockExchange exchange) =>
+      house.marketDepthSocketUrlFor(exchange);
+  static String newsAndTimeAndSalesUrlFor(StockExchange exchange) =>
+      house.newsTimeSalesSocketUrlFor(exchange);
   static String get contractUrl => house.contractUrl;
   static bool get hasContractUrl => house.contractUrl.trim().isNotEmpty;
 

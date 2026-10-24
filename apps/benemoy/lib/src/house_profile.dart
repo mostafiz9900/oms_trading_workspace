@@ -23,5 +23,5 @@ const houseProfile = HouseProfile(
     appStoreShareUrl: 'https://apps.apple.com/us/app/benemoy/id6751455371',
   ),
   // dseOnly (default) | cseOnly | dseAndCse
-  exchangeMode: ExchangeMode.dseOnly,
+  exchangeMode: ExchangeMode.dseAndCse,
 );

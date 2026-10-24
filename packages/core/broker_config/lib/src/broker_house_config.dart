@@ -30,6 +30,8 @@ class BrokerHouseConfig {
     required this.contractUrl,
     this.cseMarketSocketUrl = '',
     this.cseIndexSocketUrl = '',
+    this.cseMarketDepthSocketUrl = '',
+    this.cseNewsTimeSalesSocketUrl = '',
   });
 
   final String houseId;
@@ -64,6 +66,12 @@ class BrokerHouseConfig {
   final String cseMarketSocketUrl;
   final String cseIndexSocketUrl;
 
+  /// CSE market depth / news & time-and-sales feeds
+  /// (`OMS_CSE_SOCKET_MARKET_DEPTH_URL`, `OMS_CSE_SOCKET_NEWS_TIME_SALES_URL`).
+  /// Optional, like the two above.
+  final String cseMarketDepthSocketUrl;
+  final String cseNewsTimeSalesSocketUrl;
+
   /// Market feed of [exchange]; CSE falls back to the DSE feed when no CSE
   /// URL is configured.
   String marketSocketUrlFor(StockExchange exchange) =>
@@ -77,6 +85,20 @@ class BrokerHouseConfig {
       exchange == StockExchange.cse && cseIndexSocketUrl.isNotEmpty
       ? cseIndexSocketUrl
       : indexSocketUrl;
+
+  /// Market depth feed of [exchange]; CSE falls back to the DSE feed when no
+  /// CSE URL is configured.
+  String marketDepthSocketUrlFor(StockExchange exchange) =>
+      exchange == StockExchange.cse && cseMarketDepthSocketUrl.isNotEmpty
+      ? cseMarketDepthSocketUrl
+      : marketDepthSocketUrl;
+
+  /// News and time & sales feed of [exchange]; CSE falls back to the DSE feed
+  /// when no CSE URL is configured.
+  String newsTimeSalesSocketUrlFor(StockExchange exchange) =>
+      exchange == StockExchange.cse && cseNewsTimeSalesSocketUrl.isNotEmpty
+      ? cseNewsTimeSalesSocketUrl
+      : newsTimeSalesSocketUrl;
 
   factory BrokerHouseConfig.load({
     required String environment,
@@ -203,6 +225,14 @@ class BrokerHouseConfig {
         'OMS_CSE_SOCKET_INDEX_URL',
         fallbackValues,
       ),
+      cseMarketDepthSocketUrl: _optionalValue(
+        'OMS_CSE_SOCKET_MARKET_DEPTH_URL',
+        fallbackValues,
+      ),
+      cseNewsTimeSalesSocketUrl: _optionalValue(
+        'OMS_CSE_SOCKET_NEWS_TIME_SALES_URL',
+        fallbackValues,
+      ),
     );
     config._validate();
     return config;
@@ -294,6 +324,14 @@ class BrokerHouseConfig {
         return const String.fromEnvironment('OMS_CSE_SOCKET_MARKET_URL').trim();
       case 'OMS_CSE_SOCKET_INDEX_URL':
         return const String.fromEnvironment('OMS_CSE_SOCKET_INDEX_URL').trim();
+      case 'OMS_CSE_SOCKET_MARKET_DEPTH_URL':
+        return const String.fromEnvironment(
+          'OMS_CSE_SOCKET_MARKET_DEPTH_URL',
+        ).trim();
+      case 'OMS_CSE_SOCKET_NEWS_TIME_SALES_URL':
+        return const String.fromEnvironment(
+          'OMS_CSE_SOCKET_NEWS_TIME_SALES_URL',
+        ).trim();
       default:
         throw ArgumentError.value(name, 'name', 'Unknown broker config key');
     }
@@ -342,6 +380,20 @@ class BrokerHouseConfig {
         'ws',
         'wss',
       });
+    }
+    if (cseMarketDepthSocketUrl.isNotEmpty) {
+      _validateUrl(
+        'OMS_CSE_SOCKET_MARKET_DEPTH_URL',
+        cseMarketDepthSocketUrl,
+        const {'ws', 'wss'},
+      );
+    }
+    if (cseNewsTimeSalesSocketUrl.isNotEmpty) {
+      _validateUrl(
+        'OMS_CSE_SOCKET_NEWS_TIME_SALES_URL',
+        cseNewsTimeSalesSocketUrl,
+        const {'ws', 'wss'},
+      );
     }
     _validateColor('OMS_BRAND_PRIMARY_COLOR', primaryColor);
     _validateColor('OMS_BRAND_ACCENT_COLOR', accentColor);

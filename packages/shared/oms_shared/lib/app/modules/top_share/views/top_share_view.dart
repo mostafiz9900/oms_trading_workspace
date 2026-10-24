@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../global_widgets/appbar_right_search_tap.dart';
+import '../../../global_widgets/exchange/exchange_switcher.dart';
 import '../controllers/top_share_controller.dart';
 import '../../../global_widgets/loaders/watchlist_loader.dart';
 
@@ -27,7 +28,14 @@ class TopShareView extends GetView<TopShareController> {
         titleText: 'Top Shares',
         isBackButtonIcon: true,
         backButtonOnClick: () => Get.back(),
-        right: AppbarRightSearchTapWidget(shouldPop: true),
+        right: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // DSE | CSE; shows only for houses on both exchanges.
+            const ExchangeSwitcher(),
+            AppbarRightSearchTapWidget(shouldPop: true),
+          ],
+        ),
       ),
       body: GetBuilder<TopShareController>(
         builder: (topShareCon) {

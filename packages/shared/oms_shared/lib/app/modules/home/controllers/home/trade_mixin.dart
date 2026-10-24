@@ -151,11 +151,18 @@ mixin TradeMixin on HomeState {
     );
   }
 
+  static const cseOrderBlockedMessage =
+      'CSE trading is coming soon. Switch to DSE to place an order.';
+
   void orderConfirmSubmitted(
     SideType2 sideType,
     ActionsType action, {
     UserOrder? order,
   }) async {
+    if (action == ActionsType.ORDER && !canOrderOnSelectedExchange) {
+      _showOrderAlert('Order not sent', cseOrderBlockedMessage);
+      return;
+    }
     // Set the in-flight flag before any await, so a second tap cannot send a
     // second order while the first one is still being prepared.
     if (isOrderConfirmLoading) return;

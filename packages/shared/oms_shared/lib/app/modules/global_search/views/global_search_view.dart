@@ -16,6 +16,7 @@ import '../controllers/global_search_controller.dart';
 import '../../home/controllers/home_controller.dart';
 import '../../top_share/views/live_value_blinker.dart';
 import '../../../global_widgets/loaders/watchlist_loader.dart';
+import '../../../global_widgets/exchange/exchange_switcher.dart';
 
 class GlobalSearchScreen extends HookWidget {
   const GlobalSearchScreen({super.key});
@@ -457,6 +458,8 @@ class GlobalSearchScreen extends HookWidget {
           padding: const EdgeInsets.only(right: 16.0),
           child: Row(
             children: [
+              // DSE | CSE; shows only for houses on both exchanges.
+              const ExchangeSwitcher(padding: EdgeInsets.only(right: 8)),
               Expanded(
                 child: Container(
                   height: 40,

@@ -76,5 +76,43 @@ void main() {
         throwsStateError,
       );
     });
+
+    test('depth and time & sales: DSE feed until CSE URLs are set', () {
+      final unset = _load();
+      expect(
+        unset.marketDepthSocketUrlFor(StockExchange.cse),
+        'wss://dse.test/depth',
+      );
+      expect(
+        unset.newsTimeSalesSocketUrlFor(StockExchange.cse),
+        'wss://dse.test/news-time-sales',
+      );
+
+      final set = _load({
+        'OMS_CSE_SOCKET_MARKET_DEPTH_URL': 'wss://cse.test/depth',
+        'OMS_CSE_SOCKET_NEWS_TIME_SALES_URL': 'wss://cse.test/events',
+      });
+      expect(set.marketDepthSocketUrlFor(StockExchange.cse), 'wss://cse.test/depth');
+      expect(
+        set.newsTimeSalesSocketUrlFor(StockExchange.cse),
+        'wss://cse.test/events',
+      );
+      expect(set.marketDepthSocketUrlFor(StockExchange.dse), 'wss://dse.test/depth');
+      expect(
+        set.newsTimeSalesSocketUrlFor(StockExchange.dse),
+        'wss://dse.test/news-time-sales',
+      );
+    });
+
+    test('CSE depth / time & sales URLs must be websocket URLs', () {
+      expect(
+        () => _load({'OMS_CSE_SOCKET_MARKET_DEPTH_URL': 'https://cse.test/d'}),
+        throwsStateError,
+      );
+      expect(
+        () => _load({'OMS_CSE_SOCKET_NEWS_TIME_SALES_URL': 'nope'}),
+        throwsStateError,
+      );
+    });
   });
 }

@@ -17,6 +17,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import '../../../global_widgets/empty_widget.dart';
 import '../../../global_widgets/appbar_right_search_tap.dart';
 import '../../../global_widgets/loaders/watchlist_loader.dart';
+import '../../../global_widgets/exchange/exchange_switcher.dart';
 // আপনার MarketModelExtensions ইম্পোর্ট করে নিবেন
 
 class FavMarketView extends StatelessWidget {
@@ -43,6 +44,8 @@ class FavMarketView extends StatelessWidget {
         },
         right: Row(
           children: [
+            // DSE | CSE; shows only for houses on both exchanges.
+            const ExchangeSwitcher(padding: EdgeInsets.only(right: 8)),
             CommonWidget.buySell(context: context, onTap: () => Get.find<HomeController>().changeCurrentIndex(5)),
             AppbarRightSearchTapWidget(),
           ],

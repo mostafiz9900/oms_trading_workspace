@@ -70,7 +70,9 @@ mixin HomeSocketMixin on HomeState {
     printLog('✅ $socketId connected successfully');
 
     // অ্যাপ মিনিমাইজ করে আবার ওপেন করলে সকেট অটোমেটিক আগের আইটেমের ডেটা চাইবে
-    if (marketData.orderBook != null) {
+    // Not while Quote is re-selecting after a DSE/CSE switch: the old
+    // stock's id may be another stock on the new exchange.
+    if (marketData.orderBook != null && !_quoteReselectPending) {
       if (socketId == AppConfig.marketDepthSocketId) {
         printLog(
           '🔄 Auto Re-subscribing Market Depth for: ${marketData.orderBook}',
@@ -127,7 +129,7 @@ mixin HomeSocketMixin on HomeState {
   void _initializeMarketDepthWebSocket() {
     _initializeSocket(
       socketId: AppConfig.marketDepthSocketId,
-      url: AppConfig.marketDepthUrl,
+      url: AppConfig.marketDepthUrlFor(ExchangeService.current),
       messageHandler: _handleMarketDepthMessage,
     );
   }
@@ -135,7 +137,7 @@ mixin HomeSocketMixin on HomeState {
   void _initializeNewsTimeSalesWebSocket() {
     _initializeSocket(
       socketId: AppConfig.newsTimeSalesSocketId,
-      url: AppConfig.newsAndTimeAndSalesUrl,
+      url: AppConfig.newsAndTimeAndSalesUrlFor(ExchangeService.current),
       messageHandler: _handleNewsTimeSalesMessage,
     );
   }
@@ -263,7 +265,26 @@ mixin HomeSocketMixin on HomeState {
   /// both exchanges, so the old exchange's quotes are dropped before the new
   /// feed connects.
   void reloadMarketForExchange() {
+    _resetQuoteForExchange();
+    _resetFavForExchange();
     marketService.clear();
+    // Sector, share-type and distribution figures (Market tab, sector
+    // details) are rebuilt from the new feed; until then show none rather
+    // than the old exchange's.
+    chartData = [];
+    chartDataShareType = [];
+    sectorSummaryList = [];
+    _refreshSectorSummaryAfterSwitch = true;
+    distributionCounts = [];
+    distributionTotal = 0;
+    distributionMaxCount = 0;
+    update([
+      'marketListByGainer',
+      'marketListByShareType',
+      'sectorListUpdate',
+      'sectorSummary',
+      'distributionChartUpdate',
+    ]);
     // Every list built from the old feed (watchlist, quote lookup, sector
     // charts, search dialog, marquee) would otherwise keep the old
     // exchange's prices until each stock ticks again.
@@ -272,9 +293,36 @@ mixin HomeSocketMixin on HomeState {
     marketListForDilog.clear();
     marqueeList.clear();
     _initializeMarketWebSocket();
+    // Stock details (depth, time & sales) follow when the exchange has its
+    // own feed; with the same URL the open connection is kept.
+    _reconnectIfUrlChanged(
+      AppConfig.marketDepthSocketId,
+      AppConfig.marketDepthUrlFor(ExchangeService.current),
+      _initializeMarketDepthWebSocket,
+    );
+    _reconnectIfUrlChanged(
+      AppConfig.newsTimeSalesSocketId,
+      AppConfig.newsAndTimeAndSalesUrlFor(ExchangeService.current),
+      _initializeNewsTimeSalesWebSocket,
+    );
     if (Get.isRegistered<WatchListController>()) {
       Get.find<WatchListController>().applyFilters();
     }
+    // Open search screen: drop the old exchange's results (and its recent
+    // list); refilled as the new feed arrives.
+    if (Get.isRegistered<GlobalSearchController>()) {
+      Get.find<GlobalSearchController>().syncLiveData();
+    }
+  }
+
+  void _reconnectIfUrlChanged(
+    String socketId,
+    String url,
+    void Function() connect,
+  ) {
+    final current = _socketUrls[socketId];
+    if (current == null || current == url) return; // not opened yet / same
+    connect();
   }
 
   // Refresh methods for public use

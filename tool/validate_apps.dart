@@ -35,6 +35,8 @@ const socketKeys = [
 const optionalSocketKeys = [
   'OMS_CSE_SOCKET_MARKET_URL',
   'OMS_CSE_SOCKET_INDEX_URL',
+  'OMS_CSE_SOCKET_MARKET_DEPTH_URL',
+  'OMS_CSE_SOCKET_NEWS_TIME_SALES_URL',
 ];
 
 const colorKeys = [
