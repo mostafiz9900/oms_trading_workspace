@@ -135,7 +135,7 @@ mixin HomeNavigationMixin on HomeState {
       loadTabData(1);
     } else if (index == 2) {
       currentIndex = index;
-      applyFilters();
+      update(['marketList']);
     } else if (index == 3) {
       if (await StorageService.read(StorageConstants.token) == null) {
         Helpers.showLoginRequiredDialog();

@@ -10,7 +10,7 @@
 - **What Must Never Break**: order JSON sent to the gateway, double-tap guard and 15 s no-answer timeout, token refresh/logout, live sockets, existing UI (users rely on it).
 - **Known Technical Debt**:
   - Riverpod still used in ~10 places (OTP countdown, token refresh UI, password visibility, clock, order-type lists); migration to GetX deferred by the user.
-  - HomeController is a large shell (13 mixins, `order_list_mixin` ~700 lines).
+  - HomeController is a large shell (12 mixins, `order_list_mixin` ~700 lines).
   - App shell (`app.dart`, `app_pages.dart`, `run.dart`) is copied into every app.
   - Android: unused `settings.gradle.kts` / `build.gradle.kts`; Gradle 8.14 / AGP 8.11.1 / Kotlin 2.2.20 will soon be unsupported by Flutter.
   - `trading_core` and `trading_ui` are tiny packages behind re-export shims.

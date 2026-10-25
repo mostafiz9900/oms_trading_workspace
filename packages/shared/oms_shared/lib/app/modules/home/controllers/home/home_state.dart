@@ -30,18 +30,12 @@ abstract class HomeState extends SuperController {
   //filter start
   final bioCon = Get.put(BiometricController(), tag: 'biometric_Con');
 
-  final ScrollController scrollController = ScrollController();
-
   final searchTextEditCont = TextEditingController();
 
   final double itemHeight = 100.0;
 
-  String? filterName;
-
   final MarketSectorFilterStore _marketSectorFilterStore =
       MarketSectorFilterStore();
-
-  String selectSector = 'All';
 
   String searchQuery = '';
 
@@ -95,11 +89,7 @@ abstract class HomeState extends SuperController {
 
   List<MarketModel> marketList = <MarketModel>[];
 
-  var filteredItems = <MarketModel>[];
-
   List<MarketModel> marketListAll = <MarketModel>[];
-
-  TextEditingController searchController = TextEditingController();
 
   bool isMarket = false;
 
@@ -211,14 +201,6 @@ abstract class HomeState extends SuperController {
 
   int Function(int, int) calc = (a, b) => a + b;
 
-
-  String currentSearchQuery = '';
-
-  String currentSortOrder = 'ASC'; // ডিফল্ট ASC
-
-  String currentSortCategory = 'A-Z';
-
-  bool isGridView = false; // default shows list
 
   bool isCreateFavCat = false;
 
@@ -357,7 +339,6 @@ abstract class HomeState extends SuperController {
   void sendMessage(String socketId, String message);
   bool isSocketConnected(String socketId);
   bool get isOrderConfirmConnected;
-  void applyFilters();
   Future<void> getFavoriteAllMarketData();
   void selectTable(int tableId);
   Future<void> getFavCategory();

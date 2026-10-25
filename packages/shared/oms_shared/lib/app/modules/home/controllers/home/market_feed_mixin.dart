@@ -233,7 +233,6 @@ mixin MarketFeedMixin on HomeState {
 
   void _finalizeInitialData() {
     isMarket = false;
-    filteredItems = List.from(marketList);
     update(['marketList']);
     update();
     printLog('Market data initialized with ${marketList.length} items');
@@ -243,7 +242,6 @@ mixin MarketFeedMixin on HomeState {
   void _resetMarketState() {
     _firstDataLoaded = false;
     marketList.clear();
-    filteredItems.clear();
     _marketTickStore.clear();
     isMarket = true;
     update(['marketList', 'marquee']);

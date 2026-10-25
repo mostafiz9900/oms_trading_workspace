@@ -72,7 +72,6 @@ part 'home/market_feed_mixin.dart';
 part 'home/index_mixin.dart';
 part 'home/time_sales_mixin.dart';
 part 'home/market_depth_mixin.dart';
-part 'home/watch_list_mixin.dart';
 part 'home/fav_market_mixin.dart';
 part 'home/trade_mixin.dart';
 part 'home/order_list_mixin.dart';
@@ -113,7 +112,6 @@ class HomeController extends HomeState
         MarketIndexMixin,
         TimeSalesMixin,
         MarketDepthMixin,
-        WatchListMixin,
         FavMarketMixin,
         TradeMixin,
         OrderListMixin,
@@ -126,7 +124,6 @@ class HomeController extends HomeState
   @override
   void onInit() async {
     super.onInit();
-    searchController.addListener(_onSearchChanged);
     // DSE/CSE switch: reload the market feed of the chosen exchange.
     if (Get.isRegistered<ExchangeService>()) {
       _exchangeWorker = ever(
@@ -181,14 +178,11 @@ class HomeController extends HomeState
     disconnect();
     Future.delayed(const Duration(milliseconds: 100), () {
       _disconnectAll();
-      searchController.removeListener(_onSearchChanged);
-      searchController.dispose();
       disclosedQtyTextEditField.dispose();
       qtyTextEditField.dispose(); // শুধুমাত্র একবার কল হবে ✅
       minQtyTextEditField.dispose();
       tradPriceTextEditField.dispose();
       tradePriceFocusNode.dispose();
-      scrollController.dispose();
       searchTextEditCont.dispose();
       watchlistTextEditField.dispose();
     });

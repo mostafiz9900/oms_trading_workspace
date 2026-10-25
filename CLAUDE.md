@@ -70,7 +70,7 @@ See .claude/memory/gotchas.md (route registration per app, open behaviour questi
 DSE is live: CSE code may run only after the user taps the DSE/CSE switch — see "DSE/CSE Work" in .claude/memory/rules.md.
 
 ## 🧩 Module Map
-`home` = shell (HomeController + 13 mixins, HomeView with 6 tabs) · tabs: `market`, `quote`, `watchlist` (+ favourites), `portfolio`, `trade` · `orders` (order list, details, replace/cancel dialog) · `auth` (login, OTP, signup, biometric, token, password reset) · `notifications` · `global_search` · `top_share`, `search_watch_list`, `order_alert`, `limit_request`, `withdrawal_request`, `contact_us`, `onboarding`, `splash`, `app_network`
+`home` = shell (HomeController + 12 mixins, HomeView with 6 tabs) · tabs: `market`, `quote`, `watchlist` (+ favourites), `portfolio`, `trade` · `orders` (order list, details, replace/cancel dialog) · `auth` (login, OTP, signup, biometric, token, password reset) · `notifications` · `global_search` · `top_share`, `search_watch_list`, `order_alert`, `limit_request`, `withdrawal_request`, `contact_us`, `onboarding`, `splash`, `app_network`
 
 ## 🔗 Dependency Map
 See .claude/memory/dependencies.md. Highest blast radius: `HomeController` (+ mixins), `WebSocketService`, `StorageService`, `AppConfig`, `data/models/response/market_model.dart`, `global_widgets/`.
