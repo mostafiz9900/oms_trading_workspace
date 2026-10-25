@@ -74,7 +74,7 @@ mixin MarketFeedMixin on HomeState {
         Get.find<GlobalSearchController>().syncLiveData();
       }
 
-      update(['marketList', 'indexList']);
+      update(['marketList', 'indexList', 'marquee']);
     }
 
     // --- Helper 2: Heavy Chart Calculation Function ---
@@ -248,7 +248,7 @@ mixin MarketFeedMixin on HomeState {
     filteredItems.clear();
     _marketTickStore.clear();
     isMarket = true;
-    update(['marketList']);
+    update(['marketList', 'marquee']);
   }
 
   @override

@@ -122,9 +122,6 @@ class _BodyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ১. GetBuilder এর বদলে সরাসরি কন্ট্রোলার ফাইন্ড করে নিন
-    final homeCon = Get.find<HomeController>();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -132,7 +129,11 @@ class _BodyWidget extends StatelessWidget {
       children: [
         AppSpace.spaceH6,
 
-        ClickableMarqueeTextList(homeCon: homeCon),
+        // Fills in once the market feed arrives (see flushListDataToUI).
+        GetBuilder<HomeController>(
+          id: 'marquee',
+          builder: (con) => ClickableMarqueeTextList(homeCon: con),
+        ),
 
         // শুধুমাত্র তাকে আলাদাভাবে GetBuilder দিয়ে র‍্যাপ করুন।
         GetBuilder<HomeController>(
