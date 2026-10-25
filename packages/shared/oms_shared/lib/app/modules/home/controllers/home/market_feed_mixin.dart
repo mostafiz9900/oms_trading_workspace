@@ -111,8 +111,9 @@ mixin MarketFeedMixin on HomeState {
       _marketUpdateTimer?.cancel();
       flushListDataToUI();
       _lastListUpdateTime = now;
-    } else {
-      _marketUpdateTimer?.cancel();
+    } else if (_marketUpdateTimer?.isActive != true) {
+      // One pending trailing flush is enough: it reads the tick store when it
+      // fires, so re-creating the timer on every tick added nothing.
       _marketUpdateTimer = Timer(const Duration(milliseconds: 500), () {
         flushListDataToUI();
         runHeavyCalculations(); // মার্কেট শেষে চার্টও একবার ফাইনাল সিঙ্ক হবে
