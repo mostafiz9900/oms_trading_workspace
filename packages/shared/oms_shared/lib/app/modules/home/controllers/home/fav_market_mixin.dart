@@ -279,7 +279,6 @@ mixin FavMarketMixin on HomeState {
         List<FavouriteModel>? result = res?.data;
         isGetFavCat = false;
         favCatList.assignAll(result!);
-        watchListFilterFavoriteName = favCatList.elementAt(0).name!;
         selectedTableId = favCatList.first.id!;
         getFavMarketData(favCatList.first.id!);
         update();

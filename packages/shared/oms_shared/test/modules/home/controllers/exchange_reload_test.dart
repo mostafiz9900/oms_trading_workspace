@@ -115,8 +115,6 @@ void main() {
     expect(feed.marketFeedList, hasLength(1));
     const gp = MarketModel(orderBook: 101, shortName: 'GP');
     home.marketListAll.add(gp);
-    home.marketFeedList.add(gp);
-    home.marketListForDilog.add(gp);
     home.marqueeList.add(MarqueeHolder(shortName: 'GP'));
 
     Get.find<ExchangeService>().select(StockExchange.cse);
@@ -125,8 +123,6 @@ void main() {
 
     expect(feed.marketFeedList, isEmpty, reason: 'same ob may mean another stock on CSE');
     expect(home.marketListAll, isEmpty, reason: 'watchlist / quote lookup');
-    expect(home.marketFeedList, isEmpty);
-    expect(home.marketListForDilog, isEmpty, reason: 'search dialog');
     expect(home.marqueeList, isEmpty, reason: 'marquee is keyed by name');
     expect(sockets.last.uri.toString(), 'wss://cse.test/market');
     await finish(tester);

@@ -95,29 +95,15 @@ abstract class HomeState extends SuperController {
 
   List<MarketModel> marketList = <MarketModel>[];
 
-  List<MarketModel> marketFeedList = <MarketModel>[];
-
   var filteredItems = <MarketModel>[];
 
   List<MarketModel> marketListAll = <MarketModel>[];
-
-  List<MarketModel> marketListForDilog = <MarketModel>[];
 
   TextEditingController searchController = TextEditingController();
 
   bool isMarket = false;
 
   bool _firstDataLoaded = false;
-
-  String watchListFilterBoard = 'Main Board';
-
-  String watchListFilterPublic = 'Public';
-
-  int watchListFilterFavorite = 0;
-
-  String watchListFilterFavoriteName = "";
-
-  Map<String, List<MarketModel>>? groupedSectionMarketData;
 
   final currentSession = "".obs;
 

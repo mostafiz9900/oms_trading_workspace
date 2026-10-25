@@ -125,19 +125,4 @@ mixin WatchListMixin on HomeState {
     update(['marketList']); // update only widgets with id 'watchList'
   }
 
-  void filterItems(String query) {
-    if (query.isEmpty) {
-      marketListForDilog = marketListAll;
-    } else {
-      marketListForDilog = marketListAll
-          .where(
-            (item) => (item.shortName ?? "").toUpperCase().startsWith(
-              query.toUpperCase(),
-            ),
-          )
-          .toList();
-    }
-    update();
-  }
-
 }

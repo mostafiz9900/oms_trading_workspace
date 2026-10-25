@@ -286,11 +286,9 @@ mixin HomeSocketMixin on HomeState {
       'distributionChartUpdate',
     ]);
     // Every list built from the old feed (watchlist, quote lookup, sector
-    // charts, search dialog, marquee) would otherwise keep the old
-    // exchange's prices until each stock ticks again.
+    // charts, marquee) would otherwise keep the old exchange's
+    // prices until each stock ticks again.
     marketListAll.clear();
-    marketFeedList.clear();
-    marketListForDilog.clear();
     marqueeList.clear();
     _initializeMarketWebSocket();
     // Stock details (depth, time & sales) follow when the exchange has its

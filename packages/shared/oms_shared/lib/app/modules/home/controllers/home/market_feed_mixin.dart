@@ -56,9 +56,7 @@ mixin MarketFeedMixin on HomeState {
 
       final latestValues = _marketTickStore.quotes.toList();
       marketList.assignAll(latestValues);
-      marketFeedList.assignAll(latestValues);
       marketListAll.assignAll(latestValues);
-      marketListForDilog.assignAll(latestValues);
 
       if (!_firstDataLoaded && marketList.isNotEmpty) {
         _firstDataLoaded = true;
