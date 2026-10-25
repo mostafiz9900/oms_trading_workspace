@@ -201,23 +201,29 @@ mixin MarketFeedMixin on HomeState {
       d: incoming.d,
     );
     // marqueeList is kept sorted by shortName, so the marquee can index it
-    // directly instead of copying and sorting it for every item it builds.
-    final idx = marqueeList.indexWhere((m) => m.shortName == holder.shortName);
-    if (idx >= 0) {
-      marqueeList[idx] = holder;
-    } else {
-      final key = holder.shortName ?? '';
-      var lo = 0, hi = marqueeList.length;
-      while (lo < hi) {
-        final mid = (lo + hi) >> 1;
-        if ((marqueeList[mid].shortName ?? '').compareTo(key) < 0) {
-          lo = mid + 1;
-        } else {
-          hi = mid;
-        }
+    // directly instead of copying and sorting it for every item it builds,
+    // and a tick finds its row by binary search instead of a full scan.
+    final key = holder.shortName ?? '';
+    var lo = 0, hi = marqueeList.length;
+    while (lo < hi) {
+      final mid = (lo + hi) >> 1;
+      if ((marqueeList[mid].shortName ?? '').compareTo(key) < 0) {
+        lo = mid + 1;
+      } else {
+        hi = mid;
       }
-      marqueeList.insert(lo, holder);
     }
+    for (
+      var i = lo;
+      i < marqueeList.length && (marqueeList[i].shortName ?? '') == key;
+      i++
+    ) {
+      if (marqueeList[i].shortName == holder.shortName) {
+        marqueeList[i] = holder;
+        return;
+      }
+    }
+    marqueeList.insert(lo, holder);
   }
 
   // Share Type (Category) চার্টের ডেটা
@@ -257,5 +263,4 @@ mixin MarketFeedMixin on HomeState {
   // sector summary map
   Map<String, Map<String, int>> get sectorSummary =>
       _marketStatistics.sectorSummary;
-
 }

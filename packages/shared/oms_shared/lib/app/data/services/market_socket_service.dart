@@ -20,13 +20,14 @@ class MarketSocketService extends GetxService {
 
   /// One decoded market message (same JSON object the socket delivered).
   void onMarketPayload(Map<String, dynamic> jsonResponse) {
-    if (jsonResponse['ob'] != null) {
-      final incoming = MarketModel.fromJson(jsonResponse);
-
+    // Same parse as MarketModel.fromJson, which now only runs for a new
+    // order book.
+    final orderBook = int.tryParse(jsonResponse['ob']?.toString() ?? '');
+    if (orderBook != null) {
       final updatedModel = _marketMap.update(
-        incoming.orderBook!,
+        orderBook,
         (existing) => existing.mergePartialUpdate(jsonResponse),
-        ifAbsent: () => incoming,
+        ifAbsent: () => MarketModel.fromJson(jsonResponse),
       );
 
       if (Get.isRegistered<TopShareController>()) {

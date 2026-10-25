@@ -14,14 +14,15 @@ class MarketTickStore {
   /// (It used to return the raw tick, whose omitted fields parse as 0, so
   /// the marquee briefly showed 0 for price and change on partial updates.)
   MarketModel? apply(Map<String, dynamic> tick) {
-    final incoming = MarketModel.fromJson(tick);
-    final orderBook = incoming.orderBook;
+    // Same parse as MarketModel.fromJson; the full model is only built for a
+    // new order book (it used to be built and dropped on every tick).
+    final orderBook = int.tryParse(tick['ob']?.toString() ?? '');
     if (orderBook == null) return null;
 
     return _quotesByOrderBook.update(
       orderBook,
       (existing) => existing.mergePartialUpdate(tick),
-      ifAbsent: () => incoming,
+      ifAbsent: () => MarketModel.fromJson(tick),
     );
   }
 

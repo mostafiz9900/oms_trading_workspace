@@ -18,7 +18,10 @@ class MarketTickMessage {
       );
     }
 
-    final payload = Map<String, dynamic>.from(decoded);
+    // jsonDecode already gives a Map<String, dynamic>; copy only otherwise.
+    final payload = decoded is Map<String, dynamic>
+        ? decoded
+        : Map<String, dynamic>.from(decoded);
     final kind = switch (true) {
       _ when payload['cs'] != null => MarketTickKind.session,
       _ when payload['message_type'] == 'itch_heartbeat' =>
