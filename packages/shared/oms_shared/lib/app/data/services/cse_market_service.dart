@@ -138,9 +138,31 @@ class CseMarketService extends GetxService implements MarketFeedView {
       return;
     }
     if (event.kind != MarketTickKind.quote) return;
-    if (_store.apply(event.payload) == null) return;
+    if (_store.apply(normalizeCseTick(event.payload)) == null) return;
     _pendingFlush ??= Timer(flushInterval, _flush);
   }
+
+  /// CSE tick → the values the DSE feed uses, so the same screens and
+  /// calculations work (only the CSE feed is changed):
+  /// - instrument type `EQUITY` / `Mutual Fund` → `EQ` / `MF`;
+  /// - `c` (close) comes equal to the reference price, so change and
+  ///   gainer / loser read 0; the last traded price `lp` is used as close
+  ///   once there is one, and a tick without `lp` keeps the close it has.
+  static Map<String, dynamic> normalizeCseTick(Map<String, dynamic> tick) {
+    final type = tick['it'];
+    if (type is String) {
+      tick['it'] = _cseInstrumentTypes[type] ?? type;
+    }
+    final last = tick['lp'];
+    if (last is num && last > 0) {
+      tick['c'] = last;
+    } else if (!tick.containsKey('lp')) {
+      tick.remove('c');
+    }
+    return tick;
+  }
+
+  static const _cseInstrumentTypes = {'EQUITY': 'EQ', 'Mutual Fund': 'MF'};
 
   void _flush() {
     _pendingFlush = null;

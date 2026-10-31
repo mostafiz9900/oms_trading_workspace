@@ -2,7 +2,9 @@ import 'package:broker_config/broker_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
+import 'package:oms_shared/app/core/utils/extensions/market_model_extensions.dart';
 import 'package:oms_shared/app/core/values/app_config.dart';
+import 'package:oms_shared/app/data/models/response/market_model.dart';
 import 'package:oms_shared/app/data/services/cse_market_service.dart';
 import 'package:oms_shared/app/data/services/exchange_service.dart';
 import 'package:oms_shared/app/data/services/socket_db_service.dart';
@@ -182,4 +184,37 @@ void main() {
       await finish(tester);
     });
   });
+
+  group('CSE tick → DSE values', () {
+    test('instrument type EQUITY / Mutual Fund → EQ / MF', () {
+      expect(CseMarketService.normalizeCseTick({'it': 'EQUITY'})['it'], 'EQ');
+      expect(
+        CseMarketService.normalizeCseTick({'it': 'Mutual Fund'})['it'],
+        'MF',
+      );
+      expect(CseMarketService.normalizeCseTick({'it': 'OPT'})['it'], 'OPT');
+    });
+
+    test('close = last traded price once there is one', () {
+      // ASIAPACINS on CSE UAT: lp 53, c and r 48, d 10.4 %.
+      final tick = CseMarketService.normalizeCseTick({
+        'lp': 53,
+        'c': 48,
+        'r': 48,
+      });
+      expect(tick['c'], 53);
+      expect(MarketModel.fromJson({'ob': 1, ...tick}).percentageChange,
+          closeTo(10.4167, 0.001));
+    });
+
+    test('no trade yet (lp 0): close stays as sent', () {
+      expect(CseMarketService.normalizeCseTick({'lp': 0, 'c': 48})['c'], 48);
+    });
+
+    test('partial tick without lp keeps the close it has', () {
+      expect(CseMarketService.normalizeCseTick({'c': 48}).containsKey('c'),
+          isFalse);
+    });
+  });
+
 }

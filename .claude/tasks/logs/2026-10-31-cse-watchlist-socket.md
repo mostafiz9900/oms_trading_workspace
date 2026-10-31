@@ -15,6 +15,7 @@
 - Step B5 Global Search on the CSE feed
 - Step B6 Portfolio on the CSE feed
 - Step B7 Favourites; Step B8 DSE kept on switch (no clear, no reconnect, instant return)
+- CSE tick normalization (EQ/MF, close = last traded price); Top Shares CSE Gainer/Loser fixed
 
 ## Verified
 - `make check`: 0 analyzer issues, oms_shared 191 tests pass (end of day), validate ok

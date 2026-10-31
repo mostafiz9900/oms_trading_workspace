@@ -154,6 +154,30 @@ void main() {
     await finish(tester);
   });
 
+  testWidgets('CSE Gainer / Loser from the last traded price', (tester) async {
+    await setUpFeeds(tester);
+    final controller = Get.put(TopShareController())
+      ..setActiveTopMenuTopShare('Gainer');
+    exchange.select(StockExchange.cse);
+    await tester.pump();
+
+    // CSE sends close = reference; the change is in the last price.
+    cse.onMessage(
+      '{"ob": 1, "sn": "UPCO", "lp": 53, "c": 48, "r": 48, "v": 500, '
+      '"g": "PUBLIC", "b": "Main Board"}',
+    );
+    await cseSends(
+      tester,
+      '{"ob": 2, "sn": "DOWNCO", "lp": 40, "c": 50, "r": 50, "v": 100, '
+      '"g": "PUBLIC", "b": "Main Board"}',
+    );
+
+    expect(controller.marketFeedSortList.map((e) => e.shortName), ['UPCO']);
+    controller.setActiveTopMenuTopShare('Loser');
+    expect(controller.marketFeedSortList.map((e) => e.shortName), ['DOWNCO']);
+    await finish(tester);
+  });
+
   testWidgets('loader stops after the timeout when no feed arrives', (
     tester,
   ) async {
