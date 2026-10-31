@@ -26,7 +26,9 @@ import 'socket_db_service.dart';
 /// Single-exchange houses never start it.
 class CseMarketService extends GetxService implements MarketFeedView {
   /// A house on both exchanges with CSE selected: screens show this feed.
+  /// False while the service is not registered (nothing to show).
   static bool get isShown =>
+      Get.isRegistered<CseMarketService>() &&
       AppConfig.hasBothExchanges &&
       ExchangeService.current == StockExchange.cse;
 

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../../../core/utils/extensions/market_model_extensions.dart';
 import '../../../data/models/response/market_model.dart';
 import '../../../data/models/response/share_situation.dart';
+import '../../../data/services/cse_market_service.dart';
 import '../../../data/services/exchange_service.dart';
 import '../../../data/services/market_socket_service.dart';
 
@@ -17,7 +18,25 @@ class TopShareController extends GetxController {
   List<ShareSituation> get shareSituationList => _shareSituationList;
 
   bool pageLoad = true;
-  List<MarketModel> get marketFeedList => marketService.marketFeedList;
+
+  /// Stocks of the selected exchange: the CSE feed (its own service) while
+  /// a house on both exchanges has CSE selected, else the DSE feed, as before.
+  List<MarketModel> get marketFeedList => CseMarketService.isShown
+      ? _topShareRows(_cse?.quotes ?? const [])
+      : marketService.marketFeedList;
+
+  CseMarketService? get _cse => Get.isRegistered<CseMarketService>()
+      ? Get.find<CseMarketService>()
+      : null;
+
+  /// Same rows as the DSE feed keeps (MarketSocketService).
+  static List<MarketModel> _topShareRows(List<MarketModel> all) => all
+      .where(
+        (m) =>
+            m.group == "PUBLIC" &&
+            (m.board == "Main Board" || m.board == "Small Cap Board"),
+      )
+      .toList();
 
   Worker? _debounceWorker;
 
@@ -77,15 +96,21 @@ class TopShareController extends GetxController {
         Get.find<ExchangeService>().selected,
         (_) => reloadForExchange(),
       );
-      _feedWorker = ever<List<MarketModel>>(
-        marketService.marketFeedList,
-        _onFeedAfterExchangeSwitch,
-      );
+      _feedWorker = ever<List<MarketModel>>(marketService.marketFeedList, (
+        feed,
+      ) {
+        if (!CseMarketService.isShown) _onFeedAfterExchangeSwitch(feed);
+      });
+      final cse = _cse;
+      if (cse != null) {
+        _cseWorker = ever<List<MarketModel>>(cse.quotes, (_) => _onCseFeed());
+      }
     }
   }
 
   Worker? _exchangeWorker;
   Worker? _feedWorker;
+  Worker? _cseWorker;
   Timer? _exchangeLoadTimeout;
   bool _waitingForExchangeFeed = false;
 
@@ -112,6 +137,25 @@ class TopShareController extends GetxController {
     update();
   }
 
+  /// CSE feed flushed: build the list after a switch, else refresh the rows
+  /// shown in place (as DSE rows are refreshed per tick).
+  void _onCseFeed() {
+    if (!CseMarketService.isShown) return;
+    final rows = marketFeedList;
+    if (_waitingForExchangeFeed) {
+      _onFeedAfterExchangeSwitch(rows);
+      return;
+    }
+    final latest = {for (final m in rows) m.orderBook: m};
+    for (var i = 0; i < marketFeedSortList.length; i++) {
+      final row = marketFeedSortList[i];
+      final m = latest[row.orderBook];
+      if (m == null || identical(m, row)) continue;
+      marketFeedSortList[i] = m;
+      update(['${m.orderBook}']);
+    }
+  }
+
   void _onFeedAfterExchangeSwitch(List<MarketModel> feed) {
     if (!_waitingForExchangeFeed || feed.isEmpty) return;
     _waitingForExchangeFeed = false;
@@ -126,6 +170,7 @@ class TopShareController extends GetxController {
     _debounceWorker?.dispose();
     _exchangeWorker?.dispose();
     _feedWorker?.dispose();
+    _cseWorker?.dispose();
     _exchangeLoadTimeout?.cancel();
     super.onClose();
   }
@@ -154,6 +199,8 @@ class TopShareController extends GetxController {
   // }
 
   void updateSingleRowFromService(MarketModel updatedModel) {
+    // DSE ticks; CSE rows are refreshed from the CSE feed (_onCseFeed).
+    if (CseMarketService.isShown) return;
     int sortIndex = marketFeedSortList.indexWhere(
       (e) => e.orderBook == updatedModel.orderBook,
     );
