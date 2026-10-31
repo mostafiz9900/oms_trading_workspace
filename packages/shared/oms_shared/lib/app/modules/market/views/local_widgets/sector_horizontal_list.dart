@@ -25,7 +25,7 @@ class ProSectorHorizontalList extends StatelessWidget {
     return VisibleGetBuilder<HomeController>(
       id: 'sectorSummary',
       builder: (homeCon) {
-        final sectorList = homeCon.sectorSummaryList;
+        final sectorList = homeCon.shownMarket.sectorSummaryList;
 
         if (sectorList.isEmpty) return const SizedBox.shrink();
 
@@ -157,7 +157,7 @@ class SectorDetailsView extends StatelessWidget {
       body: GetBuilder<HomeController>(
         id: 'sectorSummary',
         builder: (homeCon) {
-          final sectorList = homeCon.sectorSummaryList.where((s) => s.sectorName == sectorName).toList();
+          final sectorList = homeCon.shownMarket.sectorSummaryList.where((s) => s.sectorName == sectorName).toList();
           if (sectorList.isEmpty) return const Center(child: Text("Sector data not found"));
 
           final sector = sectorList.first;

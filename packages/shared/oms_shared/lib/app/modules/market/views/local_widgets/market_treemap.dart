@@ -140,10 +140,10 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
     return VisibleGetBuilder<HomeController>(
       id: 'marketList',
       builder: (homeController) {
-        if (!homeController.marketList.isNotEmpty || homeController.marketList.length < 20) {
+        if (!homeController.shownMarket.quotes.isNotEmpty || homeController.shownMarket.quotes.length < 20) {
           return MarketMapLoader(height: responsiveHeight);
         }
-        final visibleList = homeController.marketList
+        final visibleList = homeController.shownMarket.quotes
             .where((m) => m.group == "PUBLIC" && m.board == "Main Board")
             .toList();
         if (visibleList.isEmpty) {

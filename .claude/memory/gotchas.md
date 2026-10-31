@@ -62,6 +62,11 @@
 - **How to Avoid**: write `Get.put<X>(x)` (or assign to a local first) in async helpers.
 - **Discovered**: 2026-10-31
 
+#### Tooling — `dart format` reflows whole files
+- **What Happens**: many oms_shared files are not in `dart format` style (longer lines); formatting a folder rewrote 14 files (+583/−203) for a 25-line change.
+- **How to Avoid**: format only files you create; for edits in existing files, keep their style and don't run `dart format` on the folder.
+- **Discovered**: 2026-10-31
+
 ## Template
 #### [Module] — [Title]
 - **What Happens**:

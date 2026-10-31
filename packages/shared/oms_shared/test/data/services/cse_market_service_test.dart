@@ -140,5 +140,46 @@ void main() {
       expect(sockets.last.uri.toString(), _cseUrl);
       await finish(tester);
     });
+
+    testWidgets('Market tab figures: session, marquee, charts, sectors', (
+      tester,
+    ) async {
+      final service = await start(tester, ExchangeMode.dseAndCse);
+      Get.find<ExchangeService>().select(StockExchange.cse);
+      await tester.pump();
+      sockets.last.open();
+      await tester.pump();
+
+      sockets.last.serverSends('{"cs": "CONTINUOUS"}');
+      sockets.last.serverSends(
+        '{"ob": 2, "sn": "ZETA", "g": "PUBLIC", "b": "Main Board", '
+        '"sc": "Bank", "st": "A", "it": "EQ", "v": 100, "lp": 10, "r": 9}',
+      );
+      sockets.last.serverSends(
+        '{"ob": 1, "sn": "ALPHA", "g": "PUBLIC", "b": "Main Board", '
+        '"sc": "IT", "st": "B", "it": "EQ", "v": 50, "lp": 5, "r": 5}',
+      );
+      sockets.last.serverSends(
+        '{"ob": 3, "sn": "BOND", "g": "DEBT", "b": "Main Board", "sc": "Bond"}',
+      );
+      await tester.pump(CseMarketService.flushInterval);
+
+      expect(service.session.value, 'CONTINUOUS');
+      expect(
+        service.marqueeList.map((m) => m.shortName),
+        ['ALPHA', 'ZETA'],
+        reason: 'PUBLIC only, sorted by name',
+      );
+      expect(service.chartData, isNotEmpty);
+      expect(service.sectorSummaryList, isNotEmpty);
+
+      Get.find<ExchangeService>().select(StockExchange.dse);
+      await tester.pump();
+      expect(service.session.value, isEmpty);
+      expect(service.marqueeList, isEmpty);
+      expect(service.chartData, isEmpty);
+      expect(service.sectorSummaryList, isEmpty);
+      await finish(tester);
+    });
   });
 }

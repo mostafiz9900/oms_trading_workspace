@@ -152,4 +152,42 @@ void main() {
       await finish(tester);
     });
   }
+
+  group('Market tab feed (shownMarket)', () {
+    for (final mode in [ExchangeMode.dseOnly, ExchangeMode.cseOnly]) {
+      testWidgets('${mode.name}: HomeController fields, as before', (
+        tester,
+      ) async {
+        await start(tester, mode);
+        home.chartData = [
+          {'sector': 'Bank'},
+        ];
+        home.currentSession.value = 'CONTINUOUS';
+
+        final shown = home.shownMarket;
+        expect(shown, isNot(isA<CseMarketService>()));
+        expect(identical(shown.quotes, home.marketList), isTrue);
+        expect(identical(shown.marqueeList, home.marqueeList), isTrue);
+        expect(identical(shown.chartData, home.chartData), isTrue);
+        expect(identical(shown.session, home.currentSession), isTrue);
+        await finish(tester);
+      });
+    }
+
+    testWidgets('DSE and CSE: DSE fields on DSE, the CSE service on CSE', (
+      tester,
+    ) async {
+      await start(tester, ExchangeMode.dseAndCse);
+      expect(identical(home.shownMarket.quotes, home.marketList), isTrue);
+
+      Get.find<ExchangeService>().select(StockExchange.cse);
+      await tester.pump();
+      expect(home.shownMarket, same(Get.find<CseMarketService>()));
+
+      Get.find<ExchangeService>().select(StockExchange.dse);
+      await tester.pump();
+      expect(identical(home.shownMarket.quotes, home.marketList), isTrue);
+      await finish(tester);
+    });
+  });
 }

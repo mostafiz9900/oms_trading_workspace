@@ -52,6 +52,8 @@ import '../../../global_provider.dart';
 import '../../global_search/controllers/global_search_controller.dart';
 import '../../../routes/app_routes.dart';
 import '../../../data/models/marquee_holder.dart';
+import '../../../data/services/cse_market_service.dart';
+import '../../../data/services/market_feed_view.dart';
 
 import '../../../data/models/response/companies_model.dart';
 import '../../../data/models/response/dividend_model.dart';

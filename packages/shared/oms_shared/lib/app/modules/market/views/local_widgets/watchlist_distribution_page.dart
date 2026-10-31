@@ -22,9 +22,9 @@ class WatchlistDistributionPage extends StatelessWidget {
     return VisibleGetBuilder<HomeController>(
       id: 'distributionChartUpdate',
       builder: (_) {
-        final counts = controller.distributionCounts;
-        final total = controller.distributionTotal;
-        final maxCount = controller.distributionMaxCount;
+        final counts = controller.shownMarket.distributionCounts;
+        final total = controller.shownMarket.distributionTotal;
+        final maxCount = controller.shownMarket.distributionMaxCount;
 
         if (total == 0 || counts.isEmpty) {
           return const DistributionChartLoader();

@@ -8,6 +8,9 @@
 - Tests: `test/data/services/cse_market_service_test.dart`, `test/modules/watchlist/controllers/watchlist_controller_test.dart`
 - New gotcha: async `return Get.put(x)` registers `FutureOr<X>`
 
+- Step B2 Market tab: `MarketFeedView`, `HomeController.shownMarket` (+ DSE adapter), CSE figures in `CseMarketService`; 7 Market widgets read `shownMarket`. Tests: service figures, shownMarket (dseOnly/cseOnly/dseAndCse); mutation 5/5
+- Found: CSE `it` values `EQUITY`/`Mutual Fund` vs DSE `EQ`/`MF` → CSE sector-gainer chart empty
+
 ## Verified
 - `make check`: 0 analyzer issues, oms_shared 168 tests pass, validate ok
 - Mutation checks 6/6 (single-exchange houses, CSE source, refresh, close/drop, DSE-only socket)

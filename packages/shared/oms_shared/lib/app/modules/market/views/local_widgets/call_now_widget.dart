@@ -45,13 +45,13 @@ class CallNowWidget extends ConsumerWidget {
             ),
             Obx(() {
               return Text(
-                homeCon.currentSession.value == ''
+                homeCon.shownMarket.session.value == ''
                     ? ""
-                    : homeCon.currentSession.value.split('_').join(' ').toCapitalize(),
+                    : homeCon.shownMarket.session.value.split('_').join(' ').toCapitalize(),
                 style: Get.textTheme.bodyMedium?.copyWith(
-                  color: homeCon.currentSession.value == ''
+                  color: homeCon.shownMarket.session.value == ''
                       ? ColorConstants.white
-                      : homeCon.currentSession.value.split('_').join(' ').toCapitalize() ==
+                      : homeCon.shownMarket.session.value.split('_').join(' ').toCapitalize() ==
                             "Continuous" //Continuous
                       ? ColorConstants.success
                       : ColorConstants.redColor, //Auction

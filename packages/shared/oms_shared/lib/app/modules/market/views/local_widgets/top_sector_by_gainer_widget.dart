@@ -16,7 +16,7 @@ class TopSectorByGainerWidget extends StatelessWidget {
     return VisibleGetBuilder<HomeController>(
       id: "marketListByGainer",
       builder: (homeCon) {
-        if (homeCon.chartData.isEmpty) {
+        if (homeCon.shownMarket.chartData.isEmpty) {
           return const CartesianChartLoader(title: 'Top Sectors By Gainer');
         }
         return Container(
@@ -53,7 +53,7 @@ class TopSectorByGainerWidget extends StatelessWidget {
                     labelRotation: -90, // rotate labels to fit
                     interval: 1,
                     minimum: -0.5, // বামপাশের গ্যাপ (আগের মতোই থাকবে)
-                    maximum: homeCon.chartData.isNotEmpty ? homeCon.chartData.length - 0.5 : null,
+                    maximum: homeCon.shownMarket.chartData.isNotEmpty ? homeCon.shownMarket.chartData.length - 0.5 : null,
                     majorGridLines: const MajorGridLines(width: 0),
                     labelPlacement: LabelPlacement.onTicks,
                     labelIntersectAction: AxisLabelIntersectAction.rotate90, // show all labels
@@ -86,7 +86,7 @@ class TopSectorByGainerWidget extends StatelessWidget {
 
                   series: <CartesianSeries>[
                     StackedColumnSeries<dynamic, String>(
-                      dataSource: homeCon.chartData,
+                      dataSource: homeCon.shownMarket.chartData,
                       xValueMapper: (data, _) => data['sector'],
                       yValueMapper: (data, _) => data['up'],
                       color: hexToColor('#22C665'),
@@ -95,7 +95,7 @@ class TopSectorByGainerWidget extends StatelessWidget {
                       dataLabelSettings: const DataLabelSettings(),
                     ),
                     StackedColumnSeries<dynamic, String>(
-                      dataSource: homeCon.chartData,
+                      dataSource: homeCon.shownMarket.chartData,
                       xValueMapper: (data, _) => data['sector'],
                       yValueMapper: (data, _) => data['down'],
                       color: hexToColor('#F54D64'), // Down
@@ -104,7 +104,7 @@ class TopSectorByGainerWidget extends StatelessWidget {
                       dataLabelSettings: const DataLabelSettings(),
                     ),
                     StackedColumnSeries<dynamic, String>(
-                      dataSource: homeCon.chartData,
+                      dataSource: homeCon.shownMarket.chartData,
                       xValueMapper: (data, _) => data['sector'],
                       yValueMapper: (data, _) => data['equal'],
                       color: hexToColor('#177DFF'), // Equa

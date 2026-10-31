@@ -358,4 +358,40 @@ abstract class HomeState extends SuperController {
   Future<void> getUserOrder();
   int? _parseNullableInt(String value);
   void clearAllFields();
+
+  /// The feed the market screens show: CSE (its own service) while a house
+  /// on both exchanges has CSE selected, else this controller's DSE feed.
+  MarketFeedView get shownMarket =>
+      CseMarketService.isShown && Get.isRegistered<CseMarketService>()
+      ? Get.find<CseMarketService>()
+      : _dseFeedView;
+
+  late final MarketFeedView _dseFeedView = _HomeFeedView(this);
+}
+
+/// This controller's own feed (DSE), read as a [MarketFeedView]; reads the
+/// same fields the market screens read before.
+class _HomeFeedView implements MarketFeedView {
+  _HomeFeedView(this._home);
+
+  final HomeState _home;
+
+  @override
+  List<MarketModel> get quotes => _home.marketList;
+  @override
+  List<MarqueeHolder> get marqueeList => _home.marqueeList;
+  @override
+  List<Map<String, dynamic>> get chartData => _home.chartData;
+  @override
+  List<Map<String, dynamic>> get chartDataShareType => _home.chartDataShareType;
+  @override
+  List<SectorDataModel> get sectorSummaryList => _home.sectorSummaryList;
+  @override
+  List<int> get distributionCounts => _home.distributionCounts;
+  @override
+  int get distributionTotal => _home.distributionTotal;
+  @override
+  int get distributionMaxCount => _home.distributionMaxCount;
+  @override
+  RxString get session => _home.currentSession;
 }

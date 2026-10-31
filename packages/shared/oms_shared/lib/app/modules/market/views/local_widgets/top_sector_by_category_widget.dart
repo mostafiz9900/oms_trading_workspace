@@ -16,7 +16,7 @@ class TopSectorByCategoryWidget extends StatelessWidget {
     return VisibleGetBuilder<HomeController>(
       id: "marketListByShareType",
       builder: (homeCon) {
-        if (homeCon.chartDataShareType.isEmpty) {
+        if (homeCon.shownMarket.chartDataShareType.isEmpty) {
           return const CartesianChartLoader(title: 'Top Sectors By Category');
         }
         return Container(
@@ -57,7 +57,7 @@ class TopSectorByCategoryWidget extends StatelessWidget {
                     labelRotation: -90,
                     interval: 1,
                     minimum: -0.5,
-                    maximum: homeCon.chartDataShareType.isNotEmpty ? homeCon.chartDataShareType.length - 0.5 : null,
+                    maximum: homeCon.shownMarket.chartDataShareType.isNotEmpty ? homeCon.shownMarket.chartDataShareType.length - 0.5 : null,
                     majorGridLines: MajorGridLines(width: 0.5, color: Colors.grey.withAlpha(77)),
                     labelPlacement: LabelPlacement.onTicks,
                     labelIntersectAction: AxisLabelIntersectAction.rotate90,
@@ -86,7 +86,7 @@ class TopSectorByCategoryWidget extends StatelessWidget {
                   ),
                   series: <CartesianSeries>[
                     StackedColumnSeries<dynamic, String>(
-                      dataSource: homeCon.chartDataShareType,
+                      dataSource: homeCon.shownMarket.chartDataShareType,
                       xValueMapper: (data, _) => data['sector'],
                       yValueMapper: (data, _) => data['A'],
                       color: hexToColor('#2BE070'),
@@ -94,7 +94,7 @@ class TopSectorByCategoryWidget extends StatelessWidget {
                       enableTooltip: true,
                     ),
                     StackedColumnSeries<dynamic, String>(
-                      dataSource: homeCon.chartDataShareType,
+                      dataSource: homeCon.shownMarket.chartDataShareType,
                       xValueMapper: (data, _) => data['sector'],
                       yValueMapper: (data, _) => data['B'],
                       color: hexToColor('#6864FF'),
@@ -102,7 +102,7 @@ class TopSectorByCategoryWidget extends StatelessWidget {
                       enableTooltip: true,
                     ),
                     StackedColumnSeries<dynamic, String>(
-                      dataSource: homeCon.chartDataShareType,
+                      dataSource: homeCon.shownMarket.chartDataShareType,
                       xValueMapper: (data, _) => data['sector'],
                       yValueMapper: (data, _) => data['N'],
                       color: hexToColor('#177DFF'),
@@ -110,7 +110,7 @@ class TopSectorByCategoryWidget extends StatelessWidget {
                       enableTooltip: true,
                     ),
                     StackedColumnSeries<dynamic, String>(
-                      dataSource: homeCon.chartDataShareType,
+                      dataSource: homeCon.shownMarket.chartDataShareType,
                       xValueMapper: (data, _) => data['sector'],
                       yValueMapper: (data, _) => data['Z'],
                       color: hexToColor('#FF495B'),
