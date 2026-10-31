@@ -132,7 +132,7 @@ mixin FavMarketMixin on HomeState {
       if (res?.success == true) {
         favMarketData = res!.data!;
         favMarketParseList = parseFavMarketList(
-          marketList: marketList,
+          marketList: shownMarket.quotes,
           favMarketData: favMarketData,
         );
         loadingFav = false;
@@ -247,7 +247,7 @@ mixin FavMarketMixin on HomeState {
   void _rebuildFavAfterExchangeSwitch() {
     if (_favRebuildWindow?.isActive != true) return;
     favMarketParseList = parseFavMarketList(
-      marketList: marketList,
+      marketList: shownMarket.quotes,
       favMarketData: favMarketData,
     );
     update();
