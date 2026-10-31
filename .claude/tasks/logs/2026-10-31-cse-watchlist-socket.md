@@ -13,6 +13,7 @@
 - Step B3 Top Shares on the CSE service (no new socket); tests rewritten
 - Step B4 Quote/Trade on the CSE feed; selected stock saved per exchange
 - Step B5 Global Search on the CSE feed
+- Step B6 Portfolio on the CSE feed
 
 ## Verified
 - `make check`: 0 analyzer issues, oms_shared 168 tests pass, validate ok

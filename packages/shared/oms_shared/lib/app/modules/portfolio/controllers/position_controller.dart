@@ -272,10 +272,12 @@ class PositionController extends GetxController {
     update();
   }
 
+  /// Price of a holding from the shown exchange's feed (DSE: marketList, as
+  /// before; CSE selected: the CSE feed — user decision 2026-10-24).
   MarketModel getMarketData(String? isin) {
     if (isin == null) return MarketModel();
     try {
-      return homeCont.marketList.firstWhere(
+      return homeCont.shownMarket.quotes.firstWhere(
         (market) =>
             market.isinCode?.trim() == isin.trim() && market.group == 'PUBLIC',
         orElse: () => MarketModel(),
