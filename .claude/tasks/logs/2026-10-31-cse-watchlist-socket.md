@@ -14,9 +14,10 @@
 - Step B4 Quote/Trade on the CSE feed; selected stock saved per exchange
 - Step B5 Global Search on the CSE feed
 - Step B6 Portfolio on the CSE feed
+- Step B7 Favourites; Step B8 DSE kept on switch (no clear, no reconnect, instant return)
 
 ## Verified
-- `make check`: 0 analyzer issues, oms_shared 168 tests pass, validate ok
+- `make check`: 0 analyzer issues, oms_shared 191 tests pass (end of day), validate ok
 - Mutation checks 6/6 (single-exchange houses, CSE source, refresh, close/drop, DSE-only socket)
 
 ## Next

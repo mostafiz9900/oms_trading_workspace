@@ -106,7 +106,10 @@ mixin HomeSocketMixin on HomeState {
 
   // Individual WebSocket initializations
   void _initializeMarketWebSocket() async {
-    final url = AppConfig.marketUrlFor(ExchangeService.current);
+    // DSE always when CSE has its own feed (also if the app starts on CSE).
+    final url = AppConfig.marketUrlFor(
+      _cseFeedApart ? StockExchange.dse : ExchangeService.current,
+    );
     printLog(url);
     try {
       _resetMarketState();
@@ -261,12 +264,35 @@ mixin HomeSocketMixin on HomeState {
     }
   }
 
-  /// Called when the user switches DSE/CSE: order book ids can be the same on
-  /// both exchanges, so the old exchange's quotes are dropped before the new
-  /// feed connects.
+  /// Called when the user switches DSE/CSE.
+  ///
+  /// CSE in its own service (houses on both exchanges): the DSE feed, lists
+  /// and socket are kept as they are; screens redraw from the shown feed, so
+  /// DSE is back at once. Otherwise (one shared feed): order book ids can be
+  /// the same on both exchanges, so the old quotes are dropped and the feed
+  /// reconnects.
   void reloadMarketForExchange() {
     _resetQuoteForExchange();
     _resetFavForExchange();
+    if (_cseFeedApart) {
+      update([
+        'marketList',
+        'marquee',
+        'marketListByGainer',
+        'marketListByShareType',
+        'sectorListUpdate',
+        'sectorSummary',
+        'distributionChartUpdate',
+      ]);
+      _followStockDetailsFeeds();
+      if (Get.isRegistered<WatchListController>()) {
+        Get.find<WatchListController>().applyFilters();
+      }
+      // Stock, favourites and search from the shown feed right away (on
+      // CSE they follow as its first quotes arrive).
+      onShownFeedFlushed();
+      return;
+    }
     marketService.clear();
     // Sector, share-type and distribution figures (Market tab, sector
     // details) are rebuilt from the new feed; until then show none rather
@@ -291,8 +317,20 @@ mixin HomeSocketMixin on HomeState {
     marketListAll.clear();
     marqueeList.clear();
     _initializeMarketWebSocket();
-    // Stock details (depth, time & sales) follow when the exchange has its
-    // own feed; with the same URL the open connection is kept.
+    _followStockDetailsFeeds();
+    if (Get.isRegistered<WatchListController>()) {
+      Get.find<WatchListController>().applyFilters();
+    }
+    // Open search screen: drop the old exchange's results (and its recent
+    // list); refilled as the new feed arrives.
+    if (Get.isRegistered<GlobalSearchController>()) {
+      Get.find<GlobalSearchController>().syncLiveData();
+    }
+  }
+
+  /// Stock details (depth, time & sales) follow when the exchange has its
+  /// own feed; with the same URL the open connection is kept.
+  void _followStockDetailsFeeds() {
     _reconnectIfUrlChanged(
       AppConfig.marketDepthSocketId,
       AppConfig.marketDepthUrlFor(ExchangeService.current),
@@ -303,14 +341,6 @@ mixin HomeSocketMixin on HomeState {
       AppConfig.newsAndTimeAndSalesUrlFor(ExchangeService.current),
       _initializeNewsTimeSalesWebSocket,
     );
-    if (Get.isRegistered<WatchListController>()) {
-      Get.find<WatchListController>().applyFilters();
-    }
-    // Open search screen: drop the old exchange's results (and its recent
-    // list); refilled as the new feed arrives.
-    if (Get.isRegistered<GlobalSearchController>()) {
-      Get.find<GlobalSearchController>().syncLiveData();
-    }
   }
 
   void _reconnectIfUrlChanged(

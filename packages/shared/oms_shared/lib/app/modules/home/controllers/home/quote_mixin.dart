@@ -134,6 +134,7 @@ mixin QuoteMixin on HomeState {
 
   /// The CSE feed (CseMarketService) flushed while shown: what a DSE list
   /// flush does for the stock and favourites after a switch.
+  @override
   void onShownFeedFlushed() {
     _selectQuoteAfterExchangeSwitch();
     _rebuildFavAfterExchangeSwitch();

@@ -351,6 +351,7 @@ abstract class HomeState extends SuperController {
   bool get _quoteReselectPending;
   void _resetFavForExchange();
   void _rebuildFavAfterExchangeSwitch();
+  void onShownFeedFlushed();
   Future<void> _selectQuoteAfterExchangeSwitch();
   void getUserInfo();
   MarketModel getMarketByOrderBookId(int orderBookId);
@@ -358,6 +359,11 @@ abstract class HomeState extends SuperController {
   Future<void> getUserOrder();
   int? _parseNullableInt(String value);
   void clearAllFields();
+
+  /// A house on both exchanges with the CSE feed in its own service: this
+  /// controller's feed is always DSE and is never cleared for CSE.
+  bool get _cseFeedApart =>
+      AppConfig.hasBothExchanges && Get.isRegistered<CseMarketService>();
 
   /// Storage key of the stock selected on Quote for the shown exchange
   /// (order book ids differ between exchanges). DSE keeps the old key.

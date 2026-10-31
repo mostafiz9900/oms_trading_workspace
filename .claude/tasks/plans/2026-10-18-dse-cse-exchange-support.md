@@ -101,8 +101,9 @@ User decision 2026-10-31: CSE data in its **own objects**; the DSE socket and li
 - Step B5 — Global Search (done): results from `shownMarket.quotes`; CSE flushes call `syncLiveData` (via `onShownFeedFlushed`); recent searches already per exchange. Tests: `test/modules/global_search/global_search_cse_feed_test.dart` (3); mutation 2/2
 - Step B6 — Portfolio (done): `PositionController.getMarketData` (holding price by ISIN) reads `shownMarket.quotes`; Account Summary already redraws on `'marketList'`, which CSE flushes update. Tests: `test/modules/portfolio/position_cse_feed_test.dart` (2); mutation 1/1
 - CSE feed sends `it` = `EQUITY` / `Mutual Fund` (DSE analytics expects `EQ` / `MF`), so the CSE sector-gainer chart stays empty — ask backend or map in CseMarketService (user decision)
-- Interim: other screens still use model A (switch clears + reconnects the shared feed), so on CSE two CSE sockets are open — remove when the last screen moves
-- Next: Market tab, Top Shares, Quote/Trade, Search, Portfolio onto `CseMarketService`; then drop the shared-feed clear/reconnect from `reloadMarketForExchange`
+- Step B7 — Favourites (done): `getFavMarketData` / post-switch re-match parse against `shownMarket.quotes`. Test `fav_cse_feed_test.dart`
+- Step B8 — DSE kept on switch (done): `HomeState._cseFeedApart` (dseAndCse + CseMarketService registered). Then the DSE market socket always uses the DSE URL (also when the app starts on CSE), and `reloadMarketForExchange` only redraws screens, follows depth/T&S URLs and calls `onShownFeedFlushed()` — no DSE clear, no DSE reconnect. Top Shares builds at once when the shown feed has quotes. Old clear+reconnect path kept only when there is no CSE service. Tests: `dse_kept_on_switch_test.dart` (5: DSE socket opened once, DSE lists kept, instant return, marquee redraw, start on CSE); mutation 5/5
+- Still model A: index (LiveIndexController clears + reconnects the index socket) until `OMS_CSE_SOCKET_INDEX_URL` exists
 
 ## Remaining gaps
 

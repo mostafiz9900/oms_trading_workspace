@@ -54,6 +54,7 @@
 #### Exchange — only Market, Watch List, Top Share, Quote, Trade, Orders, Global Search, Favourites and Sector details follow the DSE/CSE switch (so far)
 - **What Happens**: `ExchangeService.selected` reloads the market + index sockets (MarketWidget, Top Stocks feed). Everything else (index names DSEX…, boards, sessions, quote/trade/watchlist/orders) is still DSE-hardcoded.
 - **Why**: delivered step by step (plan: .claude/tasks/plans/2026-10-18-dse-cse-exchange-support.md, "User decisions 2026-10-19").
+- **Model B (2026-10-31)**: CSE has its own `CseMarketService`; screens read `HomeController.shownMarket`; the DSE feed is never cleared or reconnected on a switch. New screens must read `shownMarket`, not `marketList`.
 - **How to Avoid**: CSE uses the DSE socket URLs until `OMS_CSE_SOCKET_MARKET_URL` / `OMS_CSE_SOCKET_INDEX_URL` / `OMS_CSE_SOCKET_MARKET_DEPTH_URL` / `OMS_CSE_SOCKET_NEWS_TIME_SALES_URL` are set (all optional, in env JSON); order book ids can be the same on both exchanges, so always clear per-exchange caches on switch. Quote re-selects by **symbol**, not order book; `marketData` is shared with Trade, so never blank it during a switch. New orders are blocked while CSE is selected (no exchange field in the order JSON) — do not remove the gate before the backend defines one. Same gate (`HomeState.canOrderOnSelectedExchange`) blocks modify/cancel/duplicate/status: they look up the stock by order book id in the selected exchange's feed.
 - **Discovered**: 2026-10-19
 

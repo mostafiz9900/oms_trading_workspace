@@ -135,6 +135,8 @@ class TopShareController extends GetxController {
       update();
     });
     update();
+    // The shown feed already has quotes (DSE is kept while on CSE): no wait.
+    if (marketFeedList.isNotEmpty) _onFeedAfterExchangeSwitch(marketFeedList);
   }
 
   /// CSE feed flushed: build the list after a switch, else refresh the rows
