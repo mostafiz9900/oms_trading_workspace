@@ -90,6 +90,14 @@ Created: 2026-10-18
 - Tests: `test/modules/market/controllers/live_index_controller_test.dart` (6), 4 in `trade_mixin_test.dart`; mutation-checked 5/5
 - Pre-CSE test suite (`6db7350`) re-run against current code: all pass
 
+## Connection model B — CSE apart from DSE (started 2026-10-31, branch `feature/cse_watchlist_socket`)
+
+User decision 2026-10-31: CSE data in its **own objects**; the DSE socket and lists are never cleared or reconnected for CSE. Same JSON format on both feeds (verified: identical quote keys, CSE UAT `wss://cse-uat-firstservice.fistradebd.com/market`).
+
+- Step B1 — Watch List (done): `CseMarketService` (`data/services/cse_market_service.dart`, registered in `di.dart`): own socket `AppConfig.cseMarketSocketId`, own `MarketTickStore`, `RxList<MarketModel> quotes` (one pending flush, 500 ms). Only for `dseAndCse` houses; connects while CSE is selected, closes and drops quotes on DSE. `WatchListController.showsCse` → reads `quotes`, else HomeController lists as before. Tests: `cse_market_service_test.dart` (7), `watchlist_controller_test.dart` (5); mutation-checked 6/6
+- Interim: other screens still use model A (switch clears + reconnects the shared feed), so on CSE two CSE sockets are open — remove when the last screen moves
+- Next: Market tab, Top Shares, Quote/Trade, Search, Portfolio onto `CseMarketService`; then drop the shared-feed clear/reconnect from `reloadMarketForExchange`
+
 ## Remaining gaps
 
 1. ~~Positions~~ — **User decision 2026-10-24: CSE selected → holdings at CSE prices** (as the code does: by ISIN from the selected feed). Position is redrawn on every flush during the 5 s switch window (else only the first flush, with ~1 stock); test "Position is redrawn … and only then"

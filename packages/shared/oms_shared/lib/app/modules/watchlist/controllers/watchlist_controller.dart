@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'package:broker_config/broker_config.dart' show StockExchange;
+
 import '../../../core/utils/extensions/market_model_extensions.dart';
+import '../../../core/values/app_config.dart';
 import '../../../data/models/response/market_model.dart';
+import '../../../data/services/cse_market_service.dart';
+import '../../../data/services/exchange_service.dart';
 import '../../home/controllers/home_controller.dart';
 
 class WatchListController extends GetxController {
@@ -25,11 +30,30 @@ class WatchListController extends GetxController {
 
   List<MarketModel> filteredItems = [];
 
+  /// The CSE feed (separate from DSE), when this house has one.
+  CseMarketService? get _cse => Get.isRegistered<CseMarketService>()
+      ? Get.find<CseMarketService>()
+      : null;
+
+  /// A house on both exchanges with CSE selected: the list comes from the
+  /// CSE feed. Otherwise from HomeController's feed, as before.
+  bool get showsCse =>
+      AppConfig.hasBothExchanges &&
+      ExchangeService.current == StockExchange.cse;
+
+  Worker? _cseWorker;
+
   @override
   void onInit() {
     super.onInit();
     searchController.addListener(_onSearchChanged);
     _generateFilteredList();
+    final cse = _cse;
+    if (cse != null) {
+      _cseWorker = ever<List<MarketModel>>(cse.quotes, (_) {
+        if (showsCse) applyFilters();
+      });
+    }
   }
 
   @override
@@ -45,6 +69,7 @@ class WatchListController extends GetxController {
 
   @override
   void onClose() {
+    _cseWorker?.dispose();
     searchController.removeListener(_onSearchChanged);
     searchController.dispose();
     scrollController.dispose();
@@ -108,16 +133,21 @@ class WatchListController extends GetxController {
   }
 
   // --- Pure Data Processing Logic ---
+  List<MarketModel> get _sourceList {
+    if (showsCse) return _cse?.quotes ?? const [];
+    return homeCon.marketList.isNotEmpty
+        ? homeCon.marketList
+        : homeCon.marketListAll;
+  }
+
   void _generateFilteredList() {
-    if (homeCon.marketList.isEmpty && homeCon.marketListAll.isEmpty) {
+    final sourceList = _sourceList;
+    if (sourceList.isEmpty) {
       isLoading = true;
       filteredItems = [];
       return;
     }
     isLoading = false;
-    List<MarketModel> sourceList = homeCon.marketList.isNotEmpty
-        ? homeCon.marketList
-        : homeCon.marketListAll;
 
     // Main Board & PUBLIC Group Filter
     List<MarketModel> results = sourceList
@@ -214,6 +244,11 @@ class WatchListController extends GetxController {
   }
 
   Future<void> refreshWatchList() async {
+    if (showsCse) {
+      _cse?.reconnect();
+      applyFilters();
+      return;
+    }
     await homeCon.refreshMarket();
     applyFilters();
   }

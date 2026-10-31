@@ -88,6 +88,8 @@ class AppConfig {
 
   // Socket IDs
   static const String marketSocketId = 'market_socket';
+  /// CSE market feed of a house on both exchanges (CseMarketService).
+  static const String cseMarketSocketId = 'cse_market_socket';
   static const String notificationSocketId = 'notification_socket';
   static const String newsSocketId = 'news_socket';
   static const String indexSocketId = 'index_socket';

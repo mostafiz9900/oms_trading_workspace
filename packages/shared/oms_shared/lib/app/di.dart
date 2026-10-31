@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import 'core/theme/theme_service.dart';
+import 'data/services/cse_market_service.dart';
 import 'data/services/exchange_service.dart';
 import 'data/services/socket_db_service.dart';
 import 'data/services/storage_service.dart';
@@ -17,5 +18,8 @@ class DependencyInjection {
     Get.lazyPut<TokenController>(() => TokenController(), fenix: true);
     // Fed by HomeController's market socket; no network wait at startup.
     Get.put(MarketSocketService());
+    // CSE feed apart from DSE (houses on both exchanges, while CSE is
+    // selected); does nothing for single-exchange houses.
+    Get.put(CseMarketService(), permanent: true);
   }
 }
