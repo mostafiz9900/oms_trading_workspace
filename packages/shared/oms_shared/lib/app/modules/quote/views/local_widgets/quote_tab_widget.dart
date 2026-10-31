@@ -37,7 +37,7 @@ class QuoteTabWidget extends StatelessWidget {
                 builder: (homeCon) => RelatedItemWatchlist(
                   relatedMarketList: homeCon.getRelatedAssets(
                     homeCon.marketData,
-                    homeCon.marketListAll,
+                    homeCon.shownMarket.quotes,
                   ),
                   controller: homeCon,
                 ),

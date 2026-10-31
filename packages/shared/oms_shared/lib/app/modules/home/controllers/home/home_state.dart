@@ -359,6 +359,12 @@ abstract class HomeState extends SuperController {
   int? _parseNullableInt(String value);
   void clearAllFields();
 
+  /// Storage key of the stock selected on Quote for the shown exchange
+  /// (order book ids differ between exchanges). DSE keeps the old key.
+  String get _selectedOrderBookKey => CseMarketService.isShown
+      ? '${StorageConstants.orderBookId}_cse'
+      : StorageConstants.orderBookId;
+
   /// The feed the market screens show: CSE (its own service) while a house
   /// on both exchanges has CSE selected, else this controller's DSE feed.
   MarketFeedView get shownMarket =>

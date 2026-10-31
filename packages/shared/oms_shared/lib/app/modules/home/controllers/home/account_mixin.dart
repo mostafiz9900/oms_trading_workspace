@@ -125,6 +125,7 @@ mixin AccountMixin on HomeState {
     StorageService.remove(StorageConstants.refreshToken);
     StorageService.remove(StorageConstants.userInfo);
     StorageService.remove(StorageConstants.orderBookId);
+    StorageService.remove('${StorageConstants.orderBookId}_cse');
 
     // ২. অন্যান্য কন্ট্রোলার ডিলিট করা
     Get.delete<TokenController>();

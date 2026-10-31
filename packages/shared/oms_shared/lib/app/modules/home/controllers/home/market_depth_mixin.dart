@@ -54,12 +54,12 @@ mixin MarketDepthMixin on HomeState {
   Future<void> manageMarketDepth(int newOrderBookId) async {
     printLog('newOrderBookId:: $newOrderBookId');
     int oldOrderBookId =
-        await StorageService.read(StorageConstants.orderBookId) ?? 0;
+        await StorageService.read(_selectedOrderBookKey) ?? 0;
     printLog('old order book id:: $oldOrderBookId');
     if (oldOrderBookId != newOrderBookId) {
       _sendMarketDepthPayload(AppConstants.unsubscribe, oldOrderBookId);
       _sendMarketDepthPayload(AppConstants.subscribe, newOrderBookId);
-      await StorageService.save(StorageConstants.orderBookId, newOrderBookId);
+      await StorageService.save(_selectedOrderBookKey, newOrderBookId);
       await markerInfo();
     } else {
       _sendMarketDepthPayload(AppConstants.subscribe, newOrderBookId);

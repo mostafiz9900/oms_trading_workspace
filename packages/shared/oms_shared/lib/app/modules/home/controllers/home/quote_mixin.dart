@@ -60,8 +60,9 @@ mixin QuoteMixin on HomeState {
 
   @override
   Future<void> markerInfo() async {
-    int orderBook =
-        await StorageService.read(StorageConstants.orderBookId) ?? 0;
+    int orderBook = await StorageService.read(_selectedOrderBookKey) ?? 0;
+    // Stocks of the shown exchange (on DSE: marketList, as before).
+    final marketList = shownMarket.quotes;
 
     if (marketList.isEmpty) {
       update(['marketList', "trade_ticker_data"]);
@@ -81,10 +82,7 @@ mixin QuoteMixin on HomeState {
 
     // ২. এবার নির্বাচিত marketData এর ডাটাগুলো ফেচ করুন এবং লোকাল স্টোরেজ আপডেট করুন
     if (marketData.orderBook != null) {
-      await StorageService.save(
-        StorageConstants.orderBookId,
-        marketData.orderBook,
-      );
+      await StorageService.save(_selectedOrderBookKey, marketData.orderBook);
 
       // এই মেথডগুলো সব কন্ডিশনেই কল হতে হবে যেন অ্যাপ স্টার্টেই ডাটা লোড হয়
       _sendMarketDepthPayload(AppConstants.subscribe, marketData.orderBook!);
@@ -134,18 +132,23 @@ mixin QuoteMixin on HomeState {
   Future<void> _selectQuoteAfterExchangeSwitch() =>
       _pickQuoteAfterSwitch(force: false);
 
+  /// The CSE feed (CseMarketService) flushed while shown: what a DSE list
+  /// flush does for the stock and favourites after a switch.
+  void onShownFeedFlushed() {
+    _selectQuoteAfterExchangeSwitch();
+    _rebuildFavAfterExchangeSwitch();
+  }
+
   /// With [force], falls back to the new exchange's first stock.
   Future<void> _pickQuoteAfterSwitch({required bool force}) async {
     final symbol = _quoteSymbolAfterSwitch;
+    final marketList = shownMarket.quotes;
     if (symbol == null || isClosed || marketList.isEmpty) return;
     final match = marketList.firstWhereOrNull((m) => m.shortName == symbol);
     if (match == null && !force) return;
     _quoteSymbolAfterSwitch = null;
     _quoteSwitchFallback?.cancel();
-    await StorageService.save(
-      StorageConstants.orderBookId,
-      match?.orderBook ?? 0,
-    );
+    await StorageService.save(_selectedOrderBookKey, match?.orderBook ?? 0);
     await markerInfo(); // selects it, subscribes depth, loads company
     // On Trade, show the new stock's price, as opening Trade does.
     if (currentIndex == 5) {

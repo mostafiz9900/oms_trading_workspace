@@ -6,7 +6,7 @@ mixin HomeNavigationMixin on HomeState {
   Future<void> loadTabData(int index) async {
     if (index == 0) {
       int orderBook =
-          await StorageService.read(StorageConstants.orderBookId) ?? 0;
+          await StorageService.read(_selectedOrderBookKey) ?? 0;
       await manageMarketDepth(orderBook);
     } else if (index == 1) {
       subscribeTimeAndSales('tsm', '01', "${marketData.orderBook}");

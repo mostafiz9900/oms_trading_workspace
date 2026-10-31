@@ -11,6 +11,7 @@
 - Step B2 Market tab: `MarketFeedView`, `HomeController.shownMarket` (+ DSE adapter), CSE figures in `CseMarketService`; 7 Market widgets read `shownMarket`. Tests: service figures, shownMarket (dseOnly/cseOnly/dseAndCse); mutation 5/5
 - Found: CSE `it` values `EQUITY`/`Mutual Fund` vs DSE `EQ`/`MF` → CSE sector-gainer chart empty
 - Step B3 Top Shares on the CSE service (no new socket); tests rewritten
+- Step B4 Quote/Trade on the CSE feed; selected stock saved per exchange
 
 ## Verified
 - `make check`: 0 analyzer issues, oms_shared 168 tests pass, validate ok

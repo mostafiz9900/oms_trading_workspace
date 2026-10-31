@@ -191,7 +191,8 @@ class CseMarketService extends GetxService implements MarketFeedView {
   /// they show this feed.
   void _redrawMarketScreens({required bool analytics}) {
     if (!isShown || !Get.isRegistered<HomeController>()) return;
-    Get.find<HomeController>().update([
+    final home = Get.find<HomeController>()..onShownFeedFlushed();
+    home.update([
       'marketList',
       'marquee',
       if (analytics) ...[
