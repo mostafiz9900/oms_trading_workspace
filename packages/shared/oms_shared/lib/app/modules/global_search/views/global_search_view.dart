@@ -561,7 +561,7 @@ class GlobalSearchScreen extends HookWidget {
               Divider(height: 1, color: context.dividerColor),
 
               // Loading State
-              if (controller.filteredItems.isEmpty && Get.find<HomeController>().marketList.isEmpty)
+              if (controller.filteredItems.isEmpty && Get.find<HomeController>().shownMarket.quotes.isEmpty)
                 const Expanded(
                   child: WatchlistLoader(), // 🚀 সাধারণ স্পিনারের বদলে প্রিমিয়াম শিমার লোডার
                 )

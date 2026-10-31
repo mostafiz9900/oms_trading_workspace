@@ -23,9 +23,10 @@ class GlobalSearchController extends GetxController {
   // 🚀 Service-কে কল করার শর্টকাট
   RecentSearchService get recentService => RecentSearchService.to;
 
-  // মেইন লাইভ ডাটা
+  // মেইন লাইভ ডাটা (stocks of the shown exchange; on DSE: marketList)
   List<MarketModel> get _validHomeData {
-    final rawList = Get.find<HomeController>().marketList.cast<MarketModel>();
+    final rawList = Get.find<HomeController>().shownMarket.quotes
+        .cast<MarketModel>();
     return rawList.where((m) => m.group == "PUBLIC").toList();
   }
 

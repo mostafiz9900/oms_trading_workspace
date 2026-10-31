@@ -137,6 +137,10 @@ mixin QuoteMixin on HomeState {
   void onShownFeedFlushed() {
     _selectQuoteAfterExchangeSwitch();
     _rebuildFavAfterExchangeSwitch();
+    // Open search screen: results from the CSE feed.
+    if (Get.isRegistered<GlobalSearchController>()) {
+      Get.find<GlobalSearchController>().syncLiveData();
+    }
   }
 
   /// With [force], falls back to the new exchange's first stock.
