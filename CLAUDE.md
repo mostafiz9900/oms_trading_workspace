@@ -26,7 +26,7 @@
 - **Current Phase**: Maintenance of a **live production app** (Benemoy) + monorepo hardening
 - **Target Users**: Retail investors of each broker house (Benemoy first)
 - **Critical Paths**: placing/replacing/cancelling orders over the order socket · login, OTP, token refresh · live market/order-book sockets · portfolio and balances
-- **Current Priorities**: DSE/CSE switch — UI done on `feature/cse_ui`, waiting on backend (CSE URLs, index names, exchange field in orders) · release secrets for CI (Play + iOS) · UAT QA of PR #2 (dev → uat) · decisions on the 3 behaviours in .claude/memory/gotchas.md
+- **Current Priorities**: DSE/CSE — CSE on its own feed (`CseMarketService`) on branch `feature/cse_watchlist_socket`; waiting on backend answers in `.claude/tasks/todo/2026-10-31-cse-open-questions.md` (read it first) · release secrets for CI (Play + iOS) · UAT QA of PR #2 (dev → uat) · decisions on the 3 behaviours in .claude/memory/gotchas.md
 
 ## 📁 Project Structure
 ```text
