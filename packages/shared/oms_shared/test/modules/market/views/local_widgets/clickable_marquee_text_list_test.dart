@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:oms_shared/app/data/models/marquee_holder.dart';
+import 'package:oms_shared/app/data/services/market_feed_view.dart';
 import 'package:oms_shared/app/modules/home/controllers/home_controller.dart';
 import 'package:oms_shared/app/modules/market/views/local_widgets/clickable_marquee_text_list.dart';
 
-/// The marquee only reads [HomeController.marqueeList].
+/// The marquee only reads the marquee list of [HomeController.shownMarket].
 class _FakeHome extends Fake implements HomeController {
-  _FakeHome(this.marqueeList);
+  _FakeHome(List<MarqueeHolder> marqueeList)
+    : shownMarket = _FakeFeed(marqueeList);
+
+  @override
+  final MarketFeedView shownMarket;
+}
+
+class _FakeFeed extends Fake implements MarketFeedView {
+  _FakeFeed(this.marqueeList);
 
   @override
   final List<MarqueeHolder> marqueeList;
@@ -58,7 +67,7 @@ void main() {
       MarqueeHolder(shortName: 'ALPHA', status: 'Down', chg: -1, last: 1, d: -1),
     ]);
     // The controller keeps marqueeList sorted; the widget shows it in order.
-    unsorted.marqueeList.sort((a, b) => (a.shortName ?? '').compareTo(b.shortName ?? ''));
+    unsorted.shownMarket.marqueeList.sort((a, b) => (a.shortName ?? '').compareTo(b.shortName ?? ''));
     await tester.pumpWidget(
       MaterialApp(home: Scaffold(body: ClickableMarqueeTextList(homeCon: unsorted))),
     );
