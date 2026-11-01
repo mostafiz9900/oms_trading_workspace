@@ -139,8 +139,8 @@ class _TopSummaryDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double totalValue = positionCont.currentPortfolioValue;
-    double unrealizedAmount = positionCont.totalUnrealizedPnL;
-    double unrealizedPct = positionCont.totalUnrealizedPnLPercentage;
+    double unrealizedAmount = positionCont.summaryGain;
+    double unrealizedPct = positionCont.summaryGainPercentage;
 
     Color pnlColor = unrealizedAmount >= 0
         ? HexColor("#22C665")

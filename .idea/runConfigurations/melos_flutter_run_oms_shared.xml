@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Flutter Run -&gt; 'oms_shared'" type="FlutterRunConfigurationType" factoryName="Flutter">
+    <option name="filePath" value="$PROJECT_DIR$/packages/shared/oms_shared/lib/main.dart" />
+    <method v="2" />
+  </configuration>
+</component>

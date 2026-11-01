@@ -68,6 +68,11 @@
 - **How to Avoid**: format only files you create; for edits in existing files, keep their style and don't run `dart format` on the folder.
 - **Discovered**: 2026-10-31
 
+#### Portfolio — `total_cost` drops after an intraday sell, `initial_quantity` does not
+- **What Happens**: Position header Market Value = (initial_quantity + intraday_buy) × LTP, but Gain used Σ `total_cost`, which is only for `total_qty` (after the sell). Benemoy 2026-11-01: 20,000 sold → Gain +9.70 % shown, real −0.32 %.
+- **How to Avoid**: value and cost must use the same quantity. Header only (user, 2026-11-01): `summaryCost` = initial × avg_price + intraday_buy × intraday_buy_price_avg (`avg_price` excludes intraday buys). `totalInvestment` / Account Summary and rows still use `total_cost` on purpose — user wants only `_TopSummaryDashboard` changed.
+- **Discovered**: 2026-11-01
+
 ## Template
 #### [Module] — [Title]
 - **What Happens**:

@@ -106,6 +106,32 @@ class PositionController extends GetxController {
     return (totalUnrealizedPnL / totalInvestment) * 100;
   }
 
+  // Position tab top summary only (_TopSummaryDashboard).
+  // Cost of the same quantity [currentPortfolioValue] counts: initial at
+  // avg_price + intraday buy at its own avg (avg_price excludes intraday
+  // buys). `total_cost` drops after an intraday sell, initial_quantity does not.
+  double get summaryCost {
+    return positions.data?.fold(0.0, (sum, item) {
+          int intQty = item.initialQuantity ?? 0;
+          int intBuyQty = item.intradayBuyQuantity ?? 0;
+          double cost =
+              intQty * (item.avgPrice ?? 0.0) +
+              intBuyQty * (item.intradayBuyPriceAvg ?? 0.0);
+          return sum! + cost;
+        }) ??
+        0.0;
+  }
+
+  double get summaryGain {
+    return currentPortfolioValue - summaryCost;
+  }
+
+  double get summaryGainPercentage {
+    double cost = summaryCost;
+    if (cost <= 0) return 0.0;
+    return (summaryGain / cost) * 100;
+  }
+
   double getItemUnrealizedPnL(PositionModel item) {
     var marketData = getMarketData(item.isin);
     double activeLast = (marketData.activePrice > 0)
