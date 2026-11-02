@@ -324,8 +324,9 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
                       SizedBox(
                         width: colRealized,
                         child: const _HeaderCell2Line(
-                          'Realized',
+                          // 'Realized',
                           'Weight %',
+                          "",
                           CrossAxisAlignment.end,
                           padding: EdgeInsets.only(right: 10),
                         ),
@@ -453,7 +454,7 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
 
     // Calculations
     double activeLast = marketData.activeLast;
-    double marketValue = (intQty + intBuyQty) * activeLast;
+    double marketValue = totalQty * activeLast;
 
     double unrealizedPnL = marketValue - totalCost;
     double gainLossPct = totalCost > 0
@@ -558,9 +559,10 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
           SizedBox(
             width: colRealized,
             child: _DataCell2Line(
-              topText:
-                  '$realPnLSign${NumberFormatter.bdFormat(realizedPnL.abs())}',
-              bottomText: '${weightPct.toStringAsFixed(2)}%',
+              // topText:
+              //     '$realPnLSign${NumberFormatter.bdFormat(realizedPnL.abs())}',
+              topText: '${weightPct.toStringAsFixed(2)}%',
+              bottomText: "",
               alignment: CrossAxisAlignment.end,
               topColor: realPnLColor,
               topBold: true,

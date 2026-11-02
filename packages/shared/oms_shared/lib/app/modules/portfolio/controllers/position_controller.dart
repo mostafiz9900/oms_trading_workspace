@@ -88,10 +88,8 @@ class PositionController extends GetxController {
   double get currentPortfolioValue {
     return positions.data?.fold(0.0, (sum, item) {
           var marketData = getMarketData(item.isin);
-          int intQty = item.initialQuantity ?? 0;
-          int intBuyQty = item.intradayBuyQuantity ?? 0;
-          double marketValue =
-              (intQty + intBuyQty).toDouble() * marketData.activeLast;
+          int totalQty = item.totalQty ?? 0;
+          double marketValue = totalQty.toDouble() * marketData.activeLast;
           return sum! + marketValue;
         }) ??
         0.0;
@@ -110,14 +108,19 @@ class PositionController extends GetxController {
   // Cost of the same quantity [currentPortfolioValue] counts: initial at
   // avg_price + intraday buy at its own avg (avg_price excludes intraday
   // buys). `total_cost` drops after an intraday sell, initial_quantity does not.
+  // double get summaryCost {
+  //   return positions.data?.fold(0.0, (sum, item) {
+  //         int totalQty = item.totalQty ?? 0;
+  //         double cost = totalQty * (item.avgPrice ?? 0.0);
+  //         return sum! + cost;
+  //       }) ??
+  //       0.0;
+  // }
+
   double get summaryCost {
     return positions.data?.fold(0.0, (sum, item) {
-          int intQty = item.initialQuantity ?? 0;
-          int intBuyQty = item.intradayBuyQuantity ?? 0;
-          double cost =
-              intQty * (item.avgPrice ?? 0.0) +
-              intBuyQty * (item.intradayBuyPriceAvg ?? 0.0);
-          return sum! + cost;
+          double totalQty = item.totalCost ?? 0;
+          return sum! + totalQty;
         }) ??
         0.0;
   }

@@ -29,7 +29,9 @@ class ApiMarketChartRepository implements MarketChartRepository {
     // printLog(
     //   'getHistoricalVolume response;:: ${ApiUrl.getHistoricalVolumeData}',
     // );
-    // printLog('getHistoricalVolume    $tickerName response;:: ${orderBook}');
+    printLog(
+      'getHistoricalVolume    $tickerName $orderBook response;:: ${ApiUrl.getHistoricalVolumeData}',
+    );
     printLog('getHistoricalVolume response;:: ${response.body}');
     try {
       if (response.statusCode == 200) {

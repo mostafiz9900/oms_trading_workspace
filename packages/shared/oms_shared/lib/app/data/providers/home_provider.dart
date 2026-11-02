@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+
 import '../models/request/add_fav_item_request.dart' show AddFavItemRequest;
 
 import '../../core/values/app_config.dart';
@@ -21,10 +22,7 @@ class HomeProvider extends BaseProvider {
     String? bioToken,
     bool isActive,
   ) {
-    var body = {
-      "key": bioToken,
-      "is_active": isActive,
-    };
+    var body = {"key": bioToken, "is_active": isActive};
     return post(path, body);
   }
 
