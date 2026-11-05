@@ -1,0 +1,3 @@
+package_name("com.arenasecurities.oms.app")
+app_identifier("com.arenasecurities.oms.app")
+team_id("TODO_TEAM_ID")

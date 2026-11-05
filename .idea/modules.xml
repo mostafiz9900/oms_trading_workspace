@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<module fileurl="file://$PROJECT_DIR$/apps/arena/melos_arena.iml" filepath="$PROJECT_DIR$/apps/arena/melos_arena.iml"/>
 <module fileurl="file://$PROJECT_DIR$/apps/benemoy/melos_benemoy.iml" filepath="$PROJECT_DIR$/apps/benemoy/melos_benemoy.iml"/>
 <module fileurl="file://$PROJECT_DIR$/packages/core/broker_config/melos_broker_config.iml" filepath="$PROJECT_DIR$/packages/core/broker_config/melos_broker_config.iml"/>
+<module fileurl="file://$PROJECT_DIR$/apps/cssl/melos_cssl.iml" filepath="$PROJECT_DIR$/apps/cssl/melos_cssl.iml"/>
 <module fileurl="file://$PROJECT_DIR$/apps/fakhrul/melos_fakhrul.iml" filepath="$PROJECT_DIR$/apps/fakhrul/melos_fakhrul.iml"/>
 <module fileurl="file://$PROJECT_DIR$/packages/shared/localization/melos_localization.iml" filepath="$PROJECT_DIR$/packages/shared/localization/melos_localization.iml"/>
 <module fileurl="file://$PROJECT_DIR$/packages/shared/oms_shared/melos_oms_shared.iml" filepath="$PROJECT_DIR$/packages/shared/oms_shared/melos_oms_shared.iml"/>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1254" height="1254" viewBox="0 0 1254 1254" role="img" aria-label="Arena Securities light splash screen">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f3f5ff"/>
+      <stop offset="0.48" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#f9f2f5"/>
+    </linearGradient>
+    <radialGradient id="softLight" cx="48%" cy="42%" r="72%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.96"/>
+      <stop offset="0.72" stop-color="#f5f6ff" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#e9ecfa" stop-opacity="0.2"/>
+    </radialGradient>
+    <linearGradient id="wavePink" x1="0" y1="0" x2="1" y2="0.7">
+      <stop offset="0" stop-color="#ffd5df" stop-opacity="0.58"/>
+      <stop offset="0.55" stop-color="#ff9eaf" stop-opacity="0.78"/>
+      <stop offset="1" stop-color="#ffd4dc" stop-opacity="0.82"/>
+    </linearGradient>
+    <linearGradient id="waveRed" x1="0" y1="0" x2="1" y2="0.8">
+      <stop offset="0" stop-color="#ff2638"/>
+      <stop offset="0.5" stop-color="#ff0015"/>
+      <stop offset="1" stop-color="#ff6572"/>
+    </linearGradient>
+    <linearGradient id="waveShadow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffb7c3" stop-opacity="0.38"/>
+      <stop offset="1" stop-color="#ffeff2" stop-opacity="0.05"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="42"/>
+    </filter>
+  </defs>
+
+  <!-- Full-bleed light splash background, without an app-icon frame -->
+  <rect width="1254" height="1254" fill="url(#background)"/>
+  <rect width="1254" height="1254" fill="url(#softLight)"/>
+  <ellipse cx="970" cy="1050" rx="440" ry="260" fill="#ffb7c6" opacity="0.18" filter="url(#glow)"/>
+
+  <!-- Arena Securities wordmark -->
+  <g font-family="Arial, Helvetica, sans-serif" font-weight="700">
+    <rect x="134" y="510" width="417" height="156" fill="#000000"/>
+    <text x="154" y="638" font-size="120" letter-spacing="-5" fill="#ffffff">Arena</text>
+    <text x="570" y="638" font-size="104" letter-spacing="-4" fill="#050505">Securities</text>
+    <rect x="134" y="678" width="982" height="23" fill="#f00012"/>
+  </g>
+
+  <!-- Soft pink rear wave -->
+  <path d="M0 1144
+           C150 1045 300 1000 462 1005
+           C630 1010 754 1068 900 1028
+           C1048 988 1156 860 1254 700
+           L1254 1254 L0 1254 Z"
+        fill="url(#wavePink)"/>
+
+  <!-- Main vivid red ribbon sweeping upward at the right -->
+  <path d="M225 1254
+           C350 1128 495 1095 650 1068
+           C845 1034 1030 958 1254 790
+           L1254 1254 Z"
+        fill="url(#waveRed)"/>
+
+  <!-- Light translucent ribbon layered over the red sweep -->
+  <path d="M0 1144
+           C150 1045 300 1000 462 1005
+           C630 1010 754 1068 900 1028
+           C1048 988 1156 860 1254 700
+           L1254 805
+           C1090 978 965 1044 790 1080
+           C610 1117 440 1100 225 1254
+           L0 1254 Z"
+        fill="url(#waveShadow)"/>
+
+  <!-- Subtle bright edge along the upper contour of the red ribbon -->
+  <path d="M225 1254
+           C350 1128 495 1095 650 1068
+           C845 1034 1030 958 1254 790"
+        fill="none" stroke="#ff4a58" stroke-width="3" stroke-opacity="0.45"/>
+</svg>

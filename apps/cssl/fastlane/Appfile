@@ -1,0 +1,3 @@
+package_name("com.csslbd.oms.app")
+app_identifier("com.csslbd.oms.app")
+team_id("TODO_TEAM_ID")

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="Arena Securities splash logo">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#111722"/>
+      <stop offset="0.55" stop-color="#08090f"/>
+      <stop offset="1" stop-color="#180609"/>
+    </linearGradient>
+    <linearGradient id="redWave" x1="0" y1="0" x2="1" y2="0.8">
+      <stop offset="0" stop-color="#6d0710"/>
+      <stop offset="0.48" stop-color="#e00012"/>
+      <stop offset="1" stop-color="#8e000b"/>
+    </linearGradient>
+    <linearGradient id="redWave2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3b080e"/>
+      <stop offset="0.55" stop-color="#a9000d"/>
+      <stop offset="1" stop-color="#32070d"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#313947" stop-opacity=".8"/>
+      <stop offset="1" stop-color="#090a10" stop-opacity=".1"/>
+    </linearGradient>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+    <clipPath id="rounded">
+      <rect x="16" y="16" width="992" height="992" rx="190"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#rounded)">
+    <rect width="1024" height="1024" fill="url(#bg)"/>
+    <rect x="16" y="16" width="992" height="992" rx="190" fill="none" stroke="url(#edge)" stroke-width="3"/>
+    <ellipse cx="795" cy="820" rx="360" ry="230" fill="#a00010" opacity=".16" filter="url(#softGlow)"/>
+    <!-- flowing red lower ribbons -->
+    <path d="M-35 925 C150 800 285 775 455 785 C650 797 820 755 1055 565 L1055 1060 L-35 1060 Z"
+          fill="url(#redWave2)" opacity=".88"/>
+    <path d="M120 1050 C285 895 420 875 595 850 C770 825 900 730 1050 585 L1050 1050 Z"
+          fill="url(#redWave)" opacity=".94"/>
+    <path d="M-20 940 C160 815 300 790 455 798 C650 810 820 768 1045 585"
+          fill="none" stroke="#e31a27" stroke-opacity=".38" stroke-width="3"/>
+    <!-- wordmark -->
+    <g font-family="Arial, Helvetica, sans-serif" font-weight="700">
+      <rect x="89" y="397" width="348" height="138" fill="#000000"/>
+      <text x="106" y="505" font-size="112" letter-spacing="-5" fill="#ffffff">Arena</text>
+      <text x="452" y="505" font-size="104" letter-spacing="-4" fill="#ffffff">Securities</text>
+      <rect x="89" y="558" width="846" height="21" fill="#f00012"/>
+    </g>
+  </g>
+</svg>

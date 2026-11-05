@@ -40,6 +40,46 @@
       "args": [
         "--dart-define-from-file=env/prod.json"
       ]
+    },
+    {
+      "name": " UAT",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "${workspaceFolder}/apps/cssl",
+      "program": "${workspaceFolder}/apps/cssl/lib/main_uat.dart",
+      "args": [
+        "--dart-define-from-file=env/uat.json"
+      ]
+    },
+    {
+      "name": " PROD",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "${workspaceFolder}/apps/cssl",
+      "program": "${workspaceFolder}/apps/cssl/lib/main_prod.dart",
+      "args": [
+        "--dart-define-from-file=env/prod.json"
+      ]
+    },
+    {
+      "name": "Arena Securities Ltd UAT",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "${workspaceFolder}/apps/arena",
+      "program": "${workspaceFolder}/apps/arena/lib/main_uat.dart",
+      "args": [
+        "--dart-define-from-file=env/uat.json"
+      ]
+    },
+    {
+      "name": "Arena Securities Ltd PROD",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "${workspaceFolder}/apps/arena",
+      "program": "${workspaceFolder}/apps/arena/lib/main_prod.dart",
+      "args": [
+        "--dart-define-from-file=env/prod.json"
+      ]
     }
   ]
 }

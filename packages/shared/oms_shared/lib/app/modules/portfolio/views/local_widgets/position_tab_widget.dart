@@ -443,7 +443,7 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
 
     // Direct values from model
     int totalQty = model.totalQty ?? 0;
-    int intQty = model.initialQuantity ?? 0;
+    // int intQty = model.initialQuantity ?? 0;
     int remQty = model.sellablePosition ?? 0; // Rem. Pos = sellablePosition
     int intBuyQty = model.intradayBuyQuantity ?? 0;
     int intSellQty = model.intradaySellQuantity ?? 0;
@@ -486,7 +486,7 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
         ? HexColor("#22C665")
         : HexColor("#F70042");
     String unPnLSign = unrealizedPnL > 0 ? "+" : (unrealizedPnL < 0 ? "-" : "");
-    String realPnLSign = realizedPnL > 0 ? "+" : (realizedPnL < 0 ? "-" : "");
+    // String realPnLSign = realizedPnL > 0 ? "+" : (realizedPnL < 0 ? "-" : "");
     Widget rowContent;
 
     if (isScrollable) {
