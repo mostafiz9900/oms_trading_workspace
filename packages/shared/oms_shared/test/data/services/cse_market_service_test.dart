@@ -14,6 +14,7 @@ import '../../helpers/fake_storage.dart';
 import '../../helpers/test_env.dart';
 
 const _cseUrl = 'wss://cse.test/market';
+const _cseDepthUrl = 'wss://cse.test/marketdepth';
 
 void main() {
   late List<FakeChannel> sockets;
@@ -30,7 +31,10 @@ void main() {
   Future<CseMarketService> start(WidgetTester tester, ExchangeMode mode) async {
     initTestAppConfig(
       exchangeMode: mode,
-      extra: const {'OMS_CSE_SOCKET_MARKET_URL': _cseUrl},
+      extra: const {
+        'OMS_CSE_SOCKET_MARKET_URL': _cseUrl,
+        'OMS_CSE_SOCKET_MARKET_DEPTH_URL': _cseDepthUrl,
+      },
     );
     await tester.pumpWidget(const GetMaterialApp(home: Scaffold()));
     Get.put(ExchangeService());
@@ -43,8 +47,11 @@ void main() {
     return Get.put<CseMarketService>(CseMarketService());
   }
 
+  /// The CSE market socket (the depth socket opens right after it).
+  FakeChannel market() => sockets.lastWhere((s) => s.uri.toString() == _cseUrl);
+
   Future<void> sends(WidgetTester tester, String json) async {
-    sockets.last.serverSends(json);
+    market().serverSends(json);
     await tester.pump(CseMarketService.flushInterval);
   }
 
@@ -84,9 +91,9 @@ void main() {
 
       Get.find<ExchangeService>().select(StockExchange.cse);
       await tester.pump();
-      sockets.single.open();
+      market().open();
       await tester.pump();
-      expect(sockets.single.uri.toString(), _cseUrl);
+      expect(market().uri.toString(), _cseUrl);
       expect(
         WebSocketService.instance.isConnected(AppConfig.cseMarketSocketId),
         isTrue,
@@ -108,7 +115,7 @@ void main() {
       final exchange = Get.find<ExchangeService>();
       exchange.select(StockExchange.cse);
       await tester.pump();
-      sockets.single.open();
+      market().open();
       await tester.pump();
       await sends(tester, '{"ob": 7, "sn": "SQURPHARMA", "g": "PUBLIC", "b": "Main Board"}');
 
@@ -130,7 +137,7 @@ void main() {
       final service = await start(tester, ExchangeMode.dseAndCse);
       Get.find<ExchangeService>().select(StockExchange.cse);
       await tester.pump();
-      sockets.single.open();
+      market().open();
       await tester.pump();
       await sends(tester, '{"ob": 7, "sn": "SQURPHARMA", "g": "PUBLIC", "b": "Main Board"}');
 
@@ -138,8 +145,7 @@ void main() {
       await tester.pump();
 
       expect(service.quotes, isEmpty);
-      expect(sockets, hasLength(2));
-      expect(sockets.last.uri.toString(), _cseUrl);
+      expect(sockets.where((s) => s.uri.toString() == _cseUrl), hasLength(2));
       await finish(tester);
     });
 
@@ -149,19 +155,19 @@ void main() {
       final service = await start(tester, ExchangeMode.dseAndCse);
       Get.find<ExchangeService>().select(StockExchange.cse);
       await tester.pump();
-      sockets.last.open();
+      market().open();
       await tester.pump();
 
-      sockets.last.serverSends('{"cs": "CONTINUOUS"}');
-      sockets.last.serverSends(
+      market().serverSends('{"cs": "CONTINUOUS"}');
+      market().serverSends(
         '{"ob": 2, "sn": "ZETA", "g": "PUBLIC", "b": "Main Board", '
         '"sc": "Bank", "st": "A", "it": "EQ", "v": 100, "lp": 10, "r": 9}',
       );
-      sockets.last.serverSends(
+      market().serverSends(
         '{"ob": 1, "sn": "ALPHA", "g": "PUBLIC", "b": "Main Board", '
         '"sc": "IT", "st": "B", "it": "EQ", "v": 50, "lp": 5, "r": 5}',
       );
-      sockets.last.serverSends(
+      market().serverSends(
         '{"ob": 3, "sn": "BOND", "g": "DEBT", "b": "Main Board", "sc": "Bond"}',
       );
       await tester.pump(CseMarketService.flushInterval);
@@ -214,6 +220,54 @@ void main() {
     test('partial tick without lp keeps the close it has', () {
       expect(CseMarketService.normalizeCseTick({'c': 48}).containsKey('c'),
           isFalse);
+    });
+  });
+
+
+  group('CSE market depth', () {
+    FakeChannel depthSocket(List<FakeChannel> all) =>
+        all.lastWhere((s) => s.uri.toString() == _cseDepthUrl);
+
+    testWidgets('own socket; subscribes the stock, re-sent on connect', (
+      tester,
+    ) async {
+      final service = await start(tester, ExchangeMode.dseAndCse);
+      Get.find<ExchangeService>().select(StockExchange.cse);
+      await tester.pump();
+
+      service.sendDepth('subscribe', 7); // before the socket is open
+      final socket = depthSocket(sockets)..open();
+      await tester.pump();
+
+      expect(socket.sent, ['{"type":"subscribe","ob":7}']);
+      await finish(tester);
+    });
+
+    testWidgets('depth of the subscribed stock only; dropped on DSE', (
+      tester,
+    ) async {
+      final service = await start(tester, ExchangeMode.dseAndCse);
+      Get.find<ExchangeService>().select(StockExchange.cse);
+      await tester.pump();
+      service.sendDepth('subscribe', 7);
+
+      service.onDepthMessage(
+        '{"9": {"buy": [{"price": 1, "qty": 1}], "sell": []}}',
+      );
+      expect(service.buys, isEmpty, reason: 'not the subscribed stock');
+
+      service.onDepthMessage(
+        '{"7": {"buy": [{"price": 10, "qty": 100}], '
+        '"sell": [{"price": 11, "qty": 50}]}, "msg": "md", "ob": 7}',
+      );
+      expect(service.buys, hasLength(1));
+      expect(service.sells, hasLength(1));
+
+      Get.find<ExchangeService>().select(StockExchange.dse);
+      await tester.pump();
+      expect(service.buys, isEmpty);
+      expect(service.sells, isEmpty);
+      await finish(tester);
     });
   });
 

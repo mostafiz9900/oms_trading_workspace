@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:broker_config/broker_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -27,6 +29,8 @@ class _FakeHomeRepository implements HomeRepository {
 }
 
 const _cseUrl = 'wss://cse.test/market';
+const _cseDepthUrl = 'wss://cse.test/marketdepth';
+const _dseDepthUrl = '${testSocketBaseUrl}depth';
 const _dseUrl = '${testSocketBaseUrl}market';
 const _gp = MarketModel(
   orderBook: 101,
@@ -57,7 +61,10 @@ void main() {
   Future<void> start(WidgetTester tester) async {
     initTestAppConfig(
       exchangeMode: ExchangeMode.dseAndCse,
-      extra: const {'OMS_CSE_SOCKET_MARKET_URL': _cseUrl},
+      extra: const {
+        'OMS_CSE_SOCKET_MARKET_URL': _cseUrl,
+        'OMS_CSE_SOCKET_MARKET_DEPTH_URL': _cseDepthUrl,
+      },
     );
     await tester.pumpWidget(const GetMaterialApp(home: Scaffold()));
     final repo = _FakeHomeRepository();
@@ -192,5 +199,70 @@ void main() {
     expect(dseSockets(), hasLength(1));
     expect(exchange.selected.value, StockExchange.cse);
     await finish(tester);
+  });
+
+  group('market depth', () {
+    List<FakeChannel> at(String url) =>
+        sockets.where((s) => s.uri.toString() == url).toList();
+
+    List<Map> sent(FakeChannel socket) =>
+        socket.sent.map((m) => jsonDecode(m as String) as Map).toList();
+
+    testWidgets('CSE depth on its own socket; DSE depth socket kept', (
+      tester,
+    ) async {
+      await start(tester);
+      for (final s in sockets) {
+        s.open();
+      }
+      await tester.pump();
+      final dseDepth = at(_dseDepthUrl).single;
+
+      exchange.select(StockExchange.cse);
+      await tester.pump();
+      final cseDepth = at(_cseDepthUrl).single..open();
+      await tester.pump();
+      Get.find<CseMarketService>().onMessage(
+        '{"ob": 7, "sn": "GP", "t": "GP", "g": "PUBLIC", "b": "Main Board"}',
+      );
+      await tester.pump(CseMarketService.flushInterval);
+
+      expect(home.marketData.orderBook, 7);
+      expect(
+        sent(cseDepth),
+        contains(allOf(containsPair('type', 'subscribe'), containsPair('ob', 7))),
+      );
+      expect(
+        sent(dseDepth),
+        contains(allOf(containsPair('type', 'unsubscribe'), containsPair('ob', 101))),
+        reason: 'the DSE stock is unsubscribed on the DSE socket',
+      );
+      expect(sent(dseDepth).where((m) => m['ob'] == 7), isEmpty);
+
+      exchange.select(StockExchange.dse);
+      await tester.pump();
+      expect(at(_dseDepthUrl), hasLength(1), reason: 'never reconnected');
+      expect(
+        sent(dseDepth).last,
+        allOf(containsPair('type', 'subscribe'), containsPair('ob', 101)),
+        reason: 'DSE stock depth again',
+      );
+      await finish(tester);
+    });
+
+    testWidgets('depth panels read the shown exchange', (tester) async {
+      await start(tester);
+      final cse = Get.find<CseMarketService>();
+      expect(identical(home.shownMarket.buys, home.buys), isTrue);
+
+      exchange.select(StockExchange.cse);
+      await tester.pump();
+      cse.sendDepth('subscribe', 7);
+      cse.onDepthMessage('{"7": {"buy": [{"p": 10, "q": 100}], "sell": []}}');
+
+      expect(home.shownMarket.buys, same(cse.buys));
+      expect(home.shownMarket.buys.single.p, 10);
+      await finish(tester);
+    });
   });
 }

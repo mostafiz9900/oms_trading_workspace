@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import '../models/marquee_holder.dart';
+import '../models/response/market_depth_model.dart';
 import '../models/response/market_model.dart';
 import '../models/response/sector_data_model.dart';
 
@@ -27,4 +28,8 @@ abstract interface class MarketFeedView {
 
   /// Market session as the feed sends it (`cs`), e.g. `CONTINUOUS`.
   RxString get session;
+
+  /// Market depth (bid / ask levels) of the stock selected on Quote.
+  List<MarketDepthModel> get buys;
+  List<MarketDepthModel> get sells;
 }

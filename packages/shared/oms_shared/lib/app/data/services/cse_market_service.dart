@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:broker_config/broker_config.dart';
 import 'package:get/get.dart';
@@ -7,6 +8,7 @@ import '../../core/utils/helpers/log_helper.dart';
 import '../../core/values/app_config.dart';
 import '../../modules/home/controllers/home_controller.dart';
 import '../models/marquee_holder.dart';
+import '../models/response/market_depth_model.dart';
 import '../models/response/market_model.dart';
 import '../models/response/market_tick_message.dart';
 import '../models/response/sector_data_model.dart';
@@ -60,6 +62,22 @@ class CseMarketService extends GetxService implements MarketFeedView {
   @override
   int distributionMaxCount = 0;
 
+  /// Depth of the CSE stock selected on Quote, from the CSE depth socket
+  /// (same message format as DSE: `{"<ob>": {"buy": [...], "sell": [...]}}`).
+  @override
+  List<MarketDepthModel> buys = [];
+  @override
+  List<MarketDepthModel> sells = [];
+
+  /// Order book whose depth is subscribed (re-sent when the socket connects).
+  int? _depthOrderBook;
+
+  /// The CSE depth feed is configured (else depth stays empty on CSE rather
+  /// than showing the DSE depth of the same order book id).
+  static bool get hasDepthFeed =>
+      AppConfig.marketDepthUrlFor(StockExchange.cse) !=
+      AppConfig.marketDepthUrlFor(StockExchange.dse);
+
   final MarketSnapshotAnalytics _analytics = MarketSnapshotAnalytics();
   final MarketSectorSummaryAggregator _sectors =
       MarketSectorSummaryAggregator();
@@ -96,12 +114,80 @@ class CseMarketService extends GetxService implements MarketFeedView {
       onConnected: () => printLog('✅ CSE market socket connected'),
       onError: (error) => printLog('⚠️ CSE market socket error: $error'),
     );
+    if (hasDepthFeed) {
+      WebSocketService.instance.connect(
+        socketId: AppConfig.cseMarketDepthSocketId,
+        url: AppConfig.marketDepthUrlFor(StockExchange.cse),
+        onMessage: onDepthMessage,
+        onConnected: () {
+          printLog('✅ CSE market depth socket connected');
+          final orderBook = _depthOrderBook;
+          if (orderBook != null) _sendDepth('subscribe', orderBook);
+        },
+        onError: (error) => printLog('⚠️ CSE depth socket error: $error'),
+      );
+    }
+  }
+
+  /// Subscribes [orderBook]'s depth (unsubscribing the previous one) or, with
+  /// `unsubscribe`, stops it.
+  void sendDepth(String type, int orderBook) {
+    if (type == 'subscribe') {
+      _depthOrderBook = orderBook;
+    } else if (_depthOrderBook == orderBook) {
+      _depthOrderBook = null;
+    }
+    _sendDepth(type, orderBook);
+  }
+
+  void _sendDepth(String type, int orderBook) {
+    if (!_open || !hasDepthFeed) return;
+    WebSocketService.instance.sendMessage(
+      AppConfig.cseMarketDepthSocketId,
+      jsonEncode({'type': type, 'ob': orderBook}),
+    );
+  }
+
+  /// One message of the CSE depth socket.
+  void onDepthMessage(String message) {
+    final Object? decoded;
+    try {
+      decoded = jsonDecode(message);
+    } on FormatException catch (e) {
+      printLog('CSE depth message skipped: $e');
+      return;
+    }
+    if (decoded is! Map<String, dynamic>) return;
+    if (decoded.containsKey('message') || decoded['type'] == 'heartbeat') {
+      return;
+    }
+    var changed = false;
+    decoded.forEach((key, value) {
+      if (value is! Map<String, dynamic>) return;
+      // Only the subscribed stock (an older one may still be in flight).
+      if (_depthOrderBook != null && key != '$_depthOrderBook') return;
+      try {
+        final depth = MarketDepthData.fromJson(value);
+        buys = depth.buy;
+        sells = depth.sell;
+        changed = true;
+      } catch (e) {
+        printLog('CSE depth parse error for $key: $e');
+      }
+    });
+    if (changed && isShown && Get.isRegistered<HomeController>()) {
+      Get.find<HomeController>().update(['market_depth']);
+    }
   }
 
   void _close() {
     if (!_open) return;
     _open = false;
     WebSocketService.instance.disconnect(AppConfig.cseMarketSocketId);
+    WebSocketService.instance.disconnect(AppConfig.cseMarketDepthSocketId);
+    _depthOrderBook = null;
+    buys = [];
+    sells = [];
     _pendingFlush?.cancel();
     _pendingFlush = null;
     _store.clear();

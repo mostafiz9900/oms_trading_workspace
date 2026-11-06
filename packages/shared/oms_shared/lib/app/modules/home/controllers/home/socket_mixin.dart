@@ -72,7 +72,11 @@ mixin HomeSocketMixin on HomeState {
     // অ্যাপ মিনিমাইজ করে আবার ওপেন করলে সকেট অটোমেটিক আগের আইটেমের ডেটা চাইবে
     // Not while Quote is re-selecting after a DSE/CSE switch: the old
     // stock's id may be another stock on the new exchange.
-    if (marketData.orderBook != null && !_quoteReselectPending) {
+    // (While CSE is shown the stock is a CSE one; its depth is on the CSE
+    // depth socket, which re-subscribes by itself.)
+    if (marketData.orderBook != null &&
+        !_quoteReselectPending &&
+        !CseMarketService.isShown) {
       if (socketId == AppConfig.marketDepthSocketId) {
         printLog(
           '🔄 Auto Re-subscribing Market Depth for: ${marketData.orderBook}',
@@ -132,7 +136,10 @@ mixin HomeSocketMixin on HomeState {
   void _initializeMarketDepthWebSocket() {
     _initializeSocket(
       socketId: AppConfig.marketDepthSocketId,
-      url: AppConfig.marketDepthUrlFor(ExchangeService.current),
+      // DSE always when CSE has its own feed (also if the app starts on CSE).
+      url: AppConfig.marketDepthUrlFor(
+        _cseFeedApart ? StockExchange.dse : ExchangeService.current,
+      ),
       messageHandler: _handleMarketDepthMessage,
     );
   }
@@ -331,11 +338,14 @@ mixin HomeSocketMixin on HomeState {
   /// Stock details (depth, time & sales) follow when the exchange has its
   /// own feed; with the same URL the open connection is kept.
   void _followStockDetailsFeeds() {
-    _reconnectIfUrlChanged(
-      AppConfig.marketDepthSocketId,
-      AppConfig.marketDepthUrlFor(ExchangeService.current),
-      _initializeMarketDepthWebSocket,
-    );
+    // CSE depth has its own socket (CseMarketService); DSE depth stays.
+    if (!_cseFeedApart) {
+      _reconnectIfUrlChanged(
+        AppConfig.marketDepthSocketId,
+        AppConfig.marketDepthUrlFor(ExchangeService.current),
+        _initializeMarketDepthWebSocket,
+      );
+    }
     _reconnectIfUrlChanged(
       AppConfig.newsTimeSalesSocketId,
       AppConfig.newsAndTimeAndSalesUrlFor(ExchangeService.current),

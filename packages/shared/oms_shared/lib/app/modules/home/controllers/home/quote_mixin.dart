@@ -111,7 +111,12 @@ mixin QuoteMixin on HomeState {
   void _resetQuoteForExchange() {
     final orderBook = marketData.orderBook;
     if (orderBook == null) return;
-    _sendMarketDepthPayload(AppConstants.unsubscribe, orderBook);
+    // The old stock is on the previous exchange: unsubscribe it there.
+    if (!_cseFeedApart) {
+      _sendMarketDepthPayload(AppConstants.unsubscribe, orderBook);
+    } else if (CseMarketService.isShown) {
+      _sendDseDepthPayload(AppConstants.unsubscribe, orderBook);
+    } // back on DSE: the CSE depth socket closed with CseMarketService
     buys.clear();
     sells.clear();
     timeAndSales.clear();

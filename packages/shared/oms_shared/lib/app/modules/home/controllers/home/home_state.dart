@@ -335,6 +335,7 @@ abstract class HomeState extends SuperController {
   void subscribeTimeAndSales(String tp, String tid, String ob);
   void _handleMarketDepthMessage(String message);
   void _sendMarketDepthPayload(String type, int orderbookId);
+  void _sendDseDepthPayload(String type, int orderbookId);
   Future<void> manageMarketDepth(int newOrderBookId);
   void sendMessage(String socketId, String message);
   bool isSocketConnected(String socketId);
@@ -406,4 +407,8 @@ class _HomeFeedView implements MarketFeedView {
   int get distributionMaxCount => _home.distributionMaxCount;
   @override
   RxString get session => _home.currentSession;
+  @override
+  List<MarketDepthModel> get buys => _home.buys;
+  @override
+  List<MarketDepthModel> get sells => _home.sells;
 }

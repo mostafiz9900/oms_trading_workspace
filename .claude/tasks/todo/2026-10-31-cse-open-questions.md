@@ -21,7 +21,7 @@ Do not change anything below until the user answers.
    (User said "MarketModel is the same for DSE and CSE" — confirm whether this means the feed values are the same too.)
 3. **CSE index URL** (`OMS_CSE_SOCKET_INDEX_URL`) and the real CSE index names (app guesses CASPI, CSE30, CSCX, CSE50, CSI).
    Index is the last part still cleared + reconnected on a switch (LiveIndexController).
-4. **CSE depth and time & sales URLs** (`OMS_CSE_SOCKET_MARKET_DEPTH_URL`, `OMS_CSE_SOCKET_NEWS_TIME_SALES_URL`).
+4. ~~CSE depth URL~~ done (UAT). **CSE time & sales URL** (`OMS_CSE_SOCKET_MARKET_DEPTH_URL`, `OMS_CSE_SOCKET_NEWS_TIME_SALES_URL`).
 5. **Orders on CSE**: which field / value in the order JSON says CSE? Order list and favourites: exchange field?
    (Orders, modify, cancel, duplicate, status are blocked while CSE is selected until then.)
 6. **REST APIs** (candles, historical volume, company fundamentals / dividend / EPS, news): any exchange parameter?

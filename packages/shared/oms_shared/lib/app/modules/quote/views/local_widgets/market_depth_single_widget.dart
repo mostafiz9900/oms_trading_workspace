@@ -22,8 +22,8 @@ class MarketDepthSingleWidget extends StatelessWidget {
     return VisibleGetBuilder<HomeController>(
       id: 'market_depth',
       builder: (homeCon) {
-        final List<MarketDepthModel> buys = homeCon.buys;
-        final List<MarketDepthModel> sells = homeCon.sells;
+        final List<MarketDepthModel> buys = homeCon.shownMarket.buys;
+        final List<MarketDepthModel> sells = homeCon.shownMarket.sells;
 
         final int totalBuyQty = buys.isNotEmpty ? (buys.last.cq ?? 0) : 0;
         final int totalSellQty = sells.isNotEmpty ? (sells.last.cq ?? 0) : 0;

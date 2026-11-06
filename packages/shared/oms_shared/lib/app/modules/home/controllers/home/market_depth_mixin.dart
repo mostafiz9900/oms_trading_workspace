@@ -38,9 +38,19 @@ mixin MarketDepthMixin on HomeState {
     update(["market_depth"]);
   }
 
-  // Message send
+  // Message send: to the depth feed of the shown exchange (CSE has its own
+  // socket in CseMarketService; DSE as before).
   @override
   void _sendMarketDepthPayload(String type, int orderbookId) {
+    if (CseMarketService.isShown) {
+      Get.find<CseMarketService>().sendDepth(type, orderbookId);
+      return;
+    }
+    _sendDseDepthPayload(type, orderbookId);
+  }
+
+  @override
+  void _sendDseDepthPayload(String type, int orderbookId) {
     final payload = {"type": type, "ob": orderbookId}; //ob orderbook
     //change for new
     printLog('SendPayload :: $payload');

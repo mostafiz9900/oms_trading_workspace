@@ -25,7 +25,7 @@ class MarketDepthStickyDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    if (homeController.buys.isEmpty && homeController.sells.isEmpty) {
+    if (homeController.shownMarket.buys.isEmpty && homeController.shownMarket.sells.isEmpty) {
       return const SizedBox.shrink();
     }
     return Container(
@@ -37,8 +37,8 @@ class MarketDepthStickyDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   double get maxExtent {
-    int buyLen = homeController.buys.length;
-    int sellLen = homeController.sells.length;
+    int buyLen = homeController.shownMarket.buys.length;
+    int sellLen = homeController.shownMarket.sells.length;
     int totalMaxRows = buyLen > sellLen ? buyLen : sellLen;
     if (totalMaxRows == 0) return 0.0;
     bool showButton = totalMaxRows > 3;
@@ -62,8 +62,8 @@ class _QytPriceTableWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<MarketDepthModel> buys = homeController.buys;
-    final List<MarketDepthModel> sells = homeController.sells;
+    final List<MarketDepthModel> buys = homeController.shownMarket.buys;
+    final List<MarketDepthModel> sells = homeController.shownMarket.sells;
     if (buys.isEmpty && sells.isEmpty) return const SizedBox.shrink();
 
     final int maxBuyQty = buys.fold(

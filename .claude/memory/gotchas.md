@@ -73,6 +73,11 @@
 - **How to Avoid**: value and cost must use the same quantity. Header only (user, 2026-11-01): `summaryCost` = initial × avg_price + intraday_buy × intraday_buy_price_avg (`avg_price` excludes intraday buys). `totalInvestment` / Account Summary and rows still use `total_cost` on purpose — user wants only `_TopSummaryDashboard` changed.
 - **Discovered**: 2026-11-01
 
+#### Tooling — mutation loops in zsh
+- **What Happens**: `for f in $FILES` does not split a string in zsh, so per-file backups silently failed and mutations stayed in the code.
+- **How to Avoid**: list the paths literally in the `for`, check the backup count, and grep the diff for mutation residue before committing.
+- **Discovered**: 2026-11-06
+
 ## Template
 #### [Module] — [Title]
 - **What Happens**:
