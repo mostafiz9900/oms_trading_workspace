@@ -100,37 +100,42 @@ void main() {
     await tester.pump(const Duration(seconds: 6));
   }
 
-  testWidgets('top summary: market value unchanged (initial + intraday buy)', (
+  // Formulas since 2026-11-02 (f9c833e): market value = Σ total_qty × last;
+  // top-summary cost = Σ total_cost (same as Account Summary).
+
+  testWidgets('market value: total_qty × last (after the intraday sell)', (
     tester,
   ) async {
     final positions = await start(tester);
 
-    expect(positions.currentPortfolioValue, closeTo(11634876.50, 0.01));
+    // 160,000×19.60 + 48,620×53.10 + 50,000×23.10 + 9,005×410.90
+    expect(positions.currentPortfolioValue, closeTo(10572876.50, 0.01));
     await finish(tester);
   });
 
-  testWidgets('top summary: gain uses cost of the same quantity after a sell', (
+  testWidgets('top summary: cost = Σ total_cost, gain = market value − cost', (
     tester,
   ) async {
     final positions = await start(tester);
 
-    expect(positions.summaryCost, closeTo(11671834.48, 0.01));
-    expect(positions.summaryGain, closeTo(-36957.98, 0.01));
-    expect(positions.summaryGainPercentage, closeTo(-0.3166, 0.0001));
+    expect(positions.summaryCost, closeTo(10605714.48, 0.01));
+    expect(positions.summaryGain, closeTo(-32837.98, 0.01));
+    expect(positions.summaryGainPercentage, closeTo(-0.3096, 0.0001));
     await finish(tester);
   });
 
-  testWidgets('Account Summary getters unchanged (Σ total_cost)', (
+  testWidgets('Account Summary: Σ total_cost, same gain as the top summary', (
     tester,
   ) async {
     final positions = await start(tester);
 
     expect(positions.totalInvestment, closeTo(10605714.48, 0.01));
-    expect(positions.totalUnrealizedPnL, closeTo(1029162.02, 0.01));
+    expect(positions.totalUnrealizedPnL, closeTo(-32837.98, 0.01));
+    expect(positions.totalUnrealizedPnL, closeTo(positions.summaryGain, 1e-6));
     await finish(tester);
   });
 
-  testWidgets('top summary: intraday buy valued at its own avg price', (
+  testWidgets('intraday buy: counted through total_qty and total_cost', (
     tester,
   ) async {
     final positions = await start(tester);
@@ -140,14 +145,16 @@ void main() {
           isin: 'A',
           initialQuantity: 1000,
           intradayBuyQuantity: 500,
+          totalQty: 1500,
           avgPrice: 20,
           intradayBuyPriceAvg: 18,
+          totalCost: 1000 * 20 + 500 * 18,
         ),
       ],
     );
 
     expect(positions.currentPortfolioValue, closeTo(1500 * 19.60, 0.001));
-    expect(positions.summaryCost, closeTo(1000 * 20 + 500 * 18, 0.001));
+    expect(positions.summaryCost, closeTo(29000, 0.001));
     expect(positions.summaryGain, closeTo(29400 - 29000, 0.001));
     await finish(tester);
   });
