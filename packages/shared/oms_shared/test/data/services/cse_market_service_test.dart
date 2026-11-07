@@ -100,7 +100,10 @@ void main() {
       );
 
       await sends(tester, '{"cs": "end_message"}');
-      await sends(tester, '{"ob": 7, "sn": "SQURPHARMA", "g": "PUBLIC", "b": "Main Board", "c": 210.5}');
+      await sends(
+        tester,
+        '{"ob": 7, "sn": "SQURPHARMA", "g": "PUBLIC", "b": "Main Board", "c": 210.5}',
+      );
       await sends(tester, '{"ob": 7, "lp": 211.0}'); // partial update merges
 
       expect(service.quotes.single.shortName, 'SQURPHARMA');
@@ -117,7 +120,10 @@ void main() {
       await tester.pump();
       market().open();
       await tester.pump();
-      await sends(tester, '{"ob": 7, "sn": "SQURPHARMA", "g": "PUBLIC", "b": "Main Board"}');
+      await sends(
+        tester,
+        '{"ob": 7, "sn": "SQURPHARMA", "g": "PUBLIC", "b": "Main Board"}',
+      );
 
       exchange.select(StockExchange.dse);
       await tester.pump();
@@ -139,7 +145,10 @@ void main() {
       await tester.pump();
       market().open();
       await tester.pump();
-      await sends(tester, '{"ob": 7, "sn": "SQURPHARMA", "g": "PUBLIC", "b": "Main Board"}');
+      await sends(
+        tester,
+        '{"ob": 7, "sn": "SQURPHARMA", "g": "PUBLIC", "b": "Main Board"}',
+      );
 
       service.reconnect();
       await tester.pump();
@@ -173,11 +182,10 @@ void main() {
       await tester.pump(CseMarketService.flushInterval);
 
       expect(service.session.value, 'CONTINUOUS');
-      expect(
-        service.marqueeList.map((m) => m.shortName),
-        ['ALPHA', 'ZETA'],
-        reason: 'PUBLIC only, sorted by name',
-      );
+      expect(service.marqueeList.map((m) => m.shortName), [
+        'ALPHA',
+        'ZETA',
+      ], reason: 'PUBLIC only, sorted by name');
       expect(service.chartData, isNotEmpty);
       expect(service.sectorSummaryList, isNotEmpty);
 
@@ -209,8 +217,10 @@ void main() {
         'r': 48,
       });
       expect(tick['c'], 53);
-      expect(MarketModel.fromJson({'ob': 1, ...tick}).percentageChange,
-          closeTo(10.4167, 0.001));
+      expect(
+        MarketModel.fromJson({'ob': 1, ...tick}).percentageChange,
+        closeTo(10.4167, 0.001),
+      );
     });
 
     test('no trade yet (lp 0): close stays as sent', () {
@@ -218,11 +228,12 @@ void main() {
     });
 
     test('partial tick without lp keeps the close it has', () {
-      expect(CseMarketService.normalizeCseTick({'c': 48}).containsKey('c'),
-          isFalse);
+      expect(
+        CseMarketService.normalizeCseTick({'c': 48}).containsKey('c'),
+        isFalse,
+      );
     });
   });
-
 
   group('CSE market depth', () {
     FakeChannel depthSocket(List<FakeChannel> all) =>
@@ -271,4 +282,91 @@ void main() {
     });
   });
 
+  group('app background / logout (like the DSE sockets)', () {
+    List<FakeChannel> at(String url) =>
+        sockets.where((s) => s.uri.toString() == url).toList();
+
+    testWidgets('suspend closes both sockets, keeps quotes and depth', (
+      tester,
+    ) async {
+      final service = await start(tester, ExchangeMode.dseAndCse);
+      Get.find<ExchangeService>().select(StockExchange.cse);
+      await tester.pump();
+      market().open();
+      await tester.pump();
+      await sends(
+        tester,
+        '{"ob": 7, "sn": "GP", "g": "PUBLIC", "b": "Main Board"}',
+      );
+      service.sendDepth('subscribe', 7);
+      service.onDepthMessage('{"7": {"buy": [{"p": 10, "q": 1}], "sell": []}}');
+
+      service.suspend();
+
+      final ws = Get.find<WebSocketService>();
+      expect(ws.isConnected(AppConfig.cseMarketSocketId), isFalse);
+      expect(ws.isConnected(AppConfig.cseMarketDepthSocketId), isFalse);
+      expect(service.isOpen, isFalse);
+      expect(service.quotes, hasLength(1), reason: 'kept, as DSE lists are');
+      expect(service.buys, hasLength(1));
+      await finish(tester);
+    });
+
+    testWidgets('resume reconnects and re-subscribes the depth stock', (
+      tester,
+    ) async {
+      final service = await start(tester, ExchangeMode.dseAndCse);
+      Get.find<ExchangeService>().select(StockExchange.cse);
+      await tester.pump();
+      service.sendDepth('subscribe', 7);
+      service.suspend();
+      final before = at(_cseDepthUrl).length;
+
+      service.resume();
+      await tester.pump();
+      final depth = at(_cseDepthUrl).last..open();
+      await tester.pump();
+
+      expect(at(_cseDepthUrl), hasLength(before + 1));
+      expect(at(_cseUrl), hasLength(2));
+      expect(service.isOpen, isTrue);
+      expect(depth.sent, ['{"type":"subscribe","ob":7}']);
+      await finish(tester);
+    });
+
+    testWidgets('on DSE: suspend / resume open nothing', (tester) async {
+      final service = await start(tester, ExchangeMode.dseAndCse);
+
+      service.suspend();
+      service.resume();
+      await tester.pump();
+
+      expect(sockets, isEmpty);
+      await finish(tester);
+    });
+
+    testWidgets('switching to DSE while suspended drops the CSE data', (
+      tester,
+    ) async {
+      final service = await start(tester, ExchangeMode.dseAndCse);
+      Get.find<ExchangeService>().select(StockExchange.cse);
+      await tester.pump();
+      market().open();
+      await sends(
+        tester,
+        '{"ob": 7, "sn": "GP", "g": "PUBLIC", "b": "Main Board"}',
+      );
+      service.suspend();
+
+      Get.find<ExchangeService>().select(StockExchange.dse);
+      await tester.pump();
+      service.resume();
+      await tester.pump();
+
+      expect(service.quotes, isEmpty);
+      expect(service.isSuspended, isFalse);
+      expect(service.isOpen, isFalse);
+      await finish(tester);
+    });
+  });
 }

@@ -265,4 +265,24 @@ void main() {
       await finish(tester);
     });
   });
+
+  testWidgets('app paused / resumed: CSE sockets close and reopen with DSE', (
+    tester,
+  ) async {
+    await start(tester);
+    final cse = Get.find<CseMarketService>();
+    exchange.select(StockExchange.cse);
+    await tester.pump();
+    expect(cse.isOpen, isTrue);
+
+    home.onPaused(); // what the app does when it goes to the background
+    expect(cse.isOpen, isFalse);
+    expect(cse.isSuspended, isTrue);
+
+    home.initConnect(); // part of onResumed
+    await tester.pump();
+    expect(cse.isOpen, isTrue);
+    expect(cse.isSuspended, isFalse);
+    await finish(tester);
+  });
 }

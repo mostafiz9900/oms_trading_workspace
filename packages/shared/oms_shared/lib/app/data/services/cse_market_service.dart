@@ -180,9 +180,36 @@ class CseMarketService extends GetxService implements MarketFeedView {
     }
   }
 
-  void _close() {
+  /// Closed for the app's background / logout (see [suspend]).
+  bool _suspended = false;
+
+  bool get isSuspended => _suspended;
+
+  /// App paused or HomeController closed: closes the CSE sockets as
+  /// HomeController closes the DSE ones (battery). Quotes and depth are kept,
+  /// as the DSE lists are; [resume] connects again.
+  void suspend() {
     if (!_open) return;
     _open = false;
+    _suspended = true;
+    _pendingFlush?.cancel();
+    _pendingFlush = null;
+    WebSocketService.instance.disconnect(AppConfig.cseMarketSocketId);
+    WebSocketService.instance.disconnect(AppConfig.cseMarketDepthSocketId);
+  }
+
+  /// App resumed / HomeController connected again: reconnects if CSE is still
+  /// selected (the depth stock is re-subscribed on connect).
+  void resume() {
+    if (!_suspended) return;
+    _suspended = false;
+    if (isShown) _connect();
+  }
+
+  void _close() {
+    if (!_open && !_suspended) return;
+    _open = false;
+    _suspended = false;
     WebSocketService.instance.disconnect(AppConfig.cseMarketSocketId);
     WebSocketService.instance.disconnect(AppConfig.cseMarketDepthSocketId);
     _depthOrderBook = null;

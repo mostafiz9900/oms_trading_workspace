@@ -445,6 +445,10 @@ mixin HomeSocketMixin on HomeState {
 
   void disconnect() {
     _disconnectAll();
+    // The CSE feed (own service) closes with the DSE sockets.
+    if (Get.isRegistered<CseMarketService>()) {
+      Get.find<CseMarketService>().suspend();
+    }
   }
 
   void initConnect() async {
@@ -455,5 +459,8 @@ mixin HomeSocketMixin on HomeState {
     );
     tooltipBehavior = TooltipBehavior(enable: true);
     _initializeAllWebSockets();
+    if (Get.isRegistered<CseMarketService>()) {
+      Get.find<CseMarketService>().resume();
+    }
   }
 }
