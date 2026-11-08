@@ -16,6 +16,8 @@
   "OMS_BRAND_ACCENT_COLOR": "#177DFF",
   "OMS_BRAND_BUTTON_COLOR": "#177DFF",
   "OMS_CONTRACT_URL": "https://www.example.com/contract",
-  "OMS_CSE_SOCKET_MARKET_URL":"wss://cse-uat-firstservice.domainname.com/market",
-  "OMS_CSE_SOCKET_MARKET_DEPTH_URL":"wss://cse-uat-firstservice.domainname.com/marketdepth"
+  "OMS_CSE_SOCKET_MARKET_URL": "wss://cse-uat-firstservice.domainname.com/market",
+  "OMS_CSE_SOCKET_MARKET_DEPTH_URL": "wss://cse-uat-firstservice.domainname.com/marketdepth",
+  "OMS_CSE_SOCKET_INDEX_URL": "wss://itch.your-house.com/index",
+  "OMS_CSE_SOCKET_NEWS_TIME_SALES_URL": "wss://news.your-house.com/news-time-sales"
 }

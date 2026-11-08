@@ -460,4 +460,38 @@ void main() {
       await finish(tester);
     });
   });
+
+  group('CSE keys holding the DSE URLs (until the CSE feeds exist)', () {
+    testWidgets('every CSE socket opens on its key, also when = DSE URL', (
+      tester,
+    ) async {
+      initTestAppConfig(
+        exchangeMode: ExchangeMode.dseAndCse,
+        extra: const {
+          'OMS_CSE_SOCKET_MARKET_URL': '${testSocketBaseUrl}market',
+          'OMS_CSE_SOCKET_MARKET_DEPTH_URL': '${testSocketBaseUrl}depth',
+          'OMS_CSE_SOCKET_NEWS_TIME_SALES_URL':
+              '${testSocketBaseUrl}news-time-sales',
+        },
+      );
+      await tester.pumpWidget(const GetMaterialApp(home: Scaffold()));
+      Get.put(ExchangeService());
+      Get.put(
+        WebSocketService(
+          connector: (uri) => (sockets..add(FakeChannel(uri))).last,
+          onlineChanges: const Stream.empty(),
+        ),
+      );
+      Get.put<CseMarketService>(CseMarketService());
+      Get.find<ExchangeService>().select(StockExchange.cse);
+      await tester.pump();
+
+      expect(sockets.map((s) => s.uri.toString()), [
+        '${testSocketBaseUrl}market',
+        '${testSocketBaseUrl}depth',
+        '${testSocketBaseUrl}news-time-sales',
+      ]);
+      await finish(tester);
+    });
+  });
 }

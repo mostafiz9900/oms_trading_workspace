@@ -88,6 +88,10 @@ class AppConfig {
   /// the CSE feed exists; the response format is the same).
   static bool get hasCseTimeSalesFeed =>
       house.cseNewsTimeSalesSocketUrl.isNotEmpty;
+
+  /// `OMS_CSE_SOCKET_MARKET_DEPTH_URL` is set (may also be the DSE URL until
+  /// the CSE feed exists; only the URL changes then).
+  static bool get hasCseDepthFeed => house.cseMarketDepthSocketUrl.isNotEmpty;
   static String get contractUrl => house.contractUrl;
   static bool get hasContractUrl => house.contractUrl.trim().isNotEmpty;
 

@@ -87,11 +87,9 @@ class CseMarketService extends GetxService implements MarketFeedView {
   final Map<String, String> _timeSalesSubscriptions = {};
   Timer? _timeSalesRedraw;
 
-  /// The CSE depth feed is configured (else depth stays empty on CSE rather
-  /// than showing the DSE depth of the same order book id).
-  static bool get hasDepthFeed =>
-      AppConfig.marketDepthUrlFor(StockExchange.cse) !=
-      AppConfig.marketDepthUrlFor(StockExchange.dse);
+  /// `OMS_CSE_SOCKET_MARKET_DEPTH_URL` is set (it may be the DSE URL, like
+  /// the other CSE keys, until the CSE feed exists); else no CSE depth.
+  static bool get hasDepthFeed => AppConfig.hasCseDepthFeed;
 
   final MarketSnapshotAnalytics _analytics = MarketSnapshotAnalytics();
   final MarketSectorSummaryAggregator _sectors =
