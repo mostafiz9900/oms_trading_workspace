@@ -6,10 +6,17 @@
 **Estimated Effort**: Small–Medium (depends on answers)
 **Assigned To**: mostafiz9900
 
+## Status (2026-11-08) — read this first on any PC
+- Branch `feature/cse_watchlist_socket` (pushed). `git checkout feature/cse_watchlist_socket && git pull`, then `make setup`.
+- CSE runs on its own objects in `CseMarketService`: market, depth, time & sales sockets (same models as DSE, separate lists); screens read `HomeController.shownMarket`; DSE is never cleared or reconnected on a switch; CSE sockets close / reopen with the DSE ones.
+- All 4 `OMS_CSE_SOCKET_*` keys exist in uat/prod.json; keys without a CSE URL hold the DSE URL → when the backend sends a CSE URL, **only change the JSON**.
+- `uat.json` / `prod.json` are git-ignored: copy them privately to a new PC.
+- Last log: `.claude/tasks/logs/2026-11-08-cse-depth-time-sales.md`. Plan: `.claude/tasks/plans/2026-10-18-dse-cse-exchange-support.md` (steps B1–B11).
+- Still waiting on the backend for the questions below; do not change the related code until answered.
+
 ## Description
-CSE runs on its own feed (`CseMarketService`, branch `feature/cse_watchlist_socket`, last commit `6acd536`).
-The user will ask the backend team at the office and come back with the answers.
-Do not change anything below until the user answers.
+CSE runs on its own feed (`CseMarketService`, branch `feature/cse_watchlist_socket`).
+The user asks the backend team and comes back with the answers.
 
 ## Questions for the backend (user to ask)
 1. **`c` (close) on the CSE feed**: is it the previous close (= reference `r`)?
