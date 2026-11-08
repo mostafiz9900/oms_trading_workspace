@@ -31,6 +31,8 @@ class _FakeHomeRepository implements HomeRepository {
 const _cseUrl = 'wss://cse.test/market';
 const _cseDepthUrl = 'wss://cse.test/marketdepth';
 const _dseDepthUrl = '${testSocketBaseUrl}depth';
+const _cseTsUrl = 'wss://cse.test/events';
+const _dseTsUrl = '${testSocketBaseUrl}news-time-sales';
 const _dseUrl = '${testSocketBaseUrl}market';
 const _gp = MarketModel(
   orderBook: 101,
@@ -64,6 +66,7 @@ void main() {
       extra: const {
         'OMS_CSE_SOCKET_MARKET_URL': _cseUrl,
         'OMS_CSE_SOCKET_MARKET_DEPTH_URL': _cseDepthUrl,
+        'OMS_CSE_SOCKET_NEWS_TIME_SALES_URL': _cseTsUrl,
       },
     );
     await tester.pumpWidget(const GetMaterialApp(home: Scaffold()));
@@ -93,10 +96,8 @@ void main() {
     await home.markerInfo();
   }
 
-  List<String> dseSockets() => sockets
-      .map((s) => s.uri.toString())
-      .where((u) => u == _dseUrl)
-      .toList();
+  List<String> dseSockets() =>
+      sockets.map((s) => s.uri.toString()).where((u) => u == _dseUrl).toList();
 
   Future<void> finish(WidgetTester tester) async {
     await Get.delete<WebSocketService>(force: true);
@@ -230,11 +231,15 @@ void main() {
       expect(home.marketData.orderBook, 7);
       expect(
         sent(cseDepth),
-        contains(allOf(containsPair('type', 'subscribe'), containsPair('ob', 7))),
+        contains(
+          allOf(containsPair('type', 'subscribe'), containsPair('ob', 7)),
+        ),
       );
       expect(
         sent(dseDepth),
-        contains(allOf(containsPair('type', 'unsubscribe'), containsPair('ob', 101))),
+        contains(
+          allOf(containsPair('type', 'unsubscribe'), containsPair('ob', 101)),
+        ),
         reason: 'the DSE stock is unsubscribed on the DSE socket',
       );
       expect(sent(dseDepth).where((m) => m['ob'] == 7), isEmpty);
@@ -284,5 +289,74 @@ void main() {
     expect(cse.isOpen, isTrue);
     expect(cse.isSuspended, isFalse);
     await finish(tester);
+  });
+
+  group('time & sales', () {
+    List<FakeChannel> at(String url) =>
+        sockets.where((s) => s.uri.toString() == url).toList();
+
+    List<Map> sent(FakeChannel socket) =>
+        socket.sent.map((m) => jsonDecode(m as String) as Map).toList();
+
+    testWidgets('CSE stock on the CSE socket; DSE socket kept for DSE', (
+      tester,
+    ) async {
+      await start(tester);
+      for (final s in sockets) {
+        s.open();
+      }
+      await tester.pump();
+      final dseTs = at(_dseTsUrl).single;
+
+      exchange.select(StockExchange.cse);
+      await tester.pump();
+      final cseTs = at(_cseTsUrl).single..open();
+      await tester.pump();
+      Get.find<CseMarketService>().onMessage(
+        '{"ob": 7, "sn": "GP", "t": "GP", "g": "PUBLIC", "b": "Main Board"}',
+      );
+      await tester.pump(CseMarketService.flushInterval);
+
+      expect(home.marketData.orderBook, 7);
+      expect(
+        sent(cseTs).map((m) => '${m['tp']}:${m['ob']}'),
+        containsAll(['tsm:7', 'tsb:7', 'news_hist:7']),
+      );
+      expect(sent(dseTs).where((m) => m['ob'] == 7), isEmpty);
+
+      exchange.select(StockExchange.dse);
+      await tester.pump();
+      expect(at(_dseTsUrl), hasLength(1), reason: 'never reconnected');
+      expect(
+        sent(dseTs).map((m) => '${m['tp']}:${m['ob']}'),
+        containsAll(['tsm:101', 'tsb:101', 'news_hist:101']),
+        reason: 'DSE stock time & sales again',
+      );
+      await finish(tester);
+    });
+
+    testWidgets('Quote time & sales lists read the shown exchange', (
+      tester,
+    ) async {
+      await start(tester);
+      final cse = Get.find<CseMarketService>();
+      expect(
+        identical(home.shownMarket.timeAndSales, home.timeAndSales),
+        isTrue,
+      );
+
+      exchange.select(StockExchange.cse);
+      await tester.pump();
+      cse.onTimeSalesMessage('{"tp": "tsm", "d": [{"p": 10, "q": 5}]}');
+
+      expect(home.shownMarket.timeAndSales, same(cse.timeAndSales));
+      expect(
+        home.shownMarket.timeAndSalesHistory,
+        same(cse.timeAndSalesHistory),
+      );
+      expect(home.shownMarket.newsSingleItem, same(cse.newsSingleItem));
+      expect(home.timeAndSales, isEmpty, reason: 'DSE list not written');
+      await finish(tester);
+    });
   });
 }

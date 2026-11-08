@@ -102,7 +102,7 @@ class _TimeAndSalesBarChartState extends State<TimeAndSalesBarChart> {
     return VisibleGetBuilder<HomeController>(
       id: 'timeAndSales',
       builder: (_) {
-        final raw = List<TimeAndSalesModel>.from(homeCont.timeAndSales);
+        final raw = List<TimeAndSalesModel>.from(homeCont.shownMarket.timeAndSales);
         if (raw.isEmpty) return const Center(child: Text('No trades'));
 
         final buckets = _aggregateBuckets(raw, widget.bucketSeconds);

@@ -164,7 +164,7 @@ class CandleSeriesChartsWidget extends HookWidget {
             List<_VolBucket> volBuckets = [];
 
             if (isIntradayTab) {
-              final rawTicks = List<TimeAndSalesModel>.from(homeCont.timeAndSales);
+              final rawTicks = List<TimeAndSalesModel>.from(homeCont.shownMarket.timeAndSales);
               volBuckets = _aggregateVolumeBuckets(rawTicks, _getBucketMinutes(selectedTab.value));
             } else if (selectedTab.value == '1D') {
               volBuckets = histCont.chartData

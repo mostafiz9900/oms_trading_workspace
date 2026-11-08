@@ -110,7 +110,7 @@ class _NewsWidget extends StatelessWidget {
       id: "newsSingleItem",
       builder: (homeCon) {
         // 👈 FIX: যদি লিস্ট খালি থাকে, তাহলে লোডারের বদলে মেসেজ দেখাবে
-        if (homeCon.newsSingleItem.isEmpty) {
+        if (homeCon.shownMarket.newsSingleItem.isEmpty) {
           return Center(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
@@ -139,10 +139,10 @@ class _NewsWidget extends StatelessWidget {
         // 👈 ডেটা থাকলে নরমালি লিস্ট দেখাবে
         return ListView.separated(
           padding: EdgeInsets.zero,
-          itemCount: homeCon.newsSingleItem.length,
+          itemCount: homeCon.shownMarket.newsSingleItem.length,
           separatorBuilder: (_, _) => dividerWidget,
           itemBuilder: (context, index) {
-            final NewsModel model = homeCon.newsSingleItem[index];
+            final NewsModel model = homeCon.shownMarket.newsSingleItem[index];
             if (model.tl == null) {
               return const SizedBox.shrink();
             }

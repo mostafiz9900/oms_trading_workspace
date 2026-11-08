@@ -70,7 +70,7 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
   }
 
   List<_PricePoint> _buildPricePoints() {
-    final raw = List<TimeAndSalesModel>.from(homeCont.timeAndSales);
+    final raw = List<TimeAndSalesModel>.from(homeCont.shownMarket.timeAndSales);
     if (raw.isEmpty) return [];
     sortTimeSalesByKey(raw, (t) => _parseTst(t.tst), (a, b) => a.compareTo(b));
     final pts = raw.map((e) => _PricePoint(xDate: _parseTst(e.tst), y: e.p ?? 0.0, volume: e.v ?? 0)).toList();
@@ -124,7 +124,7 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
         final pricePts = _buildPricePoints();
         if (pricePts.isEmpty) return const Center(child: CircularProgressIndicator());
 
-        final rawTicks = List<TimeAndSalesModel>.from(homeCont.timeAndSales);
+        final rawTicks = List<TimeAndSalesModel>.from(homeCont.shownMarket.timeAndSales);
         final volBuckets = _aggregateVolumeBuckets(rawTicks, bucketSeconds, keepLast: maxBuckets);
 
         final volSeriesData = <_VolPoint>[];
@@ -398,7 +398,7 @@ class VolumePieByDirection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Builder(
       builder: (_) {
-        final raw = List<TimeAndSalesModel>.from(homeCont.timeAndSales);
+        final raw = List<TimeAndSalesModel>.from(homeCont.shownMarket.timeAndSales);
         if (raw.isEmpty) {
           return Center(child: Text('No trades', style: Get.textTheme.bodyLarge));
         }

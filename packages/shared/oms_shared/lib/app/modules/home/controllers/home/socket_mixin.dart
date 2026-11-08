@@ -147,7 +147,10 @@ mixin HomeSocketMixin on HomeState {
   void _initializeNewsTimeSalesWebSocket() {
     _initializeSocket(
       socketId: AppConfig.newsTimeSalesSocketId,
-      url: AppConfig.newsAndTimeAndSalesUrlFor(ExchangeService.current),
+      // DSE always when CSE has its own feed (also if the app starts on CSE).
+      url: AppConfig.newsAndTimeAndSalesUrlFor(
+        _cseFeedApart ? StockExchange.dse : ExchangeService.current,
+      ),
       messageHandler: _handleNewsTimeSalesMessage,
     );
   }
@@ -338,14 +341,14 @@ mixin HomeSocketMixin on HomeState {
   /// Stock details (depth, time & sales) follow when the exchange has its
   /// own feed; with the same URL the open connection is kept.
   void _followStockDetailsFeeds() {
-    // CSE depth has its own socket (CseMarketService); DSE depth stays.
-    if (!_cseFeedApart) {
-      _reconnectIfUrlChanged(
-        AppConfig.marketDepthSocketId,
-        AppConfig.marketDepthUrlFor(ExchangeService.current),
-        _initializeMarketDepthWebSocket,
-      );
-    }
+    // CSE depth and time & sales have their own sockets (CseMarketService);
+    // the DSE ones stay.
+    if (_cseFeedApart) return;
+    _reconnectIfUrlChanged(
+      AppConfig.marketDepthSocketId,
+      AppConfig.marketDepthUrlFor(ExchangeService.current),
+      _initializeMarketDepthWebSocket,
+    );
     _reconnectIfUrlChanged(
       AppConfig.newsTimeSalesSocketId,
       AppConfig.newsAndTimeAndSalesUrlFor(ExchangeService.current),

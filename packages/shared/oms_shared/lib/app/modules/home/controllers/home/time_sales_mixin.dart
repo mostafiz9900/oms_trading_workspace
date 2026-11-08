@@ -81,8 +81,14 @@ mixin TimeSalesMixin on HomeState {
   }
 
   // Your existing subscribe methods (updated for WebSocketService)
+  /// To the time & sales feed of the shown exchange (CSE has its own socket
+  /// in CseMarketService; DSE as before).
   @override
   void subscribeTimeAndSales(String tp, String tid, String ob) {
+    if (CseMarketService.isShown) {
+      Get.find<CseMarketService>().subscribeTimeSales(tp, tid, ob);
+      return;
+    }
     final body = jsonEncode({
       "ac": "subscribe",
       "tp": tp,

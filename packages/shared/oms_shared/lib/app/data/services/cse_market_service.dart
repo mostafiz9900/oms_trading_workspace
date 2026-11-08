@@ -11,6 +11,8 @@ import '../models/marquee_holder.dart';
 import '../models/response/market_depth_model.dart';
 import '../models/response/market_model.dart';
 import '../models/response/market_tick_message.dart';
+import '../models/response/news_model.dart';
+import '../models/response/time_sales_model.dart';
 import '../models/response/sector_data_model.dart';
 import 'exchange_service.dart';
 import 'market_feed_view.dart';
@@ -72,6 +74,19 @@ class CseMarketService extends GetxService implements MarketFeedView {
   /// Order book whose depth is subscribed (re-sent when the socket connects).
   int? _depthOrderBook;
 
+  /// Time & sales and news of the CSE stock selected on Quote, from the CSE
+  /// time & sales socket (same messages as DSE: `tp` tsm / tsb / news_hist).
+  @override
+  final List<TimeAndSalesModel> timeAndSales = [];
+  @override
+  final List<TimeAndSalesModel> timeAndSalesHistory = [];
+  @override
+  final List<NewsModel> newsSingleItem = [];
+
+  /// Subscriptions sent (re-sent when the socket connects), by `tp`.
+  final Map<String, String> _timeSalesSubscriptions = {};
+  Timer? _timeSalesRedraw;
+
   /// The CSE depth feed is configured (else depth stays empty on CSE rather
   /// than showing the DSE depth of the same order book id).
   static bool get hasDepthFeed =>
@@ -127,6 +142,111 @@ class CseMarketService extends GetxService implements MarketFeedView {
         onError: (error) => printLog('⚠️ CSE depth socket error: $error'),
       );
     }
+    if (AppConfig.hasCseTimeSalesFeed) {
+      WebSocketService.instance.connect(
+        socketId: AppConfig.cseNewsTimeSalesSocketId,
+        url: AppConfig.newsAndTimeAndSalesUrlFor(StockExchange.cse),
+        onMessage: onTimeSalesMessage,
+        onConnected: () {
+          printLog('✅ CSE time & sales socket connected');
+          _timeSalesSubscriptions.values.forEach(_sendTimeSales);
+        },
+        onError: (error) => printLog('⚠️ CSE time & sales error: $error'),
+      );
+    }
+  }
+
+  /// Subscribes [tp] (`tsm`, `tsb`, `news_hist`) of [orderBook], as
+  /// HomeController.subscribeTimeAndSales does on the DSE socket.
+  void subscribeTimeSales(String tp, String tid, String orderBook) {
+    final body = jsonEncode({
+      'ac': 'subscribe',
+      'tp': tp,
+      'tid': int.parse(tid),
+      'ob': int.parse(orderBook),
+    });
+    _timeSalesSubscriptions[tp] = body;
+    _sendTimeSales(body);
+  }
+
+  void _sendTimeSales(String body) {
+    if (!_open || !AppConfig.hasCseTimeSalesFeed) return;
+    WebSocketService.instance.sendMessage(
+      AppConfig.cseNewsTimeSalesSocketId,
+      body,
+    );
+  }
+
+  /// One message of the CSE time & sales socket; same handling as DSE
+  /// (TimeSalesMixin) for the stock's lists.
+  void onTimeSalesMessage(String message) {
+    final Object? decoded;
+    try {
+      decoded = jsonDecode(message);
+    } on FormatException catch (e) {
+      printLog('CSE time & sales message skipped: $e');
+      return;
+    }
+    if (decoded is! Map<String, dynamic>) return;
+    final data = decoded['d'];
+    try {
+      switch (decoded['tp']) {
+        case 'tsm':
+          if (data is List) {
+            timeAndSales
+              ..clear()
+              ..addAll(timeAndSalesModelFromMap(data));
+            _redraw(['timeAndSales'], now: true);
+          } else if (data is Map<String, dynamic>) {
+            timeAndSales.insert(0, TimeAndSalesModel.fromMap(data));
+            _redraw(['timeAndSales'], now: false);
+          } else {
+            _redraw(['timeAndSales'], now: true);
+          }
+        case 'tsb':
+          if (data is List) {
+            timeAndSalesHistory
+              ..clear()
+              ..addAll(data.map((e) => TimeAndSalesModel.fromMap(e)));
+          } else if (data is Map<String, dynamic>) {
+            timeAndSalesHistory.insert(0, TimeAndSalesModel.fromMap(data));
+          } else {
+            timeAndSalesHistory.clear();
+          }
+          _redraw(['timeAndSalesHistory'], now: true);
+        case 'news_hist':
+          if (data is List) {
+            newsSingleItem
+              ..clear()
+              ..addAll(newsModelFromMap(data));
+          } else if (data is Map<String, dynamic>) {
+            newsSingleItem.insert(0, NewsModel.fromMap(data));
+          } else {
+            newsSingleItem.clear();
+          }
+          _redraw(['newsSingleItem'], now: true);
+      }
+    } catch (e) {
+      printLog('❌ CSE time & sales parse error: $e');
+    }
+  }
+
+  /// Redraws the Quote builders while CSE is shown; single trades at most
+  /// every 500 ms (as DSE throttles them).
+  void _redraw(List<String> ids, {required bool now}) {
+    if (!isShown || !Get.isRegistered<HomeController>()) return;
+    if (now) {
+      _timeSalesRedraw?.cancel();
+      _timeSalesRedraw = null;
+      Get.find<HomeController>().update(ids);
+      return;
+    }
+    _timeSalesRedraw ??= Timer(flushInterval, () {
+      _timeSalesRedraw = null;
+      if (isShown && Get.isRegistered<HomeController>()) {
+        Get.find<HomeController>().update(ids);
+      }
+    });
   }
 
   /// Subscribes [orderBook]'s depth (unsubscribing the previous one) or, with
@@ -194,8 +314,11 @@ class CseMarketService extends GetxService implements MarketFeedView {
     _suspended = true;
     _pendingFlush?.cancel();
     _pendingFlush = null;
+    _timeSalesRedraw?.cancel();
+    _timeSalesRedraw = null;
     WebSocketService.instance.disconnect(AppConfig.cseMarketSocketId);
     WebSocketService.instance.disconnect(AppConfig.cseMarketDepthSocketId);
+    WebSocketService.instance.disconnect(AppConfig.cseNewsTimeSalesSocketId);
   }
 
   /// App resumed / HomeController connected again: reconnects if CSE is still
@@ -212,6 +335,13 @@ class CseMarketService extends GetxService implements MarketFeedView {
     _suspended = false;
     WebSocketService.instance.disconnect(AppConfig.cseMarketSocketId);
     WebSocketService.instance.disconnect(AppConfig.cseMarketDepthSocketId);
+    WebSocketService.instance.disconnect(AppConfig.cseNewsTimeSalesSocketId);
+    _timeSalesRedraw?.cancel();
+    _timeSalesRedraw = null;
+    _timeSalesSubscriptions.clear();
+    timeAndSales.clear();
+    timeAndSalesHistory.clear();
+    newsSingleItem.clear();
     _depthOrderBook = null;
     buys = [];
     sells = [];

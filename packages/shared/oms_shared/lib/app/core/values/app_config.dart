@@ -83,6 +83,11 @@ class AppConfig {
       house.marketDepthSocketUrlFor(exchange);
   static String newsAndTimeAndSalesUrlFor(StockExchange exchange) =>
       house.newsTimeSalesSocketUrlFor(exchange);
+
+  /// `OMS_CSE_SOCKET_NEWS_TIME_SALES_URL` is set (it may be the DSE URL until
+  /// the CSE feed exists; the response format is the same).
+  static bool get hasCseTimeSalesFeed =>
+      house.cseNewsTimeSalesSocketUrl.isNotEmpty;
   static String get contractUrl => house.contractUrl;
   static bool get hasContractUrl => house.contractUrl.trim().isNotEmpty;
 
@@ -91,6 +96,7 @@ class AppConfig {
   /// CSE market feed of a house on both exchanges (CseMarketService).
   static const String cseMarketSocketId = 'cse_market_socket';
   static const String cseMarketDepthSocketId = 'cse_market_depth_socket';
+  static const String cseNewsTimeSalesSocketId = 'cse_news_time_sales_socket';
   static const String notificationSocketId = 'notification_socket';
   static const String newsSocketId = 'news_socket';
   static const String indexSocketId = 'index_socket';

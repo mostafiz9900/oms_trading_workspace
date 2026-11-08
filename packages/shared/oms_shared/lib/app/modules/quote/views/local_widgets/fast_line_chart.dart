@@ -64,7 +64,7 @@ class _FastLineChartState extends State<FastLineChart> {
   }
 
   List<_ChartPoint> _buildChartData() {
-    final raw = homeCont.timeAndSales;
+    final raw = homeCont.shownMarket.timeAndSales;
     if (raw.isEmpty) return [];
 
     // sort by time

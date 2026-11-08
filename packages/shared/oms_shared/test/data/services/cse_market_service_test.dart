@@ -15,6 +15,7 @@ import '../../helpers/test_env.dart';
 
 const _cseUrl = 'wss://cse.test/market';
 const _cseDepthUrl = 'wss://cse.test/marketdepth';
+const _cseTsUrl = 'wss://cse.test/events';
 
 void main() {
   late List<FakeChannel> sockets;
@@ -34,6 +35,7 @@ void main() {
       extra: const {
         'OMS_CSE_SOCKET_MARKET_URL': _cseUrl,
         'OMS_CSE_SOCKET_MARKET_DEPTH_URL': _cseDepthUrl,
+        'OMS_CSE_SOCKET_NEWS_TIME_SALES_URL': _cseTsUrl,
       },
     );
     await tester.pumpWidget(const GetMaterialApp(home: Scaffold()));
@@ -366,6 +368,95 @@ void main() {
       expect(service.quotes, isEmpty);
       expect(service.isSuspended, isFalse);
       expect(service.isOpen, isFalse);
+      await finish(tester);
+    });
+  });
+
+  group('CSE time & sales', () {
+    FakeChannel tsSocket() =>
+        sockets.lastWhere((s) => s.uri.toString() == _cseTsUrl);
+
+    Future<CseMarketService> onCse(WidgetTester tester) async {
+      final service = await start(tester, ExchangeMode.dseAndCse);
+      Get.find<ExchangeService>().select(StockExchange.cse);
+      await tester.pump();
+      return service;
+    }
+
+    testWidgets('own socket; tsm / tsb / news_hist re-sent on connect', (
+      tester,
+    ) async {
+      final service = await onCse(tester);
+
+      service.subscribeTimeSales('tsm', '01', '7');
+      service.subscribeTimeSales('tsb', '02', '7');
+      service.subscribeTimeSales('news_hist', '04', '7');
+      final socket = tsSocket()..open();
+      await tester.pump();
+
+      expect(socket.sent, [
+        '{"ac":"subscribe","tp":"tsm","tid":1,"ob":7}',
+        '{"ac":"subscribe","tp":"tsb","tid":2,"ob":7}',
+        '{"ac":"subscribe","tp":"news_hist","tid":4,"ob":7}',
+      ]);
+      await finish(tester);
+    });
+
+    testWidgets('a new stock replaces the subscription of the same tp', (
+      tester,
+    ) async {
+      final service = await onCse(tester);
+      service.subscribeTimeSales('tsm', '01', '7');
+      service.subscribeTimeSales('tsm', '01', '9');
+      final socket = tsSocket()..open();
+      await tester.pump();
+
+      expect(socket.sent, ['{"ac":"subscribe","tp":"tsm","tid":1,"ob":9}']);
+      await finish(tester);
+    });
+
+    testWidgets('messages fill the lists like DSE; dropped on DSE', (
+      tester,
+    ) async {
+      final service = await onCse(tester);
+
+      service.onTimeSalesMessage(
+        '{"tp": "tsm", "d": [{"p": 10, "q": 5}, {"p": 11, "q": 6}]}',
+      );
+      service.onTimeSalesMessage('{"tp": "tsm", "d": {"p": 12, "q": 7}}');
+      service.onTimeSalesMessage('{"tp": "tsb", "d": [{"p": 9, "q": 1}]}');
+      service.onTimeSalesMessage('{"tp": "news_hist", "d": [{"title": "N"}]}');
+
+      expect(service.timeAndSales.map((t) => t.p), [12, 10, 11]);
+      expect(service.timeAndSalesHistory, hasLength(1));
+      expect(service.newsSingleItem, hasLength(1));
+
+      Get.find<ExchangeService>().select(StockExchange.dse);
+      await tester.pump();
+      expect(service.timeAndSales, isEmpty);
+      expect(service.timeAndSalesHistory, isEmpty);
+      expect(service.newsSingleItem, isEmpty);
+      await finish(tester);
+    });
+
+    testWidgets('no CSE time & sales URL: no socket opened', (tester) async {
+      initTestAppConfig(
+        exchangeMode: ExchangeMode.dseAndCse,
+        extra: const {'OMS_CSE_SOCKET_MARKET_URL': _cseUrl},
+      );
+      await tester.pumpWidget(const GetMaterialApp(home: Scaffold()));
+      Get.put(ExchangeService());
+      Get.put(
+        WebSocketService(
+          connector: (uri) => (sockets..add(FakeChannel(uri))).last,
+          onlineChanges: const Stream.empty(),
+        ),
+      );
+      Get.put<CseMarketService>(CseMarketService());
+      Get.find<ExchangeService>().select(StockExchange.cse);
+      await tester.pump();
+
+      expect(sockets.map((s) => s.uri.toString()), [_cseUrl]);
       await finish(tester);
     });
   });

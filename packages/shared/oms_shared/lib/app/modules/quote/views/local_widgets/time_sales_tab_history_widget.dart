@@ -49,15 +49,15 @@ class TimeSalesTabHistoryWidget extends StatelessWidget {
             ),
             AppSpace.spaceH10,
             Expanded(
-              child: homeCon.timeAndSalesHistory == []
+              child: homeCon.shownMarket.timeAndSalesHistory == []
                   ? const CustomLoaderWidget()
-                  : homeCon.timeAndSalesHistory.isEmpty
+                  : homeCon.shownMarket.timeAndSalesHistory.isEmpty
                   ? EmptyWidget()
                   : ListView.builder(
-                      itemCount: homeCon.timeAndSalesHistory.length,
+                      itemCount: homeCon.shownMarket.timeAndSalesHistory.length,
                       itemBuilder: (context, index) {
-                        final reverseIndex = homeCon.timeAndSalesHistory.length - 1 - index;
-                        final model = homeCon.timeAndSalesHistory[reverseIndex];
+                        final reverseIndex = homeCon.shownMarket.timeAndSalesHistory.length - 1 - index;
+                        final model = homeCon.shownMarket.timeAndSalesHistory[reverseIndex];
                         return Container(
                           padding: const .symmetric(horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(color: index % 2 == 0 ? context.evenColor : context.oddColor),

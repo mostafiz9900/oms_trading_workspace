@@ -411,4 +411,10 @@ class _HomeFeedView implements MarketFeedView {
   List<MarketDepthModel> get buys => _home.buys;
   @override
   List<MarketDepthModel> get sells => _home.sells;
+  @override
+  List<TimeAndSalesModel> get timeAndSales => _home.timeAndSales;
+  @override
+  List<TimeAndSalesModel> get timeAndSalesHistory => _home.timeAndSalesHistory;
+  @override
+  List<NewsModel> get newsSingleItem => _home.newsSingleItem;
 }

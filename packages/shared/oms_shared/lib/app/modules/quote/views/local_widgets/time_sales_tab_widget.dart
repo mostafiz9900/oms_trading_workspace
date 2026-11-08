@@ -22,7 +22,7 @@ class TimeSalesTabWidget extends StatelessWidget {
     return VisibleGetBuilder<HomeController>(
       id: 'timeAndSales',
       builder: (homeCon) {
-        final sortedList = Helpers.sortByTstDesc([...homeCon.timeAndSales], (m) => m.tst ?? "");
+        final sortedList = Helpers.sortByTstDesc([...homeCon.shownMarket.timeAndSales], (m) => m.tst ?? "");
         return CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
@@ -63,7 +63,7 @@ class TimeSalesTabWidget extends StatelessWidget {
             ),
             homeCon.isLoadTimeSales
                 ? TimeSalesListLoader()
-                : homeCon.timeAndSales.isEmpty
+                : homeCon.shownMarket.timeAndSales.isEmpty
                 ? SliverToBoxAdapter(child: EmptyWidget())
                 : homeCon.isShowTimeSalesChart
                 ? SliverToBoxAdapter(child: TimeSalesChartsView(data: sortedList))

@@ -134,8 +134,8 @@ class _TimeAndSalesButton extends StatelessWidget {
             VisibleGetBuilder<HomeController>(
               id: 'timeAndSales',
               builder: (timeSalesCont) {
-                if (timeSalesCont.timeAndSales.isNotEmpty) {
-                  var firstItem = timeSalesCont.timeAndSales.first;
+                if (timeSalesCont.shownMarket.timeAndSales.isNotEmpty) {
+                  var firstItem = timeSalesCont.shownMarket.timeAndSales.first;
                   return Expanded(
                     child: Text(
                       'Traded ${firstItem.v ?? 0.0} shares @${firstItem.p ?? 0.0}Tk',
