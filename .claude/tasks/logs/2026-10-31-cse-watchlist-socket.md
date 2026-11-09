@@ -2,7 +2,7 @@
 
 ## Done
 - Branches: `feature/cse_api`, `feature/cse_watchlist_socket` (from `feature/cse_ui` @ d03ff3f)
-- Verified CSE UAT feed `wss://cse-uat-firstservice.fistradebd.com/market`: same quote keys as DSE; boards Main / Derivatives / Alternative Trading; session `{"cs":"end_message"}`
+- Verified CSE UAT feed `wss://cse-uat-firstservice.tksharesbd.com/market`: same quote keys as DSE; boards Main / Derivatives / Alternative Trading; session `{"cs":"end_message"}`
 - `apps/benemoy/env/uat.json`: `OMS_CSE_SOCKET_MARKET_URL` (local, git-ignored)
 - `CseMarketService` + `AppConfig.cseMarketSocketId` + DI; `WatchListController` reads it when CSE is selected (dseAndCse only)
 - Tests: `test/data/services/cse_market_service_test.dart`, `test/modules/watchlist/controllers/watchlist_controller_test.dart`

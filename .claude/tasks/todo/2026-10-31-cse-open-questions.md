@@ -14,6 +14,15 @@
 - Last log: `.claude/tasks/logs/2026-11-08-cse-depth-time-sales.md`. Plan: `.claude/tasks/plans/2026-10-18-dse-cse-exchange-support.md` (steps B1–B11).
 - Still waiting on the backend for the questions below; do not change the related code until answered.
 
+## Live recheck (2026-11-09, UAT, market open)
+- Depth: DSE + CSE UAT answer; CSE switch sequence (unsub → sub) gets ack + snapshot each time.
+- **Index** `wss://cse-uat-firstservice.tksharesbd.com/index` ✅ same `IndexModel` keys; names include CASPI, CSE30, CSCX, CSE50, CSI (app guess correct). Feed also sends sectors, test indices (CASPI2, TEST30, TESTIND1, INDEX05/06, CSE30Index, CSE50Index) and **DSEX / DS30 / DSMEX** → these are appended to the CSE index list (same rule as DSE extras). ~~Ask backend whether DSE names on the CSE feed are UAT-only.~~ Resolved by the user 2026-11-09: CSE shows only CASPI, CSE30, CSCX, CSE50, CSI (`LiveIndexController` drops other names on CSE; DSE unchanged).
+- **Time & sales** `wss://cse-uat-firstservice.tksharesbd.com/events` ✅ same protocol as DSE (`tsm` / `tsb` / `news_hist` acked, `d: []` — no CSE trades on UAT today, 0 of 872 traded).
+  Env had `wss://se-uat-…` (typo, missing `c`) → HTTP 445, connection fails.
+- `prod.json` CSE keys point to CSE **UAT** servers (no prod CSE URL yet — question 7).
+- Later 2026-11-09: user fixed T&S typo; `prod.json` now `wss://cse-firstservice.fistradebd.com/{market,index,marketdepth,events}` → **all HTTP 445** (a made-up `*.fistradebd.com` host gives the same 445; DSE prod connects) → that host is not live / wrong name. Ask backend for the real prod CSE host.
+- UAT replay (recorded live messages → real `CseMarketService` / `IndexModel`, temp test, deleted): 875 ticks → 872 quotes, `EQUITY`/`Mutual Fund` normalized, close = lp, session `continuous`, 19 sectors, 3 boards; depth BEXIMCO buy 80 × 10 then dropped on switch; T&S replies handled; all 36 index messages parse. Extra CSE `it` values not mapped: CorpBond, OPT, FUT, MLEG, GOVDBT (ask backend whether DSE uses other codes for these). `make check` exit 0 (216 tests).
+
 ## Description
 CSE runs on its own feed (`CseMarketService`, branch `feature/cse_watchlist_socket`).
 The user asks the backend team and comes back with the answers.
@@ -32,7 +41,7 @@ The user asks the backend team and comes back with the answers.
 5. **Orders on CSE**: which field / value in the order JSON says CSE? Order list and favourites: exchange field?
    (Orders, modify, cancel, duplicate, status are blocked while CSE is selected until then.)
 6. **REST APIs** (candles, historical volume, company fundamentals / dividend / EPS, news): any exchange parameter?
-7. **Prod CSE market URL** (UAT is `wss://cse-uat-firstservice.fistradebd.com/market`).
+7. **Prod CSE market URL** (UAT is `wss://cse-uat-firstservice.tksharesbd.com/market`).
 
 ## Acceptance Criteria
 - [ ] Answers recorded here

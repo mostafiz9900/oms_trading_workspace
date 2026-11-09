@@ -8,7 +8,7 @@ Branch `feature/cse_watchlist_socket` (all pushed; last code commit `05a92e0`).
 - `e93b3ab` CSE sockets suspend / resume with HomeController (app pause, detach, logout; `initConnect` on resume).
 - `db1de26` CSE time & sales on its own socket (same `TimeAndSalesModel` / `NewsModel`, separate lists; `tsm` / `tsb` / `news_hist`); general market news stays on DSE.
 - `05a92e0` CSE env keys hold the DSE URL until the CSE feeds exist; CSE depth opens whenever its key is set (`AppConfig.hasCseDepthFeed`); benemoy `example.json` lists all 4 `OMS_CSE_SOCKET_*` keys.
-- Local only (git-ignored): `apps/benemoy/env/prod.json` → all 4 CSE keys = DSE prod URLs; `uat.json` → market + depth = CSE UAT (`wss://cse-uat-firstservice.fistradebd.com/market`, `/marketdepth`), index + T&S = DSE UAT.
+- Local only (git-ignored): `apps/benemoy/env/prod.json` → all 4 CSE keys = DSE prod URLs; `uat.json` → market + depth = CSE UAT (`wss://cse-uat-firstservice.tksharesbd.com/market`, `/marketdepth`), index + T&S = DSE UAT.
 - Restored deleted `apps/benemoy/ios/Runner.xcodeproj` / `Runner.xcworkspace` (`git restore`, user OK).
 
 ## Verified
