@@ -23,6 +23,10 @@
 - Later 2026-11-09: user fixed T&S typo; `prod.json` now `wss://cse-firstservice.fistradebd.com/{market,index,marketdepth,events}` → **all HTTP 445** (a made-up `*.fistradebd.com` host gives the same 445; DSE prod connects) → that host is not live / wrong name. Ask backend for the real prod CSE host.
 - UAT replay (recorded live messages → real `CseMarketService` / `IndexModel`, temp test, deleted): 875 ticks → 872 quotes, `EQUITY`/`Mutual Fund` normalized, close = lp, session `continuous`, 19 sectors, 3 boards; depth BEXIMCO buy 80 × 10 then dropped on switch; T&S replies handled; all 36 index messages parse. Extra CSE `it` values not mapped: CorpBond, OPT, FUT, MLEG, GOVDBT (ask backend whether DSE uses other codes for these). `make check` exit 0 (216 tests).
 
+## Moved from done/2026-11-09-cse-order-submit.md (still open)
+- [ ] Confirm `exchange` on CSE orders in the order list / execution reports (order socket showed 0 orders on next login; `order_submitted` reply did carry `exchange: CSE`). Without it, CSE orders look like DSE ones (`HomeState.exchangeOfOrder` default = DSE).
+- [ ] Modify / cancel a CSE order on UAT (TK Shares account with `cse_trader_code`).
+
 ## Description
 CSE runs on its own feed (`CseMarketService`, branch `feature/cse_watchlist_socket`).
 The user asks the backend team and comes back with the answers.
