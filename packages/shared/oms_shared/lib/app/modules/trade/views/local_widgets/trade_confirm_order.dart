@@ -1,5 +1,6 @@
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/utils/helpers/hex_color.dart';
+import '../../../../core/values/app_config.dart';
 import '../../../../core/values/colors.dart';
 import '../../../../core/values/dimens.dart';
 import '../../../../core/values/space.dart';
@@ -14,6 +15,10 @@ import 'package:get/get.dart';
 class TradeConfirmOrders extends StatelessWidget {
   const TradeConfirmOrders({super.key, required this.orderConfirm});
   final OrderConfirmHolder orderConfirm;
+
+  /// BUY / SELL colours of the Trade screen's order buttons.
+  static final Color _buyColor = HexColor('#22C665');
+  static final Color _sellColor = HexColor('#F70042');
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +106,7 @@ class TradeConfirmOrders extends StatelessWidget {
                       width: AppDimens.space70,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: ColorConstants.blueColor,
+                        color: orderConfirm.sideType == SideType2.SELL ? _sellColor : _buyColor,
                         borderRadius: BorderRadius.circular(AppDimens.space5),
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: AppDimens.space5),
@@ -129,6 +134,14 @@ class TradeConfirmOrders extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
+                    // A house on DSE and CSE: the exchange this order is sent to.
+                    if (AppConfig.hasBothExchanges) ...[
+                      _TitleAndValueRowWidget(
+                        title: "Exchange",
+                        value: Get.find<HomeController>().orderExchange,
+                      ),
+                      AppSpace.spaceH10,
+                    ],
                     _TitleAndValueRowWidget(title: "Price", value: '${orderConfirm.price ?? 0.0}'),
                     AppSpace.spaceH10,
                     _TitleAndValueRowWidget(title: "Quantity", value: "${orderConfirm.qty ?? 0}"),
