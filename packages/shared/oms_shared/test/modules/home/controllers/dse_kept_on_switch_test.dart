@@ -359,4 +359,63 @@ void main() {
       await finish(tester);
     });
   });
+
+  group('switch speed: the whole Home screen is not rebuilt', () {
+    /// A bare update() rebuilds HomeView (all six tabs); count those builds
+    /// with an id-less builder like HomeView's.
+    Future<int Function()> countHomeRebuilds(WidgetTester tester) async {
+      var builds = 0;
+      await tester.pumpWidget(
+        GetMaterialApp(
+          home: GetBuilder<HomeController>(
+            builder: (_) {
+              builds++;
+              return const SizedBox();
+            },
+          ),
+        ),
+      );
+      final before = builds;
+      return () => builds - before;
+    }
+
+    Future<void> switchAndFeed(WidgetTester tester, StockExchange to) async {
+      exchange.select(to);
+      await tester.pump();
+      if (to == StockExchange.cse) {
+        Get.find<CseMarketService>().onMessage(
+          '{"ob": 7, "sn": "GP", "t": "GP", "g": "PUBLIC", "b": "Main Board"}',
+        );
+        await tester.pump(CseMarketService.flushInterval);
+        await tester.pump();
+      }
+    }
+
+    testWidgets('Market tab: DSE -> CSE -> DSE rebuilds HomeView 0 times', (
+      tester,
+    ) async {
+      await start(tester);
+      home.currentIndex = 0;
+      final rebuilds = await countHomeRebuilds(tester);
+
+      await switchAndFeed(tester, StockExchange.cse);
+      await switchAndFeed(tester, StockExchange.dse);
+
+      expect(rebuilds(), 0);
+      await finish(tester);
+    });
+
+    testWidgets('Favourites tab open: it is redrawn on the switch', (
+      tester,
+    ) async {
+      await start(tester);
+      home.currentIndex = 3;
+      final rebuilds = await countHomeRebuilds(tester);
+
+      await switchAndFeed(tester, StockExchange.cse);
+
+      expect(rebuilds(), greaterThan(0));
+      await finish(tester);
+    });
+  });
 }

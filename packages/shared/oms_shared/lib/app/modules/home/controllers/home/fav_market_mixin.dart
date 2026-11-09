@@ -240,7 +240,17 @@ mixin FavMarketMixin on HomeState {
     favMarketParseList = [];
     _favRebuildWindow?.cancel();
     _favRebuildWindow = Timer(QuoteMixin.quoteSwitchFallback, () {});
-    update();
+    _redrawFavIfShown();
+  }
+
+  /// Favourites tab index in HomeView.
+  static const _favTab = 3;
+
+  /// A bare update() rebuilds HomeView with all six tabs (~100 ms on a low-end
+  /// phone), so the DSE/CSE switch redraws Favourites only while it is open;
+  /// opening the tab reloads it (selectTable) anyway.
+  void _redrawFavIfShown() {
+    if (currentIndex == _favTab) update();
   }
 
   @override
@@ -250,7 +260,7 @@ mixin FavMarketMixin on HomeState {
       marketList: shownMarket.quotes,
       favMarketData: favMarketData,
     );
-    update();
+    _redrawFavIfShown();
     // Holdings are valued from the selected exchange's feed; redraw them as
     // it fills (on DSE they redraw on their own updates, as before).
     if (Get.isRegistered<PositionController>()) {
