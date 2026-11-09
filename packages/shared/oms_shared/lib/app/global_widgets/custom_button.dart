@@ -78,13 +78,21 @@ class CustomButton extends StatelessWidget {
                           height: iconHeight ?? 20,
                         ).paddingOnly(right: title != null ? AppDimens.space8 : 0)
                       : const SizedBox.shrink(),
+                  // A title wider than the button (e.g. a long house name)
+                  // shrinks to fit; one that fits keeps its size.
                   title != null
-                      ? Text(
-                          title.toString(),
-                          style: Get.textTheme.labelLarge!.copyWith(
-                            fontSize: fontSize ?? AppDimens.fontSizeMedium,
-                            color: titleTextColor ?? ColorConstants.white,
-                            fontWeight: fontWeight ?? FontWeight.w600,
+                      ? Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              title.toString(),
+                              maxLines: 1,
+                              style: Get.textTheme.labelLarge!.copyWith(
+                                fontSize: fontSize ?? AppDimens.fontSizeMedium,
+                                color: titleTextColor ?? ColorConstants.white,
+                                fontWeight: fontWeight ?? FontWeight.w600,
+                              ),
+                            ),
                           ),
                         )
                       : const SizedBox.shrink(),
