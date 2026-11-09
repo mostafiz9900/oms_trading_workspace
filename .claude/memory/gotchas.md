@@ -83,6 +83,11 @@
 - **How to Avoid**: when only HomeController state is needed (e.g. another controller does `Get.find<HomeController>()`), register a subclass with empty `onInit` / `onReady` (`test/modules/orders/controllers/order_summary_controller_test.dart`).
 - **Discovered**: 2026-11-09
 
+#### Performance — bare update() on HomeController rebuilds all six tabs
+- **What Happens**: `home_view.dart` wraps the whole `IndexedStack` (Market, Quote, Watchlist, Favourites, Portfolio, Trade) in an id-less `GetBuilder<HomeController>`; every bare `update()` rebuilds all of them, hidden tabs too: 100–190 ms per frame on a Samsung SM A075F (profile). The DSE/CSE switch did this on the switch and on every CSE flush for 5 s → laggy switch.
+- **How to Avoid**: in hot paths (sockets, switch, timers) use `update([id])`; the switch now redraws Favourites only while that tab is open (`FavMarketMixin._redrawFavIfShown`). Measure on a low-end phone in `--profile` (debug is several times slower).
+- **Discovered**: 2026-11-09
+
 ## Template
 #### [Module] — [Title]
 - **What Happens**:
