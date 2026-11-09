@@ -344,6 +344,12 @@ class LiveIndexController extends GetxController {
       if (messageType == null) {
         final baseIndices = baseIndicesByExchange[ExchangeService.current]!;
         var index = IndexModel.fromJson(jsonResponse);
+        // CSE shows only its main indices (its feed also sends sectors, test
+        // and DSE names). DSE keeps every index as before.
+        if (ExchangeService.current == StockExchange.cse &&
+            !baseIndices.contains(index.sn)) {
+          return;
+        }
 
         if (baseIndices.contains(index.sn)) {
           final indexPos = baseIndices.indexOf(index.sn!);

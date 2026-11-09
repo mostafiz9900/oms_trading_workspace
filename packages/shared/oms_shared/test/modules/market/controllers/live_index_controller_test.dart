@@ -67,6 +67,19 @@ void main() {
       expect(index.newArr?.sn, 'DSEX');
       await finish(tester);
     });
+
+    testWidgets('every index the feed sends stays in the list', (tester) async {
+      final index = await start(tester, ExchangeMode.dseOnly);
+      for (final sn in ['DSEX', 'DS30', 'ATBX', 'BANK', 'CASPI']) {
+        await sends(tester, sn);
+      }
+
+      expect(
+        index.visibleIndexList.map((e) => e.sn),
+        ['DSEX', 'DS30', 'ATBX', 'BANK', 'CASPI'],
+      );
+      await finish(tester);
+    });
   });
 
   group('CSE only', () {
@@ -91,6 +104,25 @@ void main() {
       expect(index.selectedSn, 'CSE30');
 
       await sends(tester, 'CASPI');
+      expect(index.selectedSn, 'CASPI');
+      await finish(tester);
+    });
+
+    testWidgets('only CASPI, CSE30, CSCX, CSE50, CSI are listed (the CSE '
+        'feed also sends sectors, test and DSE names)', (tester) async {
+      final index = await start(tester, ExchangeMode.cseOnly);
+      // Names as the CSE UAT index feed sent them on 2026-11-09.
+      for (final sn in [
+        'BANK', 'CASPI', 'CASPI2', 'CSCX', 'CSE30', 'CSE30Index', 'CSE50',
+        'CSI', 'DS30', 'DSEX', 'DSMEX', 'TEST30', 'TELECOMMUNICATION',
+      ]) {
+        await sends(tester, sn);
+      }
+
+      expect(
+        index.visibleIndexList.map((e) => e.sn),
+        ['CASPI', 'CSE30', 'CSCX', 'CSE50', 'CSI'],
+      );
       expect(index.selectedSn, 'CASPI');
       await finish(tester);
     });
