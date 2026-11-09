@@ -88,6 +88,9 @@ class UserDetail {
   String? traderCode;
   int? branchId;
 
+  /// Trader code for CSE orders (`cse_trader_code`); none → no CSE orders.
+  String? cseTraderCode;
+
   UserDetail({
     this.investorId,
     this.investorName,
@@ -96,6 +99,7 @@ class UserDetail {
     this.traderId,
     this.traderCode,
     this.branchId,
+    this.cseTraderCode,
   });
 
   factory UserDetail.fromJson(Map<String, dynamic> json) => UserDetail(
@@ -106,6 +110,7 @@ class UserDetail {
     traderId: json["trader_id"],
     traderCode: json["trader_code"],
     branchId: json["branch_id"],
+    cseTraderCode: json["cse_trader_code"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -116,5 +121,6 @@ class UserDetail {
     "trader_id": traderId,
     "trader_code": traderCode,
     "branch_id": branchId,
+    "cse_trader_code": cseTraderCode,
   };
 }

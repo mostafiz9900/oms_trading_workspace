@@ -92,6 +92,9 @@ class UserOrder {
   final String? aggressorIndicator;
   final String? clientCode;
 
+  /// `DSE` / `CSE`; orders without it are on the house's default exchange.
+  final String? exchange;
+
   UserOrder({
     this.traderId,
     this.boId,
@@ -131,6 +134,7 @@ class UserOrder {
     this.remainingQty,
     this.aggressorIndicator,
     this.clientCode,
+    this.exchange,
   });
 
   factory UserOrder.fromJson(Map<String, dynamic> json) => UserOrder(
@@ -175,6 +179,7 @@ class UserOrder {
     remainingQty: json["remainingQty"],
     aggressorIndicator: json["aggressorIndicator"] as String?,
     clientCode: json["client_code"] as String?,
+    exchange: json["exchange"] as String?,
   );
 
   Map<String, dynamic> toJson() => {
@@ -216,6 +221,7 @@ class UserOrder {
     "remainingQty": remainingQty,
     "aggressorIndicator": aggressorIndicator,
     "client_code": clientCode,
+    "exchange": exchange,
   };
 
   // --- copyWith function for UserOrder ---
@@ -258,6 +264,7 @@ class UserOrder {
     dynamic remainingQty,
     String? aggressorIndicator,
     String? clientCode,
+    String? exchange,
   }) {
     return UserOrder(
       traderId: traderId ?? this.traderId,
@@ -298,6 +305,7 @@ class UserOrder {
       remainingQty: remainingQty ?? this.remainingQty,
       aggressorIndicator: aggressorIndicator ?? this.aggressorIndicator,
       clientCode: clientCode ?? this.clientCode,
+      exchange: exchange ?? this.exchange,
     );
   }
 

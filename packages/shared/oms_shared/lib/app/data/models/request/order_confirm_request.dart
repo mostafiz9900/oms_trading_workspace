@@ -31,6 +31,12 @@ class OrderConfirmRequest {
   int? orderBookId;
   String? board;
   String? session;
+
+  /// `DSE` / `CSE`: the order socket trades both exchanges.
+  String? exchange;
+
+  /// The user's CSE trader code on CSE orders, null on DSE.
+  String? cseTraderCode;
   String? category;
   String? marketType;
   String? group;
@@ -60,6 +66,8 @@ class OrderConfirmRequest {
     this.orderBookId,
     this.board,
     this.session,
+    this.exchange,
+    this.cseTraderCode,
     this.category,
     this.marketType,
     this.group,
@@ -90,6 +98,8 @@ class OrderConfirmRequest {
       orderBookId: json['order_book_id'],
       board: json['board'],
       session: json['session'],
+      exchange: json['exchange'],
+      cseTraderCode: json['cse_trader_code'],
       category: json['category'],
       marketType: json['market_type'],
       group: json['group'],
@@ -119,6 +129,8 @@ class OrderConfirmRequest {
     'order_book_id': orderBookId,
     'board': board,
     'session': session,
+    'exchange': exchange,
+    'cse_trader_code': cseTraderCode,
     'category': category,
     'market_type': marketType,
     'group': group,
@@ -148,6 +160,8 @@ class OrderConfirmRequest {
     'order_book_id': orderBookId,
     'board': board,
     'session': session,
+    'exchange': exchange,
+    'cse_trader_code': cseTraderCode,
     'category': category,
     'market_type': marketType,
     'group': group,

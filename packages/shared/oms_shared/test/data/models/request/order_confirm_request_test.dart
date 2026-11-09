@@ -53,6 +53,8 @@ void main() {
         'order_book_id',
         'board',
         'session',
+        'exchange',
+        'cse_trader_code',
         'category',
         'market_type',
         'group',
@@ -82,6 +84,20 @@ void main() {
           .toJson();
       expect(json.containsKey('orig_client_order_id'), isFalse);
       expect(json.containsKey('order_id'), isFalse);
+    });
+
+    test('exchange and CSE trader code, as the web trader sends them', () {
+      final dse = (buyLimit()..exchange = 'DSE').toJson();
+      expect(dse['exchange'], 'DSE');
+      expect(dse.containsKey('cse_trader_code'), isTrue);
+      expect(dse['cse_trader_code'], isNull);
+
+      final cse = (buyLimit()
+            ..exchange = 'CSE'
+            ..cseTraderCode = 'CSE-TR9')
+          .toJsonReplaceOrder();
+      expect(cse['exchange'], 'CSE');
+      expect(cse['cse_trader_code'], 'CSE-TR9');
     });
 
     test('optional quantities go out as null, not 0', () {

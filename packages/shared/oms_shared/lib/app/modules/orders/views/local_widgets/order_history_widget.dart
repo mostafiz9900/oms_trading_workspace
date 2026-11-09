@@ -461,8 +461,8 @@ class _Original3DotMenu extends StatelessWidget {
           items: [
             if (!status.contains('Terminated') && !status.contains('Done')) ...[
               _buildMenuItem(0, Icons.edit, 'Modify', () {
-                if (!homeCotByOrder.canOrderOnSelectedExchange) {
-                  Helpers.snackbarForErorr2(bodyText: OrderListMixin.cseOrderActionBlockedMessage);
+                if (!homeCotByOrder.canActOnOrder(order)) {
+                  Helpers.snackbarForErorr2(bodyText: homeCotByOrder.orderOnOtherExchangeMessage(order));
                 } else if (order.side == 'BUY' || order.side == 'SELL') {
                   Get.back();
                   showOrderFormDialog(order);
@@ -579,8 +579,8 @@ class _OrderActionWrapWidget extends StatelessWidget {
             label: 'Modify',
             color: Colors.blueAccent,
             onTap: () {
-              if (!homeCotByOrder.canOrderOnSelectedExchange) {
-                Helpers.snackbarForErorr2(bodyText: OrderListMixin.cseOrderActionBlockedMessage);
+              if (!homeCotByOrder.canActOnOrder(order)) {
+                Helpers.snackbarForErorr2(bodyText: homeCotByOrder.orderOnOtherExchangeMessage(order));
               } else if (order.side == 'BUY' || order.side == 'SELL') {
                 showOrderFormDialog(order);
               }

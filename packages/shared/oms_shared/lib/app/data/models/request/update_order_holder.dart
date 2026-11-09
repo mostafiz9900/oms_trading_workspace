@@ -11,6 +11,10 @@ class UpdateOrderHolder {
   final String side;
   final String session;
 
+  /// `DSE` / `CSE` and the CSE trader code (null on DSE), as on new orders.
+  final String exchange;
+  final String? cseTraderCode;
+
   UpdateOrderHolder({
     required this.action,
     required this.traderId,
@@ -23,6 +27,8 @@ class UpdateOrderHolder {
     required this.symbol,
     required this.side,
     required this.session,
+    required this.exchange,
+    required this.cseTraderCode,
   });
 
   Map<String, dynamic> toJson() {
@@ -38,6 +44,8 @@ class UpdateOrderHolder {
       'symbol': symbol,
       'side': side,
       'session': session,
+      'exchange': exchange,
+      'cse_trader_code': cseTraderCode,
     };
   }
 }

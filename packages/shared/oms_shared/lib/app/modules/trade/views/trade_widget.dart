@@ -476,11 +476,7 @@ class TradeWidget extends StatelessWidget {
                                 : HexColor("#F70042"),
                             onPressed: () async {
                               FocusManager.instance.primaryFocus?.unfocus();
-                              if (!con.canOrderOnSelectedExchange) {
-                                Helpers.snackbarForErorr2(
-                                  bodyText: TradeMixin.cseOrderBlockedMessage,
-                                );
-                              } else if (con.selectOrderType == null) {
+                              if (con.selectOrderType == null) {
                                 Helpers.snackbarForErorr2(
                                   bodyText: 'Select order type',
                                 );

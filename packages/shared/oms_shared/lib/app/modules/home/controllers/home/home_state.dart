@@ -280,13 +280,56 @@ abstract class HomeState extends SuperController {
     update(['order_confirm_btn']);
   }
 
-  /// A house on both exchanges: order requests carry no exchange field and
-  /// every existing order is on DSE, so nothing is sent to the gateway while
-  /// CSE is selected; CSE trading opens once the gateway supports it.
-  /// A single-exchange house (DSE only or CSE only) always trades, as before.
-  bool get canOrderOnSelectedExchange =>
+  /// Exchange an order is on: its `exchange` field, else the house's default
+  /// (DSE): orders from before the field existed are DSE orders.
+  StockExchange exchangeOfOrder(UserOrder order) =>
+      switch (order.exchange?.toUpperCase()) {
+        'CSE' => StockExchange.cse,
+        'DSE' => StockExchange.dse,
+        _ => AppConfig.defaultExchange,
+      };
+
+  /// Modify / cancel / duplicate / status of [order] are sent only while its
+  /// exchange is selected: the stock is looked up in the selected feed and
+  /// order book ids repeat between exchanges. Single-exchange houses: always.
+  bool canActOnOrder(UserOrder order) =>
       !AppConfig.hasBothExchanges ||
-      ExchangeService.current != StockExchange.cse;
+      exchangeOfOrder(order) == ExchangeService.current;
+
+  /// Shown when [order] is on the exchange that is not selected.
+  String orderOnOtherExchangeMessage(UserOrder order) {
+    final name = exchangeOfOrder(order).name.toUpperCase();
+    return 'This order is on $name. Switch to $name to modify, cancel or '
+        'duplicate it.';
+  }
+
+  /// `exchange` of an order request (`DSE` / `CSE`); one order socket trades
+  /// both, as in the web trader.
+  String get orderExchange => ExchangeService.current.name.toUpperCase();
+
+  bool get _isCseOrder => ExchangeService.current == StockExchange.cse;
+
+  /// `cse_trader_code` of an order request: the user's code on CSE, else null.
+  String? get orderCseTraderCode =>
+      _isCseOrder ? userInfo.userDetail?.cseTraderCode : null;
+
+  /// Session of the selected exchange's feed (CSE has its own).
+  String get orderSession => CseMarketService.isShown
+      ? Get.find<CseMarketService>().session.value
+      : currentSession.value;
+
+  static const cseTraderCodeMissingMessage =
+      'Your account has no CSE trader code. Please contact your broker.';
+
+  /// A CSE order needs the user's CSE trader code; without it nothing is sent
+  /// and the user is told why. True when the order must stop here.
+  bool _blockCseOrderWithoutTraderCode() {
+    if (!_isCseOrder) return false;
+    final code = userInfo.userDetail?.cseTraderCode;
+    if (code != null && code.isNotEmpty) return false;
+    _showOrderAlert('Order not sent', cseTraderCodeMissingMessage);
+    return true;
+  }
 
   /// Shows an order alert right away. GetX shows one snackbar at a time and
   /// queues the rest, so behind the persistent "No internet" bar an alert

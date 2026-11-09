@@ -10,6 +10,7 @@ import 'package:oms_shared/app/data/models/response/market_model.dart';
 import 'package:oms_shared/app/data/models/response/user_order.dart';
 import 'package:oms_shared/app/data/models/response/user_profile.dart';
 import 'package:oms_shared/app/data/repositories/home_repository.dart';
+import 'package:oms_shared/app/data/services/cse_market_service.dart';
 import 'package:oms_shared/app/data/services/exchange_service.dart';
 import 'package:oms_shared/app/data/services/market_socket_service.dart';
 import 'package:oms_shared/app/data/services/socket_db_service.dart';
@@ -152,6 +153,8 @@ void main() {
       expect(order, containsPair('branch_id', 3));
       expect(order, containsPair('user_id', 42));
       expect(order, containsPair('session', 'CONTINUOUS'));
+      expect(order, containsPair('exchange', 'DSE'));
+      expect(order, containsPair('cse_trader_code', null));
       expect(order, containsPair('category', 'A'));
       expect(order, containsPair('group', 'PUBLIC'));
       expect(order, containsPair('timeInForce', '0'));
@@ -357,7 +360,7 @@ void main() {
   });
 
   group('DSE/CSE house', () {
-    // Orders carry no exchange field yet, so none may be sent for CSE.
+    // One order socket trades both; each order request says which exchange.
     Future<void> onExchange(WidgetTester tester, StockExchange exchange) async {
       initTestAppConfig(exchangeMode: ExchangeMode.dseAndCse);
       addTearDown(initTestAppConfig);
@@ -365,7 +368,22 @@ void main() {
       Get.put(ExchangeService()).select(exchange);
     }
 
-    testWidgets('CSE selected: no order is sent and the user is told why', (
+    testWidgets('CSE selected: the order is sent to CSE with the CSE '
+        'trader code', (tester) async {
+      await onExchange(tester, StockExchange.cse);
+      home.userInfo.userDetail!.cseTraderCode = 'CSE-TR9';
+
+      home.orderConfirmSubmitted(SideType2.BUY, ActionsType.ORDER);
+      final socket = await openOrderSocket(tester);
+
+      final order = sentOrder(socket);
+      expect(order, containsPair('action', 'NEW_ORDER_SINGLE_REQUEST'));
+      expect(order, containsPair('exchange', 'CSE'));
+      expect(order, containsPair('cse_trader_code', 'CSE-TR9'));
+      await finish(tester);
+    });
+
+    testWidgets('CSE selected, no CSE trader code: nothing is sent', (
       tester,
     ) async {
       await onExchange(tester, StockExchange.cse);
@@ -375,8 +393,7 @@ void main() {
 
       expect(sockets, isEmpty, reason: 'order socket not even opened');
       expect(home.isOrderConfirmLoading, isFalse);
-      expect(home.canOrderOnSelectedExchange, isFalse);
-      expect(find.text(TradeMixin.cseOrderBlockedMessage), findsOneWidget);
+      expect(find.text(HomeState.cseTraderCodeMissingMessage), findsOneWidget);
       await finish(tester);
     });
 
@@ -409,6 +426,7 @@ void main() {
         tester,
       ) async {
         await onExchange(tester, StockExchange.cse);
+        home.userInfo.userDetail!.cseTraderCode = 'CSE-TR9';
         home.marketListAll.add(home.marketData);
 
         entry.value();
@@ -416,12 +434,98 @@ void main() {
 
         expect(sockets, isEmpty, reason: 'order socket not even opened');
         expect(
-          find.text(OrderListMixin.cseOrderActionBlockedMessage),
+          find.text(
+            'This order is on DSE. Switch to DSE to modify, cancel or '
+            'duplicate it.',
+          ),
           findsOneWidget,
         );
         await finish(tester);
       });
     }
+
+    final cseOrder = UserOrder(
+      orderId: 'OID-9',
+      clientOrderId: 'COID-9',
+      orderBookId: 101,
+      side: 'BUY',
+      limit: 80,
+      sentQty: 10,
+      exchange: 'CSE',
+    );
+    final cseOrderActions = <String, void Function()>{
+      'modify': () => home.orderConfirmSubmittedReplaceOrder(
+        SideType2.BUY,
+        ActionsType.REPLACE_ORDER,
+        order: cseOrder,
+      ),
+      'cancel': () => home.orderCancelSubmitted('ORDER_CANCEL_REQUEST', cseOrder),
+      'duplicate': () =>
+          home.orderDuplicateSubmitted(ActionsType.ORDER, order: cseOrder),
+      'status': () => home.orderStatusChangeConfirmSubmitted(
+        ActionsType.ORDER_STATUS,
+        cseOrder,
+      ),
+    };
+
+    for (final entry in cseOrderActions.entries) {
+      testWidgets('CSE selected: ${entry.key} of a CSE order uses the CSE '
+          'stock (same order book id as a DSE one)', (tester) async {
+        await onExchange(tester, StockExchange.cse);
+        home.userInfo.userDetail!.cseTraderCode = 'CSE-TR9';
+        home.marketListAll.add(home.marketData); // DSE GP, order book 101
+        final cse = Get.put<CseMarketService>(CseMarketService());
+        cse.quotes.add(
+          const MarketModel(
+            shortName: 'BEXIMCO',
+            ticker: 'BEXIMCO',
+            orderBook: 101,
+            reference: 80,
+            isinCode: 'BD0613BXLTD6',
+            instrumentType: 'EQ',
+            board: 'Main Board',
+            shareType: 'A',
+            marketType: 'Public',
+            group: 'PUBLIC',
+          ),
+        );
+        cse.session.value = 'continuous';
+        await tester.pump();
+
+        entry.value();
+        await tester.pump();
+        final socket = sockets.lastWhere(
+          (s) => s.uri.toString().contains('/order/'),
+        )..open();
+        await pumpFor(tester, const Duration(seconds: 1));
+
+        final sent = sentOrder(socket);
+        expect(sent, containsPair('symbol', 'BEXIMCO'));
+        expect(sent, containsPair('exchange', 'CSE'));
+        expect(sent, containsPair('cse_trader_code', 'CSE-TR9'));
+        await finish(tester);
+      });
+    }
+
+    testWidgets('DSE selected: actions on a CSE order send nothing', (
+      tester,
+    ) async {
+      await onExchange(tester, StockExchange.dse);
+      home.marketListAll.add(home.marketData);
+
+      home.orderCancelSubmitted('ORDER_CANCEL_REQUEST', cseOrder);
+      await pumpFor(tester, const Duration(seconds: 2));
+
+      expect(sockets, isEmpty);
+      expect(
+        find.text(
+          'This order is on CSE. Switch to CSE to modify, cancel or '
+          'duplicate it.',
+        ),
+        findsOneWidget,
+      );
+      await finish(tester);
+    });
 
     testWidgets('DSE selected: cancel is sent as before', (tester) async {
       await onExchange(tester, StockExchange.dse);
@@ -434,6 +538,9 @@ void main() {
       final sent = jsonDecode(socket.sent.single as String) as Map;
       expect(sent['action'], 'ORDER_CANCEL_REQUEST');
       expect(sent['symbol'], 'GP');
+      expect(sent['exchange'], 'DSE');
+      expect(sent.containsKey('cse_trader_code'), isTrue);
+      expect(sent['cse_trader_code'], isNull);
       await finish(tester);
     });
 
@@ -454,13 +561,17 @@ void main() {
         initTestAppConfig(exchangeMode: mode);
         addTearDown(initTestAppConfig);
         await startApp(tester);
+        home.userInfo.userDetail!.cseTraderCode = 'CSE-TR9';
         Get.put(ExchangeService());
-        expect(home.canOrderOnSelectedExchange, isTrue);
 
         home.orderConfirmSubmitted(SideType2.BUY, ActionsType.ORDER);
         final socket = await openOrderSocket(tester);
 
-        expect(sentOrder(socket), containsPair('symbol', 'GP'));
+        final order = sentOrder(socket);
+        expect(order, containsPair('symbol', 'GP'));
+        final cse = mode == ExchangeMode.cseOnly;
+        expect(order, containsPair('exchange', cse ? 'CSE' : 'DSE'));
+        expect(order, containsPair('cse_trader_code', cse ? 'CSE-TR9' : null));
         await finish(tester);
       });
 
@@ -468,6 +579,7 @@ void main() {
         initTestAppConfig(exchangeMode: mode);
         addTearDown(initTestAppConfig);
         await startApp(tester);
+        home.userInfo.userDetail!.cseTraderCode = 'CSE-TR9';
         Get.put(ExchangeService());
         home.marketListAll.add(home.marketData);
 
@@ -478,7 +590,105 @@ void main() {
         final socket = await openOrderSocket(tester);
         await pumpFor(tester, const Duration(seconds: 1));
 
-        expect(sentOrder(socket), containsPair('action', 'ORDER_CANCEL_REQUEST'));
+        final cancel = sentOrder(socket);
+        expect(cancel, containsPair('action', 'ORDER_CANCEL_REQUEST'));
+        final cse = mode == ExchangeMode.cseOnly;
+        expect(cancel, containsPair('exchange', cse ? 'CSE' : 'DSE'));
+        expect(cancel, containsPair('cse_trader_code', cse ? 'CSE-TR9' : null));
+        await finish(tester);
+      });
+    }
+  });
+
+  group('exchange on every order request (one socket for DSE and CSE)', () {
+    final order = UserOrder(
+      orderId: 'OID-1',
+      clientOrderId: 'COID-1',
+      orderBookId: 101,
+      side: 'BUY',
+      limit: 300,
+      sentQty: 100,
+    );
+    final actions = <String, void Function()>{
+      'modify': () => home.orderConfirmSubmittedReplaceOrder(
+        SideType2.BUY,
+        ActionsType.REPLACE_ORDER,
+        order: order,
+      ),
+      'duplicate': () =>
+          home.orderDuplicateSubmitted(ActionsType.ORDER, order: order),
+      'status': () => home.orderStatusChangeConfirmSubmitted(
+        ActionsType.ORDER_STATUS,
+        order,
+      ),
+    };
+
+    for (final entry in actions.entries) {
+      testWidgets('DSE: ${entry.key} sends exchange DSE, no CSE trader code', (
+        tester,
+      ) async {
+        await startApp(tester);
+        home.userInfo.userDetail!.cseTraderCode = 'CSE-TR9';
+        home.marketListAll.add(home.marketData);
+
+        entry.value();
+        final socket = await openOrderSocket(tester);
+        await pumpFor(tester, const Duration(seconds: 1));
+
+        final sent = sentOrder(socket);
+        expect(sent, containsPair('exchange', 'DSE'));
+        expect(sent, containsPair('cse_trader_code', null));
+        await finish(tester);
+      });
+    }
+
+    final allActions = <String, void Function()>{
+      'new order': () =>
+          home.orderConfirmSubmitted(SideType2.BUY, ActionsType.ORDER),
+      'cancel': () => home.orderCancelSubmitted('ORDER_CANCEL_REQUEST', order),
+      ...actions,
+    };
+    for (final entry in allActions.entries) {
+      testWidgets('CSE: ${entry.key} sends exchange CSE and the CSE trader '
+          'code', (tester) async {
+        initTestAppConfig(exchangeMode: ExchangeMode.cseOnly);
+        addTearDown(initTestAppConfig);
+        await startApp(tester);
+        home.userInfo.userDetail!.cseTraderCode = 'CSE-TR9';
+        home.marketListAll.add(home.marketData);
+
+        entry.value();
+        final socket = await openOrderSocket(tester);
+        await pumpFor(tester, const Duration(seconds: 1));
+
+        final sent = sentOrder(socket);
+        expect(sent, containsPair('exchange', 'CSE'));
+        expect(sent, containsPair('cse_trader_code', 'CSE-TR9'));
+        await finish(tester);
+      });
+    }
+
+    final cseOnlyActions = <String, void Function()>{
+      'new order': () =>
+          home.orderConfirmSubmitted(SideType2.BUY, ActionsType.ORDER),
+      'cancel': () => home.orderCancelSubmitted('ORDER_CANCEL_REQUEST', order),
+      ...actions,
+    };
+    for (final entry in cseOnlyActions.entries) {
+      testWidgets('CSE without a CSE trader code: ${entry.key} sends nothing', (
+        tester,
+      ) async {
+        initTestAppConfig(exchangeMode: ExchangeMode.cseOnly);
+        addTearDown(initTestAppConfig);
+        await startApp(tester);
+        home.marketListAll.add(home.marketData);
+
+        entry.value();
+        await pumpFor(tester, const Duration(seconds: 2));
+
+        expect(sockets, isEmpty, reason: 'order socket not even opened');
+        expect(home.isOrderConfirmLoading, isFalse);
+        expect(find.text(HomeState.cseTraderCodeMissingMessage), findsOneWidget);
         await finish(tester);
       });
     }

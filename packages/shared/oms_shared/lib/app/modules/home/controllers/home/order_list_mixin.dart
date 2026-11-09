@@ -2,10 +2,32 @@ part of '../home_controller.dart';
 
 /// Orders for order_list_tab_widget: list, modify, cancel, confirmations.
 mixin OrderListMixin on HomeState {
-  /// Shown when an order action is tapped while CSE is selected (see
-  /// [HomeState.canOrderOnSelectedExchange]).
-  static const cseOrderActionBlockedMessage =
-      'Your orders are on DSE. Switch to DSE to modify, cancel or duplicate them.';
+  /// Stock of [orderBookId] in the selected exchange's feed: the CSE feed
+  /// while CSE is shown, else the DSE list as before.
+  MarketModel _marketForOrderBook(int orderBookId) => CseMarketService.isShown
+      ? Get.find<CseMarketService>().quotes.firstWhere(
+          (m) => m.orderBook == orderBookId,
+          orElse: () => MarketModel(),
+        )
+      : getMarketByOrderBookId(orderBookId);
+
+  /// Symbol of [orderBookId] for cancel / status (CSE feed while CSE is shown).
+  String _symbolForOrderBook(int? orderBookId) => CseMarketService.isShown
+      ? Get.find<CseMarketService>().quotes
+                .firstWhereOrNull((m) => m.orderBook == orderBookId)
+                ?.shortName ??
+            ''
+      : marketListAll
+                .firstWhereOrNull((market) => market.orderBook == orderBookId)
+                ?.shortName ??
+            '';
+
+  /// False (and the user is told) when [order] is on the other exchange.
+  bool _orderOnSelectedExchange(UserOrder order) {
+    if (canActOnOrder(order)) return true;
+    _showOrderAlert('Order not sent', orderOnOtherExchangeMessage(order));
+    return false;
+  }
 
   void changeOrderTypeOrderList(String data) {
     selectOrderType = data;
@@ -296,10 +318,8 @@ mixin OrderListMixin on HomeState {
   }
 
   void orderDuplicateSubmitted(ActionsType action, {UserOrder? order}) async {
-    if (!canOrderOnSelectedExchange) {
-      _showOrderAlert('Order not sent', cseOrderActionBlockedMessage);
-      return;
-    }
+    if (order != null && !_orderOnSelectedExchange(order)) return;
+    if (_blockCseOrderWithoutTraderCode()) return;
     //  ১. ইন্টারনেট চেক
     if (!await _orderNetworkAvailable()) return;
 
@@ -313,7 +333,7 @@ mixin OrderListMixin on HomeState {
 
     var clientCode = userInfo.userDetail?.investorCode ?? '';
     final safeOrderBookId = order.orderBookId ?? 0;
-    final marketFindByOrderBookId = getMarketByOrderBookId(safeOrderBookId);
+    final marketFindByOrderBookId = _marketForOrderBook(safeOrderBookId);
 
     //  ৩. মার্কেট ডেটা ভ্যালিডেশন
     if (marketFindByOrderBookId.orderBook == null ||
@@ -352,7 +372,9 @@ mixin OrderListMixin on HomeState {
       securityCode: marketFindByOrderBookId.ticker,
       orderBookId: marketFindByOrderBookId.orderBook,
       board: marketFindByOrderBookId.board,
-      session: currentSession.value,
+      session: orderSession,
+      exchange: orderExchange,
+      cseTraderCode: orderCseTraderCode,
       category: marketFindByOrderBookId.shareType?.toUpperCase(),
       marketType: marketFindByOrderBookId.marketType,
       group: marketFindByOrderBookId.group?.toUpperCase(),
@@ -408,10 +430,8 @@ mixin OrderListMixin on HomeState {
     ActionsType action, {
     UserOrder? order,
   }) async {
-    if (!canOrderOnSelectedExchange) {
-      _showOrderAlert('Order not sent', cseOrderActionBlockedMessage);
-      return;
-    }
+    if (order != null && !_orderOnSelectedExchange(order)) return;
+    if (_blockCseOrderWithoutTraderCode()) return;
     //  1. SAFEGUARD: Check internet
     if (!await _orderNetworkAvailable()) return;
 
@@ -433,7 +453,7 @@ mixin OrderListMixin on HomeState {
 
     //  3. SAFEGUARD: Handle orderBookId safely.
     final safeOrderBookId = order.orderBookId ?? 0;
-    final marketFindByOrderBookId = getMarketByOrderBookId(safeOrderBookId);
+    final marketFindByOrderBookId = _marketForOrderBook(safeOrderBookId);
 
     //  4. SAFEGUARD: Check if market data was actually found
     if (marketFindByOrderBookId.orderBook == null ||
@@ -487,7 +507,9 @@ mixin OrderListMixin on HomeState {
       securityCode: marketFindByOrderBookId.ticker,
       orderBookId: marketFindByOrderBookId.orderBook,
       board: marketFindByOrderBookId.board,
-      session: currentSession.value,
+      session: orderSession,
+      exchange: orderExchange,
+      cseTraderCode: orderCseTraderCode,
       category: marketFindByOrderBookId.shareType?.toUpperCase(),
       marketType: marketFindByOrderBookId.marketType,
       group: marketFindByOrderBookId.group?.toUpperCase(),
@@ -537,10 +559,8 @@ mixin OrderListMixin on HomeState {
   }
 
   void orderCancelSubmitted(String action, UserOrder order) async {
-    if (!canOrderOnSelectedExchange) {
-      _showOrderAlert('Order not sent', cseOrderActionBlockedMessage);
-      return;
-    }
+    if (!_orderOnSelectedExchange(order)) return;
+    if (_blockCseOrderWithoutTraderCode()) return;
     //  ১. ইন্টারনেট চেক
     if (!await _orderNetworkAvailable()) return;
 
@@ -560,11 +580,7 @@ mixin OrderListMixin on HomeState {
     var clientCode = userInfo.userDetail?.investorCode ?? '';
 
     //  ৩. Symbol (shortName) বের করা হচ্ছে
-    final shortName =
-        marketListAll
-            .firstWhereOrNull((market) => market.orderBook == order.orderBookId)
-            ?.shortName ??
-        '';
+    final shortName = _symbolForOrderBook(order.orderBookId);
 
     if (shortName.isEmpty) {
       printLog(
@@ -583,7 +599,9 @@ mixin OrderListMixin on HomeState {
       orderId: order.orderId ?? '',
       origClientOrderId: order.clientOrderId ?? "",
       clientOrderId: "", // ক্যান্সেলের সময় নতুন ক্লায়েন্ট আইডি লাগে না
-      session: currentSession.value,
+      session: orderSession,
+      exchange: orderExchange,
+      cseTraderCode: orderCseTraderCode,
     );
 
     final jsonRequest = jsonEncode(requestBody.toJson());
@@ -631,10 +649,8 @@ mixin OrderListMixin on HomeState {
     ActionsType action,
     UserOrder order,
   ) async {
-    if (!canOrderOnSelectedExchange) {
-      _showOrderAlert('Order not sent', cseOrderActionBlockedMessage);
-      return;
-    }
+    if (!_orderOnSelectedExchange(order)) return;
+    if (_blockCseOrderWithoutTraderCode()) return;
     //  ১. ইন্টারনেট চেক
     if (!await _orderNetworkAvailable()) return;
 
@@ -644,11 +660,7 @@ mixin OrderListMixin on HomeState {
     var boId = userInfo.userDetail?.boId ?? '';
 
     //  ২. Symbol (shortName) বের করা হচ্ছে
-    final shortName =
-        marketListAll
-            .firstWhereOrNull((market) => market.orderBook == order.orderBookId)
-            ?.shortName ??
-        '';
+    final shortName = _symbolForOrderBook(order.orderBookId);
 
     if (shortName.isEmpty) {
       printLog(
@@ -665,6 +677,8 @@ mixin OrderListMixin on HomeState {
       'symbol': shortName,
       'side': order.side,
       'session': "continuous",
+      'exchange': orderExchange,
+      'cse_trader_code': orderCseTraderCode,
     };
 
     final jsonRequest = jsonEncode(requestBody);
