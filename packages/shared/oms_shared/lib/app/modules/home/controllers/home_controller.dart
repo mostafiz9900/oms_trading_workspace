@@ -170,6 +170,9 @@ class HomeController extends HomeState
     printLog("on ready home controller");
   }
 
+  /// How long after [onClose] the order form fields are disposed.
+  static const fieldsDisposeDelay = Duration(seconds: 1);
+
   @override
   void onClose() {
     _exchangeWorker?.dispose();
@@ -178,7 +181,12 @@ class HomeController extends HomeState
     _orderResponseTimer?.cancel();
     _timeSalesThrottle.cancel();
     disconnect();
-    Future.delayed(const Duration(milliseconds: 100), () {
+    // Login / logout delete this controller and then replace the Home route;
+    // the old Home (its Trade fields) stays on screen during the route
+    // transition (~300 ms, longer with a slow frame). Disposing the fields
+    // before it is gone threw "TextEditingController was used after being
+    // disposed", so wait until the transition is over.
+    Future.delayed(fieldsDisposeDelay, () {
       _disconnectAll();
       disclosedQtyTextEditField.dispose();
       qtyTextEditField.dispose(); // শুধুমাত্র একবার কল হবে ✅
