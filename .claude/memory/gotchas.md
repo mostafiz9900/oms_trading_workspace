@@ -78,6 +78,11 @@
 - **How to Avoid**: list the paths literally in the `for`, check the backup count, and grep the diff for mutation residue before committing.
 - **Discovered**: 2026-11-06
 
+#### Tests — a HomeController without onInit
+- **What Happens**: `Get.put(HomeController(...))` runs onInit: it opens every socket, may navigate to `/login` and leaves timers pending (test fails after it ends).
+- **How to Avoid**: when only HomeController state is needed (e.g. another controller does `Get.find<HomeController>()`), register a subclass with empty `onInit` / `onReady` (`test/modules/orders/controllers/order_summary_controller_test.dart`).
+- **Discovered**: 2026-11-09
+
 ## Template
 #### [Module] — [Title]
 - **What Happens**:

@@ -3,8 +3,10 @@ import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/values/app_config.dart';
+import '../../../core/values/storage.dart';
 import '../../../data/models/response/order_summary_model.dart';
 import '../../../data/services/socket_db_service.dart';
+import '../../../data/services/storage_service.dart';
 import '../../home/controllers/home_controller.dart';
 
 class OrderSummaryController extends GetxController {
@@ -34,9 +36,9 @@ class OrderSummaryController extends GetxController {
       _setLoadingState();
 
       // 🚀 ডাইনামিক টোকেন এবং ইনভেস্টর কোড রিড করা
-      String token =
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzg3MjE5MTMxLCJpYXQiOjE3ODcxOTc1MzEsImp0aSI6ImRmYzdiZmU1MzY0OTQ2YzJiOGFhMWQxNWU5YmVkM2U1IiwidXNlcl9pZCI6Nn0.zRE8vxMFFtid72tszTqZ4QVASHkILsa_-1ormc3xCy8';
-      String investorCode = "311";
+      String token = await StorageService.read(StorageConstants.token) ?? '';
+      String investorCode =
+          homeController.userInfo.userDetail?.investorCode ?? '';
 
       if (token.isEmpty || investorCode.isEmpty) {
         _setErrorState("Authentication failed. Please login again.");
