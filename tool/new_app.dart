@@ -88,6 +88,12 @@ void main(List<String> args) {
   }
 
   final quotedName = name.contains(' ') ? '"$name"' : name;
+  // Info.plist and AndroidManifest.xml are XML: "&" must be "&amp;".
+  final xmlName = name
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;');
   _edit('$target/pubspec.yaml', [
     (RegExp(r'^name: .*$', multiLine: true), 'name: $id'),
     (
@@ -102,7 +108,7 @@ void main(List<String> args) {
   _edit('$target/android/app/src/main/AndroidManifest.xml', [
     (
       RegExp('android:label="${RegExp.escape(sourceName)}"'),
-      'android:label="$name"',
+      'android:label="$xmlName"',
     ),
   ]);
   _edit('$target/ios/Runner.xcodeproj/project.pbxproj', [
@@ -126,7 +132,7 @@ void main(List<String> args) {
   _edit('$target/ios/Runner/Info.plist', [
     (
       RegExp('<string>${RegExp.escape(sourceName)}</string>'),
-      '<string>$name</string>',
+      '<string>$xmlName</string>',
     ),
     // Version comes from pubspec.yaml for new apps.
     (
@@ -166,7 +172,7 @@ class DefaultFirebaseOptions {
 /// Server URLs, app name and colors live in `env/uat.json` / `env/prod.json`.
 const houseProfile = HouseProfile(
   houseId: '$id',
-  legalName: 'TODO $name Ltd',
+  legalName: 'TODO $name',
   companyName: '$name',
   contact: HouseContact(
     phone: 'TODO',
