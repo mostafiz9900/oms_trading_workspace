@@ -226,7 +226,7 @@ class _MarketTabWidget extends StatelessWidget {
         children: [
           TradeSummaryGridWidget(),
           MarketIndexListWidget(),
-          IndexChartWidget(), //lastly added
+          IndexChartWidget(),
           AppSpace.spaceH10,
           const TopSectorByGainerWidget(),
           const TopSectorByCategoryWidget(),

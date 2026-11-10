@@ -3,6 +3,7 @@ import '../../../data/models/response/index_candle_model.dart'
 
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:broker_config/broker_config.dart' show StockExchange;
 
 import 'package:get/get.dart';
@@ -182,7 +183,7 @@ class LiveIndexController extends GetxController {
 
     try {
       final String url = getCandleEndpoint(symbol, param);
-      // printLog('Fetching Index Chart Data: $url');
+      printLog('Fetching Index Chart Data: $url');
 
       final response = await _connection.get(url);
       printLog(response.body);

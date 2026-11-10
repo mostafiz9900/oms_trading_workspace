@@ -4,7 +4,7 @@
   "OMS_ENV": "uat",
   "OMS_API_BASE_URL": "https://api.your-house.com/",
   "OMS_API_CHART_BASE_URL": "https://chart.your-house.com/",
-  "OMS_API_ITCH_BASE_URL": "https://itch.your-house.com/",
+  "OMS_API_ITCH_BASE_URL": "https://uat-itchservice.skytrade.us/",
   "OMS_SOCKET_BASE_URL": "wss://api.your-house.com/",
   "OMS_SOCKET_MARKET_URL": "wss://itch.your-house.com/market",
   "OMS_SOCKET_NEWS_URL": "wss://news.your-house.com/socket-api/v1/news/ws",

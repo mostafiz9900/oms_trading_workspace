@@ -109,7 +109,8 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
   }
 
   Color sectorTileColor(double? sectorValue) {
-    final double c = sectorValue ?? 0.0;
+    final double rawValue = sectorValue ?? 0.0;
+    final double c = rawValue.isFinite ? rawValue : 0.0;
     if (c > 0.005) {
       return ColorConstants.forestGreen;
     } else if (c < -0.005) {
@@ -120,6 +121,7 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
   }
 
   String formatChgText(double changeVal) {
+    if (!changeVal.isFinite) changeVal = 0.0;
     if (changeVal.abs() < 0.005) {
       return '0.00%';
     }
@@ -135,7 +137,9 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.sizeOf(context).width;
     final double screenHeight = MediaQuery.sizeOf(context).height;
-    final double responsiveHeight = (screenHeight * 0.65).clamp(400.0, 800.0);
+    final double responsiveHeight = screenHeight.isFinite
+        ? (screenHeight * 0.65).clamp(400.0, 800.0).toDouble()
+        : 400.0;
 
     return VisibleGetBuilder<HomeController>(
       id: 'marketList',
@@ -190,11 +194,17 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
           if (turnover > maxTurnover) maxTurnover = turnover;
         }
 
-        final double minWeight = maxTurnover * 0.01;
+        // Normalize the weights before passing them to Syncfusion. Its squarified
+        // layout computes tile areas from their sum; very large market values can
+        // otherwise overflow intermediate calculations and produce NaN geometry.
+        final double safeMaxTurnover = maxTurnover.isFinite && maxTurnover > 0
+            ? maxTurnover
+            : 1.0;
         for (int i = 0; i < itemWeights.length; i++) {
-          if (itemWeights[i] < minWeight) {
-            itemWeights[i] = minWeight;
-          }
+          final double normalized = itemWeights[i] / safeMaxTurnover;
+          itemWeights[i] = normalized.isFinite && normalized > 0
+              ? normalized.clamp(0.01, 1.0).toDouble()
+              : 0.01;
         }
 
         final bool isZoomed = _selectedSector != null;
@@ -303,19 +313,25 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
                               padding: EdgeInsets.zero,
                               color: const Color(0xFF141414), // 🚀 অরিজিনাল ডার্ক কালার ফিরে এসেছে
                               labelBuilder: (BuildContext context, TreemapTile tile) {
-                                return IgnorePointer(
-                                  child: Container(
-                                    alignment: Alignment.centerLeft, // 🚀 টাইটেল একদম Left-Center ফিক্সড
-                                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                                    child: FittedBox(
-                                      fit: BoxFit.scaleDown, // 🚀 সাইজের সাথে রেস্পন্সিভ হয়ে ছোট হবে
+                                // Bound the label area so it cannot consume the
+                                // sector tile and leave no room for child tiles.
+                                return SizedBox(
+                                  height: 12,
+                                  child: IgnorePointer(
+                                    child: Container(
                                       alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        tile.group.toUpperCase(),
-                                        style: const TextStyle(
-                                          color: Colors.white, // অরিজিনাল হোয়াইট টেক্সট
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
+                                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          tile.group.toUpperCase(),
+                                          maxLines: 1,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -339,7 +355,7 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
                               final String title = model.shortName?.isNotEmpty == true
                                   ? model.shortName!
                                   : (model.ticker ?? 'N/A');
-                              final double changeVal = model.chg ?? 0.0;
+                              final double changeVal = getChgSafe(model);
                               final String chgStr = formatChgText(changeVal);
 
                               return GestureDetector(
@@ -380,7 +396,12 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,
-                                                    fontSize: isZoomed ? 14 : 11,
+                                                    fontSize: isZoomed
+                                                        ? 14
+                                                        : (tileConstraints.maxWidth < 55 ||
+                                                                tileConstraints.maxHeight < 35
+                                                            ? 8
+                                                            : 11),
                                                   ),
                                                 ),
                                                 if (isZoomed || tileConstraints.maxHeight > 25)

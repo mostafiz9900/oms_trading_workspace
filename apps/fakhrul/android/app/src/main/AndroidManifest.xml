@@ -25,7 +25,7 @@
         <package android:name="com.whatsapp" />
     </queries>
     <application
-        android:label="Fakhrul Securities"
+        android:label="FISBD"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
