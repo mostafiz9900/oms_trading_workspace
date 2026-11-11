@@ -5,13 +5,14 @@ import 'package:get/get.dart';
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/utils/extensions/string_extensions.dart';
 import '../../../../core/utils/helpers/hex_color.dart';
-import '../../../../core/values/constants.dart';
 import '../../../../core/values/dimens.dart';
 import '../../../../core/values/space.dart';
 import '../../../../data/enums/app_enum.dart';
 import '../../../../data/models/response/user_order.dart';
 import '../../../../global_widgets/custom_dropdown.dart';
 import '../../../home/controllers/home_controller.dart';
+
+const _orderModifyDialogId = 'order_modify_dialog';
 
 // ----------------------------------------------------------------------
 //  Restored Function: showOrderFormDialog
@@ -23,7 +24,9 @@ void showOrderFormDialog(UserOrder order) {
 
   Get.dialog(
     GetBuilder<HomeController>(
-      id: AppConstants.orderList,
+      // Keep dialog form updates scoped to the overlay. Rebuilding the order
+      // list underneath an open dialog can detach its sliver/render children.
+      id: _orderModifyDialogId,
       initState: (_) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           final homeCon = Get.find<HomeController>();
@@ -33,7 +36,7 @@ void showOrderFormDialog(UserOrder order) {
           homeCon.qtyTextEditField.text = "${order.leavesQty ?? ''}";
           homeCon.minQtyTextEditField.text = "${order.minQty ?? ''}";
           homeCon.tradPriceTextEditField.text = "${order.limit ?? ''}";
-          homeCon.update([AppConstants.orderList]);
+          homeCon.update([_orderModifyDialogId]);
         });
       },
       builder: (homeCon) {
@@ -78,7 +81,10 @@ void showOrderFormDialog(UserOrder order) {
                           Flexible(
                             child: OrderTypeDropdownListWidget(
                               valueChanged: (String? value) {
-                                if (value != null) homeCon.changeOrderTypeOrderList(value);
+                                if (value != null) {
+                                  homeCon.selectOrderType = value;
+                                  homeCon.update([_orderModifyDialogId]);
+                                }
                               },
                               selectedValueNotifier: ValueNotifier<String?>(homeCon.selectOrderType),
                             ),
@@ -90,7 +96,10 @@ void showOrderFormDialog(UserOrder order) {
                               decoration: BoxDecoration(color: context.tapBg, borderRadius: BorderRadius.circular(6)),
                               child: TypeDropdownListWidget(
                                 valueChanged: (String? value) {
-                                  if (value != null) homeCon.changeTypeOrderList(value);
+                                  if (value != null) {
+                                    homeCon.selectType = value;
+                                    homeCon.update([_orderModifyDialogId]);
+                                  }
                                 },
                                 value: homeCon.selectType,
                               ),
@@ -136,7 +145,10 @@ void showOrderFormDialog(UserOrder order) {
                               decoration: BoxDecoration(color: context.tapBg, borderRadius: BorderRadius.circular(6)),
                               child: ValidityDropdownListWidget(
                                 valueChanged: (String? value) {
-                                  if (value != null) homeCon.changeValidityOrderList(value);
+                                  if (value != null) {
+                                    homeCon.selectValidity = value;
+                                    homeCon.update([_orderModifyDialogId]);
+                                  }
                                 },
                                 value: homeCon.selectValidity,
                               ),

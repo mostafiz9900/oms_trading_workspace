@@ -6,9 +6,11 @@ import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/utils/helpers/app_helper.dart';
 import '../../../../core/values/colors.dart';
 import '../../../../core/values/constants.dart';
+import '../../../../core/values/app_config.dart';
 import '../../../../core/values/space.dart';
 import '../../../../data/enums/app_enum.dart';
 import '../../../../data/models/response/user_order.dart';
+import '../../../../data/services/exchange_service.dart';
 import '../../../../global_widgets/custom_container.dart';
 import '../../../home/controllers/home_controller.dart';
 import '../../../../global_widgets/confirm_dialog.dart';
@@ -26,7 +28,11 @@ class OrderHistoryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<HomeController>(
+    // The portfolio's DSE/CSE switch changes an Rx value. Observe it here so
+    // this kept-alive tab filters again even when its controller isn't updated.
+    return Obx(() {
+      final selectedExchange = ExchangeService.current;
+      return GetBuilder<HomeController>(
       id: AppConstants.orderList,
       builder: (homeCotByOrder) {
         if (homeCotByOrder.isLoadingUserOrder) {
@@ -34,6 +40,12 @@ class OrderHistoryWidget extends StatelessWidget {
         }
 
         List<UserOrder?> orders = List.from(homeCotByOrder.userOrder.data ?? []);
+
+        if (AppConfig.hasBothExchanges) {
+          orders = orders
+              .where((order) => order != null && homeCotByOrder.exchangeOfOrder(order) == selectedExchange)
+              .toList();
+        }
 
         if (homeCotByOrder.selectedInstrument != 'All') {
           orders = orders.where((o) => o?.name == homeCotByOrder.selectedInstrument).toList();
@@ -136,6 +148,7 @@ class OrderHistoryWidget extends StatelessWidget {
         );
       },
     );
+    });
   }
 
   // ----------------------------------------------------------------------

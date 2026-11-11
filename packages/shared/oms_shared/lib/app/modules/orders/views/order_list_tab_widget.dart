@@ -5,10 +5,12 @@ import 'package:get/get.dart';
 
 import '../../../core/utils/extensions/app_context.dart';
 import '../../../core/values/assets.dart';
+import '../../../core/values/app_config.dart';
 import '../../../core/values/colors.dart';
 import '../../../core/values/constants.dart';
 import '../../../core/values/space.dart';
 import '../../home/controllers/home_controller.dart';
+import '../../../data/services/exchange_service.dart';
 import 'local_widgets/title_and_sub_title_column_widget.dart';
 import 'local_widgets/order_history_widget.dart';
 
@@ -185,6 +187,11 @@ class _ClientCodeWidget extends ConsumerWidget {
                 final position = details.globalPosition;
                 List<String> uniqueInstruments = ['All'];
                 var allOrders = homeCotByOrder.userOrder.data ?? [];
+                if (AppConfig.hasBothExchanges) {
+                  allOrders = allOrders
+                      .where((order) => homeCotByOrder.exchangeOfOrder(order) == ExchangeService.current)
+                      .toList();
+                }
                 for (var order in allOrders) {
                   if (order.name != null && order.name!.isNotEmpty) {
                     if (!uniqueInstruments.contains(order.name)) {
