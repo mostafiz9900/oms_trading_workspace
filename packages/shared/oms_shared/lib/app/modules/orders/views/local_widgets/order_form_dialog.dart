@@ -18,12 +18,43 @@ const _orderModifyDialogId = 'order_modify_dialog';
 //  Restored Function: showOrderFormDialog
 // ----------------------------------------------------------------------
 void showOrderFormDialog(UserOrder order) {
-  bool isBuy = order.side?.toUpperCase() == 'BUY';
-  Color headerBgColor = isBuy ? HexColor("#22C665") : HexColor("#F70042");
-  Color headerTextColor = Colors.white;
+  Get.dialog(_OrderModifyDialog(order: order), barrierDismissible: false);
+}
 
-  Get.dialog(
-    GetBuilder<HomeController>(
+class _OrderModifyDialog extends StatefulWidget {
+  const _OrderModifyDialog({required this.order});
+
+  final UserOrder order;
+
+  @override
+  State<_OrderModifyDialog> createState() => _OrderModifyDialogState();
+}
+
+class _OrderModifyDialogState extends State<_OrderModifyDialog> {
+  late final TextEditingController _priceController;
+
+  @override
+  void initState() {
+    super.initState();
+    _priceController = TextEditingController(
+      text: (widget.order.limit ?? 0).toString(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _priceController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final order = widget.order;
+    final isBuy = order.side?.toUpperCase() == 'BUY';
+    final headerBgColor = isBuy ? HexColor("#22C665") : HexColor("#F70042");
+    const headerTextColor = Colors.white;
+
+    return GetBuilder<HomeController>(
       // Keep dialog form updates scoped to the overlay. Rebuilding the order
       // list underneath an open dialog can detach its sliver/render children.
       id: _orderModifyDialogId,
@@ -35,13 +66,14 @@ void showOrderFormDialog(UserOrder order) {
           homeCon.selectValidity = order.timeInForce?.toCapitalize();
           homeCon.qtyTextEditField.text = "${order.leavesQty ?? ''}";
           homeCon.minQtyTextEditField.text = "${order.minQty ?? ''}";
-          homeCon.tradPriceTextEditField.text = "${order.limit ?? ''}";
           homeCon.update([_orderModifyDialogId]);
         });
       },
       builder: (homeCon) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           contentPadding: EdgeInsets.zero,
           content: SingleChildScrollView(
             child: Builder(
@@ -86,14 +118,19 @@ void showOrderFormDialog(UserOrder order) {
                                   homeCon.update([_orderModifyDialogId]);
                                 }
                               },
-                              selectedValueNotifier: ValueNotifier<String?>(homeCon.selectOrderType),
+                              selectedValueNotifier: ValueNotifier<String?>(
+                                homeCon.selectOrderType,
+                              ),
                             ),
                           ),
                           AppSpace.spaceW10,
                           Flexible(
                             child: Container(
                               height: AppDimens.space50,
-                              decoration: BoxDecoration(color: context.tapBg, borderRadius: BorderRadius.circular(6)),
+                              decoration: BoxDecoration(
+                                color: context.tapBg,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
                               child: TypeDropdownListWidget(
                                 valueChanged: (String? value) {
                                   if (value != null) {
@@ -117,18 +154,28 @@ void showOrderFormDialog(UserOrder order) {
                         children: [
                           Expanded(
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: AppDimens.space15),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppDimens.space15,
+                              ),
                               alignment: Alignment.centerLeft,
                               height: AppDimens.space50,
-                              decoration: BoxDecoration(color: context.tapBg, borderRadius: BorderRadius.circular(6)),
+                              decoration: BoxDecoration(
+                                color: context.tapBg,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
                               child: TextFormField(
                                 controller: homeCon.disclosedQtyTextEditField,
                                 keyboardType: TextInputType.number,
-                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                ],
                                 style: TextStyle(color: context.textColor),
                                 decoration: InputDecoration(
                                   hintText: 'Disclosed Qty.',
-                                  hintStyle: TextStyle(fontSize: 14.0, color: context.textColor.withAlpha(128)),
+                                  hintStyle: TextStyle(
+                                    fontSize: 14.0,
+                                    color: context.textColor.withAlpha(128),
+                                  ),
                                   border: InputBorder.none,
                                   enabledBorder: InputBorder.none,
                                   focusedBorder: InputBorder.none,
@@ -142,7 +189,10 @@ void showOrderFormDialog(UserOrder order) {
                           Expanded(
                             child: Container(
                               height: AppDimens.space50,
-                              decoration: BoxDecoration(color: context.tapBg, borderRadius: BorderRadius.circular(6)),
+                              decoration: BoxDecoration(
+                                color: context.tapBg,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
                               child: ValidityDropdownListWidget(
                                 valueChanged: (String? value) {
                                   if (value != null) {
@@ -166,18 +216,28 @@ void showOrderFormDialog(UserOrder order) {
                         children: [
                           Expanded(
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: AppDimens.space15),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppDimens.space15,
+                              ),
                               alignment: Alignment.centerLeft,
                               height: AppDimens.space50,
-                              decoration: BoxDecoration(color: context.tapBg, borderRadius: BorderRadius.circular(6)),
+                              decoration: BoxDecoration(
+                                color: context.tapBg,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
                               child: TextFormField(
                                 controller: homeCon.qtyTextEditField,
                                 keyboardType: TextInputType.number,
-                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                ],
                                 style: TextStyle(color: context.textColor),
                                 decoration: InputDecoration(
                                   hintText: 'Qty.',
-                                  hintStyle: TextStyle(fontSize: 14.0, color: context.textColor.withAlpha(128)),
+                                  hintStyle: TextStyle(
+                                    fontSize: 14.0,
+                                    color: context.textColor.withAlpha(128),
+                                  ),
                                   border: InputBorder.none,
                                   enabledBorder: InputBorder.none,
                                   focusedBorder: InputBorder.none,
@@ -190,18 +250,28 @@ void showOrderFormDialog(UserOrder order) {
                           AppSpace.spaceW10,
                           Expanded(
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: AppDimens.space15),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppDimens.space15,
+                              ),
                               alignment: Alignment.centerLeft,
                               height: AppDimens.space50,
-                              decoration: BoxDecoration(color: context.tapBg, borderRadius: BorderRadius.circular(6)),
+                              decoration: BoxDecoration(
+                                color: context.tapBg,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
                               child: TextFormField(
                                 controller: homeCon.minQtyTextEditField,
                                 keyboardType: TextInputType.number,
-                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                ],
                                 style: TextStyle(color: context.textColor),
                                 decoration: InputDecoration(
                                   hintText: 'Min Qty.',
-                                  hintStyle: TextStyle(fontSize: 14.0, color: context.textColor.withAlpha(128)),
+                                  hintStyle: TextStyle(
+                                    fontSize: 14.0,
+                                    color: context.textColor.withAlpha(128),
+                                  ),
                                   border: InputBorder.none,
                                   enabledBorder: InputBorder.none,
                                   focusedBorder: InputBorder.none,
@@ -223,45 +293,72 @@ void showOrderFormDialog(UserOrder order) {
                         children: [
                           Expanded(
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 5),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 5,
+                              ),
                               alignment: Alignment.center,
                               height: AppDimens.space50,
                               decoration: BoxDecoration(
                                 color: context.tapBg,
                                 borderRadius: BorderRadius.circular(6),
-                                border: Border.all(color: context.textColor.withAlpha(26)),
+                                border: Border.all(
+                                  color: context.textColor.withAlpha(26),
+                                ),
                               ),
                               child: Row(
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      double currentVal = double.tryParse(homeCon.tradPriceTextEditField.text) ?? 0.0;
+                                      double currentVal =
+                                          double.tryParse(
+                                            _priceController.text,
+                                          ) ??
+                                          0.0;
                                       if (currentVal > 0) {
                                         //  Math Fix: Floating point precision issue এড়াতে
-                                        double newVal = double.parse((currentVal - 0.10).toStringAsFixed(2));
+                                        double newVal = double.parse(
+                                          (currentVal - 0.10).toStringAsFixed(
+                                            2,
+                                          ),
+                                        );
                                         if (newVal < 0) newVal = 0;
 
-                                        String newText = newVal.toStringAsFixed(2);
+                                        String newText = newVal.toStringAsFixed(
+                                          2,
+                                        );
                                         //  Cursor Fix: টেক্সট আপডেট হওয়ার পর কার্সারটি একদম শেষে রাখার লজিক
-                                        homeCon.tradPriceTextEditField.value = TextEditingValue(
+                                        _priceController
+                                            .value = TextEditingValue(
                                           text: newText,
-                                          selection: TextSelection.collapsed(offset: newText.length),
+                                          selection: TextSelection.collapsed(
+                                            offset: newText.length,
+                                          ),
                                         );
                                       }
                                     },
                                     borderRadius: BorderRadius.circular(4),
                                     child: Container(
                                       padding: const EdgeInsets.all(8),
-                                      child: Icon(Icons.remove, color: context.textColor),
+                                      child: Icon(
+                                        Icons.remove,
+                                        color: context.textColor,
+                                      ),
                                     ),
                                   ),
 
                                   // 💵 Price Input Field
                                   Expanded(
                                     child: TextFormField(
-                                      controller: homeCon.tradPriceTextEditField,
-                                      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}'))],
-                                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                      controller: _priceController,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                          RegExp(r'^\d*\.?\d{0,2}'),
+                                        ),
+                                      ],
+                                      keyboardType:
+                                          const TextInputType.numberWithOptions(
+                                            decimal: true,
+                                          ),
                                       textAlign: TextAlign.center,
                                       decoration: const InputDecoration(
                                         border: InputBorder.none,
@@ -269,7 +366,10 @@ void showOrderFormDialog(UserOrder order) {
                                         focusedBorder: InputBorder.none,
                                         filled: true,
                                         fillColor: Colors.transparent,
-                                        contentPadding: EdgeInsets.only(bottom: 11, top: 11),
+                                        contentPadding: EdgeInsets.only(
+                                          bottom: 11,
+                                          top: 11,
+                                        ),
                                         hintText: "0.00",
                                       ),
                                       style: Get.textTheme.titleLarge?.copyWith(
@@ -282,21 +382,34 @@ void showOrderFormDialog(UserOrder order) {
 
                                   InkWell(
                                     onTap: () {
-                                      double currentVal = double.tryParse(homeCon.tradPriceTextEditField.text) ?? 0.0;
+                                      double currentVal =
+                                          double.tryParse(
+                                            _priceController.text,
+                                          ) ??
+                                          0.0;
                                       //  Math Fix
-                                      double newVal = double.parse((currentVal + 0.10).toStringAsFixed(2));
+                                      double newVal = double.parse(
+                                        (currentVal + 0.10).toStringAsFixed(2),
+                                      );
 
-                                      String newText = newVal.toStringAsFixed(2);
+                                      String newText = newVal.toStringAsFixed(
+                                        2,
+                                      );
                                       //  Cursor Fix
-                                      homeCon.tradPriceTextEditField.value = TextEditingValue(
+                                      _priceController.value = TextEditingValue(
                                         text: newText,
-                                        selection: TextSelection.collapsed(offset: newText.length),
+                                        selection: TextSelection.collapsed(
+                                          offset: newText.length,
+                                        ),
                                       );
                                     },
                                     borderRadius: BorderRadius.circular(4),
                                     child: Container(
                                       padding: const EdgeInsets.all(8),
-                                      child: Icon(Icons.add, color: context.textColor),
+                                      child: Icon(
+                                        Icons.add,
+                                        color: context.textColor,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -324,15 +437,26 @@ void showOrderFormDialog(UserOrder order) {
                               homeCon.tradPriceTextEditField.clear();
                             },
                             style: OutlinedButton.styleFrom(
-                              side: BorderSide(color: context.textColor.withAlpha(77)),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                              side: BorderSide(
+                                color: context.textColor.withAlpha(77),
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
                             ),
-                            child: Text("Cancel", style: TextStyle(color: context.textColor)),
+                            child: Text(
+                              "Cancel",
+                              style: TextStyle(color: context.textColor),
+                            ),
                           ),
                           AppSpace.spaceW10,
                           ElevatedButton(
                             onPressed: () {
-                              var orderConfirm = isBuy ? SideType2.BUY : SideType2.SELL;
+                              var orderConfirm = isBuy
+                                  ? SideType2.BUY
+                                  : SideType2.SELL;
+                              homeCon.tradPriceTextEditField.text =
+                                  _priceController.text;
                               Get.back();
                               homeCon.orderConfirmSubmittedReplaceOrder(
                                 orderConfirm,
@@ -342,10 +466,15 @@ void showOrderFormDialog(UserOrder order) {
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: headerBgColor,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
                               elevation: 0,
                             ),
-                            child: const Text("Submit", style: TextStyle(color: Colors.white)),
+                            child: const Text(
+                              "Submit",
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                         ],
                       ),
@@ -357,7 +486,6 @@ void showOrderFormDialog(UserOrder order) {
           ),
         );
       },
-    ),
-    barrierDismissible: false,
-  );
+    );
+  }
 }
