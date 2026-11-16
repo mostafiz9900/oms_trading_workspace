@@ -282,6 +282,12 @@ mixin HomeSocketMixin on HomeState {
   /// the same on both exchanges, so the old quotes are dropped and the feed
   /// reconnects.
   void reloadMarketForExchange() {
+    // Order history is scoped to the selected exchange. A symbol picked on
+    // CSE may not exist on DSE, so clear that filter when the exchange changes.
+    if (selectedInstrument != 'All') {
+      selectedInstrument = 'All';
+      update([AppConstants.orderList]);
+    }
     _resetQuoteForExchange();
     _resetFavForExchange();
     if (_cseFeedApart) {

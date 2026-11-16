@@ -13,12 +13,20 @@ import '../../../global_widgets/appbar_right_search_tap.dart';
 import '../../orders/views/order_list_tab_widget.dart';
 import 'local_widgets/position_tab_widget.dart';
 
-class PortfolioWidget extends StatelessWidget {
+class PortfolioWidget extends StatefulWidget {
   const PortfolioWidget({super.key});
 
   @override
+  State<PortfolioWidget> createState() => _PortfolioWidgetState();
+}
+
+class _PortfolioWidgetState extends State<PortfolioWidget> {
+  // Made once: a new key on every build threw the whole tab (drawer,
+  // inner tabs, scroll) away and rebuilt it on every Home update.
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
   Widget build(BuildContext context) {
-    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
     return Scaffold(
       key: scaffoldKey,
       drawer: CustomDrawer(),

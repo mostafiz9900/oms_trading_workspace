@@ -15,12 +15,20 @@ import '../../../global_widgets/exchange/exchange_switcher.dart';
 import 'local_widgets/price_table_tab_widget.dart';
 import 'local_widgets/time_sales_tab_widget.dart';
 
-class QuoteWidget extends StatelessWidget {
+class QuoteWidget extends StatefulWidget {
   const QuoteWidget({super.key});
 
   @override
+  State<QuoteWidget> createState() => _QuoteWidgetState();
+}
+
+class _QuoteWidgetState extends State<QuoteWidget> {
+  // Made once: a new key on every build threw the whole tab (drawer,
+  // inner tabs, scroll) away and rebuilt it on every Home update.
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
   Widget build(BuildContext context) {
-    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
     final homeController = Get.find<HomeController>();
     return Scaffold(
       key: scaffoldKey,

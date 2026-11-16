@@ -1,5 +1,7 @@
+import '../market_identifier.dart';
+
 class MarketModel {
-  final int? id;
+  final MarketIdentifier? id;
   final int? fvbId;
   final String? session;
   final String? shortName;
@@ -9,7 +11,7 @@ class MarketModel {
   final String? tradingState;
   final String? shareType;
   final String? marketType;
-  final int? orderBook;
+  final MarketIdentifier? orderBook;
   final String? date;
   final int? lq;
   final int? bq;
@@ -143,7 +145,7 @@ class MarketModel {
 
   factory MarketModel.fromJson(Map<String, dynamic> json) {
     return MarketModel(
-      id: json['id'] != null ? int.tryParse(json['id'].toString()) : null,
+      id: marketIdentifierFromJson(json['id']),
       fvbId: json['fvbId'] != null
           ? int.tryParse(json['fvbId'].toString())
           : null,
@@ -155,7 +157,7 @@ class MarketModel {
       tradingState: json['ts'],
       shareType: json['st']?.toString(),
       marketType: json['mt'],
-      orderBook: int.tryParse(json['ob']?.toString() ?? ''),
+      orderBook: marketIdentifierFromJson(json['ob']),
       date: json['date']?.toString(),
       lq: json['lq'],
       bq: json['bq'],
@@ -287,7 +289,7 @@ class MarketModel {
   };
 
   MarketModel copyWith({
-    int? id,
+    MarketIdentifier? id,
     int? fvbId,
     String? session,
     String? shortName,
@@ -297,7 +299,7 @@ class MarketModel {
     String? tradingState,
     String? shareType,
     String? marketType,
-    int? orderBook,
+    MarketIdentifier? orderBook,
     String? date,
     int? lq,
     int? bq,
@@ -432,7 +434,7 @@ class MarketModel {
 
   MarketModel mergePartialUpdate(Map<String, dynamic> json) {
     return copyWith(
-      id: json.containsKey('id') ? int.tryParse(json['id'].toString()) : id,
+      id: json.containsKey('id') ? marketIdentifierFromJson(json['id']) : id,
       fvbId: json.containsKey('fvbId')
           ? int.tryParse(json['fvbId'].toString())
           : fvbId,
@@ -447,7 +449,7 @@ class MarketModel {
       shareType: json.containsKey('st') ? json['st'] : shareType,
       marketType: json.containsKey('mt') ? json['mt'] : marketType,
       orderBook: json.containsKey('ob')
-          ? int.tryParse(json['ob'].toString())
+          ? marketIdentifierFromJson(json['ob'])
           : orderBook,
       date: json.containsKey('date') ? json['date']?.toString() : date,
       lq: json.containsKey('lq') ? json['lq'] : lq,
@@ -568,7 +570,7 @@ class MarketModel {
 
   MarketModel mergeUpdate(Map<String, dynamic> json) {
     return copyWith(
-      id: json['id'] != null ? int.tryParse(json['id'].toString()) : id,
+      id: json['id'] != null ? marketIdentifierFromJson(json['id']) : id,
       fvbId: json['fvbId'] != null
           ? int.tryParse(json['fvbId'].toString())
           : fvbId,
@@ -581,7 +583,7 @@ class MarketModel {
       shareType: json['st'] ?? shareType,
       marketType: json['mt'] ?? marketType,
       orderBook: json['ob'] != null
-          ? int.tryParse(json['ob'].toString()) ?? orderBook
+          ? marketIdentifierFromJson(json['ob']) ?? orderBook
           : orderBook,
       date: json['date'] ?? date,
       lq: json['lq'] ?? lq,

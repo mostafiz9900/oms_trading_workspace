@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import '../market_identifier.dart';
+
 OrderConfirmRequest orderConfirmRequestFromJson(String str) =>
     OrderConfirmRequest.fromJson(json.decode(str));
 
@@ -28,7 +30,7 @@ class OrderConfirmRequest {
   String? isin;
   String? assetClass;
   String? securityCode;
-  int? orderBookId;
+  MarketIdentifier? orderBookId;
   String? board;
   String? session;
 
@@ -95,7 +97,7 @@ class OrderConfirmRequest {
       isin: json['isin'],
       assetClass: json['asset_class'],
       securityCode: json['security_code'],
-      orderBookId: json['order_book_id'],
+      orderBookId: marketIdentifierFromJson(json['order_book_id']),
       board: json['board'],
       session: json['session'],
       exchange: json['exchange'],

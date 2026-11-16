@@ -28,13 +28,21 @@ import '../../../global_widgets/empty_widget.dart';
 import '../../../global_widgets/loaders/watchlist_loader.dart';
 import '../../../global_widgets/exchange/exchange_switcher.dart';
 
-class WatchListWidget extends StatelessWidget {
+class WatchListWidget extends StatefulWidget {
   const WatchListWidget({super.key});
+
+  @override
+  State<WatchListWidget> createState() => _WatchListWidgetState();
+}
+
+class _WatchListWidgetState extends State<WatchListWidget> {
+  // Made once: a new key on every build threw the whole tab (drawer,
+  // inner tabs, scroll) away and rebuilt it on every Home update.
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     if (!Get.isRegistered<WatchListController>()) Get.put(WatchListController());
-    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
     final dividerWidget = Divider(height: 1, color: context.dividerColor);
 
     return VisibleGetBuilder<WatchListController>(

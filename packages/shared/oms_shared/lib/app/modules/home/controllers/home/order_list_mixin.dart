@@ -4,23 +4,31 @@ part of '../home_controller.dart';
 mixin OrderListMixin on HomeState {
   /// Stock of [orderBookId] in the selected exchange's feed: the CSE feed
   /// while CSE is shown, else the DSE list as before.
-  MarketModel _marketForOrderBook(int orderBookId) => CseMarketService.isShown
-      ? Get.find<CseMarketService>().quotes.firstWhere(
-          (m) => m.orderBook == orderBookId,
-          orElse: () => MarketModel(),
-        )
-      : getMarketByOrderBookId(orderBookId);
+  MarketModel _marketForOrderBook(MarketIdentifier orderBookId) {
+    if (!CseMarketService.isShown) {
+      return getMarketByOrderBookId(orderBookId);
+    }
+    final quotes = Get.find<CseMarketService>().quotes;
+    final exactMatch = quotes.firstWhereOrNull(
+      (m) => m.orderBook == orderBookId,
+    );
+    return exactMatch ?? MarketModel();
+  }
 
   /// Symbol of [orderBookId] for cancel / status (CSE feed while CSE is shown).
-  String _symbolForOrderBook(int? orderBookId) => CseMarketService.isShown
-      ? Get.find<CseMarketService>().quotes
-                .firstWhereOrNull((m) => m.orderBook == orderBookId)
-                ?.shortName ??
-            ''
-      : marketListAll
-                .firstWhereOrNull((market) => market.orderBook == orderBookId)
-                ?.shortName ??
-            '';
+  String _symbolForOrderBook(MarketIdentifier? orderBookId) {
+    if (CseMarketService.isShown) {
+      final quotes = Get.find<CseMarketService>().quotes;
+      final exactMatch = quotes.firstWhereOrNull(
+        (m) => m.orderBook == orderBookId,
+      );
+      return exactMatch?.shortName ?? '';
+    }
+    return marketListAll
+            .firstWhereOrNull((market) => market.orderBook == orderBookId)
+            ?.shortName ??
+        '';
+  }
 
   /// False (and the user is told) when [order] is on the other exchange.
   bool _orderOnSelectedExchange(UserOrder order) {
@@ -119,6 +127,7 @@ mixin OrderListMixin on HomeState {
           clearAllFields();
           currentIndex = 4;
           currentTabIndexPortfolio = 1;
+          refreshUserOrderList();
           update();
           if (Get.currentRoute != Routes.HOME) {
             printLog('🔄 Redirecting to Home Page from: ${Get.currentRoute}');
@@ -315,6 +324,14 @@ mixin OrderListMixin on HomeState {
       isLoadingUserOrder = false;
       update([AppConstants.orderList]);
     }
+  }
+
+  /// The order socket sends the current order snapshot on connection. Refresh
+  /// that snapshot after the server accepts an order so the Orders tab shows it.
+  void refreshUserOrderList() {
+    isLoadingUserOrder = true;
+    update([AppConstants.orderList]);
+    WebSocketService.instance.forceReconnect(AppConfig.orderConfirmSocketId);
   }
 
   void orderDuplicateSubmitted(ActionsType action, {UserOrder? order}) async {
@@ -546,7 +563,6 @@ mixin OrderListMixin on HomeState {
       // Only update UI if the send attempt didn't throw an error
       currentTabIndexPortfolio = 1;
       update([AppConstants.orderList]);
-
     } catch (e) {
       printLog('❌ WebSocket send failed: $e');
       Get.snackbar(
@@ -726,5 +742,4 @@ mixin OrderListMixin on HomeState {
     // Ekhane obossoi orderList tag diye update dite hobe, taholei list re-render hobe
     update([AppConstants.orderList]);
   }
-
 }

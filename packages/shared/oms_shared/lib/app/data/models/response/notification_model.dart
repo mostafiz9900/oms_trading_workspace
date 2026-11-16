@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import '../market_identifier.dart';
+
 List<NotificationModel> notificationModelFromJson(String str) =>
     List<NotificationModel>.from(
       json.decode(str).map((x) => NotificationModel.fromJson(x)),
@@ -15,7 +17,7 @@ String notificationModelToJson(List<NotificationModel> data) =>
 class NotificationModel {
   final DateTime? date;
   final DateTime? time;
-  final int? orderBook;
+  final MarketIdentifier? orderBook;
   final int? newsId;
   final String? firmId;
   final String? title;

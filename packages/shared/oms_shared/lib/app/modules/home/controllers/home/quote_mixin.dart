@@ -60,7 +60,8 @@ mixin QuoteMixin on HomeState {
 
   @override
   Future<void> markerInfo() async {
-    int orderBook = await StorageService.read(_selectedOrderBookKey) ?? 0;
+    final MarketIdentifier orderBook =
+        await StorageService.read(_selectedOrderBookKey) ?? 0;
     // Stocks of the shown exchange (on DSE: marketList, as before).
     final marketList = shownMarket.quotes;
 
@@ -182,7 +183,7 @@ mixin QuoteMixin on HomeState {
   }
 
   @override
-  MarketModel getMarketByOrderBookId(int orderBookId) {
+  MarketModel getMarketByOrderBookId(MarketIdentifier orderBookId) {
     return marketListAll.firstWhere(
       (market) => market.orderBook == orderBookId,
       orElse: () => MarketModel(),

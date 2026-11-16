@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:get/get.dart';
 
 import '../models/response/market_model.dart';
+import '../models/market_identifier.dart';
 import '../../modules/top_share/controllers/top_share_controller.dart';
 
 /// Market feed for the Top Stocks page.
@@ -14,7 +15,7 @@ import '../../modules/top_share/controllers/top_share_controller.dart';
 class MarketSocketService extends GetxService {
   final RxList<MarketModel> marketFeedList = <MarketModel>[].obs;
   final RxBool loadingMarketFeed = false.obs;
-  final Map<int, MarketModel> _marketMap = {};
+  final Map<MarketIdentifier, MarketModel> _marketMap = {};
 
   Timer? _listUpdateTimer;
 
@@ -22,7 +23,7 @@ class MarketSocketService extends GetxService {
   void onMarketPayload(Map<String, dynamic> jsonResponse) {
     // Same parse as MarketModel.fromJson, which now only runs for a new
     // order book.
-    final orderBook = int.tryParse(jsonResponse['ob']?.toString() ?? '');
+    final orderBook = marketIdentifierFromJson(jsonResponse['ob']);
     if (orderBook != null) {
       final updatedModel = _marketMap.update(
         orderBook,

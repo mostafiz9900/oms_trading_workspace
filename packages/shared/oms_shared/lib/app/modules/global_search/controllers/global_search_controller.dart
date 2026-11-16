@@ -32,7 +32,7 @@ class GlobalSearchController extends GetxController {
 
   List<MarketModel> get recentSearches {
     List<MarketModel> liveRecentItems = [];
-    for (int id in recentService.recentOrderBookIds) {
+    for (final id in recentService.recentOrderBookIds) {
       final matches = _validHomeData.where((m) => m.orderBook == id);
       if (matches.isNotEmpty) {
         liveRecentItems.add(matches.first);
@@ -71,7 +71,9 @@ class GlobalSearchController extends GetxController {
     currentSearchQuery = query;
 
     filteredItems = _validHomeData.where((item) {
-      bool matchesSearch = query.isEmpty || item.displayName.toLowerCase().contains(query.toLowerCase());
+      bool matchesSearch =
+          query.isEmpty ||
+          item.displayName.toLowerCase().contains(query.toLowerCase());
       return matchesSearch;
     }).toList();
 
@@ -117,7 +119,12 @@ class GlobalSearchController extends GetxController {
       });
     }
 
-    update(['searchList', 'sortCategoryDropdown', 'sortOrderDropdown', 'viewModeDropdown']);
+    update([
+      'searchList',
+      'sortCategoryDropdown',
+      'sortOrderDropdown',
+      'viewModeDropdown',
+    ]);
   }
 
   void addToRecent(MarketModel item) {

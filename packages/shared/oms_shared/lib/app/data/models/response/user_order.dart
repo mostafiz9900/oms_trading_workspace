@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import '../market_identifier.dart';
+
 List<UserOrder> userOrderFromJson(dynamic str) => List<UserOrder>.from(
   (str as List<dynamic>).map((x) => UserOrder.fromJson(x)),
 );
@@ -55,7 +57,7 @@ class UserOrderModel {
 class UserOrder {
   final String? traderId;
   final String? boId;
-  final int? orderBookId;
+  final MarketIdentifier? orderBookId;
   final String? name;
   final String? side;
   final int? cumQty;
@@ -140,7 +142,7 @@ class UserOrder {
   factory UserOrder.fromJson(Map<String, dynamic> json) => UserOrder(
     traderId: json["trader_id"] as String?,
     boId: json["bo_id"] as String?,
-    orderBookId: json["order_book_id"] as int?,
+    orderBookId: json["order_book_id"],
     name: json["name"] as String?,
     side: json["side"] as String?,
     cumQty: json["cumQty"] as int?,
@@ -228,7 +230,7 @@ class UserOrder {
   UserOrder copyWith({
     String? traderId,
     String? boId,
-    int? orderBookId,
+    MarketIdentifier? orderBookId,
     String? name,
     String? side,
     int? cumQty,

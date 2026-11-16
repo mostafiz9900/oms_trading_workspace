@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import '../models/market_identifier.dart';
 import '../models/request/add_fav_item_request.dart' show AddFavItemRequest;
 
 import '../../core/values/app_config.dart';
@@ -83,7 +84,7 @@ class HomeProvider extends BaseProvider {
   Future<Response> getHistoricalVolume(
     String path,
     String tickerName,
-    int orderBook,
+    MarketIdentifier orderBook,
   ) {
     return _plainClient.post(path, {
       "ticker_name": tickerName,

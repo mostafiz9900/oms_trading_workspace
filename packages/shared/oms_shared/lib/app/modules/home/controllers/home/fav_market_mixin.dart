@@ -163,12 +163,12 @@ mixin FavMarketMixin on HomeState {
     }
   }
 
-  bool isFav(int orderBookId) {
+  bool isFav(MarketIdentifier orderBookId) {
     if (favAllMarketData == []) {
       getFavoriteAllMarketData();
     }
     return favAllMarketData.any(
-      (fav) => int.parse('${fav.oderBook}') == orderBookId,
+      (fav) => marketIdentifierFromJson(fav.oderBook) == orderBookId,
     );
   }
 
@@ -219,7 +219,7 @@ mixin FavMarketMixin on HomeState {
           return market.copyWith(
             group: fav.group,
             fvbId: fav.id,
-            orderBook: int.tryParse(fav.oderBook ?? ""),
+            orderBook: marketIdentifierFromJson(fav.oderBook),
           );
         })
         .toList();
@@ -310,5 +310,4 @@ mixin FavMarketMixin on HomeState {
     favCurrentViewMode = mode;
     update(); // UI রিবিল্ড করার জন্য
   }
-
 }

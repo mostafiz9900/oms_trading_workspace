@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/request/add_fav_item_request.dart' show AddFavItemRequest;
+import '../models/market_identifier.dart';
 import '../models/response/fav_market_response.dart' show FavMarketResponse;
 import '../models/response/index_chart_model.dart' show IndexChartModel;
 import '../models/response/index_chart_model2.dart' show IndexChartModel2;
@@ -163,7 +164,7 @@ class HomeRepository
   @override
   Future<ApiResponse<PriceTableResponse>?> getHistoricalVolume(
     String tickerName,
-    int orderBook,
+    MarketIdentifier orderBook,
   ) async {
     return _marketChartRepository.getHistoricalVolume(tickerName, orderBook);
   }

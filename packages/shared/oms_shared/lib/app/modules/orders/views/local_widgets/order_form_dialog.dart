@@ -33,17 +33,37 @@ class _OrderModifyDialog extends StatefulWidget {
 class _OrderModifyDialogState extends State<_OrderModifyDialog> {
   late final TextEditingController _priceController;
 
+  // The dialog's own fields: the Trade page (kept mounted under the dialog)
+  // uses HomeController's fields, and two live inputs on one controller made
+  // typing here also change the Trade page. Copied to HomeController on
+  // Submit, which reads them.
+  late final TextEditingController _disclosedQtyController;
+  late final TextEditingController _qtyController;
+  late final TextEditingController _minQtyController;
+
   @override
   void initState() {
     super.initState();
     _priceController = TextEditingController(
       text: (widget.order.limit ?? 0).toString(),
     );
+    _disclosedQtyController = TextEditingController(
+      text: "${widget.order.displayQty ?? ''}",
+    );
+    _qtyController = TextEditingController(
+      text: "${widget.order.leavesQty ?? ''}",
+    );
+    _minQtyController = TextEditingController(
+      text: "${widget.order.minQty ?? ''}",
+    );
   }
 
   @override
   void dispose() {
     _priceController.dispose();
+    _disclosedQtyController.dispose();
+    _qtyController.dispose();
+    _minQtyController.dispose();
     super.dispose();
   }
 
@@ -62,10 +82,7 @@ class _OrderModifyDialogState extends State<_OrderModifyDialog> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           final homeCon = Get.find<HomeController>();
           homeCon.selectOrderType = order.ordType?.toCapitalize();
-          homeCon.disclosedQtyTextEditField.text = "${order.displayQty ?? ''}";
           homeCon.selectValidity = order.timeInForce?.toCapitalize();
-          homeCon.qtyTextEditField.text = "${order.leavesQty ?? ''}";
-          homeCon.minQtyTextEditField.text = "${order.minQty ?? ''}";
           homeCon.update([_orderModifyDialogId]);
         });
       },
@@ -164,7 +181,7 @@ class _OrderModifyDialogState extends State<_OrderModifyDialog> {
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: TextFormField(
-                                controller: homeCon.disclosedQtyTextEditField,
+                                controller: _disclosedQtyController,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly,
@@ -226,7 +243,7 @@ class _OrderModifyDialogState extends State<_OrderModifyDialog> {
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: TextFormField(
-                                controller: homeCon.qtyTextEditField,
+                                controller: _qtyController,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly,
@@ -260,7 +277,7 @@ class _OrderModifyDialogState extends State<_OrderModifyDialog> {
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: TextFormField(
-                                controller: homeCon.minQtyTextEditField,
+                                controller: _minQtyController,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly,
@@ -455,6 +472,12 @@ class _OrderModifyDialogState extends State<_OrderModifyDialog> {
                               var orderConfirm = isBuy
                                   ? SideType2.BUY
                                   : SideType2.SELL;
+                              homeCon.disclosedQtyTextEditField.text =
+                                  _disclosedQtyController.text;
+                              homeCon.qtyTextEditField.text =
+                                  _qtyController.text;
+                              homeCon.minQtyTextEditField.text =
+                                  _minQtyController.text;
                               homeCon.tradPriceTextEditField.text =
                                   _priceController.text;
                               Get.back();

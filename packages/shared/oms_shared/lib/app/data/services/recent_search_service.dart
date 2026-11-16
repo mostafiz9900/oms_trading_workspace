@@ -3,18 +3,19 @@ import 'package:get/get.dart';
 
 import 'exchange_service.dart';
 import 'storage_service.dart';
+import '../models/market_identifier.dart';
 
 /// Last searched stocks (by order book id), kept per exchange: the same
 /// order book id can be another stock on DSE and CSE.
 class RecentSearchService extends GetxService {
   static RecentSearchService get to => Get.find();
 
-  final Map<StockExchange, List<int>> _recentByExchange = {
-    for (final exchange in StockExchange.values) exchange: <int>[],
+  final Map<StockExchange, List<MarketIdentifier>> _recentByExchange = {
+    for (final exchange in StockExchange.values) exchange: <MarketIdentifier>[],
   };
 
   /// Recent order book ids of the selected exchange, newest first.
-  List<int> get recentOrderBookIds =>
+  List<MarketIdentifier> get recentOrderBookIds =>
       _recentByExchange[ExchangeService.current]!;
 
   /// DSE keeps the original key, so searches saved before CSE stay.
@@ -33,12 +34,15 @@ class RecentSearchService extends GetxService {
     for (final exchange in StockExchange.values) {
       final savedData = await StorageService.read(storageKey(exchange));
       if (savedData != null) {
-        _recentByExchange[exchange] = List<int>.from(savedData);
+        _recentByExchange[exchange] = savedData
+            .map(marketIdentifierFromJson)
+            .whereType<MarketIdentifier>()
+            .toList();
       }
     }
   }
 
-  void addToRecentSearch(int orderBook) {
+  void addToRecentSearch(MarketIdentifier orderBook) {
     final recent = recentOrderBookIds;
     recent.removeWhere((id) => id == orderBook);
     recent.insert(0, orderBook);

@@ -1,11 +1,12 @@
 import '../models/response/market_model.dart';
+import '../models/market_identifier.dart';
 
 /// Keeps the latest market tick for each order book.
 ///
 /// Partial updates merge into existing quotes so omitted fields retain their
 /// previous values.
 class MarketTickStore {
-  final Map<int, MarketModel> _quotesByOrderBook = {};
+  final Map<MarketIdentifier, MarketModel> _quotesByOrderBook = {};
 
   Iterable<MarketModel> get quotes => _quotesByOrderBook.values;
 
@@ -16,7 +17,7 @@ class MarketTickStore {
   MarketModel? apply(Map<String, dynamic> tick) {
     // Same parse as MarketModel.fromJson; the full model is only built for a
     // new order book (it used to be built and dropped on every tick).
-    final orderBook = int.tryParse(tick['ob']?.toString() ?? '');
+    final orderBook = marketIdentifierFromJson(tick['ob']);
     if (orderBook == null) return null;
 
     return _quotesByOrderBook.update(

@@ -24,7 +24,7 @@ class _FakeHomeRepository implements HomeRepository {
 
 const _cseUrl = 'wss://cse.test/market';
 const _gp = MarketModel(
-  orderBook: 101,
+  orderBook: 254555,
   shortName: 'GP',
   group: 'PUBLIC',
   board: 'Main Board',
@@ -96,6 +96,8 @@ void main() {
 
     expect(watch.showsCse, isFalse);
     expect(shown(watch), ['GP']);
+    expect(watch.filteredItems.single.orderBook, 254555);
+    expect(watch.filteredItems.single.orderBook, isA<int>());
     await finish(tester);
   });
 
@@ -110,11 +112,12 @@ void main() {
       expect(watch.isLoading, isTrue);
       await cseSends(
         tester,
-        '{"ob": 7, "sn": "SQURPHARMA", "g": "PUBLIC", "b": "Main Board"}',
+        '{"ob": "CSE_101001462", "sn": "SQURPHARMA", "g": "PUBLIC", "b": "Main Board"}',
       );
 
       expect(watch.showsCse, isTrue);
       expect(shown(watch), ['SQURPHARMA']);
+      expect(watch.filteredItems.single.orderBook, 'CSE_101001462');
       for (final list in [home.marketList, home.marketListAll]) {
         expect(list.where((m) => m.shortName == 'SQURPHARMA'), isEmpty);
       }
@@ -129,7 +132,7 @@ void main() {
     await tester.pump();
     await cseSends(
       tester,
-      '{"ob": 7, "sn": "SQURPHARMA", "g": "PUBLIC", "b": "Main Board"}',
+      '{"ob": "CSE_101001462", "sn": "SQURPHARMA", "g": "PUBLIC", "b": "Main Board"}',
     );
 
     exchange.select(StockExchange.dse);

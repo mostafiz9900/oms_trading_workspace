@@ -10,6 +10,7 @@ import '../../modules/home/controllers/home_controller.dart';
 import '../models/marquee_holder.dart';
 import '../models/response/market_depth_model.dart';
 import '../models/response/market_model.dart';
+import '../models/market_identifier.dart';
 import '../models/response/market_tick_message.dart';
 import '../models/response/news_model.dart';
 import '../models/response/time_sales_model.dart';
@@ -72,7 +73,7 @@ class CseMarketService extends GetxService implements MarketFeedView {
   List<MarketDepthModel> sells = [];
 
   /// Order book whose depth is subscribed (re-sent when the socket connects).
-  int? _depthOrderBook;
+  MarketIdentifier? _depthOrderBook;
 
   /// Time & sales and news of the CSE stock selected on Quote, from the CSE
   /// time & sales socket (same messages as DSE: `tp` tsm / tsb / news_hist).
@@ -120,9 +121,11 @@ class CseMarketService extends GetxService implements MarketFeedView {
   void _connect() {
     if (_open) return;
     _open = true;
+    var urlCse = AppConfig.marketUrlFor(StockExchange.cse);
+    printLog('Connecting to CSE market socket: $urlCse');
     WebSocketService.instance.connect(
       socketId: AppConfig.cseMarketSocketId,
-      url: AppConfig.marketUrlFor(StockExchange.cse),
+      url: urlCse,
       onMessage: onMessage,
       onConnected: () => printLog('✅ CSE market socket connected'),
       onError: (error) => printLog('⚠️ CSE market socket error: $error'),
@@ -161,7 +164,7 @@ class CseMarketService extends GetxService implements MarketFeedView {
       'ac': 'subscribe',
       'tp': tp,
       'tid': int.parse(tid),
-      'ob': int.parse(orderBook),
+      'ob': marketIdentifierFromJson(orderBook),
     });
     _timeSalesSubscriptions[tp] = body;
     _sendTimeSales(body);
@@ -249,7 +252,7 @@ class CseMarketService extends GetxService implements MarketFeedView {
 
   /// Subscribes [orderBook]'s depth (unsubscribing the previous one) or, with
   /// `unsubscribe`, stops it.
-  void sendDepth(String type, int orderBook) {
+  void sendDepth(String type, MarketIdentifier orderBook) {
     if (type == 'subscribe') {
       _depthOrderBook = orderBook;
     } else if (_depthOrderBook == orderBook) {
@@ -258,7 +261,7 @@ class CseMarketService extends GetxService implements MarketFeedView {
     _sendDepth(type, orderBook);
   }
 
-  void _sendDepth(String type, int orderBook) {
+  void _sendDepth(String type, MarketIdentifier orderBook) {
     if (!_open || !hasDepthFeed) return;
     WebSocketService.instance.sendMessage(
       AppConfig.cseMarketDepthSocketId,
@@ -422,18 +425,17 @@ class CseMarketService extends GetxService implements MarketFeedView {
   }
 
   /// PUBLIC stocks, sorted by short name (as the DSE marquee).
-  static List<MarqueeHolder> _marquee(List<MarketModel> all) =>
-      [
-        for (final m in all)
-          if (m.group == 'PUBLIC')
-            MarqueeHolder(
-              status: m.status,
-              shortName: m.shortName,
-              chg: m.chg,
-              last: m.last,
-              d: m.d,
-            ),
-      ]..sort((a, b) => (a.shortName ?? '').compareTo(b.shortName ?? ''));
+  static List<MarqueeHolder> _marquee(List<MarketModel> all) => [
+    for (final m in all)
+      if (m.group == 'PUBLIC')
+        MarqueeHolder(
+          status: m.status,
+          shortName: m.shortName,
+          chg: m.chg,
+          last: m.last,
+          d: m.d,
+        ),
+  ]..sort((a, b) => (a.shortName ?? '').compareTo(b.shortName ?? ''));
 
   void _computeAnalytics() {
     chartData = _analytics.calculateSectorGainers(quotes);

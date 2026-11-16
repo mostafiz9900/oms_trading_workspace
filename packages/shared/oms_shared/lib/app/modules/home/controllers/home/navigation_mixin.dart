@@ -5,7 +5,7 @@ mixin HomeNavigationMixin on HomeState {
   @override
   Future<void> loadTabData(int index) async {
     if (index == 0) {
-      int orderBook =
+      final MarketIdentifier orderBook =
           await StorageService.read(_selectedOrderBookKey) ?? 0;
       await manageMarketDepth(orderBook);
     } else if (index == 1) {
@@ -71,8 +71,7 @@ mixin HomeNavigationMixin on HomeState {
     if (index == 0) {
       currentIndex = index;
       update();
-      if (marketList.isEmpty) {
-      }
+      if (marketList.isEmpty) {}
     } else if (index == 1) {
       printLog('change tab index $index');
       currentIndex = index;
@@ -123,8 +122,7 @@ mixin HomeNavigationMixin on HomeState {
     if (index == 0) {
       currentIndex = index;
       update();
-      if (marketList.isEmpty) {
-      }
+      if (marketList.isEmpty) {}
     } else if (index == 1) {
       printLog('change tab index $index');
       currentIndex = index;
@@ -179,7 +177,7 @@ mixin HomeNavigationMixin on HomeState {
   }
 
   @override
-  void goBottomNabBarPage(int index, int orderBookId) async {
+  void goBottomNabBarPage(int index, MarketIdentifier orderBookId) async {
     printLog('index nab bar :: $index');
     previousIndex = currentIndex;
 
@@ -232,5 +230,4 @@ mixin HomeNavigationMixin on HomeState {
     printLog('currentIndex :: $currentIndex');
     update();
   }
-
 }

@@ -6,7 +6,6 @@ abstract class HomeState extends SuperController {
   HomeState({required this.homeRepository})
     : marketFavoritesRepository = homeRepository;
 
-
   final MarketSocketService marketService = Get.find<MarketSocketService>();
 
   final CompaniesController companiesController =
@@ -201,7 +200,6 @@ abstract class HomeState extends SuperController {
 
   int Function(int, int) calc = (a, b) => a + b;
 
-
   bool isCreateFavCat = false;
 
   bool isAddFavCat = false;
@@ -340,7 +338,12 @@ abstract class HomeState extends SuperController {
     Color color = Colors.red,
   }) async {
     if (Get.isSnackbarOpen) await Get.closeCurrentSnackbar();
-    Get.snackbar(title, message, backgroundColor: color, colorText: Colors.white);
+    Get.snackbar(
+      title,
+      message,
+      backgroundColor: color,
+      colorText: Colors.white,
+    );
   }
 
   /// Connectivity check for order actions that always tells the user why
@@ -377,9 +380,9 @@ abstract class HomeState extends SuperController {
   void _handleNewsTimeSalesMessage(String message);
   void subscribeTimeAndSales(String tp, String tid, String ob);
   void _handleMarketDepthMessage(String message);
-  void _sendMarketDepthPayload(String type, int orderbookId);
-  void _sendDseDepthPayload(String type, int orderbookId);
-  Future<void> manageMarketDepth(int newOrderBookId);
+  void _sendMarketDepthPayload(String type, MarketIdentifier orderbookId);
+  void _sendDseDepthPayload(String type, MarketIdentifier orderbookId);
+  Future<void> manageMarketDepth(MarketIdentifier newOrderBookId);
   void sendMessage(String socketId, String message);
   bool isSocketConnected(String socketId);
   bool get isOrderConfirmConnected;
@@ -389,7 +392,7 @@ abstract class HomeState extends SuperController {
   void userBalance();
   void _handleUserBalanceMessage(dynamic message);
   void loadComanyDividentEPS(String shortName);
-  void goBottomNabBarPage(int index, int orderBookId);
+  void goBottomNabBarPage(int index, MarketIdentifier orderBookId);
   Future<void> markerInfo();
   void _resetQuoteForExchange();
   bool get _quoteReselectPending;
@@ -398,7 +401,7 @@ abstract class HomeState extends SuperController {
   void onShownFeedFlushed();
   Future<void> _selectQuoteAfterExchangeSwitch();
   void getUserInfo();
-  MarketModel getMarketByOrderBookId(int orderBookId);
+  MarketModel getMarketByOrderBookId(MarketIdentifier orderBookId);
   void _handleOrderConfirmMessage(String message);
   Future<void> getUserOrder();
   int? _parseNullableInt(String value);

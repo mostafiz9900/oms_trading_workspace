@@ -130,14 +130,25 @@ void main() {
   }
 
   group('placing a new order', () {
-    testWidgets('a limit BUY sends one exact order to the gateway', (tester) async {
+    testWidgets('a limit BUY sends one exact order to the gateway', (
+      tester,
+    ) async {
       await startApp(tester);
 
       home.orderConfirmSubmitted(SideType2.BUY, ActionsType.ORDER);
-      expect(home.isOrderConfirmLoading, isTrue, reason: 'button locks at once');
+      expect(
+        home.isOrderConfirmLoading,
+        isTrue,
+        reason: 'button locks at once',
+      );
       final socket = await openOrderSocket(tester);
 
-      expect(socket.uri.toString(), startsWith('${testSocketBaseUrl}order/1201234567890123/?token=access-token'));
+      expect(
+        socket.uri.toString(),
+        startsWith(
+          '${testSocketBaseUrl}order/1201234567890123/?token=access-token',
+        ),
+      );
       final order = sentOrder(socket);
       expect(order, containsPair('action', 'NEW_ORDER_SINGLE_REQUEST'));
       expect(order, containsPair('side', 'BUY'));
@@ -160,7 +171,11 @@ void main() {
       expect(order, containsPair('timeInForce', '0'));
       expect(order['displayQty'], isNull);
       expect(order['minQty'], isNull);
-      expect(home.isOrderConfirmLoading, isTrue, reason: 'waits for the server');
+      expect(
+        home.isOrderConfirmLoading,
+        isTrue,
+        reason: 'waits for the server',
+      );
 
       await finish(tester);
     });
@@ -173,7 +188,9 @@ void main() {
       await finish(tester);
     });
 
-    testWidgets('disclosed and minimum quantities are sent when set', (tester) async {
+    testWidgets('disclosed and minimum quantities are sent when set', (
+      tester,
+    ) async {
       await startApp(tester);
       home.disclosedQtyTextEditField.text = '100';
       home.minQtyTextEditField.text = '50';
@@ -184,7 +201,9 @@ void main() {
       await finish(tester);
     });
 
-    testWidgets('waits up to 3 s for a slow order socket, then sends', (tester) async {
+    testWidgets('waits up to 3 s for a slow order socket, then sends', (
+      tester,
+    ) async {
       await startApp(tester);
       home.orderConfirmSubmitted(SideType2.BUY, ActionsType.ORDER);
       await tester.pump();
@@ -223,51 +242,103 @@ void main() {
   });
 
   group('server answer', () {
-    testWidgets('order_submitted unlocks the button, clears the form, opens Orders', (tester) async {
+    testWidgets(
+      'order_submitted unlocks the button, clears the form, opens Orders',
+      (tester) async {
+        await startApp(tester);
+        home.orderConfirmSubmitted(SideType2.BUY, ActionsType.ORDER);
+        final socket = await openOrderSocket(tester);
+
+        socket.serverSends(
+          jsonEncode({
+            'message_type': 'order_submitted',
+            'message': 'Order placed',
+          }),
+        );
+        await pumpFor(tester, const Duration(seconds: 1));
+
+        expect(sockets, hasLength(2), reason: 'refreshes the order snapshot');
+        final refreshedSocket = sockets.last;
+        refreshedSocket.open();
+        await tester.pump(const Duration(milliseconds: 200));
+        refreshedSocket.serverSends(
+          jsonEncode({
+            'message_type': 'connection',
+            'data': [
+              {
+                'order_book_id': 254555,
+                'clientOrderId': 'DSE-ORDER-1',
+                'orderStatus': 'NEW',
+                'exchange': 'DSE',
+              },
+            ],
+          }),
+        );
+        await tester.pump(const Duration(milliseconds: 200));
+
+        expect(home.isOrderConfirmLoading, isFalse);
+        expect(home.userOrderList, hasLength(1));
+        expect(home.userOrderList.single.orderBookId, 254555);
+        expect(home.userOrderList.single.exchange, 'DSE');
+        expect(home.qtyTextEditField.text, isEmpty);
+        expect(home.tradPriceTextEditField.text, isEmpty);
+        expect(home.currentIndex, 4);
+        expect(home.currentTabIndexPortfolio, 1);
+        expect(find.text('Order placed'), findsOneWidget);
+        await finish(tester);
+      },
+    );
+
+    testWidgets('order_error unlocks the button and keeps the form', (
+      tester,
+    ) async {
       await startApp(tester);
       home.orderConfirmSubmitted(SideType2.BUY, ActionsType.ORDER);
       final socket = await openOrderSocket(tester);
 
-      socket.serverSends(jsonEncode({'message_type': 'order_submitted', 'message': 'Order placed'}));
+      socket.serverSends(
+        jsonEncode({
+          'message_type': 'order_error',
+          'message': ['Insufficient balance'],
+        }),
+      );
       await pumpFor(tester, const Duration(seconds: 1));
 
       expect(home.isOrderConfirmLoading, isFalse);
-      expect(home.qtyTextEditField.text, isEmpty);
-      expect(home.tradPriceTextEditField.text, isEmpty);
-      expect(home.currentIndex, 4);
-      expect(home.currentTabIndexPortfolio, 1);
-      expect(find.text('Order placed'), findsOneWidget);
-      await finish(tester);
-    });
-
-    testWidgets('order_error unlocks the button and keeps the form', (tester) async {
-      await startApp(tester);
-      home.orderConfirmSubmitted(SideType2.BUY, ActionsType.ORDER);
-      final socket = await openOrderSocket(tester);
-
-      socket.serverSends(jsonEncode({'message_type': 'order_error', 'message': ['Insufficient balance']}));
-      await pumpFor(tester, const Duration(seconds: 1));
-
-      expect(home.isOrderConfirmLoading, isFalse);
-      expect(home.qtyTextEditField.text, '500', reason: 'user can fix and retry');
+      expect(
+        home.qtyTextEditField.text,
+        '500',
+        reason: 'user can fix and retry',
+      );
       expect(find.text('Insufficient balance'), findsOneWidget);
       await finish(tester);
     });
 
-    testWidgets('connection and alert messages do not unlock the button', (tester) async {
+    testWidgets('connection and alert messages do not unlock the button', (
+      tester,
+    ) async {
       await startApp(tester);
       home.orderConfirmSubmitted(SideType2.BUY, ActionsType.ORDER);
       final socket = await openOrderSocket(tester);
 
-      socket.serverSends(jsonEncode({'message_type': 'connection', 'message': 'ok'}));
-      socket.serverSends(jsonEncode({'message_type': 'alert', 'data': {'status': 'x'}}));
+      socket.serverSends(
+        jsonEncode({'message_type': 'connection', 'message': 'ok'}),
+      );
+      socket.serverSends(
+        jsonEncode({
+          'message_type': 'alert',
+          'data': {'status': 'x'},
+        }),
+      );
       await pumpFor(tester, const Duration(seconds: 1));
 
       expect(home.isOrderConfirmLoading, isTrue);
       await finish(tester);
     });
 
-    testWidgets('no answer in 15 s: unlock, warn, and never re-send', (tester) async {
+    testWidgets('no answer in 15 s: unlock, warn, and never re-send', (
+      tester,
+    ) async {
       await startApp(tester);
       home.orderConfirmSubmitted(SideType2.BUY, ActionsType.ORDER);
       final socket = await openOrderSocket(tester);
@@ -325,7 +396,9 @@ void main() {
   });
 
   group('order form helpers', () {
-    testWidgets('price +/- moves in 0.10 steps and never below 0', (tester) async {
+    testWidgets('price +/- moves in 0.10 steps and never below 0', (
+      tester,
+    ) async {
       await startApp(tester);
       home.setInitialPrice(300.25);
       expect(home.tradPriceTextEditField.text, '300.25');
@@ -339,7 +412,9 @@ void main() {
       await finish(tester);
     });
 
-    testWidgets('quick-add quantity buttons add to the typed quantity', (tester) async {
+    testWidgets('quick-add quantity buttons add to the typed quantity', (
+      tester,
+    ) async {
       await startApp(tester);
       home.qtyTextEditField.text = '250';
       home.updateQuantity('1K');
@@ -372,6 +447,7 @@ void main() {
         'trader code', (tester) async {
       await onExchange(tester, StockExchange.cse);
       home.userInfo.userDetail!.cseTraderCode = 'CSE-TR9';
+      home.marketData = home.marketData.copyWith(orderBook: 'CSE_101001288');
 
       home.orderConfirmSubmitted(SideType2.BUY, ActionsType.ORDER);
       final socket = await openOrderSocket(tester);
@@ -380,6 +456,8 @@ void main() {
       expect(order, containsPair('action', 'NEW_ORDER_SINGLE_REQUEST'));
       expect(order, containsPair('exchange', 'CSE'));
       expect(order, containsPair('cse_trader_code', 'CSE-TR9'));
+      expect(order, containsPair('order_book_id', 'CSE_101001288'));
+      expect(order['order_book_id'], isA<String>());
       await finish(tester);
     });
 
@@ -412,7 +490,8 @@ void main() {
         ActionsType.REPLACE_ORDER,
         order: dseOrder,
       ),
-      'cancel': () => home.orderCancelSubmitted('ORDER_CANCEL_REQUEST', dseOrder),
+      'cancel': () =>
+          home.orderCancelSubmitted('ORDER_CANCEL_REQUEST', dseOrder),
       'duplicate': () =>
           home.orderDuplicateSubmitted(ActionsType.ORDER, order: dseOrder),
       'status': () => home.orderStatusChangeConfirmSubmitted(
@@ -447,7 +526,7 @@ void main() {
     final cseOrder = UserOrder(
       orderId: 'OID-9',
       clientOrderId: 'COID-9',
-      orderBookId: 101,
+      orderBookId: 'CSE_101001288',
       side: 'BUY',
       limit: 80,
       sentQty: 10,
@@ -459,7 +538,8 @@ void main() {
         ActionsType.REPLACE_ORDER,
         order: cseOrder,
       ),
-      'cancel': () => home.orderCancelSubmitted('ORDER_CANCEL_REQUEST', cseOrder),
+      'cancel': () =>
+          home.orderCancelSubmitted('ORDER_CANCEL_REQUEST', cseOrder),
       'duplicate': () =>
           home.orderDuplicateSubmitted(ActionsType.ORDER, order: cseOrder),
       'status': () => home.orderStatusChangeConfirmSubmitted(
@@ -469,8 +549,9 @@ void main() {
     };
 
     for (final entry in cseOrderActions.entries) {
-      testWidgets('CSE selected: ${entry.key} of a CSE order uses the CSE '
-          'stock (same order book id as a DSE one)', (tester) async {
+      testWidgets('CSE selected: ${entry.key} uses the prefixed CSE feed ID', (
+        tester,
+      ) async {
         await onExchange(tester, StockExchange.cse);
         home.userInfo.userDetail!.cseTraderCode = 'CSE-TR9';
         home.marketListAll.add(home.marketData); // DSE GP, order book 101
@@ -479,7 +560,7 @@ void main() {
           const MarketModel(
             shortName: 'BEXIMCO',
             ticker: 'BEXIMCO',
-            orderBook: 101,
+            orderBook: 'CSE_101001288',
             reference: 80,
             isinCode: 'BD0613BXLTD6',
             instrumentType: 'EQ',
@@ -585,7 +666,12 @@ void main() {
 
         home.orderCancelSubmitted(
           'ORDER_CANCEL_REQUEST',
-          UserOrder(orderId: 'OID-1', clientOrderId: 'C-1', orderBookId: 101, side: 'BUY'),
+          UserOrder(
+            orderId: 'OID-1',
+            clientOrderId: 'C-1',
+            orderBookId: 101,
+            side: 'BUY',
+          ),
         );
         final socket = await openOrderSocket(tester);
         await pumpFor(tester, const Duration(seconds: 1));
@@ -688,7 +774,10 @@ void main() {
 
         expect(sockets, isEmpty, reason: 'order socket not even opened');
         expect(home.isOrderConfirmLoading, isFalse);
-        expect(find.text(HomeState.cseTraderCodeMissingMessage), findsOneWidget);
+        expect(
+          find.text(HomeState.cseTraderCodeMissingMessage),
+          findsOneWidget,
+        );
         await finish(tester);
       });
     }

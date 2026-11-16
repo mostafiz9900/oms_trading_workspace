@@ -37,12 +37,20 @@ import 'local_widgets/market_sentiment_ratio_chart.dart';
 import 'local_widgets/clickable_marquee_text_list.dart';
 import '../../../global_widgets/loaders/index_value_loader.dart';
 
-class MarketWidget extends StatelessWidget {
+class MarketWidget extends StatefulWidget {
   const MarketWidget({super.key});
 
   @override
+  State<MarketWidget> createState() => _MarketWidgetState();
+}
+
+class _MarketWidgetState extends State<MarketWidget> {
+  // Made once: a new key on every build threw the whole tab (drawer,
+  // inner tabs, scroll) away and rebuilt it on every Home update.
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
   Widget build(BuildContext context) {
-    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
     return SafeArea(
       child: Column(
         children: [

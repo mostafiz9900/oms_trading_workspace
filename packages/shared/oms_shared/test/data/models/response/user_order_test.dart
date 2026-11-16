@@ -7,4 +7,20 @@ void main() {
     expect(UserOrder.fromJson({'orderId': 'O-1'}).exchange, isNull);
     expect(UserOrder.fromJson({'exchange': 'CSE'}).toJson()['exchange'], 'CSE');
   });
+
+  test('parses DSE integer and CSE string order book IDs in one list', () {
+    final model = UserOrderModel.fromJson({
+      'message_type': 'connection',
+      'data': [
+        {'order_book_id': 254555, 'exchange': 'DSE'},
+        {'order_book_id': 'CSE_101001288', 'exchange': 'CSE'},
+      ],
+    });
+
+    expect(model.data, hasLength(2));
+    expect(model.data![0].orderBookId, 254555);
+    expect(model.data![0].orderBookId, isA<int>());
+    expect(model.data![1].orderBookId, 'CSE_101001288');
+    expect(model.data![1].orderBookId, isA<String>());
+  });
 }

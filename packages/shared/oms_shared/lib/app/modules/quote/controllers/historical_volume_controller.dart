@@ -1,5 +1,9 @@
-import '../../../data/models/response/historical_volume.dart' show HistoricalVolume;
-import '../../../data/repositories/market_chart_repository.dart' show MarketChartRepository;
+import '../../../data/models/response/historical_volume.dart'
+    show HistoricalVolume;
+import '../../../data/models/market_identifier.dart';
+import '../../../data/repositories/market_chart_repository.dart'
+    show MarketChartRepository;
+
 // lib/controllers/historical_volume_controller.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,7 +24,7 @@ class HistoricalVolumeController extends GetxController {
   bool isLoading = false;
   String errorMessage = '';
   String tickerName = '';
-  int orderbook = 0;
+  MarketIdentifier orderbook = 0;
 
   // Data
   List<HistoricalVolume> allData = [];
@@ -76,7 +80,7 @@ class HistoricalVolumeController extends GetxController {
     update();
   }
 
-  Future<void> loadData(String ticket, int orderbookId) async {
+  Future<void> loadData(String ticket, MarketIdentifier orderbookId) async {
     try {
       isLoading = true;
       errorMessage = '';

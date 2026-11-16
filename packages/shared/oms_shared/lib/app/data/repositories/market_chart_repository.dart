@@ -1,5 +1,6 @@
 import 'package:trading_core/trading_core.dart';
 
+import '../models/market_identifier.dart';
 import '../models/response/historical_volume.dart';
 import '../models/response/index_chart_model.dart';
 import '../models/response/index_chart_model2.dart';
@@ -8,7 +9,7 @@ import '../models/response/index_chart_model2.dart';
 abstract interface class MarketChartRepository {
   Future<ApiResponse<PriceTableResponse>?> getHistoricalVolume(
     String tickerName,
-    int orderBook,
+    MarketIdentifier orderBook,
   );
 
   Future<ApiResponse<List<IndexChartModel>>> getIndexChart(

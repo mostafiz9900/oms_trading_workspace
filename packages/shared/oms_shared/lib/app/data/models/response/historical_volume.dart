@@ -1,3 +1,5 @@
+import '../market_identifier.dart';
+
 // lib/models/historical_volume.dart
 class HistoricalVolume {
   final String date;
@@ -35,7 +37,7 @@ class HistoricalVolume {
 
 class PriceTableResponse {
   final List<HistoricalVolume> data;
-  final int orderbook;
+  final MarketIdentifier orderbook;
   final bool success;
   final String tickerName;
 

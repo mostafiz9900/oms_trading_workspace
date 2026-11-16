@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../data/models/market_identifier.dart';
+
 import 'package:get/get.dart';
 
 import '../core/utils/extensions/app_context.dart';
@@ -8,7 +11,8 @@ import '../data/enums/app_enum.dart';
 import '../data/models/response/market_model.dart';
 import '../modules/home/controllers/home_controller.dart';
 
-import '../data/models/request/add_fav_item_request.dart' show AddFavItemRequest;
+import '../data/models/request/add_fav_item_request.dart'
+    show AddFavItemRequest;
 
 class SharedMarketLogic {
   /// 🚀 Common Text Highlighter
@@ -59,7 +63,7 @@ class MarketDialogHelper {
   // 🚀 ১. Common Buy/Sell Dialog
   static void showBuySellDialog({
     required BuildContext context,
-    required int orderBookId,
+    required MarketIdentifier orderBookId,
     required String shortName,
   }) {
     final homeCon = Get.find<HomeController>();

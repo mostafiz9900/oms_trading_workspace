@@ -5,12 +5,14 @@ import 'data/services/cse_market_service.dart';
 import 'data/services/exchange_service.dart';
 import 'data/services/socket_db_service.dart';
 import 'data/services/storage_service.dart';
+import 'data/services/session_timeout_service.dart';
 import 'data/services/market_socket_service.dart';
 import 'modules/auth/controllers/token_controller.dart';
 
 class DependencyInjection {
   static Future<void> init() async {
     Get.lazyPut(() => StorageService());
+    Get.put<SessionTimeoutService>(SessionTimeoutService(), permanent: true);
     Get.put<ThemeServices>(ThemeServices(), permanent: true);
     // Selected DSE/CSE exchange; read by the market and index sockets.
     Get.put(ExchangeService(), permanent: true);

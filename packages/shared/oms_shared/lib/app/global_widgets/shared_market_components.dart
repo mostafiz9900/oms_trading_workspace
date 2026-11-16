@@ -301,7 +301,9 @@ class SharedMarketListItem extends StatelessWidget {
     final double chartHigh = math.max(high, ycp);
     final double chartLow = math.min(low, ycp);
 
-    final int seed = item.orderBook ?? (item.shortName?.hashCode ?? 0);
+    final int seed = item.orderBook is int
+        ? item.orderBook as int
+        : item.orderBook?.hashCode ?? (item.shortName?.hashCode ?? 0);
     final random = math.Random(seed);
 
     // 🚀 সরাসরি absoluteChange থেকে বুলিশ/বেয়ারিশ নির্ণয়

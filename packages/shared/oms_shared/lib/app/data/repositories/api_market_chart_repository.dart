@@ -1,5 +1,6 @@
 import '../models/response/index_chart_model.dart'
     show IndexChartModel, indexChartModelFromJson;
+import '../models/market_identifier.dart';
 import '../models/response/index_chart_model2.dart'
     show IndexChartModel2, indexChartModel2FromJson;
 import 'market_chart_repository.dart' show MarketChartRepository;
@@ -19,7 +20,7 @@ class ApiMarketChartRepository implements MarketChartRepository {
   @override
   Future<ApiResponse<PriceTableResponse>?> getHistoricalVolume(
     String tickerName,
-    int orderBook,
+    MarketIdentifier orderBook,
   ) async {
     final response = await homeProvider.getHistoricalVolume(
       ApiUrl.getHistoricalVolumeData,

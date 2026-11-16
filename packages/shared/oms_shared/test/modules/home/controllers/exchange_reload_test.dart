@@ -47,7 +47,7 @@ class _RecordingHistory extends HistoricalVolumeController {
   void onInit() {}
 
   @override
-  Future<void> loadData(String ticket, int orderbookId) async =>
+  Future<void> loadData(String ticket, Object orderbookId) async =>
       loads.add('$ticket#$orderbookId');
 }
 
@@ -110,7 +110,12 @@ void main() {
     final feed = Get.find<MarketSocketService>();
 
     // DSE quotes are on screen (Top Stocks, watchlist/quote lists, marquee).
-    feed.onMarketPayload({'ob': 101, 'sn': 'GP', 'g': 'PUBLIC', 'b': 'Main Board'});
+    feed.onMarketPayload({
+      'ob': 101,
+      'sn': 'GP',
+      'g': 'PUBLIC',
+      'b': 'Main Board',
+    });
     await tester.pump(const Duration(seconds: 1));
     expect(feed.marketFeedList, hasLength(1));
     const gp = MarketModel(orderBook: 101, shortName: 'GP');
@@ -121,7 +126,11 @@ void main() {
     home.reloadMarketForExchange();
     await tester.pump();
 
-    expect(feed.marketFeedList, isEmpty, reason: 'same ob may mean another stock on CSE');
+    expect(
+      feed.marketFeedList,
+      isEmpty,
+      reason: 'same ob may mean another stock on CSE',
+    );
     expect(home.marketListAll, isEmpty, reason: 'watchlist / quote lookup');
     expect(home.marqueeList, isEmpty, reason: 'marquee is keyed by name');
     expect(sockets.last.uri.toString(), 'wss://cse.test/market');
@@ -144,6 +153,20 @@ void main() {
     await tester.pump();
 
     expect(search.filteredItems, isEmpty);
+    await finish(tester);
+  });
+
+  testWidgets('exchange switch clears the order instrument filter', (
+    tester,
+  ) async {
+    final home = await startHome(tester);
+    home.changeInstrument('BEXIMCO');
+
+    Get.find<ExchangeService>().select(StockExchange.cse);
+    home.reloadMarketForExchange();
+    await tester.pump();
+
+    expect(home.selectedInstrument, 'All');
     await finish(tester);
   });
 
@@ -222,7 +245,10 @@ void main() {
   });
 
   group('Favourites, sectors, Price Table', () {
-    Future<HomeController> switchToCse(WidgetTester tester, HomeController home) async {
+    Future<HomeController> switchToCse(
+      WidgetTester tester,
+      HomeController home,
+    ) async {
       Get.find<ExchangeService>().select(StockExchange.cse);
       home.reloadMarketForExchange();
       await tester.pump();
@@ -231,8 +257,13 @@ void main() {
       return home;
     }
 
-    Future<void> cseSends(WidgetTester tester, Map<String, Object> quote) async {
-      sockets.last.serverSends(jsonEncode({'g': 'PUBLIC', 'b': 'Main Board', ...quote}));
+    Future<void> cseSends(
+      WidgetTester tester,
+      Map<String, Object> quote,
+    ) async {
+      sockets.last.serverSends(
+        jsonEncode({'g': 'PUBLIC', 'b': 'Main Board', ...quote}),
+      );
       await tester.pump(const Duration(milliseconds: 600));
     }
 
@@ -241,10 +272,16 @@ void main() {
     ) async {
       final home = await startHome(tester);
       home.favMarketData = [FavMarketResponse(ticker: 'GP', oderBook: '7')];
-      home.favMarketParseList = [const MarketModel(orderBook: 7, ticker: 'GP', reference: 300)];
+      home.favMarketParseList = [
+        const MarketModel(orderBook: 7, ticker: 'GP', reference: 300),
+      ];
       await switchToCse(tester, home);
 
-      expect(home.favMarketParseList, isEmpty, reason: 'no old-exchange prices');
+      expect(
+        home.favMarketParseList,
+        isEmpty,
+        reason: 'no old-exchange prices',
+      );
 
       await cseSends(tester, {'ob': 7, 'sn': 'GP', 't': 'GP'});
       expect(home.favMarketParseList.single.orderBook, 7);
@@ -270,8 +307,9 @@ void main() {
         'and only then', (tester) async {
       final home = await startHome(tester);
       Get.put<HomeController>(home);
-      final positions =
-          Get.put<PositionController>(_CountingPositions()) as _CountingPositions;
+      final positions = Get.put<PositionController>(
+        _CountingPositions(),
+      ) as _CountingPositions;
       await switchToCse(tester, home);
 
       await cseSends(tester, {'ob': 7, 'sn': 'GP', 't': 'GP'});
@@ -280,7 +318,11 @@ void main() {
       await tester.pump(QuoteMixin.quoteSwitchFallback);
       final afterWindow = positions.redraws;
       await cseSends(tester, {'ob': 8, 'sn': 'BATBC', 't': 'BATBC'});
-      expect(positions.redraws, afterWindow, reason: 'as before outside a switch');
+      expect(
+        positions.redraws,
+        afterWindow,
+        reason: 'as before outside a switch',
+      );
       await finish(tester);
     });
 
@@ -288,8 +330,12 @@ void main() {
       tester,
     ) async {
       final home = await startHome(tester);
-      home.chartData = [{'sector': 'Bank'}];
-      home.chartDataShareType = [{'type': 'A'}];
+      home.chartData = [
+        {'sector': 'Bank'},
+      ];
+      home.chartDataShareType = [
+        {'type': 'A'},
+      ];
       home.distributionCounts = [1, 2];
       home.distributionTotal = 3;
       home.distributionMaxCount = 2;
@@ -336,8 +382,9 @@ void main() {
     ) async {
       final home = await startHome(tester);
       Get.put<HomeController>(home);
-      final history = Get.put<HistoricalVolumeController>(_RecordingHistory())
-          as _RecordingHistory;
+      final history = Get.put<HistoricalVolumeController>(
+        _RecordingHistory(),
+      ) as _RecordingHistory;
       home.marketData = const MarketModel(orderBook: 101, shortName: 'GP');
       home.currentTabIndexQuote = 3;
       await switchToCse(tester, home);
@@ -383,9 +430,8 @@ void main() {
     FakeChannel socketAt(String url) =>
         sockets.lastWhere((s) => s.uri.toString() == url);
 
-    List<Map> sentTo(String url) => socketAt(
-      url,
-    ).sent.map((m) => jsonDecode(m as String) as Map).toList();
+    List<Map> sentTo(String url) =>
+        socketAt(url).sent.map((m) => jsonDecode(m as String) as Map).toList();
 
     testWidgets('a CSE stock shows CSE depth and time & sales', (tester) async {
       final home = await runningOnGp(tester, cseFeeds);
@@ -411,7 +457,9 @@ void main() {
       expect(home.marketData.orderBook, 7);
       expect(
         sentTo('wss://cse.test/depth'),
-        contains(allOf(containsPair('type', 'subscribe'), containsPair('ob', 7))),
+        contains(
+          allOf(containsPair('type', 'subscribe'), containsPair('ob', 7)),
+        ),
       );
       expect(
         sentTo('wss://cse.test/events').where((m) => m['ob'] == 7),

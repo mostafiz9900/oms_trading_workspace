@@ -562,7 +562,7 @@ class Helpers {
     openLoginAlertDialog(() {
       Get.back(); // 👈 ডায়ালগ বন্ধ করুন
       Future.delayed(const Duration(milliseconds: 150), () {
-        Get.offNamed(Routes.LOGIN);
+        Get.offAllNamed(Routes.LOGIN);
       });
     });
   }

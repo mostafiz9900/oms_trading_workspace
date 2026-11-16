@@ -41,7 +41,7 @@ mixin MarketDepthMixin on HomeState {
   // Message send: to the depth feed of the shown exchange (CSE has its own
   // socket in CseMarketService; DSE as before).
   @override
-  void _sendMarketDepthPayload(String type, int orderbookId) {
+  void _sendMarketDepthPayload(String type, MarketIdentifier orderbookId) {
     if (CseMarketService.isShown) {
       Get.find<CseMarketService>().sendDepth(type, orderbookId);
       return;
@@ -50,7 +50,7 @@ mixin MarketDepthMixin on HomeState {
   }
 
   @override
-  void _sendDseDepthPayload(String type, int orderbookId) {
+  void _sendDseDepthPayload(String type, MarketIdentifier orderbookId) {
     final payload = {"type": type, "ob": orderbookId}; //ob orderbook
     //change for new
     printLog('SendPayload :: $payload');
@@ -61,9 +61,9 @@ mixin MarketDepthMixin on HomeState {
   }
 
   @override
-  Future<void> manageMarketDepth(int newOrderBookId) async {
+  Future<void> manageMarketDepth(MarketIdentifier newOrderBookId) async {
     printLog('newOrderBookId:: $newOrderBookId');
-    int oldOrderBookId =
+    final MarketIdentifier oldOrderBookId =
         await StorageService.read(_selectedOrderBookKey) ?? 0;
     printLog('old order book id:: $oldOrderBookId');
     if (oldOrderBookId != newOrderBookId) {
@@ -76,5 +76,4 @@ mixin MarketDepthMixin on HomeState {
       await markerInfo();
     }
   }
-
 }

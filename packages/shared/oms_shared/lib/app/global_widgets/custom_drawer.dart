@@ -321,7 +321,7 @@ class CustomDrawer extends StatelessWidget {
                         onTap: () {
                           Get.back();
                           if (homeCon.userInfo.id == null) {
-                            Get.offNamed(Routes.LOGIN);
+                            Get.offAllNamed(Routes.LOGIN);
                           } else {
                             showLogoutDialog(context);
                           }

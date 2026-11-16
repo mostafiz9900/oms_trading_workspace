@@ -20,13 +20,21 @@ import '../../../global_widgets/loaders/watchlist_loader.dart';
 import '../../../global_widgets/exchange/exchange_switcher.dart';
 // আপনার MarketModelExtensions ইম্পোর্ট করে নিবেন
 
-class FavMarketView extends StatelessWidget {
+class FavMarketView extends StatefulWidget {
   const FavMarketView({super.key});
+
+  @override
+  State<FavMarketView> createState() => _FavMarketViewState();
+}
+
+class _FavMarketViewState extends State<FavMarketView> {
+  // Made once: a new key on every build threw the whole tab (drawer,
+  // inner tabs, scroll) away and rebuilt it on every Home update.
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     final homeController = Get.find<HomeController>();
-    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
     return Scaffold(
       key: scaffoldKey,
       drawer: CustomDrawer(),

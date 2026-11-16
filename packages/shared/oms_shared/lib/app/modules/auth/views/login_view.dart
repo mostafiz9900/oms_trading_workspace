@@ -8,7 +8,6 @@ import '../../../core/values/space.dart';
 import '../../../global_widgets/custom_button.dart';
 import '../../../global_widgets/custom_edit_text_form_field.dart';
 import '../controllers/auth_controller.dart';
-import '../../home/controllers/home_controller.dart';
 import '../../../routes/app_routes.dart';
 import 'package:localization/localization.dart';
 import '/app/modules/onboarding/views/local_widgets/create_new_account.dart';
@@ -147,12 +146,8 @@ class LoginView extends GetView<AuthController> {
                       onPressed: () async {
                         // ১. গেস্ট মোডে যাওয়ার আগে স্টোরেজ থেকে সমস্ত টোকেন ক্লিয়ার করুন
 
-                        // ২. মেমোরিতে যদি পুরানো HomeController অ্যাক্টিভ থাকে, তবে তা জোরপূর্বক ডিলিট করে দিন
-                        if (Get.isRegistered<HomeController>()) {
-                          Get.delete<HomeController>(force: true);
-                        }
-
-                        // ৩. এরপর ফ্রেশভাবে হোম পেজে চলে যান
+                        // Clear the previous route stack; its binding disposes
+                        // HomeController after the old widgets are removed.
                         Get.offAllNamed(Routes.HOME);
                       },
                       child: Text(

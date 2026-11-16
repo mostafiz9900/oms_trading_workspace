@@ -106,7 +106,7 @@ mixin TradeMixin on HomeState {
     // আপনার লিসেনার অটোমেটিক calculateTotal() কল করবে এবং টোটাল আপডেট হবে।
   }
 
-  void showBuySellDialog(BuildContext ctx, int orderBookId) {
+  void showBuySellDialog(BuildContext ctx, MarketIdentifier orderBookId) {
     showDialog(
       context: ctx,
       builder: (context) => AlertDialog(
@@ -334,5 +334,4 @@ mixin TradeMixin on HomeState {
     qtyTextEditField.clear();
     minQtyTextEditField.clear();
   }
-
 }

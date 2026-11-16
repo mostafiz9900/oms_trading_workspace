@@ -10,17 +10,31 @@ import 'package:broker_config/broker_config.dart' show StockExchange;
 import 'package:flutter/material.dart' hide Actions;
 import 'package:get/get.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '../../../data/models/request/add_fav_item_request.dart' show AddFavItemRequest;
-import '../../../data/models/response/fav_market_response.dart' show FavMarketResponse;
-import '../../../data/models/response/market_depth_model.dart' show MarketDepthData, MarketDepthModel;
-import '../../../data/services/market_statistics_aggregator.dart' show MarketStatisticsAggregator;
-import '../../../data/repositories/market_favorites_repository.dart' show MarketFavoritesRepository;
-import '../../../data/services/market_sector_filter_store.dart' show MarketSectorFilterStore;
-import '../../../data/services/market_sector_summary_aggregator.dart' show MarketSectorSummaryAggregator;
-import '../../../data/services/market_snapshot_analytics.dart' show MarketSnapshotAnalytics;
-import '../../../data/models/response/sector_data_model.dart' show SectorDataModel;
-import '../../../data/models/response/market_tick_message.dart' show MarketTickKind, MarketTickMessage;
+
+import '../../../data/models/request/add_fav_item_request.dart'
+    show AddFavItemRequest;
+import '../../../data/models/market_identifier.dart'
+    show MarketIdentifier, marketIdentifierFromJson;
+import '../../../data/models/response/fav_market_response.dart'
+    show FavMarketResponse;
+import '../../../data/models/response/market_depth_model.dart'
+    show MarketDepthData, MarketDepthModel;
+import '../../../data/services/market_statistics_aggregator.dart'
+    show MarketStatisticsAggregator;
+import '../../../data/repositories/market_favorites_repository.dart'
+    show MarketFavoritesRepository;
+import '../../../data/services/market_sector_filter_store.dart'
+    show MarketSectorFilterStore;
+import '../../../data/services/market_sector_summary_aggregator.dart'
+    show MarketSectorSummaryAggregator;
+import '../../../data/services/market_snapshot_analytics.dart'
+    show MarketSnapshotAnalytics;
+import '../../../data/models/response/sector_data_model.dart'
+    show SectorDataModel;
+import '../../../data/models/response/market_tick_message.dart'
+    show MarketTickKind, MarketTickMessage;
 import '../../../data/services/market_tick_store.dart' show MarketTickStore;
+
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '/app/data/models/request/update_order_holder.dart';
@@ -36,6 +50,7 @@ import '../../../core/values/colors.dart';
 import '../../../core/values/constants.dart';
 import '../../../core/values/space.dart';
 import '../../../core/values/storage.dart';
+import '../../../core/values/session_timeout_config.dart';
 import '../../../data/enums/app_enum.dart';
 import '../../../data/models/request/order_confirm_request.dart';
 import '../../../data/models/response/favourite_model.dart';
@@ -188,11 +203,11 @@ class HomeController extends HomeState
     // disposed", so wait until the transition is over.
     Future.delayed(fieldsDisposeDelay, () {
       _disconnectAll();
+      tradePriceFocusNode.dispose();
       disclosedQtyTextEditField.dispose();
       qtyTextEditField.dispose(); // শুধুমাত্র একবার কল হবে ✅
       minQtyTextEditField.dispose();
       tradPriceTextEditField.dispose();
-      tradePriceFocusNode.dispose();
       searchTextEditCont.dispose();
       watchlistTextEditField.dispose();
     });
@@ -232,5 +247,4 @@ class HomeController extends HomeState
   void onInactive() {
     printLog('💤 App Inactive ::::');
   }
-
 }

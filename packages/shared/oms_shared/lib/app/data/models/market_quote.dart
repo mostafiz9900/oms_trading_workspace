@@ -1,3 +1,5 @@
+import 'market_identifier.dart';
+
 /// Immutable quote values and calculations shared between broker apps.
 class MarketQuote {
   const MarketQuote({
@@ -31,7 +33,8 @@ class MarketQuote {
   });
 
   final double? close, last, reference, settle1, change, vwap, value;
-  final int? volume, buyQuantity, sellQuantity, trades, orderBook;
+  final int? volume, buyQuantity, sellQuantity, trades;
+  final MarketIdentifier? orderBook;
   final double? ask, bid, high, low, week52High;
   final double? change1w, change2w, change1m, change6m, change1y;
   final double? week1AverageVolume, month1AverageVolume;

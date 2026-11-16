@@ -120,12 +120,18 @@ mixin AccountMixin on HomeState {
   }
 
   void _clearLocal() {
+    // Release a focused TextField before replacing the Home route. EditableText
+    // can notify its controller while FocusManager is completing the change;
+    // keep the controller alive until that focus notification has settled.
+    FocusManager.instance.primaryFocus?.unfocus();
+
     // ১. লোকাল স্টোরেজ ক্লিয়ার করা
     StorageService.remove(StorageConstants.token);
     StorageService.remove(StorageConstants.refreshToken);
     StorageService.remove(StorageConstants.userInfo);
     StorageService.remove(StorageConstants.orderBookId);
     StorageService.remove('${StorageConstants.orderBookId}_cse');
+    StorageService.remove(SessionTimeoutConfig.backgroundedAtStorageKey);
 
     // ২. অন্যান্য কন্ট্রোলার ডিলিট করা
     Get.delete<TokenController>();
@@ -135,8 +141,7 @@ mixin AccountMixin on HomeState {
     // ৩. পুরো রাউট স্ট্যাক ক্লিয়ার করে লগইন পেজে পাঠানো
     Get.offAllNamed(Routes.LOGIN);
 
-    //  ৪. Permanent HomeController-কে জোরপূর্বক ডিলিট করা
-    Get.delete<HomeController>(force: true);
+    // HomeController belongs to the Home route. Let GetX dispose it when
+    // offAllNamed removes that route, after its widgets have unmounted.
   }
-
 }

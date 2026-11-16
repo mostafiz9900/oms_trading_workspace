@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/sparkcharts.dart';
@@ -13,7 +14,11 @@ class RelatedItemWatchlist extends StatelessWidget {
   final List<MarketModel> relatedMarketList;
   final dynamic controller; // এটি মূলত HomeController এর ইনস্ট্যান্স
 
-  const RelatedItemWatchlist({super.key, required this.relatedMarketList, required this.controller});
+  const RelatedItemWatchlist({
+    super.key,
+    required this.relatedMarketList,
+    required this.controller,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -79,9 +84,15 @@ class _GoogleFinanceCard extends StatelessWidget {
     final double change = item.chg ?? 0.0;
     final bool isPositive = change >= 0;
 
-    final Color textColor = isPositive ? const Color(0xFF137333) : const Color(0xFFA50E0E);
-    final Color bgColor = context.isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF8F9FA);
-    final Color borderColor = context.isDark ? Colors.white12 : Colors.transparent;
+    final Color textColor = isPositive
+        ? const Color(0xFF137333)
+        : const Color(0xFFA50E0E);
+    final Color bgColor = context.isDark
+        ? const Color(0xFF1E1E1E)
+        : const Color(0xFFF8F9FA);
+    final Color borderColor = context.isDark
+        ? Colors.white12
+        : Colors.transparent;
 
     // 🚀 আপডেটেড জেনারেটর ব্যবহার করা হলো
     final List<num> sparklineData = _generateSparklineData(item, change);
@@ -112,7 +123,9 @@ class _GoogleFinanceCard extends StatelessWidget {
                       item.shortName ?? '',
                       style: TextStyle(
                         fontSize: 11,
-                        color: context.isDark ? Colors.white54 : const Color(0xFF5F6368),
+                        color: context.isDark
+                            ? Colors.white54
+                            : const Color(0xFF5F6368),
                         fontWeight: FontWeight.w500,
                       ),
                       maxLines: 1,
@@ -124,7 +137,9 @@ class _GoogleFinanceCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
-                        color: context.isDark ? Colors.white : const Color(0xFF202124),
+                        color: context.isDark
+                            ? Colors.white
+                            : const Color(0xFF202124),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -134,7 +149,9 @@ class _GoogleFinanceCard extends StatelessWidget {
                       item.last?.toStringAsFixed(2) ?? '0.00',
                       style: TextStyle(
                         fontSize: 13,
-                        color: context.isDark ? Colors.white70 : const Color(0xFF5F6368),
+                        color: context.isDark
+                            ? Colors.white70
+                            : const Color(0xFF5F6368),
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -144,14 +161,23 @@ class _GoogleFinanceCard extends StatelessWidget {
                       children: [
                         Text(
                           '${isPositive ? '+' : ''}${change.toStringAsFixed(2)}%',
-                          style: TextStyle(color: textColor, fontWeight: FontWeight.w500, fontSize: 14),
+                          style: TextStyle(
+                            color: textColor,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                          ),
                         ),
                         const SizedBox(width: 6),
                         Container(
                           padding: const EdgeInsets.all(2.5),
-                          decoration: BoxDecoration(color: textColor, shape: BoxShape.circle),
+                          decoration: BoxDecoration(
+                            color: textColor,
+                            shape: BoxShape.circle,
+                          ),
                           child: Icon(
-                            isPositive ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded,
+                            isPositive
+                                ? Icons.arrow_upward_rounded
+                                : Icons.arrow_downward_rounded,
                             color: Colors.white,
                             size: 10,
                           ),
@@ -168,8 +194,13 @@ class _GoogleFinanceCard extends StatelessWidget {
                 left: 0,
                 right: 0,
                 child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
-                  child: GoogleFinanceSparkline(data: sparklineData, change: change),
+                  borderRadius: const BorderRadius.vertical(
+                    bottom: Radius.circular(16),
+                  ),
+                  child: GoogleFinanceSparkline(
+                    data: sparklineData,
+                    change: change,
+                  ),
                 ),
               ),
             ],
@@ -184,12 +215,20 @@ class _GoogleFinanceCard extends StatelessWidget {
   // =========================================================================
   List<num> _generateSparklineData(MarketModel item, double absoluteChange) {
     final double currentPrice = item.last ?? 0.0;
-    final double ycp = (item.reference != null && item.reference! > 0) ? item.reference! : currentPrice;
+    final double ycp = (item.reference != null && item.reference! > 0)
+        ? item.reference!
+        : currentPrice;
     if (ycp == 0 || currentPrice == 0) return [10, 10, 10];
 
-    final double open = (item.open != null && item.open! > 0) ? item.open! : ycp;
-    double high = (item.high != null && item.high! > 0) ? item.high! : math.max(open, currentPrice);
-    double low = (item.low != null && item.low! > 0) ? item.low! : math.min(open, currentPrice);
+    final double open = (item.open != null && item.open! > 0)
+        ? item.open!
+        : ycp;
+    double high = (item.high != null && item.high! > 0)
+        ? item.high!
+        : math.max(open, currentPrice);
+    double low = (item.low != null && item.low! > 0)
+        ? item.low!
+        : math.min(open, currentPrice);
 
     if (low > high) {
       double temp = low;
@@ -207,7 +246,9 @@ class _GoogleFinanceCard extends StatelessWidget {
     final double chartHigh = math.max(high, ycp);
     final double chartLow = math.min(low, ycp);
 
-    final int seed = item.orderBook ?? (item.shortName?.hashCode ?? 0);
+    final int seed = item.orderBook is int
+        ? item.orderBook as int
+        : item.orderBook?.hashCode ?? (item.shortName?.hashCode ?? 0);
     final random = math.Random(seed);
 
     bool isBullish = absoluteChange >= 0;
@@ -242,7 +283,8 @@ class _GoogleFinanceCard extends StatelessWidget {
 
       double localT = segment - idx;
       double smoothT = (1 - math.cos(localT * math.pi)) / 2;
-      double point = keyAnchors[idx] + (keyAnchors[nextIdx] - keyAnchors[idx]) * smoothT;
+      double point =
+          keyAnchors[idx] + (keyAnchors[nextIdx] - keyAnchors[idx]) * smoothT;
 
       if (i > 0 && i < totalSteps) {
         point += ((random.nextDouble() * 2) - 1) * ((high - low) * 0.15);
@@ -259,7 +301,11 @@ class GoogleFinanceSparkline extends StatelessWidget {
   final List<num> data;
   final double change;
 
-  const GoogleFinanceSparkline({super.key, required this.data, required this.change});
+  const GoogleFinanceSparkline({
+    super.key,
+    required this.data,
+    required this.change,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -287,7 +333,9 @@ class GoogleFinanceSparkline extends StatelessWidget {
                   (index) => Expanded(
                     child: Container(
                       height: 1,
-                      color: index % 2 == 0 ? Colors.grey.withAlpha(89) : Colors.transparent,
+                      color: index % 2 == 0
+                          ? Colors.grey.withAlpha(89)
+                          : Colors.transparent,
                     ),
                   ),
                 ),

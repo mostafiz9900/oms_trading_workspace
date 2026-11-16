@@ -93,7 +93,7 @@ mixin TimeSalesMixin on HomeState {
       "ac": "subscribe",
       "tp": tp,
       "tid": int.parse(tid),
-      "ob": int.parse(ob),
+      "ob": marketIdentifierFromJson(ob),
     });
     _webSocketService.sendMessage(AppConfig.newsTimeSalesSocketId, body);
     printLog("Time & Sales Sent subscribe: $body");
@@ -108,5 +108,4 @@ mixin TimeSalesMixin on HomeState {
     printLog("Time & Sales Sent subscribe news: $body");
     _webSocketService.sendMessage(AppConfig.newsTimeSalesSocketId, body);
   }
-
 }

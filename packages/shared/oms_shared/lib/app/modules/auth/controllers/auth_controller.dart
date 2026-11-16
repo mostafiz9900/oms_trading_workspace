@@ -12,10 +12,12 @@ import '../../../core/values/storage.dart';
 import '../../../data/models/request/login_request.dart';
 import '../../../data/repositories/auth_repository.dart';
 import '../../../data/services/storage_service.dart';
+import '../../../data/services/session_timeout_service.dart';
 import '../views/login_view.dart';
-import '../../home/controllers/home_controller.dart';
 import '../../../routes/app_routes.dart';
+
 import 'package:localization/localization.dart';
+
 import '/app/modules/auth/views/otp_verify_screen.dart';
 import '/app/modules/auth/views/reset_password_screen.dart';
 import '/app/modules/auth/views/signup_verify.dart';
@@ -33,6 +35,8 @@ import 'token_controller.dart';
 class AuthController extends GetxController {
   final AuthRepository authRepository;
   AuthController({required this.authRepository});
+
+  static const _fieldDisposeDelay = Duration(seconds: 1);
 
   // ============= login ================================
   var timerCont = Get.put<TokenController>(TokenController());
@@ -84,7 +88,10 @@ class AuthController extends GetxController {
   }
 
   Future<dynamic> login() async {
-    var loginInfo = LoginRequest(userName: loginUserNameController.text, password: loginPasswordController.text);
+    var loginInfo = LoginRequest(
+      userName: loginUserNameController.text,
+      password: loginPasswordController.text,
+    );
 
     if (await NetworkUtil.checkInternetConnection()) {
       try {
@@ -102,25 +109,30 @@ class AuthController extends GetxController {
           _rememberedUserSave(loginUserNameController.text);
 
           // 1. Storage এ সিকিউরলি সেভ করুন
-          await StorageService.save(StorageConstants.token, res.data!.token?.access);
-          await StorageService.save(StorageConstants.refreshToken, res.data!.token?.refresh);
-          await StorageService.saveMap(StorageConstants.userInfo, res.data!.toJson());
+          await StorageService.save(
+            StorageConstants.token,
+            res.data!.token?.access,
+          );
+          await StorageService.save(
+            StorageConstants.refreshToken,
+            res.data!.token?.refresh,
+          );
+          await StorageService.saveMap(
+            StorageConstants.userInfo,
+            res.data!.toJson(),
+          );
+          if (Get.isRegistered<SessionTimeoutService>()) {
+            Get.find<SessionTimeoutService>().resetForNewSession();
+          }
 
           await Future.delayed(const Duration(milliseconds: 100));
 
-          isLoading = false; // 👈 এখানে অবশ্যই false করতে হবে, নাহলে লোডার আটকে থাকবে
+          isLoading =
+              false; // 👈 এখানে অবশ্যই false করতে হবে, নাহলে লোডার আটকে থাকবে
           update();
 
-          // 3. পুরানো HomeController মেমোরি থেকে সম্পূর্ণ মুছে ফেলুন
-          if (Get.isRegistered<HomeController>()) {
-            Get.delete<HomeController>(force: true);
-          }
-
-          // 4. হোম পেজে নেভিগেট করুন।
-          // যাতে HomeController স্বয়ংক্রিয়ভাবে আবার তৈরি হয়ে onInit() কল করতে পারে।
-          Get.offAllNamed(
-            Routes.HOME,
-          ); // offNamed এর বদলে offAllNamed ব্যবহার করা বেশি সেফ, এতে প্রিভিয়াস রাউট স্ট্যাক ক্লিয়ার থাকে।
+          // Replace the route stack before GetX disposes the old Home route.
+          Get.offAllNamed(Routes.HOME);
         } else {
           Helpers.snackbarForErorr2(bodyText: '${res.errorMessage}');
           isLoading = false;
@@ -132,7 +144,9 @@ class AuthController extends GetxController {
         update();
       }
     } else {
-      Helpers.snackbarForErorr2(bodyText: AppTranslations.noInternetConnection.tr);
+      Helpers.snackbarForErorr2(
+        bodyText: AppTranslations.noInternetConnection.tr,
+      );
     }
   }
 
@@ -147,13 +161,24 @@ class AuthController extends GetxController {
         if (res.data != null) {
           printLog(res.data);
           printLog("res.data here it is");
-          await StorageService.save(StorageConstants.token, res.data!.token?.access);
-          await StorageService.save(StorageConstants.refreshToken, res.data!.token?.refresh);
-          await StorageService.saveMap(StorageConstants.userInfo, res.data!.toJson());
+          await StorageService.save(
+            StorageConstants.token,
+            res.data!.token?.access,
+          );
+          await StorageService.save(
+            StorageConstants.refreshToken,
+            res.data!.token?.refresh,
+          );
+          await StorageService.saveMap(
+            StorageConstants.userInfo,
+            res.data!.toJson(),
+          );
+          if (Get.isRegistered<SessionTimeoutService>()) {
+            Get.find<SessionTimeoutService>().resetForNewSession();
+          }
           isLoading = true;
           update();
-          Get.delete<HomeController>(force: true);
-          Get.offNamed(Routes.HOME, preventDuplicates: false);
+          Get.offAllNamed(Routes.HOME);
         } else {
           Helpers.snackbarForErorr2(bodyText: '${res.errorMessage}');
           isLoading = false;
@@ -165,7 +190,9 @@ class AuthController extends GetxController {
         update();
       }
     } else {
-      Helpers.snackbarForErorr2(bodyText: AppTranslations.noInternetConnection.tr);
+      Helpers.snackbarForErorr2(
+        bodyText: AppTranslations.noInternetConnection.tr,
+      );
     }
   }
 
@@ -184,7 +211,9 @@ class AuthController extends GetxController {
   Future<bool> loginWithBiometric() async {
     final isEnable = await bioCon.isBiometricEnabled();
     if (!isEnable) {
-      Helpers.snackbarForErorr2(bodyText: "Biometric is not enabled for this device.");
+      Helpers.snackbarForErorr2(
+        bodyText: "Biometric is not enabled for this device.",
+      );
       return false;
     }
 
@@ -210,7 +239,8 @@ class AuthController extends GetxController {
   /// BiometricController function to enable or disable based on current status
   Future<void> enableDisableBiometric() async {
     try {
-      final isEnable = await bioCon.isBiometricEnabled(); // check current status
+      final isEnable = await bioCon
+          .isBiometricEnabled(); // check current status
       if (isEnable) {
         await bioCon.disableBiometric();
         printLog('Biometric disabled locally');
@@ -255,7 +285,9 @@ class AuthController extends GetxController {
         try {
           isLoadingRegister = true;
           update();
-          final res = await authRepository.register(registerBoIdController.text.toString());
+          final res = await authRepository.register(
+            registerBoIdController.text.toString(),
+          );
           if (res != null) {
             printLog('user register information');
             registerInformation = res;
@@ -274,7 +306,9 @@ class AuthController extends GetxController {
         }
       }
     } else {
-      Helpers.snackbarForErorr2(bodyText: AppTranslations.noInternetConnection.tr);
+      Helpers.snackbarForErorr2(
+        bodyText: AppTranslations.noInternetConnection.tr,
+      );
     }
   }
 
@@ -310,7 +344,9 @@ class AuthController extends GetxController {
         }
       }
     } else {
-      Helpers.snackbarForErorr2(bodyText: AppTranslations.noInternetConnection.tr);
+      Helpers.snackbarForErorr2(
+        bodyText: AppTranslations.noInternetConnection.tr,
+      );
     }
   }
 
@@ -333,7 +369,10 @@ class AuthController extends GetxController {
       try {
         selectMediaLoading = true;
         update();
-        final res = await authRepository.selectMedia(boId: verifyBoid?.boId, mediaType: selectedMedia);
+        final res = await authRepository.selectMedia(
+          boId: verifyBoid?.boId,
+          mediaType: selectedMedia,
+        );
         if (res != null) {
           selectMediaLoading = false;
           update();
@@ -351,7 +390,9 @@ class AuthController extends GetxController {
         printLog('selectMediaInfo error :: $e');
       }
     } else {
-      Helpers.snackbarForErorr2(bodyText: AppTranslations.noInternetConnection.tr);
+      Helpers.snackbarForErorr2(
+        bodyText: AppTranslations.noInternetConnection.tr,
+      );
     }
   }
 
@@ -378,8 +419,11 @@ class AuthController extends GetxController {
       try {
         if (selectedMedia == null) {
           Helpers.snackbarForErorr2(bodyText: "Please select media");
-        } else if (selectedAvailablePhoneOrEmail == null && inputMediaEmailOrPhone.text.isEmpty) {
-          Helpers.snackbarForErorr2(bodyText: "Please Enter available email or mobile number");
+        } else if (selectedAvailablePhoneOrEmail == null &&
+            inputMediaEmailOrPhone.text.isEmpty) {
+          Helpers.snackbarForErorr2(
+            bodyText: "Please Enter available email or mobile number",
+          );
         } else {
           verifyMediaLoading = true;
           update();
@@ -406,7 +450,9 @@ class AuthController extends GetxController {
         printLog('verifyMedia error :: $e');
       }
     } else {
-      Helpers.snackbarForErorr2(bodyText: AppTranslations.noInternetConnection.tr);
+      Helpers.snackbarForErorr2(
+        bodyText: AppTranslations.noInternetConnection.tr,
+      );
     }
   }
 
@@ -446,7 +492,9 @@ class AuthController extends GetxController {
         printLog('verifyOtp error :: $e');
       }
     } else {
-      Helpers.snackbarForErorr2(bodyText: AppTranslations.noInternetConnection.tr);
+      Helpers.snackbarForErorr2(
+        bodyText: AppTranslations.noInternetConnection.tr,
+      );
     }
   }
 
@@ -458,7 +506,9 @@ class AuthController extends GetxController {
   void sentOtpForForgotPassword(String email, {bool isReset = false}) async {
     if (await NetworkUtil.checkInternetConnection()) {
       try {
-        final emailAddress = email.trim().isNotEmpty ? email.trim() : forgotPassEditController.text.trim();
+        final emailAddress = email.trim().isNotEmpty
+            ? email.trim()
+            : forgotPassEditController.text.trim();
         final bool isValid = EmailValidator.validate(emailAddress);
         if (emailAddress.isEmpty) {
           Helpers.snackbarForErorr2(bodyText: "Enter email address");
@@ -488,7 +538,9 @@ class AuthController extends GetxController {
         printLog('forgotPassword error :: $e');
       }
     } else {
-      Helpers.snackbarForErorr2(bodyText: AppTranslations.noInternetConnection.tr);
+      Helpers.snackbarForErorr2(
+        bodyText: AppTranslations.noInternetConnection.tr,
+      );
     }
   }
 
@@ -497,7 +549,10 @@ class AuthController extends GetxController {
       try {
         verifyOtpLoading = true;
         update();
-        final res = await authRepository.verifyOtpForgot(email: email, otp: otp);
+        final res = await authRepository.verifyOtpForgot(
+          email: email,
+          otp: otp,
+        );
         if (res != null) {
           verifyOtpLoading = false;
           update();
@@ -513,7 +568,9 @@ class AuthController extends GetxController {
         printLog('verifyOtp error :: $e');
       }
     } else {
-      Helpers.snackbarForErorr2(bodyText: AppTranslations.noInternetConnection.tr);
+      Helpers.snackbarForErorr2(
+        bodyText: AppTranslations.noInternetConnection.tr,
+      );
     }
   }
 
@@ -524,7 +581,10 @@ class AuthController extends GetxController {
         update();
 
         // 🚀 Repository থেকে true/false রিসিভ করছে
-        final bool isSuccess = await authRepository.resetPassword(email: email, password: password);
+        final bool isSuccess = await authRepository.resetPassword(
+          email: email,
+          password: password,
+        );
 
         if (isSuccess) {
           verifyOtpLoading = false;
@@ -547,14 +607,25 @@ class AuthController extends GetxController {
         printLog('resetPassword error :: $e');
       }
     } else {
-      Helpers.snackbarForErorr2(bodyText: AppTranslations.noInternetConnection.tr);
+      Helpers.snackbarForErorr2(
+        bodyText: AppTranslations.noInternetConnection.tr,
+      );
     }
   }
 
   @override
   void onClose() {
     super.onClose();
-    closeController();
+    // A Login route can be created while the previous auth route is still
+    // transitioning out. If GetX reuses this controller for the new route,
+    // keep its text fields alive for that route.
+    Future.delayed(_fieldDisposeDelay, () {
+      if (Get.isRegistered<AuthController>() &&
+          identical(Get.find<AuthController>(), this)) {
+        return;
+      }
+      closeController();
+    });
   }
 
   void closeController() {
@@ -620,4 +691,3 @@ class CountDownNotifier extends Notifier<int> {
 final countDownProvider = NotifierProvider.family<CountDownNotifier, int, int>(
   (int minutes) => CountDownNotifier(minutes),
 );
-

@@ -1,9 +1,11 @@
+import '../market_identifier.dart';
+
 /// Request payload for adding a market instrument to a user's watchlist.
 class AddFavItemRequest {
   final int tableId;
   final String ticker;
   final String group;
-  final int oderBook;
+  final MarketIdentifier oderBook;
 
   AddFavItemRequest({
     required this.tableId,
