@@ -47,6 +47,18 @@ class OrderConfirmRequest {
   String? execInst;
   int? minQty;
 
+  /// CSE market IDs keep their prefixed string in app state, but the order
+  /// gateway accepts only the integer form. DSE identifiers pass unchanged.
+  MarketIdentifier? get _orderBookIdForPayload {
+    final id = orderBookId;
+    if (exchange?.toUpperCase() != 'CSE') return id;
+    final numericId = cseOrderBookIdToInt(id);
+    if (numericId == null) {
+      throw FormatException('Invalid CSE order book ID: $id');
+    }
+    return numericId;
+  }
+
   OrderConfirmRequest({
     this.action,
     this.traderPk,
@@ -128,7 +140,7 @@ class OrderConfirmRequest {
     'isin': isin,
     'asset_class': assetClass,
     'security_code': securityCode,
-    'order_book_id': orderBookId,
+    'order_book_id': _orderBookIdForPayload,
     'board': board,
     'session': session,
     'exchange': exchange,
@@ -159,7 +171,7 @@ class OrderConfirmRequest {
     'isin': isin,
     'asset_class': assetClass,
     'security_code': securityCode,
-    'order_book_id': orderBookId,
+    'order_book_id': _orderBookIdForPayload,
     'board': board,
     'session': session,
     'exchange': exchange,

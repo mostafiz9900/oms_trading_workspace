@@ -456,8 +456,25 @@ void main() {
       expect(order, containsPair('action', 'NEW_ORDER_SINGLE_REQUEST'));
       expect(order, containsPair('exchange', 'CSE'));
       expect(order, containsPair('cse_trader_code', 'CSE-TR9'));
-      expect(order, containsPair('order_book_id', 'CSE_101001288'));
-      expect(order['order_book_id'], isA<String>());
+      expect(order, containsPair('order_book_id', 101001288));
+      expect(order['order_book_id'], isA<int>());
+      await finish(tester);
+    });
+
+    testWidgets('CSE integer order book IDs remain integer in the payload', (
+      tester,
+    ) async {
+      await onExchange(tester, StockExchange.cse);
+      home.userInfo.userDetail!.cseTraderCode = 'CSE-TR9';
+      home.marketData = home.marketData.copyWith(orderBook: 101001288);
+
+      home.orderConfirmSubmitted(SideType2.BUY, ActionsType.ORDER);
+      final socket = await openOrderSocket(tester);
+
+      final order = sentOrder(socket);
+      expect(order['exchange'], 'CSE');
+      expect(order['order_book_id'], 101001288);
+      expect(order['order_book_id'], isA<int>());
       await finish(tester);
     });
 
