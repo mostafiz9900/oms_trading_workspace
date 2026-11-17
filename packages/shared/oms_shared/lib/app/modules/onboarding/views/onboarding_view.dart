@@ -3,10 +3,11 @@ import '../../../core/values/app_config.dart';
 import '../../../core/values/colors.dart';
 import '../../../core/values/space.dart';
 import '../../../global_widgets/custom_button.dart';
-import 'package:localization/localization.dart';
-import 'package:flutter/material.dart';
 
-import 'package:get/get.dart';
+import 'package:localization/localization.dart';
+import 'package:material_ui/material_ui.dart';
+
+import 'package:getxify/getxify.dart';
 
 import '../controllers/onboarding_controller.dart';
 
@@ -47,16 +48,15 @@ class OnboardingView extends GetView<OnboardingController> {
                           Center(
                             child: Text(
                               onboardingCont.demoData[index]['title'],
-                              style: Get.textTheme.titleLarge?.copyWith(
-                                color: context.textColor,
-                              ),
+                              style: Get.context!.textTheme.titleLarge
+                                  ?.copyWith(color: context.textColor),
                             ),
                           ),
                           const SizedBox(height: 19),
                           Text(
                             onboardingCont.demoData[index]['text'],
                             textAlign: TextAlign.center,
-                            style: Get.textTheme.bodyMedium?.copyWith(
+                            style: Get.context!.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w400,
                               fontSize: 16,
                               color: context.textColor,
@@ -87,11 +87,10 @@ class OnboardingView extends GetView<OnboardingController> {
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: SizedBox(
-                    width: Get.width * 0.60,
+                    width: Get.context!.width * 0.60,
                     child: CustomButton(
                       onPressed: () {
                         onboardingCont.changeNextPage();
-
                       },
                       title: AppTranslations.startHouse.tr.replaceAll(
                         'Benemoy',
@@ -132,4 +131,3 @@ class AnimatedDot extends StatelessWidget {
     );
   }
 }
-

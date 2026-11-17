@@ -2,7 +2,8 @@ class AppTranslations {
   static const String welcomeKey = 'welcome';
   static const String greetKey = 'greet';
   static const String helloWorld = 'HELLO WORLD';
-  static const String growYourInvestmentsWithHouse = 'growYourInvestmentsWithHouse';
+  static const String growYourInvestmentsWithHouse =
+      'growYourInvestmentsWithHouse';
   static const String manageYourStocks = 'manageYourStocks';
   static const String startHouse = 'startHouse';
   static const String getStarted = 'getStarted';

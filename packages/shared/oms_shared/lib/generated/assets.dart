@@ -2,36 +2,68 @@
 class Assets {
   Assets._();
 
-  static const String svgImageAboutUs = 'packages/oms_shared/assets/svg_image/about_us.svg';
-  static const String svgImageAccountSummary = 'packages/oms_shared/assets/svg_image/account_summary.svg';
-  static const String svgImageAddIcon = 'packages/oms_shared/assets/svg_image/add_icon.svg';
-  static const String svgImageAlartIcon = 'packages/oms_shared/assets/svg_image/alart_icon.svg';
-  static const String svgImageBackIcon = 'packages/oms_shared/assets/svg_image/back_icon.svg';
-  static const String svgImageChangePassword = 'packages/oms_shared/assets/svg_image/change_password.svg';
-  static const String svgImageDrawerIcon = 'packages/oms_shared/assets/svg_image/drawer_icon.svg';
-  static const String svgImageDropManuIcon = 'packages/oms_shared/assets/svg_image/drop_manu_icon.svg';
-  static const String svgImageFaceId = 'packages/oms_shared/assets/svg_image/face_id.svg';
-  static const String svgImageFingerScan = 'packages/oms_shared/assets/svg_image/finger_scan.svg';
-  static const String svgImageGoFow = 'packages/oms_shared/assets/svg_image/go_fow.svg';
-  static const String svgImageHelp = 'packages/oms_shared/assets/svg_image/help.svg';
-  static const String svgImageLogout = 'packages/oms_shared/assets/svg_image/logout.svg';
-  static const String svgImageLove = 'packages/oms_shared/assets/svg_image/love.svg';
-  static const String svgImageLoveIcon = 'packages/oms_shared/assets/svg_image/love_icon.svg';
-  static const String svgImageMarketIcon = 'packages/oms_shared/assets/svg_image/market_icon.svg';
-  static const String svgImageMarketLine = 'packages/oms_shared/assets/svg_image/market_line.svg';
-  static const String svgImageMoreIcon = 'packages/oms_shared/assets/svg_image/more_icon.svg';
-  static const String svgImageOrderList = 'packages/oms_shared/assets/svg_image/order_list.svg';
-  static const String svgImagePasswordIcon = 'packages/oms_shared/assets/svg_image/password_icon.svg';
-  static const String svgImagePasswordInvisibile = 'packages/oms_shared/assets/svg_image/password_invisibile.svg';
-  static const String svgImagePasswordVisible = 'packages/oms_shared/assets/svg_image/password_visible.svg';
-  static const String svgImagePortfolioIcon = 'packages/oms_shared/assets/svg_image/portfolio_icon.svg';
-  static const String svgImageQuoteIcon = 'packages/oms_shared/assets/svg_image/quote_icon.svg';
-  static const String svgImageSearchIcon = 'packages/oms_shared/assets/svg_image/search_icon.svg';
-  static const String svgImageStar = 'packages/oms_shared/assets/svg_image/star.svg';
-  static const String svgImageTime = 'packages/oms_shared/assets/svg_image/time.svg';
-  static const String svgImageTimeAndSales = 'packages/oms_shared/assets/svg_image/time_and_sales.svg';
-  static const String svgImageTopStocks = 'packages/oms_shared/assets/svg_image/top_stocks.svg';
-  static const String svgImageTradeIcon = 'packages/oms_shared/assets/svg_image/trade_icon.svg';
-  static const String svgImageUserIcon = 'packages/oms_shared/assets/svg_image/user_icon.svg';
-  static const String svgImageWatchListIcon = 'packages/oms_shared/assets/svg_image/watch_list_icon.svg';
+  static const String svgImageAboutUs =
+      'packages/oms_shared/assets/svg_image/about_us.svg';
+  static const String svgImageAccountSummary =
+      'packages/oms_shared/assets/svg_image/account_summary.svg';
+  static const String svgImageAddIcon =
+      'packages/oms_shared/assets/svg_image/add_icon.svg';
+  static const String svgImageAlartIcon =
+      'packages/oms_shared/assets/svg_image/alart_icon.svg';
+  static const String svgImageBackIcon =
+      'packages/oms_shared/assets/svg_image/back_icon.svg';
+  static const String svgImageChangePassword =
+      'packages/oms_shared/assets/svg_image/change_password.svg';
+  static const String svgImageDrawerIcon =
+      'packages/oms_shared/assets/svg_image/drawer_icon.svg';
+  static const String svgImageDropManuIcon =
+      'packages/oms_shared/assets/svg_image/drop_manu_icon.svg';
+  static const String svgImageFaceId =
+      'packages/oms_shared/assets/svg_image/face_id.svg';
+  static const String svgImageFingerScan =
+      'packages/oms_shared/assets/svg_image/finger_scan.svg';
+  static const String svgImageGoFow =
+      'packages/oms_shared/assets/svg_image/go_fow.svg';
+  static const String svgImageHelp =
+      'packages/oms_shared/assets/svg_image/help.svg';
+  static const String svgImageLogout =
+      'packages/oms_shared/assets/svg_image/logout.svg';
+  static const String svgImageLove =
+      'packages/oms_shared/assets/svg_image/love.svg';
+  static const String svgImageLoveIcon =
+      'packages/oms_shared/assets/svg_image/love_icon.svg';
+  static const String svgImageMarketIcon =
+      'packages/oms_shared/assets/svg_image/market_icon.svg';
+  static const String svgImageMarketLine =
+      'packages/oms_shared/assets/svg_image/market_line.svg';
+  static const String svgImageMoreIcon =
+      'packages/oms_shared/assets/svg_image/more_icon.svg';
+  static const String svgImageOrderList =
+      'packages/oms_shared/assets/svg_image/order_list.svg';
+  static const String svgImagePasswordIcon =
+      'packages/oms_shared/assets/svg_image/password_icon.svg';
+  static const String svgImagePasswordInvisibile =
+      'packages/oms_shared/assets/svg_image/password_invisibile.svg';
+  static const String svgImagePasswordVisible =
+      'packages/oms_shared/assets/svg_image/password_visible.svg';
+  static const String svgImagePortfolioIcon =
+      'packages/oms_shared/assets/svg_image/portfolio_icon.svg';
+  static const String svgImageQuoteIcon =
+      'packages/oms_shared/assets/svg_image/quote_icon.svg';
+  static const String svgImageSearchIcon =
+      'packages/oms_shared/assets/svg_image/search_icon.svg';
+  static const String svgImageStar =
+      'packages/oms_shared/assets/svg_image/star.svg';
+  static const String svgImageTime =
+      'packages/oms_shared/assets/svg_image/time.svg';
+  static const String svgImageTimeAndSales =
+      'packages/oms_shared/assets/svg_image/time_and_sales.svg';
+  static const String svgImageTopStocks =
+      'packages/oms_shared/assets/svg_image/top_stocks.svg';
+  static const String svgImageTradeIcon =
+      'packages/oms_shared/assets/svg_image/trade_icon.svg';
+  static const String svgImageUserIcon =
+      'packages/oms_shared/assets/svg_image/user_icon.svg';
+  static const String svgImageWatchListIcon =
+      'packages/oms_shared/assets/svg_image/watch_list_icon.svg';
 }

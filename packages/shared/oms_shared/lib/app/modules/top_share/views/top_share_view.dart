@@ -8,8 +8,8 @@ import '../../../global_widgets/custom_app_bar.dart';
 import '../../../global_widgets/shared_market_components.dart';
 import '../../home/controllers/home_controller.dart';
 
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../global_widgets/appbar_right_search_tap.dart';
 import '../../../global_widgets/exchange/exchange_switcher.dart';
@@ -295,7 +295,7 @@ class _CustomShareFilterWidget extends StatelessWidget {
               onTap: () {
                 Helpers.openDropdownShare(
                   context,
-                  height: Get.height * 0.6,
+                  height: Get.context!.height * 0.6,
                   title: "Sector",
                   menuLists: topShareCon.sortByCompanyTypeMenuList,
                   selectedValue: topShareCon.activeSector,
@@ -370,7 +370,7 @@ class _CustomChip extends StatelessWidget {
         children: [
           Text(
             name,
-            style: Get.textTheme.bodyMedium?.copyWith(
+            style: Get.context!.textTheme.bodyMedium?.copyWith(
               color: context.buttonColor,
               height: 1.1,
             ),

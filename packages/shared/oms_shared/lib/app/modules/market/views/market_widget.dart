@@ -1,5 +1,4 @@
 import 'package:oms_shared/app/modules/market/controllers/live_index_controller.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 
 import '/app/modules/market/views/local_widgets/watchlist_distribution_page.dart';
 import '../../../core/utils/extensions/app_context.dart';
@@ -16,9 +15,9 @@ import '../../global_search/controllers/global_search_controller.dart';
 import '../../home/controllers/home_controller.dart';
 import '../../../routes/app_routes.dart';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -155,13 +154,31 @@ class _BodyWidget extends StatelessWidget {
   }
 }
 
-class _CustomTabWidget extends HookWidget {
+class _CustomTabWidget extends StatefulWidget {
   const _CustomTabWidget();
 
   @override
-  Widget build(BuildContext context) {
-    final tabController = useTabController(initialLength: 3);
+  State<_CustomTabWidget> createState() => _CustomTabWidgetState();
+}
 
+class _CustomTabWidgetState extends State<_CustomTabWidget>
+    with SingleTickerProviderStateMixin {
+  late final TabController tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Expanded(
       child: Column(
         children: [
@@ -239,7 +256,7 @@ class _MarketTabWidget extends StatelessWidget {
           const TopSectorByGainerWidget(),
           const TopSectorByCategoryWidget(),
           AppSpace.spaceH10,
-          ProSectorHorizontalList(),
+          // ProSectorHorizontalList(),
 
           WatchlistDistributionPage(),
 
@@ -318,7 +335,7 @@ class _IndicesTabWidget extends StatelessWidget {
               0, // 🚀 চার্টের ভেতরের চারপাশের বর্ডার লাইন রিমুভ করা হয়েছে
           title: ChartTitle(
             text: '${controller.selectedSn} Analysis',
-            textStyle: Get.textTheme.titleMedium?.copyWith(
+            textStyle: Get.context!.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
               fontSize: 16,
               color: ctx.textColor,

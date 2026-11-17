@@ -1,5 +1,6 @@
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
+import 'app_binding.dart';
 import 'core/theme/theme_service.dart';
 import 'data/services/cse_market_service.dart';
 import 'data/services/exchange_service.dart';
@@ -11,6 +12,7 @@ import 'modules/auth/controllers/token_controller.dart';
 
 class DependencyInjection {
   static Future<void> init() async {
+    AppBinding().dependencies();
     Get.lazyPut(() => StorageService());
     Get.put<SessionTimeoutService>(SessionTimeoutService(), permanent: true);
     Get.put<ThemeServices>(ThemeServices(), permanent: true);

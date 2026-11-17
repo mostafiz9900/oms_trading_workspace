@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:oms_shared/app/core/values/storage.dart';
 import 'package:oms_shared/app/data/api/api_response.dart';
 import 'package:oms_shared/app/data/repositories/home_repository.dart';
@@ -13,7 +13,8 @@ import 'package:oms_shared/app/routes/app_routes.dart';
 import '../../helpers/fake_storage.dart';
 
 String jwt(Map<String, dynamic> payload) {
-  String part(Object o) => base64Url.encode(utf8.encode(jsonEncode(o))).replaceAll('=', '');
+  String part(Object o) =>
+      base64Url.encode(utf8.encode(jsonEncode(o))).replaceAll('=', '');
   return '${part({'alg': 'HS256', 'typ': 'JWT'})}.${part(payload)}.sig';
 }
 
@@ -59,11 +60,14 @@ void main() {
         ],
       ),
     );
+    await tester.pump(const Duration(milliseconds: 1));
   }
 
   Future<void> storeSession({required String access, String? refresh}) async {
     await StorageService.save(StorageConstants.token, access);
-    if (refresh != null) await StorageService.save(StorageConstants.refreshToken, refresh);
+    if (refresh != null) {
+      await StorageService.save(StorageConstants.refreshToken, refresh);
+    }
     await StorageService.save(StorageConstants.userInfo, {'id': 1});
   }
 
@@ -77,7 +81,9 @@ void main() {
   }
 
   group('a valid session', () {
-    testWidgets('stays signed in and schedules a refresh 2 min before expiry', (tester) async {
+    testWidgets('stays signed in and schedules a refresh 2 min before expiry', (
+      tester,
+    ) async {
       await pumpApp(tester);
       final access = tokenExpiringIn(const Duration(hours: 1));
       await storeSession(access: access, refresh: 'refresh-1');
@@ -95,7 +101,10 @@ void main() {
       await tester.pump(const Duration(minutes: 1, seconds: 5));
       await tester.pump();
       expect(repo.refreshCalls, ['refresh-1']);
-      expect(await StorageService.read(StorageConstants.refreshToken), 'refresh-2');
+      expect(
+        await StorageService.read(StorageConstants.refreshToken),
+        'refresh-2',
+      );
       expect(Get.currentRoute, '/home');
 
       Get.delete<TokenController>(); // cancels the next scheduled refresh
@@ -106,7 +115,8 @@ void main() {
       final access = tokenExpiringIn(const Duration(seconds: 60));
       final newAccess = tokenExpiringIn(const Duration(hours: 1));
       await storeSession(access: access, refresh: 'refresh-1');
-      repo.answer = (_) => ApiResponse.success({'access': newAccess, 'refresh': 'refresh-2'});
+      repo.answer = (_) =>
+          ApiResponse.success({'access': newAccess, 'refresh': 'refresh-2'});
 
       controller.startTokenCountdown(access);
       await tester.pump();
@@ -177,7 +187,9 @@ void main() {
       await pumpApp(tester);
       final access = tokenExpiringIn(const Duration(seconds: 30));
       await storeSession(access: access, refresh: 'refresh-1');
-      repo.answer = (_) => ApiResponse.success({'access': tokenExpiringIn(const Duration(hours: 1))});
+      repo.answer = (_) => ApiResponse.success({
+        'access': tokenExpiringIn(const Duration(hours: 1)),
+      });
 
       controller.startTokenCountdown(access);
 

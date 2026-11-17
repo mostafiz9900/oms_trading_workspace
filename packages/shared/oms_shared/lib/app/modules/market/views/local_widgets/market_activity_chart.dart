@@ -1,12 +1,11 @@
-
 import 'package:oms_shared/app/modules/market/controllers/live_index_controller.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/values/colors.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class MarketActivityChart extends StatelessWidget {
   const MarketActivityChart({super.key});
@@ -18,7 +17,10 @@ class MarketActivityChart extends StatelessWidget {
         final chartData = controller.visibleIndexList;
 
         if (chartData.isEmpty) {
-          return const SizedBox(height: 250, child: Center(child: Text("No activity data available")));
+          return const SizedBox(
+            height: 250,
+            child: Center(child: Text("No activity data available")),
+          );
         }
 
         return Container(
@@ -29,7 +31,13 @@ class MarketActivityChart extends StatelessWidget {
             color: context.isDark ? hexToColor('#161A33') : Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: context.borderSideColor.withAlpha(128)),
-            boxShadow: [BoxShadow(color: Colors.black.withAlpha(13), blurRadius: 10, offset: const Offset(0, 4))],
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(13),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,7 +48,7 @@ class MarketActivityChart extends StatelessWidget {
                 children: [
                   Text(
                     'Market Activity (Value vs Trades)',
-                    style: Get.textTheme.titleMedium?.copyWith(
+                    style: Get.context!.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w800,
                       fontSize: 14,
                       color: context.textColor,
@@ -60,14 +68,22 @@ class MarketActivityChart extends StatelessWidget {
                     position: LegendPosition.bottom,
                     iconHeight: 12,
                     iconWidth: 12,
-                    textStyle: TextStyle(color: context.textColor, fontWeight: FontWeight.w600, fontSize: 11),
+                    textStyle: TextStyle(
+                      color: context.textColor,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 11,
+                    ),
                   ),
 
                   // 🚀 X-অক্ষ
                   primaryXAxis: CategoryAxis(
                     majorGridLines: const MajorGridLines(width: 0),
                     axisLine: const AxisLine(width: 0),
-                    labelStyle: TextStyle(fontWeight: FontWeight.w700, color: context.textColor, fontSize: 11),
+                    labelStyle: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: context.textColor,
+                      fontSize: 11,
+                    ),
                   ),
 
                   primaryYAxis: NumericAxis(
@@ -87,7 +103,11 @@ class MarketActivityChart extends StatelessWidget {
                     ),
                     axisLine: const AxisLine(width: 0),
                     labelFormat: '{value}',
-                    labelStyle: TextStyle(color: Colors.blue.shade600, fontWeight: FontWeight.bold, fontSize: 10),
+                    labelStyle: TextStyle(
+                      color: Colors.blue.shade600,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 10,
+                    ),
                   ),
 
                   // 🚀 Secondary Y-অক্ষ (ডান দিকে): Trades
@@ -106,7 +126,11 @@ class MarketActivityChart extends StatelessWidget {
                       majorGridLines: const MajorGridLines(width: 0),
                       axisLine: const AxisLine(width: 0),
                       labelFormat: '{value}k',
-                      labelStyle: const TextStyle(color: Colors.amber, fontWeight: FontWeight.bold, fontSize: 10),
+                      labelStyle: const TextStyle(
+                        color: Colors.amber,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10,
+                      ),
                     ),
                   ],
 
@@ -114,8 +138,14 @@ class MarketActivityChart extends StatelessWidget {
                   tooltipBehavior: TooltipBehavior(
                     enable: true,
                     shared: true,
-                    color: context.isDark ? hexToColor('#1E2336') : Colors.grey.shade900,
-                    textStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12),
+                    color: context.isDark
+                        ? hexToColor('#1E2336')
+                        : Colors.grey.shade900,
+                    textStyle: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
                     elevation: 5,
                     shadowColor: Colors.black45,
                     format: 'point.series.name: point.y',
@@ -139,7 +169,9 @@ class MarketActivityChart extends StatelessWidget {
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
                       ),
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(6),
+                      ),
                       width: 0.45,
                       animationDuration: 0, // লাইভ ফিল্টারের জন্য ০
                     ),
@@ -153,7 +185,9 @@ class MarketActivityChart extends StatelessWidget {
                         final int tds = data.tds ?? 0;
                         return tds / 1000;
                       },
-                      color: Colors.amber.shade600, // প্রিমিয়াম গোল্ডেন/অ্যাম্বার কালার
+                      color: Colors
+                          .amber
+                          .shade600, // প্রিমিয়াম গোল্ডেন/অ্যাম্বার কালার
                       width: 2.5, // লাইন একটু স্লিক করা হয়েছে
                       animationDuration: 0,
                       // 🚀 মার্কারগুলোকে ছোট ও শার্প করা হয়েছে

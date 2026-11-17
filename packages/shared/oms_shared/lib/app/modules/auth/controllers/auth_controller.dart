@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:email_validator/email_validator.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../core/utils/functions/network_util.dart';

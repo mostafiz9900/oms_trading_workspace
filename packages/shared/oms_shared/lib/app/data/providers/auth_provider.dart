@@ -1,10 +1,9 @@
 import 'dart:convert';
 
 import '../../core/utils/helpers/log_helper.dart';
+import '../api/http_response.dart';
 import '../api/base_provider.dart';
 import '../models/request/login_request.dart';
-import 'package:get/get.dart';
-
 
 class AuthProvider extends BaseProvider {
   Future<Response> login(String path, LoginRequest data) {

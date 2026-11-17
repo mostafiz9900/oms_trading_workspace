@@ -1,5 +1,5 @@
 import 'package:broker_config/broker_config.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../core/values/app_config.dart';
 import '../../core/values/storage.dart';
@@ -21,8 +21,8 @@ class ExchangeService extends GetxService {
       ? Get.find<ExchangeService>().selected.value
       : AppConfig.defaultExchange;
 
-  List<StockExchange> get available => AppConfig.exchanges.toList()
-    ..sort((a, b) => a.index.compareTo(b.index));
+  List<StockExchange> get available =>
+      AppConfig.exchanges.toList()..sort((a, b) => a.index.compareTo(b.index));
 
   /// Switches to [exchange] and remembers it. Ignored when the house does not
   /// trade on it or it is already selected.

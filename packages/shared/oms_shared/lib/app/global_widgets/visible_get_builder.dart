@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 /// A [GetBuilder] for live-data widgets that does not rebuild while it cannot
 /// be seen.

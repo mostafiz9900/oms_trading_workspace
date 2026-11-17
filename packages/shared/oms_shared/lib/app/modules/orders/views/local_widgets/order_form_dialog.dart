@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/utils/extensions/string_extensions.dart';
@@ -111,7 +111,7 @@ class _OrderModifyDialogState extends State<_OrderModifyDialog> {
                       ),
                       child: Text(
                         "${order.side ?? 'ORDER'} MODIFY",
-                        style: Get.textTheme.titleMedium?.copyWith(
+                        style: Get.context!.textTheme.titleMedium?.copyWith(
                           color: headerTextColor,
                           fontWeight: FontWeight.w700,
                           fontSize: AppDimens.space17,
@@ -389,11 +389,12 @@ class _OrderModifyDialogState extends State<_OrderModifyDialog> {
                                         ),
                                         hintText: "0.00",
                                       ),
-                                      style: Get.textTheme.titleLarge?.copyWith(
-                                        fontSize: AppDimens.space19,
-                                        fontWeight: FontWeight.w600,
-                                        color: context.textColor,
-                                      ),
+                                      style: Get.context!.textTheme.titleLarge
+                                          ?.copyWith(
+                                            fontSize: AppDimens.space19,
+                                            fontWeight: FontWeight.w600,
+                                            color: context.textColor,
+                                          ),
                                     ),
                                   ),
 

@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../core/utils/extensions/app_context.dart';
 import '../core/values/colors.dart';
@@ -122,56 +122,85 @@ class CustomEditTextFormField extends StatelessWidget {
       decoration: InputDecoration(
         isDense: true,
         //  Touch Target বড় করার জন্য প্যাডিং ব্যালেন্স করা হয়েছে
-        contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 14,
+          horizontal: 16,
+        ),
 
         filled: true,
         fillColor: backgroundColor ?? context.tapBg,
         //  ডায়নামিক হাইট কন্ট্রোল
-        constraints: BoxConstraints(minHeight: minHeight, maxWidth: Get.width),
+        constraints: BoxConstraints(
+          minHeight: minHeight,
+          maxWidth: Get.context!.width,
+        ),
         hintTextDirection: TextDirection.ltr,
         hintText: hintText,
         hintStyle:
             hintStyle ??
-            Get.textTheme.bodyMedium?.copyWith(
-              color: hintTextColor ?? context.textColor.withValues(alpha: 0.50), //  Deprecated API Fixed
+            Get.context!.textTheme.bodyMedium?.copyWith(
+              color:
+                  hintTextColor ??
+                  context.textColor.withValues(
+                    alpha: 0.50,
+                  ), //  Deprecated API Fixed
               fontSize: fontSize ?? 14,
             ),
         errorMaxLines: 2,
         enabled: true,
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(borderRadius ?? AppDimens.space10)),
+          borderRadius: BorderRadius.all(
+            Radius.circular(borderRadius ?? AppDimens.space10),
+          ),
           borderSide: BorderSide(
-            color: isEnabledBorder ? ColorConstants.primaryColorLight.alphaSafe(0.50) : Colors.transparent,
+            color: isEnabledBorder
+                ? ColorConstants.primaryColorLight.alphaSafe(0.50)
+                : Colors.transparent,
             width: 1.2,
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(borderRadius ?? AppDimens.space10)),
+          borderRadius: BorderRadius.all(
+            Radius.circular(borderRadius ?? AppDimens.space10),
+          ),
           borderSide: BorderSide(
-            color: isFocusedBorder ? ColorConstants.primaryColorLight.alphaSafe(0.50) : Colors.transparent,
+            color: isFocusedBorder
+                ? ColorConstants.primaryColorLight.alphaSafe(0.50)
+                : Colors.transparent,
             width: 1.2,
           ),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(borderRadius ?? AppDimens.space10)),
+          borderRadius: BorderRadius.all(
+            Radius.circular(borderRadius ?? AppDimens.space10),
+          ),
           borderSide: BorderSide(color: Colors.red.alphaSafe(0.60), width: 1.2),
         ),
         //  Added Error Border (Missing before)
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(borderRadius ?? AppDimens.space10)),
+          borderRadius: BorderRadius.all(
+            Radius.circular(borderRadius ?? AppDimens.space10),
+          ),
           borderSide: BorderSide(color: Colors.red.alphaSafe(0.60), width: 1.2),
         ),
         suffixIcon: suffixIcon != null
             ? InkWell(
                 onTap: suffixOnTap,
-                borderRadius: BorderRadius.circular(AppDimens.space14), //  Added Ripple Effect Radius
+                borderRadius: BorderRadius.circular(
+                  AppDimens.space14,
+                ), //  Added Ripple Effect Radius
                 child: Padding(
-                  padding: const EdgeInsets.all(AppDimens.space14), //  Syntax Fixed (.all to EdgeInsets.all)
+                  padding: const EdgeInsets.all(
+                    AppDimens.space14,
+                  ), //  Syntax Fixed (.all to EdgeInsets.all)
                   child: SvgPicture.asset(
                     suffixIcon.toString(),
                     height: AppDimens.space10,
                     width: AppDimens.space10,
-                    colorFilter: ColorFilter.mode(hexToColor('#177DFF'), BlendMode.srcIn),
+                    colorFilter: ColorFilter.mode(
+                      hexToColor('#177DFF'),
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
               )
@@ -188,7 +217,10 @@ class CustomEditTextFormField extends StatelessWidget {
                   prefixIcon.toString(),
                   height: AppDimens.space16,
                   width: AppDimens.space16,
-                  colorFilter: ColorFilter.mode(hexToColor('#177DFF'), BlendMode.srcIn),
+                  colorFilter: ColorFilter.mode(
+                    hexToColor('#177DFF'),
+                    BlendMode.srcIn,
+                  ),
                 ),
               )
             : null,

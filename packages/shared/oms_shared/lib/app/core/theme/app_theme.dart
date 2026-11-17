@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -38,10 +38,15 @@ class AppTheme {
       backgroundColor: ColorConstants.white,
       elevation: 0,
       iconTheme: IconThemeData(color: ColorConstants.black),
-      titleTextStyle: TextStyle(color: ColorConstants.primaryColor, fontWeight: FontWeight.w500, fontSize: 21),
+      titleTextStyle: TextStyle(
+        color: ColorConstants.primaryColor,
+        fontWeight: FontWeight.w500,
+        fontSize: 21,
+      ),
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: Colors.white, // <-- Status bar color
-        statusBarIconBrightness: Brightness.dark, // <-- For Android (dark icons)
+        statusBarIconBrightness:
+            Brightness.dark, // <-- For Android (dark icons)
         statusBarBrightness: Brightness.light, // <-- For iOS (dark icons)
       ),
     ),
@@ -59,7 +64,10 @@ class AppTheme {
       ),
     ),
     textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(foregroundColor: Colors.white, backgroundColor: ColorConstants.primaryColorLight),
+      style: TextButton.styleFrom(
+        foregroundColor: Colors.white,
+        backgroundColor: ColorConstants.primaryColorLight,
+      ),
     ),
     cardTheme: const CardThemeData(color: Colors.white),
     brightness: Brightness.light,
@@ -68,8 +76,15 @@ class AppTheme {
     inputDecorationTheme: InputDecorationTheme(
       fillColor: ColorConstants.editTextFillColorLight,
       border: OutlineInputBorder(
-        borderRadius: const BorderRadius.all(Radius.circular(AppDimens.space14)),
-        borderSide: BorderSide(color: ColorConstants.primaryColorLight.withAlpha((0.20 * 255).toInt()), width: 1.2),
+        borderRadius: const BorderRadius.all(
+          Radius.circular(AppDimens.space14),
+        ),
+        borderSide: BorderSide(
+          color: ColorConstants.primaryColorLight.withAlpha(
+            (0.20 * 255).toInt(),
+          ),
+          width: 1.2,
+        ),
       ),
       enabledBorder: const OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(AppDimens.space14)),
@@ -87,7 +102,9 @@ class AppTheme {
       ),
       displayMedium: GoogleFonts.ibmPlexSans(
         textStyle: TextStyle(
-          color: ColorConstants.primaryColorLight.withAlpha((0.80 * 255).toInt()),
+          color: ColorConstants.primaryColorLight.withAlpha(
+            (0.80 * 255).toInt(),
+          ),
           fontSize: 45,
           letterSpacing: 0,
           fontWeight: FontWeight.normal,
@@ -95,7 +112,9 @@ class AppTheme {
       ),
       displaySmall: GoogleFonts.ibmPlexSans(
         textStyle: TextStyle(
-          color: ColorConstants.primaryColorLight.withAlpha((0.60 * 255).toInt()),
+          color: ColorConstants.primaryColorLight.withAlpha(
+            (0.60 * 255).toInt(),
+          ),
           fontSize: 36,
           letterSpacing: 0,
           fontWeight: FontWeight.normal,
@@ -143,7 +162,11 @@ class AppTheme {
         ),
       ),
       bodyLarge: GoogleFonts.ibmPlexSans(
-        textStyle: TextStyle(color: ColorConstants.textColorLight, fontSize: 16, fontWeight: FontWeight.normal),
+        textStyle: TextStyle(
+          color: ColorConstants.textColorLight,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+        ),
       ),
       bodyMedium: GoogleFonts.ibmPlexSans(
         textStyle: TextStyle(
@@ -178,7 +201,12 @@ class AppTheme {
         ),
       ),
       labelSmall: GoogleFonts.ibmPlexSans(
-        textStyle: TextStyle(color: HexColor('#9ba0a5'), fontSize: 11, letterSpacing: 0.5, fontWeight: FontWeight.w500),
+        textStyle: TextStyle(
+          color: HexColor('#9ba0a5'),
+          fontSize: 11,
+          letterSpacing: 0.5,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     ),
     iconTheme: const IconThemeData(color: Colors.white, size: 25.0),
@@ -192,9 +220,15 @@ class AppTheme {
       labelColor: hexToColor('#EBF2FC'),
     ),
     drawerTheme: const DrawerThemeData(backgroundColor: Colors.white),
-    bottomAppBarTheme: BottomAppBarThemeData(color: ColorConstants.buttonColorLight),
-    bottomNavigationBarTheme: BottomNavigationBarThemeData(backgroundColor: ColorConstants.primaryColorLight),
-    navigationBarTheme: NavigationBarThemeData(backgroundColor: ColorConstants.primaryColorLight),
+    bottomAppBarTheme: BottomAppBarThemeData(
+      color: ColorConstants.buttonColorLight,
+    ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: ColorConstants.primaryColorLight,
+    ),
+    navigationBarTheme: NavigationBarThemeData(
+      backgroundColor: ColorConstants.primaryColorLight,
+    ),
   );
 
   /// Dark Theme
@@ -231,16 +265,23 @@ class AppTheme {
       labelColor: hexToColor('#161A33'),
     ),
     textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(foregroundColor: Colors.white, backgroundColor: ColorConstants.primaryColorDark),
+      style: TextButton.styleFrom(
+        foregroundColor: Colors.white,
+        backgroundColor: ColorConstants.primaryColorDark,
+      ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       fillColor: ColorConstants.editTextFillColorDart,
       border: OutlineInputBorder(
-        borderRadius: const BorderRadius.all(Radius.circular(AppDimens.space14)),
+        borderRadius: const BorderRadius.all(
+          Radius.circular(AppDimens.space14),
+        ),
         borderSide: BorderSide(color: Colors.grey.shade600, width: 1.2),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: const BorderRadius.all(Radius.circular(AppDimens.space14)),
+        borderRadius: const BorderRadius.all(
+          Radius.circular(AppDimens.space14),
+        ),
         borderSide: BorderSide(color: Colors.grey.shade800, width: 1.2),
       ),
     ),
@@ -295,7 +336,11 @@ class AppTheme {
         ),
       ),
       bodyLarge: GoogleFonts.ibmPlexSans(
-        textStyle: TextStyle(color: ColorConstants.textColorDark, fontSize: 16, fontWeight: FontWeight.normal),
+        textStyle: TextStyle(
+          color: ColorConstants.textColorDark,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+        ),
       ),
       bodyMedium: GoogleFonts.ibmPlexSans(
         textStyle: TextStyle(
@@ -307,18 +352,35 @@ class AppTheme {
         ),
       ),
       bodySmall: GoogleFonts.ibmPlexSans(
-        textStyle: TextStyle(color: HexColor("#ffffff"), fontSize: 12, letterSpacing: 0.4, fontWeight: FontWeight.w500),
+        textStyle: TextStyle(
+          color: HexColor("#ffffff"),
+          fontSize: 12,
+          letterSpacing: 0.4,
+          fontWeight: FontWeight.w500,
+        ),
       ),
       labelSmall: GoogleFonts.ibmPlexSans(
-        textStyle: TextStyle(color: HexColor('#AEAEB2'), fontSize: 11, letterSpacing: 0.5, fontWeight: FontWeight.w500),
+        textStyle: TextStyle(
+          color: HexColor('#AEAEB2'),
+          fontSize: 11,
+          letterSpacing: 0.5,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     ),
 
     iconTheme: const IconThemeData(color: Colors.white, size: 25.0),
-    buttonTheme: const ButtonThemeData(buttonColor: Colors.amber, disabledColor: Colors.grey),
+    buttonTheme: const ButtonThemeData(
+      buttonColor: Colors.amber,
+      disabledColor: Colors.grey,
+    ),
     drawerTheme: DrawerThemeData(backgroundColor: hexToColor('#293563')),
     dividerColor: Colors.grey.shade700,
-    bottomNavigationBarTheme: BottomNavigationBarThemeData(backgroundColor: ColorConstants.primaryColorDark),
-    navigationBarTheme: NavigationBarThemeData(backgroundColor: ColorConstants.primaryColorDark),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: ColorConstants.primaryColorDark,
+    ),
+    navigationBarTheme: NavigationBarThemeData(
+      backgroundColor: ColorConstants.primaryColorDark,
+    ),
   );
 }

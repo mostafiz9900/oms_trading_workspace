@@ -109,5 +109,4 @@ mixin MarketIndexMixin on HomeState {
     printLog('getSumOfAllIndex called -> ${newArr?.toJson()}');
     update(['indexList']);
   }
-
 }

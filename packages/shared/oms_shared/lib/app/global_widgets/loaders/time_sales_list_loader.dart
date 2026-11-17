@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../core/utils/extensions/app_context.dart';
@@ -8,8 +8,12 @@ class TimeSalesListLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseColor = context.isDark ? Colors.grey.shade800 : Colors.grey.shade300;
-    final highlightColor = context.isDark ? Colors.grey.shade700 : Colors.grey.shade100;
+    final baseColor = context.isDark
+        ? Colors.grey.shade800
+        : Colors.grey.shade300;
+    final highlightColor = context.isDark
+        ? Colors.grey.shade700
+        : Colors.grey.shade100;
 
     return SliverList(
       delegate: SliverChildBuilderDelegate(
@@ -18,7 +22,12 @@ class TimeSalesListLoader extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: index % 2 != 0 ? context.evenColor : context.oddColor,
-              border: Border(bottom: BorderSide(color: context.dividerColor.withAlpha(25), width: 0.5)),
+              border: Border(
+                bottom: BorderSide(
+                  color: context.dividerColor.withAlpha(25),
+                  width: 0.5,
+                ),
+              ),
             ),
             child: Shimmer.fromColors(
               baseColor: baseColor,
@@ -32,7 +41,10 @@ class TimeSalesListLoader extends StatelessWidget {
                     child: Container(
                       height: 14,
                       width: 60,
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(3)),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(3),
+                      ),
                     ),
                   ),
                   // Price Skeleton
@@ -41,7 +53,10 @@ class TimeSalesListLoader extends StatelessWidget {
                     child: Container(
                       height: 14,
                       width: 40,
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(3)),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(3),
+                      ),
                     ),
                   ),
                   // Volume Skeleton
@@ -51,7 +66,10 @@ class TimeSalesListLoader extends StatelessWidget {
                       child: Container(
                         height: 14,
                         width: 40,
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(3)),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(3),
+                        ),
                       ),
                     ),
                   ),
@@ -63,7 +81,10 @@ class TimeSalesListLoader extends StatelessWidget {
                       child: Container(
                         height: 14,
                         width: 30,
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(3)),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(3),
+                        ),
                       ),
                     ),
                   ),

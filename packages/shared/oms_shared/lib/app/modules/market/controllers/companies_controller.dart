@@ -1,22 +1,32 @@
+import 'package:dio/dio.dart';
+
 import '../../../core/utils/helpers/log_helper.dart';
 import '../../../core/values/app_config.dart';
 
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../data/models/response/companies_model.dart';
 import '../../../data/models/response/dividend_model.dart';
 import '../../../data/models/response/eps_model.dart';
 
 class CompaniesController extends GetxController {
-  final GetConnect _httpClient = GetConnect();
+  final Dio _httpClient = Dio();
 
   @override
   void onClose() {
-    _httpClient.dispose();
+    _httpClient.close(force: true);
+    _connect.close(force: true);
     super.onClose();
   }
 
-  final _connect = GetConnect(timeout: Duration(seconds: 30));
+  final _connect = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 30),
+      responseType: ResponseType.json,
+      validateStatus: (status) => status != null,
+    ),
+  );
 
   CompaniesModel? companies;
   bool isLoading = false;
@@ -35,16 +45,16 @@ class CompaniesController extends GetxController {
       // printLog('response:: companies:: ${response.statusCode}');
       // printLog('response:: companies:: ${response.body}');
 
-      if (response.statusCode == 200 && response.body != null) {
+      if (response.statusCode == 200 && response.data != null) {
         // ১. response.body যদি String হিসেবে আসে (যেমন প্লেন টেক্সট বা এনকোডেড JSON)
-        if (response.body is String) {
-          companies = companiesModelFromJson(response.body as String);
+        if (response.data is String) {
+          companies = companiesModelFromJson(response.data as String);
           return companies;
         }
-        // ২. response.body যদি অলরেডি Map/JSON অবজেক্ট হয় (GetConnect সাধারণত অটো-পার্স করে)
-        else if (response.body is Map<String, dynamic>) {
+        // Dio decodes JSON responses to maps when the server sends JSON content.
+        else if (response.data is Map<String, dynamic>) {
           companies = CompaniesModel.fromJson(
-            Map<String, dynamic>.from(response.body),
+            Map<String, dynamic>.from(response.data),
           );
           return companies;
         }
@@ -53,17 +63,17 @@ class CompaniesController extends GetxController {
           try {
             // যদি বডি অলরেডি ম্যাপের মতো বিহেভ করে কিন্তু টাইপ এক্সপ্লিসিট না থাকে
             companies = CompaniesModel.fromJson(
-              Map<String, dynamic>.from(response.body),
+              Map<String, dynamic>.from(response.data),
             );
             return companies;
           } catch (e) {
             error =
-                'Parsing Error: Unexpected data format (${response.body.runtimeType})';
+                'Parsing Error: Unexpected data format (${response.data.runtimeType})';
             printLog('error::: $error');
           }
         }
       } else {
-        error = 'Error: ${response.statusCode} ${response.statusText ?? ''}';
+        error = 'Error: ${response.statusCode} ${response.statusMessage ?? ''}';
       }
     } on Exception catch (e) {
       error = 'Exception: $e';
@@ -84,23 +94,23 @@ class CompaniesController extends GetxController {
       printLog('url:::get dividends:$url');
       final response = await _connect.get(url);
       printLog('response:: dividends:: ${response.statusCode}');
-      printLog('response:: dividends:: ${response.body}');
+      printLog('response:: dividends:: ${response.data}');
       if (response.statusCode == 200) {
-        // response.body may be Map or String depending on GetConnect setup
-        if (response.body is String) {
-          var dividend = dividendModelFromMap(response.body as String);
+        // Response data may be a Map or a JSON String depending on server headers.
+        if (response.data is String) {
+          var dividend = dividendModelFromMap(response.data as String);
           return dividend;
-        } else if (response.body is Map<String, dynamic>) {
+        } else if (response.data is Map<String, dynamic>) {
           var dividend = DividendModel.fromMap(
-            Map<String, dynamic>.from(response.body),
+            Map<String, dynamic>.from(response.data),
           );
           return dividend;
         } else {
-          var dividend = DividendModel.fromMap(response.body ?? '');
+          var dividend = DividendModel.fromMap(response.data ?? '');
           return dividend;
         }
       } else {
-        error = 'Error: ${response.statusCode} ${response.statusText ?? ''}';
+        error = 'Error: ${response.statusCode} ${response.statusMessage ?? ''}';
       }
     } on Exception catch (e) {
       error = 'Exception: $e';
@@ -122,8 +132,8 @@ class CompaniesController extends GetxController {
 
     final response = await _httpClient.get(url);
 
-    if (response.statusCode == 200 && response.body != null) {
-      return EpsModel.fromMap(Map<String, dynamic>.from(response.body));
+    if (response.statusCode == 200 && response.data != null) {
+      return EpsModel.fromMap(Map<String, dynamic>.from(response.data));
     }
     return null;
   }

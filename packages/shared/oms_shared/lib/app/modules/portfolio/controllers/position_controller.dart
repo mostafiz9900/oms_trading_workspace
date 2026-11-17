@@ -12,7 +12,7 @@ import '../../../data/services/storage_service.dart';
 import '../../home/controllers/home_controller.dart';
 
 import 'package:oms_shared/app/data/models/response/position_response.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 class PositionController extends GetxController {
   final homeCont = Get.find<HomeController>();

@@ -1,7 +1,5 @@
-
-
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/values/colors.dart';
@@ -125,7 +123,7 @@ class _NewsWidget extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     "No news available at the moment",
-                    style: Get.textTheme.bodyMedium?.copyWith(
+                    style: Get.context!.textTheme.bodyMedium?.copyWith(
                       color: Colors.grey,
                     ),
                     textAlign: TextAlign.center,

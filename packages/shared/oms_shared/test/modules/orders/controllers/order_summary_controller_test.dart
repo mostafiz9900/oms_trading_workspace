@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:oms_shared/app/core/values/storage.dart';
 import 'package:oms_shared/app/data/models/response/user_profile.dart';
 import 'package:oms_shared/app/data/repositories/home_repository.dart';
@@ -68,9 +68,7 @@ void main() {
     );
     Get.put<HomeController>(
       _QuietHomeController(repo)
-        ..userInfo = UserProfile(
-          userDetail: UserDetail(investorCode: 'C-100'),
-        ),
+        ..userInfo = UserProfile(userDetail: UserDetail(investorCode: 'C-100')),
     );
 
     Get.put(OrderSummaryController());
@@ -82,7 +80,7 @@ void main() {
     expect(uri.path, endsWith('order_summary/C-100/all/'));
     expect(uri.queryParameters['token'], 'user-token');
 
-    await Get.delete<WebSocketService>(force: true);
+    Get.delete<WebSocketService>(force: true);
     await tester.pump(const Duration(seconds: 2));
   });
 }

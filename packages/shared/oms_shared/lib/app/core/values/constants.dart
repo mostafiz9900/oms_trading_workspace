@@ -35,4 +35,3 @@ class AppConstants {
   // URL constants
   static const String apiBaseUrl = 'https://api.myflutterapp.com';
 }
-

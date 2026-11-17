@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+
 import '../../../core/utils/extensions/app_context.dart';
 import '../../../core/values/assets.dart';
 import '../../../global_widgets/custom_button.dart';
@@ -10,13 +11,15 @@ import '../../../global_widgets/custom_edit_text_form_field.dart';
 import '../controllers/auth_controller.dart';
 
 // ================== Password Visibility Providers ==================
-final passwordVisibilityProvider = NotifierProvider<PasswordVisibilityNotifier, bool>(() {
-  return PasswordVisibilityNotifier();
-});
+final passwordVisibilityProvider =
+    NotifierProvider<PasswordVisibilityNotifier, bool>(() {
+      return PasswordVisibilityNotifier();
+    });
 
-final confirmPasswordVisibilityProvider = NotifierProvider<ConfirmPasswordVisibilityNotifier, bool>(() {
-  return ConfirmPasswordVisibilityNotifier();
-});
+final confirmPasswordVisibilityProvider =
+    NotifierProvider<ConfirmPasswordVisibilityNotifier, bool>(() {
+      return ConfirmPasswordVisibilityNotifier();
+    });
 
 class PasswordVisibilityNotifier extends Notifier<bool> {
   @override
@@ -45,7 +48,7 @@ class ResetPasswordPage extends HookConsumerWidget {
     final confirmPasswordController = useTextEditingController();
     final formKey = useMemoized(() => GlobalKey<FormState>());
 
-    var inputHintStyle = Get.textTheme.bodyMedium?.copyWith(
+    var inputHintStyle = Get.context!.textTheme.bodyMedium?.copyWith(
       color: Colors.grey.shade400,
       fontWeight: FontWeight.w400,
       fontSize: 14,
@@ -54,7 +57,10 @@ class ResetPasswordPage extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Reset Password'),
-        leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Get.back()),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Get.back(),
+        ),
       ),
       body: SafeArea(
         child: Center(
@@ -68,11 +74,21 @@ class ResetPasswordPage extends HookConsumerWidget {
                 //  필্ডগুলোকে ফুল-উইডথ করার জন্য stretch ব্যবহার করা হলো
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Center(child: SvgPicture.asset(context.bannerLogo, width: 80, height: 80)),
+                  Center(
+                    child: SvgPicture.asset(
+                      context.bannerLogo,
+                      width: 80,
+                      height: 80,
+                    ),
+                  ),
                   const SizedBox(height: 10),
 
                   const SizedBox(height: 8),
-                  Text('Please enter your new password', textAlign: TextAlign.center, style: inputHintStyle),
+                  Text(
+                    'Please enter your new password',
+                    textAlign: TextAlign.center,
+                    style: inputHintStyle,
+                  ),
                   const SizedBox(height: 32),
 
                   //  New Password Field
@@ -108,7 +124,9 @@ class ResetPasswordPage extends HookConsumerWidget {
                     passwordVisible: !showConfirm,
                     keyboardType: TextInputType.visiblePassword,
                     prefixIcon: AssetsConstants.passwordIconSvg,
-                    suffixIcon: showConfirm ? AssetsConstants.passwordVisibleSvg : AssetsConstants.passwordInvisibelSvg,
+                    suffixIcon: showConfirm
+                        ? AssetsConstants.passwordVisibleSvg
+                        : AssetsConstants.passwordInvisibelSvg,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please confirm your password';
@@ -119,7 +137,9 @@ class ResetPasswordPage extends HookConsumerWidget {
                       return null;
                     },
                     suffixOnTap: () {
-                      ref.read(confirmPasswordVisibilityProvider.notifier).toggle();
+                      ref
+                          .read(confirmPasswordVisibilityProvider.notifier)
+                          .toggle();
                     },
                     onChanged: (String value) {},
                   ),
@@ -133,7 +153,10 @@ class ResetPasswordPage extends HookConsumerWidget {
                         onPressed: () {
                           if (formKey.currentState?.validate() ?? false) {
                             FocusScope.of(context).unfocus();
-                            authCon.resetPassword(email: email, password: newPasswordController.text.trim());
+                            authCon.resetPassword(
+                              email: email,
+                              password: newPasswordController.text.trim(),
+                            );
                           }
                         },
                         title: "Reset Password",

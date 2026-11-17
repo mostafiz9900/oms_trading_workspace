@@ -1,7 +1,3 @@
-
-
-
-
 class ChartData {
   ChartData(this.dateTime, this.x, this.y1, this.y2, this.y3, this.y4, this.y5);
 

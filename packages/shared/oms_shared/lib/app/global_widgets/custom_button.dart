@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../core/values/colors.dart';
 import '../core/values/dimens.dart';
@@ -47,16 +47,22 @@ class CustomButton extends StatelessWidget {
       onPressed: isLoading == true ? null : onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: backgroundColor ?? ColorConstants.buttonColorLight,
-        minimumSize: Size(width ?? Get.width * 0.40, height ?? 56),
+        minimumSize: Size(width ?? Get.context!.width * 0.40, height ?? 56),
         padding: const .symmetric(horizontal: 2, vertical: 2),
-        textStyle: Get.textTheme.labelLarge!.copyWith(
+        textStyle: Get.context!.textTheme.labelLarge!.copyWith(
           color: titleTextColor ?? ColorConstants.white,
           fontSize: 20,
           fontWeight: fontWeight ?? FontWeight.w400,
         ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius ?? AppDimens.space12)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radius ?? AppDimens.space12),
+        ),
         side: isBorder!
-            ? BorderSide(width: 1, color: borderColor ?? ColorConstants.buttonColorLight, style: BorderStyle.solid)
+            ? BorderSide(
+                width: 1,
+                color: borderColor ?? ColorConstants.buttonColorLight,
+                style: BorderStyle.solid,
+              )
             : null,
       ),
       child: Padding(
@@ -64,7 +70,10 @@ class CustomButton extends StatelessWidget {
         child: isLoading == true
             ? Center(
                 child: Center(
-                  child: CircularProgressIndicator(strokeWidth: 3.0, color: ColorConstants.buttonColorLight),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3.0,
+                    color: ColorConstants.buttonColorLight,
+                  ),
                 ),
               )
             : Row(
@@ -72,11 +81,19 @@ class CustomButton extends StatelessWidget {
                 crossAxisAlignment: .center,
                 children: [
                   icon != null
-                      ? SvgPicture.asset(
-                          icon.toString(),
-                          colorFilter: ColorFilter.mode(iconColor ?? ColorConstants.white, BlendMode.srcIn),
-                          height: iconHeight ?? 20,
-                        ).paddingOnly(right: title != null ? AppDimens.space8 : 0)
+                      ? Padding(
+                          padding: EdgeInsets.only(
+                            right: title != null ? AppDimens.space8 : 0,
+                          ),
+                          child: SvgPicture.asset(
+                            icon.toString(),
+                            colorFilter: ColorFilter.mode(
+                              iconColor ?? ColorConstants.white,
+                              BlendMode.srcIn,
+                            ),
+                            height: iconHeight ?? 20,
+                          ),
+                        )
                       : const SizedBox.shrink(),
                   // A title wider than the button (e.g. a long house name)
                   // shrinks to fit; one that fits keeps its size.
@@ -87,11 +104,14 @@ class CustomButton extends StatelessWidget {
                             child: Text(
                               title.toString(),
                               maxLines: 1,
-                              style: Get.textTheme.labelLarge!.copyWith(
-                                fontSize: fontSize ?? AppDimens.fontSizeMedium,
-                                color: titleTextColor ?? ColorConstants.white,
-                                fontWeight: fontWeight ?? FontWeight.w600,
-                              ),
+                              style: Get.context!.textTheme.labelLarge!
+                                  .copyWith(
+                                    fontSize:
+                                        fontSize ?? AppDimens.fontSizeMedium,
+                                    color:
+                                        titleTextColor ?? ColorConstants.white,
+                                    fontWeight: fontWeight ?? FontWeight.w600,
+                                  ),
                             ),
                           ),
                         )

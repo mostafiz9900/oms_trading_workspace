@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+import 'package:dio/dio.dart' as dio;
 
 import '../models/market_identifier.dart';
 import '../models/request/add_fav_item_request.dart' show AddFavItemRequest;
@@ -6,12 +6,20 @@ import '../models/request/add_fav_item_request.dart' show AddFavItemRequest;
 import '../../core/values/app_config.dart';
 import '../../core/values/storage.dart';
 import '../api/base_provider.dart';
+import '../api/http_response.dart';
 import '../services/storage_service.dart';
 import '../models/request/withdraw_request.dart';
 
 class HomeProvider extends BaseProvider {
-  // Plain client (no base URL or interceptors), reused across calls.
-  final GetConnect _plainClient = GetConnect();
+  // Public market history endpoints intentionally bypass OMS auth headers.
+  final dio.Dio _publicClient = dio.Dio(
+    dio.BaseOptions(
+      connectTimeout: const Duration(seconds: 20),
+      receiveTimeout: const Duration(seconds: 30),
+      responseType: dio.ResponseType.json,
+      validateStatus: (status) => status != null,
+    ),
+  );
 
   Future<Response> createFavCategory(String path, data) {
     var body = {"device_type": "mobile", "name": data};
@@ -86,14 +94,16 @@ class HomeProvider extends BaseProvider {
     String tickerName,
     MarketIdentifier orderBook,
   ) {
-    return _plainClient.post(path, {
-      "ticker_name": tickerName,
-      "order_book": orderBook,
-    });
+    return _sendPublic(
+      () => _publicClient.post<dynamic>(
+        path,
+        data: {"ticker_name": tickerName, "order_book": orderBook},
+      ),
+    );
   }
 
   Future<Response> getIndexChart(String path) {
-    return _plainClient.get(path);
+    return _sendPublic(() => _publicClient.get<dynamic>(path));
   }
 
   Future<Response> fetchIndexChartData({
@@ -102,14 +112,16 @@ class HomeProvider extends BaseProvider {
     required int fromTs,
     required int toTs,
   }) {
-    return _plainClient.get(
-      '${AppConfig.baseURLItch}api/get_index_chart_data',
-      query: {
-        'fsym': fsym,
-        'resolution': resolution.toString(),
-        'fromTs': fromTs.toString(),
-        'toTs': toTs.toString(),
-      },
+    return _sendPublic(
+      () => _publicClient.get<dynamic>(
+        '${AppConfig.baseURLItch}api/get_index_chart_data',
+        queryParameters: {
+          'fsym': fsym,
+          'resolution': resolution.toString(),
+          'fromTs': fromTs.toString(),
+          'toTs': toTs.toString(),
+        },
+      ),
     );
   }
 
@@ -119,5 +131,21 @@ class HomeProvider extends BaseProvider {
 
   Future<Response> withdrawGet(String path) {
     return get(path);
+  }
+
+  @override
+  void onClose() {
+    _publicClient.close(force: true);
+    super.onClose();
+  }
+
+  Future<Response> _sendPublic(
+    Future<dio.Response<dynamic>> Function() request,
+  ) async {
+    try {
+      return Response<dynamic>.fromDio(await request());
+    } on dio.DioException catch (error) {
+      return Response<dynamic>.fromDioException(error);
+    }
   }
 }

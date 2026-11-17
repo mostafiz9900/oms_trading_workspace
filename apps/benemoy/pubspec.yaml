@@ -17,10 +17,11 @@ dependencies:
     path: ../../packages/shared/localization
   firebase_core: ^4.15.0
   firebase_messaging: ^16.7.0
-  get: ^4.7.3
+  getxify: ^5.2.0
   flutter_easyloading: ^3.0.5
   firebase_crashlytics: ^5.4.0
 
+  material_ui: ^1.11.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

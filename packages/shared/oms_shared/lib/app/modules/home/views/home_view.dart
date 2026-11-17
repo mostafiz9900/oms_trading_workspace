@@ -1,8 +1,9 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:cupertino_ui/cupertino_ui.dart' as cupertino;
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/utils/extensions/app_context.dart';
@@ -116,144 +117,147 @@ class HomeView extends StatelessWidget {
         ],
       ),
 
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: _buildPlatformNavigationBar(homeCon, context),
+    );
+  }
+
+  Widget _buildPlatformNavigationBar(
+    HomeController homeCon,
+    BuildContext context,
+  ) {
+    final items = <BottomNavigationBarItem>[
+      /// 3️⃣ Market
+      BottomNavigationBarItem(
+        icon: SvgPicture.asset(
+          AssetsConstants.marketIconSvg,
+          colorFilter: ColorFilter.mode(context.unselectColor, BlendMode.srcIn),
+        ),
+        activeIcon: SvgPicture.asset(
+          AssetsConstants.marketIconSvg,
+          colorFilter: ColorFilter.mode(
+            ColorConstants.secondaryColorLight,
+            BlendMode.srcIn,
+          ),
+        ),
+        label: 'Home',
+      ),
+
+      /// 1️⃣ Quote
+      BottomNavigationBarItem(
+        icon: SvgPicture.asset(
+          AssetsConstants.tradeIconSvg,
+          colorFilter: ColorFilter.mode(context.unselectColor, BlendMode.srcIn),
+        ),
+        activeIcon: SvgPicture.asset(
+          AssetsConstants.tradeIconSvg,
+          colorFilter: ColorFilter.mode(
+            ColorConstants.secondaryColorLight,
+            BlendMode.srcIn,
+          ),
+        ),
+        label: 'Details',
+      ),
+
+      /// 2️⃣ Watch List
+      BottomNavigationBarItem(
+        icon: SvgPicture.asset(
+          AssetsConstants.watchListIconSvg,
+          colorFilter: ColorFilter.mode(context.unselectColor, BlendMode.srcIn),
+        ),
+        activeIcon: SvgPicture.asset(
+          AssetsConstants.watchListIconSvg,
+          colorFilter: ColorFilter.mode(
+            ColorConstants.secondaryColorLight,
+            BlendMode.srcIn,
+          ),
+        ),
+        label: 'Watch List',
+      ),
+
+      /// 6️⃣ Favorite (Newly Added)
+      BottomNavigationBarItem(
+        icon: SvgPicture.asset(
+          AssetsConstants.starIconSvg, // 🔹 তোমার SVG path এখানে দাও
+          height: 25,
+          width: 25,
+          colorFilter: ColorFilter.mode(context.unselectColor, BlendMode.srcIn),
+        ),
+        activeIcon: SvgPicture.asset(
+          AssetsConstants.starIconSvg,
+          height: 25,
+          width: 25,
+          colorFilter: ColorFilter.mode(
+            ColorConstants.secondaryColorLight,
+            BlendMode.srcIn,
+          ),
+        ),
+        label: 'Favorite',
+      ),
+
+      /// 4️⃣ Portfolio
+      BottomNavigationBarItem(
+        icon: SvgPicture.asset(
+          AssetsConstants.portfolioIconSvg,
+          colorFilter: ColorFilter.mode(context.unselectColor, BlendMode.srcIn),
+        ),
+        activeIcon: SvgPicture.asset(
+          AssetsConstants.portfolioIconSvg,
+          colorFilter: ColorFilter.mode(
+            ColorConstants.secondaryColorLight,
+            BlendMode.srcIn,
+          ),
+        ),
+        label: 'Portfolio',
+      ),
+
+      /// 5️⃣ Trade
+      BottomNavigationBarItem(
+        icon: SvgPicture.asset(
+          AssetsConstants.quoteIconSvg,
+          colorFilter: ColorFilter.mode(context.unselectColor, BlendMode.srcIn),
+        ),
+        activeIcon: SvgPicture.asset(
+          AssetsConstants.quoteIconSvg,
+          colorFilter: ColorFilter.mode(
+            ColorConstants.secondaryColorLight,
+            BlendMode.srcIn,
+          ),
+        ),
+        label: 'Trade',
+      ),
+    ];
+
+    if (Theme.of(context).platform == TargetPlatform.iOS) {
+      return cupertino.CupertinoTabBar(
         currentIndex: homeCon.currentIndex,
         onTap: homeCon.changeCurrentIndex2,
-        type: BottomNavigationBarType.fixed, // ✅ 6 items allowed
-        selectedItemColor: ColorConstants.secondaryColorLight,
-        unselectedItemColor: context.unselectColor,
-        showUnselectedLabels: true,
+        activeColor: ColorConstants.secondaryColorLight,
+        inactiveColor: context.unselectColor,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        iconSize: 25,
+        height: 54,
+        items: items,
+      );
+    }
 
-        selectedLabelStyle: TextStyle(
-          color: ColorConstants.secondaryColorLight,
-          fontWeight: FontWeight.bold,
-          fontSize: 12,
-        ),
-        unselectedLabelStyle: TextStyle(
-          color: ColorConstants.unselectedItemColor,
-          fontWeight: FontWeight.normal,
-          fontSize: 10,
-        ),
-        items: [
-          /// 3️⃣ Market
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              AssetsConstants.marketIconSvg,
-              colorFilter: ColorFilter.mode(
-                context.unselectColor,
-                BlendMode.srcIn,
-              ),
-            ),
-            activeIcon: SvgPicture.asset(
-              AssetsConstants.marketIconSvg,
-              colorFilter: ColorFilter.mode(
-                ColorConstants.secondaryColorLight,
-                BlendMode.srcIn,
-              ),
-            ),
-            label: 'Home',
-          ),
-
-          /// 1️⃣ Quote
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              AssetsConstants.tradeIconSvg,
-              colorFilter: ColorFilter.mode(
-                context.unselectColor,
-                BlendMode.srcIn,
-              ),
-            ),
-            activeIcon: SvgPicture.asset(
-              AssetsConstants.tradeIconSvg,
-              colorFilter: ColorFilter.mode(
-                ColorConstants.secondaryColorLight,
-                BlendMode.srcIn,
-              ),
-            ),
-            label: 'Details',
-          ),
-
-          /// 2️⃣ Watch List
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              AssetsConstants.watchListIconSvg,
-              colorFilter: ColorFilter.mode(
-                context.unselectColor,
-                BlendMode.srcIn,
-              ),
-            ),
-            activeIcon: SvgPicture.asset(
-              AssetsConstants.watchListIconSvg,
-              colorFilter: ColorFilter.mode(
-                ColorConstants.secondaryColorLight,
-                BlendMode.srcIn,
-              ),
-            ),
-            label: 'Watch List',
-          ),
-
-          /// 6️⃣ Favorite (Newly Added)
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              AssetsConstants.starIconSvg, // 🔹 তোমার SVG path এখানে দাও
-              height: 25,
-              width: 25,
-              colorFilter: ColorFilter.mode(
-                context.unselectColor,
-                BlendMode.srcIn,
-              ),
-            ),
-            activeIcon: SvgPicture.asset(
-              AssetsConstants.starIconSvg,
-              height: 25,
-              width: 25,
-              colorFilter: ColorFilter.mode(
-                ColorConstants.secondaryColorLight,
-                BlendMode.srcIn,
-              ),
-            ),
-            label: 'Favorite',
-          ),
-
-          /// 4️⃣ Portfolio
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              AssetsConstants.portfolioIconSvg,
-              colorFilter: ColorFilter.mode(
-                context.unselectColor,
-                BlendMode.srcIn,
-              ),
-            ),
-            activeIcon: SvgPicture.asset(
-              AssetsConstants.portfolioIconSvg,
-              colorFilter: ColorFilter.mode(
-                ColorConstants.secondaryColorLight,
-                BlendMode.srcIn,
-              ),
-            ),
-            label: 'Portfolio',
-          ),
-
-          /// 5️⃣ Trade
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              AssetsConstants.quoteIconSvg,
-              colorFilter: ColorFilter.mode(
-                context.unselectColor,
-                BlendMode.srcIn,
-              ),
-            ),
-            activeIcon: SvgPicture.asset(
-              AssetsConstants.quoteIconSvg,
-              colorFilter: ColorFilter.mode(
-                ColorConstants.secondaryColorLight,
-                BlendMode.srcIn,
-              ),
-            ),
-            label: 'Trade',
-          ),
-        ],
+    return BottomNavigationBar(
+      currentIndex: homeCon.currentIndex,
+      onTap: homeCon.changeCurrentIndex2,
+      type: BottomNavigationBarType.fixed,
+      selectedItemColor: ColorConstants.secondaryColorLight,
+      unselectedItemColor: context.unselectColor,
+      showUnselectedLabels: true,
+      selectedLabelStyle: TextStyle(
+        color: ColorConstants.secondaryColorLight,
+        fontWeight: FontWeight.bold,
+        fontSize: 12,
       ),
+      unselectedLabelStyle: TextStyle(
+        color: ColorConstants.unselectedItemColor,
+        fontWeight: FontWeight.normal,
+        fontSize: 10,
+      ),
+      items: items,
     );
   }
 }

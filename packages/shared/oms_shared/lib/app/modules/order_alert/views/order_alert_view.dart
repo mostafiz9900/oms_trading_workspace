@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:intl/intl.dart';
+
 import '../../../core/values/constants.dart';
 import '../../../global_widgets/custom_app_bar.dart';
 import '../../../global_widgets/shared_market_components.dart';
@@ -46,7 +47,8 @@ class OrderAlertView extends HookWidget {
               onSelected: (String value) {
                 selectedFilter.value = value; // Hook state update
               },
-              widthDropdown: 150, // 'Partially Filled' টেক্সট ধরার জন্য একটু বড় রাখা হলো
+              widthDropdown:
+                  150, // 'Partially Filled' টেক্সট ধরার জন্য একটু বড় রাখা হলো
             ),
           ),
         ),
@@ -97,7 +99,11 @@ class OrderAlertView extends HookWidget {
             return const Center(
               child: Text(
                 "No alerts found for this status",
-                style: TextStyle(color: Colors.grey, fontSize: 15, fontWeight: FontWeight.w500),
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             );
           }
@@ -106,23 +112,41 @@ class OrderAlertView extends HookWidget {
             children: [
               Container(
                 color: const Color(0xFFE8F5E9), // Light Green Header
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 12.0,
+                ),
                 child: const Row(
                   children: [
                     Expanded(
                       flex: 2,
-                      child: Text("Time", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                      child: Text(
+                        "Time",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
                     ),
                     Expanded(
                       flex: 5,
-                      child: Text("Investor Timeline", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                      child: Text(
+                        "Investor Timeline",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
                     ),
                     Expanded(
                       flex: 2,
                       child: Text(
                         "Exec Type",
                         textAlign: TextAlign.right,
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
                       ),
                     ),
                   ],
@@ -133,18 +157,27 @@ class OrderAlertView extends HookWidget {
               Expanded(
                 child: ListView.separated(
                   itemCount: filteredAlerts.length,
-                  separatorBuilder: (context, index) => const Divider(height: 1, color: Color(0xFFEEEEEE)),
+                  separatorBuilder: (context, index) =>
+                      const Divider(height: 1, color: Color(0xFFEEEEEE)),
                   itemBuilder: (context, index) {
                     final alert = filteredAlerts[index];
 
-                    Color rowColor = index.isEven ? Colors.white : const Color(0xFFFAFAFA);
-                    if (alert.execType?.toUpperCase() == 'TRADE' || alert.status?.toUpperCase() == 'FILLED') {
-                      rowColor = const Color(0xFFE3F2FD); // Light Blue for Trade/Filled
+                    Color rowColor = index.isEven
+                        ? Colors.white
+                        : const Color(0xFFFAFAFA);
+                    if (alert.execType?.toUpperCase() == 'TRADE' ||
+                        alert.status?.toUpperCase() == 'FILLED') {
+                      rowColor = const Color(
+                        0xFFE3F2FD,
+                      ); // Light Blue for Trade/Filled
                     }
 
                     return Container(
                       color: rowColor,
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 12.0,
+                      ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -172,7 +205,11 @@ class OrderAlertView extends HookWidget {
                             flex: 5,
                             child: Text(
                               _buildTimelineText(alert),
-                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black87),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
                             ),
                           ),
 
@@ -232,8 +269,12 @@ class OrderAlertView extends HookWidget {
     final st = status?.toUpperCase() ?? '';
     if (st == 'NEW') return Colors.blue.shade700;
     if (st == 'FILLED' || st == 'TRADE') return Colors.green.shade700;
-    if (st == 'CANCELED' || st == 'REJECTED' || st == 'EXPIRED') return Colors.red.shade600;
-    if (st == 'PARTIALLY_FILLED' || st == 'REPLACED') return Colors.orange.shade700;
+    if (st == 'CANCELED' || st == 'REJECTED' || st == 'EXPIRED') {
+      return Colors.red.shade600;
+    }
+    if (st == 'PARTIALLY_FILLED' || st == 'REPLACED') {
+      return Colors.orange.shade700;
+    }
     return Colors.black87;
   }
 }

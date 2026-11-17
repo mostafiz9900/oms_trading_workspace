@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../core/utils/extensions/app_context.dart';
@@ -9,8 +9,12 @@ class IndexListLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseColor = context.isDark ? Colors.grey.shade800 : Colors.grey.shade300;
-    final highlightColor = context.isDark ? Colors.grey.shade700 : Colors.grey.shade100;
+    final baseColor = context.isDark
+        ? Colors.grey.shade800
+        : Colors.grey.shade300;
+    final highlightColor = context.isDark
+        ? Colors.grey.shade700
+        : Colors.grey.shade100;
 
     return Container(
       margin: const EdgeInsets.all(6),
@@ -24,7 +28,9 @@ class IndexListLoader extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               border: const Border(bottom: BorderSide(color: Colors.black26)),
-              color: context.isDark ? hexToColor('#161A33') : ColorConstants.yaleBlue,
+              color: context.isDark
+                  ? hexToColor('#161A33')
+                  : ColorConstants.yaleBlue,
             ),
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: Row(
@@ -36,7 +42,10 @@ class IndexListLoader extends StatelessWidget {
                   child: Container(
                     height: 14,
                     width: 150, // "Last update on..." টেক্সটের আনুমানিক সাইজ
-                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(2)),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
                 ),
               ],
@@ -46,12 +55,18 @@ class IndexListLoader extends StatelessWidget {
           ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: 4, // ইনডেক্সে সাধারণত ৪টি আইটেম থাকে (DSEX, DSES, DS30, DSMEX)
+            itemCount:
+                4, // ইনডেক্সে সাধারণত ৪টি আইটেম থাকে (DSEX, DSES, DS30, DSMEX)
             itemBuilder: (context, index) {
               return Container(
                 decoration: BoxDecoration(
                   color: context.isDark ? hexToColor('#161A33') : null,
-                  border: Border(bottom: BorderSide(color: context.borderSideColor, width: 1)),
+                  border: Border(
+                    bottom: BorderSide(
+                      color: context.borderSideColor,
+                      width: 1,
+                    ),
+                  ),
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 6),
                 child: Row(
@@ -72,7 +87,10 @@ class IndexListLoader extends StatelessWidget {
                     Expanded(
                       flex: 3,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         child: Shimmer.fromColors(
                           baseColor: baseColor,
                           highlightColor: highlightColor,
@@ -84,7 +102,10 @@ class IndexListLoader extends StatelessWidget {
                     Expanded(
                       flex: 2,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 4,
+                        ),
                         child: Shimmer.fromColors(
                           baseColor: baseColor,
                           highlightColor: highlightColor,
@@ -96,7 +117,10 @@ class IndexListLoader extends StatelessWidget {
                     Expanded(
                       flex: 2,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 4,
+                        ),
                         child: Shimmer.fromColors(
                           baseColor: baseColor,
                           highlightColor: highlightColor,
@@ -111,7 +135,11 @@ class IndexListLoader extends StatelessWidget {
                         child: Shimmer.fromColors(
                           baseColor: baseColor,
                           highlightColor: highlightColor,
-                          child: Container(height: 14, width: 14, color: Colors.white),
+                          child: Container(
+                            height: 14,
+                            width: 14,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),

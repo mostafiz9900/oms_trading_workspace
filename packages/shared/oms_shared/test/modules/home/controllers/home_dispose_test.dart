@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:oms_shared/app/data/repositories/home_repository.dart';
 import 'package:oms_shared/app/data/services/market_socket_service.dart';
 import 'package:oms_shared/app/data/services/socket_db_service.dart';

@@ -1,8 +1,10 @@
 import '../../../core/utils/helpers/app_helper.dart';
 import '../../../data/repositories/home_repository.dart';
 import '../../../routes/app_routes.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
+
 import '../../../core/utils/helpers/log_helper.dart';
 
 class PasswordResetController extends GetxController {
@@ -41,20 +43,32 @@ class PasswordResetController extends GetxController {
     update();
 
     try {
-      var response = await homeRepository.changePassword(oldPasswordController.text, passwordController.text);
+      var response = await homeRepository.changePassword(
+        oldPasswordController.text,
+        passwordController.text,
+      );
 
       if (response.success) {
         isLoading = false; // 🚀 FIX: এখানে true ছিল, false করা হলো
-        Helpers.snackBarForSuccess2(titleText: "Success", bodyText: "${response.data}");
+        Helpers.snackBarForSuccess2(
+          titleText: "Success",
+          bodyText: "${response.data}",
+        );
         Get.offAllNamed(Routes.LOGIN);
       } else {
         isLoading = false; // 🚀 FIX: এখানেও false করা হলো
-        Helpers.snackbarForErorr2(titleText: "Error", bodyText: "${response.errorMessage}");
+        Helpers.snackbarForErorr2(
+          titleText: "Error",
+          bodyText: "${response.errorMessage}",
+        );
       }
     } catch (e) {
       isLoading = false; // 🚀 FIX
       printLog('Change password error: $e');
-      Helpers.snackbarForErorr2(titleText: "Exception", bodyText: "Something went wrong!");
+      Helpers.snackbarForErorr2(
+        titleText: "Exception",
+        bodyText: "Something went wrong!",
+      );
     }
     update();
   }

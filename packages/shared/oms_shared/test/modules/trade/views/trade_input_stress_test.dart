@@ -1,8 +1,8 @@
 import 'package:broker_config/broker_config.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:oms_shared/app/data/models/response/market_depth_model.dart';
 import 'package:oms_shared/app/data/models/response/market_model.dart';
 import 'package:oms_shared/app/data/models/response/user_order.dart';
@@ -84,6 +84,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         child: GetMaterialApp(
+          builder: testLegacyMaterialBuilder,
           home: GetBuilder<HomeController>(
             builder: (c) => Scaffold(
               body: IndexedStack(
@@ -95,7 +96,11 @@ void main() {
         ),
       ),
     );
-    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 1));
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 1));
+    });
   }
 
   void keyboard(WidgetTester tester, bool open) {

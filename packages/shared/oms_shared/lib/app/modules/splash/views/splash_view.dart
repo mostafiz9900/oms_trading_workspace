@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../core/utils/extensions/app_context.dart';
 import '../../../core/values/assets.dart';
@@ -15,12 +15,14 @@ class SplashView extends GetView<SplashController> {
     printLog(controller.hashCode);
     return Scaffold(
       body: SizedBox(
-        width: Get.width,
-        height: Get.height,
+        width: Get.context!.width,
+        height: Get.context!.height,
         child: SvgPicture.asset(
-          context.isDark ? AssetsConstants.splasDarthSvg : AssetsConstants.splashSvg,
-          width: Get.width,
-          height: Get.width,
+          context.isDark
+              ? AssetsConstants.splasDarthSvg
+              : AssetsConstants.splashSvg,
+          width: Get.context!.width,
+          height: Get.context!.width,
           fit: BoxFit.cover,
         ),
       ),

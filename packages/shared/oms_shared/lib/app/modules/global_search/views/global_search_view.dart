@@ -1,8 +1,9 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
+
 import '../../../core/utils/extensions/app_context.dart';
 import '../../../core/utils/extensions/market_model_extensions.dart';
 import '../../../core/utils/helpers/formatter_helper.dart';
@@ -40,19 +41,34 @@ class GlobalSearchScreen extends HookWidget {
             customButton: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withAlpha(13) : Colors.grey.shade100,
+                color: isDark
+                    ? Colors.white.withAlpha(13)
+                    : Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: isDark ? Colors.white.withAlpha(20) : Colors.grey.shade200, width: 1),
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white.withAlpha(20)
+                      : Colors.grey.shade200,
+                  width: 1,
+                ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     currentValue,
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: ctx.textColor),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: ctx.textColor,
+                    ),
                   ),
                   const SizedBox(width: 2),
-                  Icon(Icons.keyboard_arrow_down_rounded, size: 16, color: Colors.grey[600]),
+                  Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    size: 16,
+                    color: Colors.grey[600],
+                  ),
                 ],
               ),
             ),
@@ -67,7 +83,11 @@ class GlobalSearchScreen extends HookWidget {
                     border: isLast
                         ? null
                         : Border(
-                            bottom: BorderSide(color: isDark ? Colors.white.withAlpha(13) : Colors.grey.shade200),
+                            bottom: BorderSide(
+                              color: isDark
+                                  ? Colors.white.withAlpha(13)
+                                  : Colors.grey.shade200,
+                            ),
                           ),
                   ),
                   child: Row(
@@ -78,10 +98,17 @@ class GlobalSearchScreen extends HookWidget {
                         style: TextStyle(
                           fontSize: 13,
                           color: isSelected ? Colors.blueAccent : ctx.textColor,
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w400,
                         ),
                       ),
-                      if (isSelected) const Icon(Icons.check_rounded, color: Colors.blueAccent, size: 16),
+                      if (isSelected)
+                        const Icon(
+                          Icons.check_rounded,
+                          color: Colors.blueAccent,
+                          size: 16,
+                        ),
                     ],
                   ),
                 ),
@@ -98,7 +125,11 @@ class GlobalSearchScreen extends HookWidget {
                 borderRadius: BorderRadius.circular(10),
                 color: ctx.cardColor,
                 boxShadow: [
-                  BoxShadow(color: Colors.black.withAlpha(26), blurRadius: 10, offset: const Offset(0, 4)),
+                  BoxShadow(
+                    color: Colors.black.withAlpha(26),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
                 ],
               ),
             ),
@@ -130,7 +161,9 @@ class GlobalSearchScreen extends HookWidget {
     if (viewMode == 'Classic') {
       final Color priceColor = absoluteChange > 0
           ? const Color(0xFF00A25B)
-          : (absoluteChange < 0 ? const Color(0xFFE53935) : Colors.grey.shade500);
+          : (absoluteChange < 0
+                ? const Color(0xFFE53935)
+                : Colors.grey.shade500);
       childWidget = Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -142,11 +175,16 @@ class GlobalSearchScreen extends HookWidget {
                   text: TextSpan(
                     // 🚀 Extension displayName ব্যবহার করা হয়েছে
                     children: [
-                      ...SharedMarketLogic.buildHighlightText(model.displayName, textCon.text, context, fontSize: 14),
+                      ...SharedMarketLogic.buildHighlightText(
+                        model.displayName,
+                        textCon.text,
+                        context,
+                        fontSize: 14,
+                      ),
                       if (model.shareType != null)
                         TextSpan(
                           text: ' [${model.shareType}]',
-                          style: Get.textTheme.bodySmall?.copyWith(
+                          style: Get.context!.textTheme.bodySmall?.copyWith(
                             fontSize: 8,
                             color: context.textColor,
                             fontFeatures: const [FontFeature.superscripts()],
@@ -155,7 +193,7 @@ class GlobalSearchScreen extends HookWidget {
                       if (model.marketType != null)
                         TextSpan(
                           text: ' [${model.marketType}]',
-                          style: Get.textTheme.bodySmall?.copyWith(
+                          style: Get.context!.textTheme.bodySmall?.copyWith(
                             fontSize: 8,
                             color: context.textColor,
                             fontFeatures: const [FontFeature.superscripts()],
@@ -167,7 +205,10 @@ class GlobalSearchScreen extends HookWidget {
                 const SizedBox(height: 2),
                 Text(
                   model.sector ?? model.group ?? "",
-                  style: TextStyle(fontSize: 11, color: context.textColor.withAlpha(128)),
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: context.textColor.withAlpha(128),
+                  ),
                 ),
               ],
             ),
@@ -177,12 +218,20 @@ class GlobalSearchScreen extends HookWidget {
             children: [
               Text(
                 currentPrice.toStringAsFixed(2),
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: priceColor),
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: priceColor,
+                ),
               ),
               const SizedBox(height: 2),
               Text(
                 '${absoluteChange > 0 ? "+" : ""}${absoluteChange.toStringAsFixed(2)} (${percentChange.toStringAsFixed(2)}%)',
-                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: priceColor),
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: priceColor,
+                ),
               ),
             ],
           ),
@@ -201,11 +250,16 @@ class GlobalSearchScreen extends HookWidget {
                   text: TextSpan(
                     // 🚀 Extension displayName ব্যবহার করা হয়েছে
                     children: [
-                      ...SharedMarketLogic.buildHighlightText(model.displayName, textCon.text, context, fontSize: 14),
+                      ...SharedMarketLogic.buildHighlightText(
+                        model.displayName,
+                        textCon.text,
+                        context,
+                        fontSize: 14,
+                      ),
                       if (model.shareType != null)
                         TextSpan(
                           text: ' [${model.shareType}]',
-                          style: Get.textTheme.bodySmall?.copyWith(
+                          style: Get.context!.textTheme.bodySmall?.copyWith(
                             fontSize: 8,
                             color: context.textColor,
                             fontFeatures: const [FontFeature.superscripts()],
@@ -214,7 +268,7 @@ class GlobalSearchScreen extends HookWidget {
                       if (model.marketType != null)
                         TextSpan(
                           text: ' [${model.marketType}]',
-                          style: Get.textTheme.bodySmall?.copyWith(
+                          style: Get.context!.textTheme.bodySmall?.copyWith(
                             fontSize: 8,
                             color: context.textColor,
                             fontFeatures: const [FontFeature.superscripts()],
@@ -228,11 +282,17 @@ class GlobalSearchScreen extends HookWidget {
                   children: [
                     Text(
                       "Vol:${NumberFormatter.bdFormat((model.volume ?? 0).toDouble())}, ",
-                      style: TextStyle(fontSize: 10, color: context.textColor.withAlpha(153)),
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: context.textColor.withAlpha(153),
+                      ),
                     ),
                     Text(
                       "Val:${NumberFormatter.croreFormat(model.val ?? 0.0)}",
-                      style: TextStyle(fontSize: 10, color: context.textColor.withAlpha(153)),
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: context.textColor.withAlpha(153),
+                      ),
                     ),
                   ],
                 ),
@@ -243,14 +303,22 @@ class GlobalSearchScreen extends HookWidget {
             flex: 2,
             child: favList
                 ? const Icon(Icons.favorite, color: Colors.red, size: 16)
-                : SvgPicture.asset(AssetsConstants.loveIconSvg, width: 14, height: 14),
+                : SvgPicture.asset(
+                    AssetsConstants.loveIconSvg,
+                    width: 14,
+                    height: 14,
+                  ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
                 currentPrice.toStringAsFixed(2),
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: context.textColor),
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: context.textColor,
+                ),
               ),
               const SizedBox(height: 2),
               Text(
@@ -289,20 +357,26 @@ class GlobalSearchScreen extends HookWidget {
                             if (model.shareType != null)
                               TextSpan(
                                 text: ' [${model.shareType}]',
-                                style: Get.textTheme.bodySmall?.copyWith(
-                                  fontSize: 8,
-                                  color: context.textColor,
-                                  fontFeatures: const [FontFeature.superscripts()],
-                                ),
+                                style: Get.context!.textTheme.bodySmall
+                                    ?.copyWith(
+                                      fontSize: 8,
+                                      color: context.textColor,
+                                      fontFeatures: const [
+                                        FontFeature.superscripts(),
+                                      ],
+                                    ),
                               ),
                             if (model.marketType != null)
                               TextSpan(
                                 text: ' [${model.marketType}]',
-                                style: Get.textTheme.bodySmall?.copyWith(
-                                  fontSize: 8,
-                                  color: context.textColor,
-                                  fontFeatures: const [FontFeature.superscripts()],
-                                ),
+                                style: Get.context!.textTheme.bodySmall
+                                    ?.copyWith(
+                                      fontSize: 8,
+                                      color: context.textColor,
+                                      fontFeatures: const [
+                                        FontFeature.superscripts(),
+                                      ],
+                                    ),
                               ),
                           ],
                         ),
@@ -312,7 +386,7 @@ class GlobalSearchScreen extends HookWidget {
                       trackValue: absoluteChange,
                       child: Text(
                         NumberHelper.formatSigned(absoluteChange),
-                        style: Get.textTheme.titleSmall!.copyWith(
+                        style: Get.context!.textTheme.titleSmall!.copyWith(
                           color: NumberHelper.getColor(absoluteChange),
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -328,14 +402,20 @@ class GlobalSearchScreen extends HookWidget {
                       trackValue: (model.volume ?? 0).toDouble(),
                       child: Text(
                         "${index + 1} | Vol:${NumberFormatter.fixedDecimal2(model.volume ?? 0.0, decimal: 0)}, ",
-                        style: Get.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500, fontSize: 12),
+                        style: Get.context!.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                     LiveProBlinker(
                       trackValue: model.val ?? 0.0,
                       child: Text(
                         "Val:${NumberFormatter.croreFormat(model.val ?? 0.0)}, ",
-                        style: Get.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500, fontSize: 12),
+                        style: Get.context!.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                     Flexible(
@@ -344,7 +424,10 @@ class GlobalSearchScreen extends HookWidget {
                         child: Text(
                           'Trd:${(model.trades ?? 0).toStringAsFixed(0)}',
                           maxLines: 1,
-                          style: Get.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500, fontSize: 12),
+                          style: Get.context!.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     ),
@@ -358,10 +441,18 @@ class GlobalSearchScreen extends HookWidget {
             flex: 2,
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
-              onTap: () => Get.snackbar("Watchlist", "${model.shortName} added!", snackPosition: SnackPosition.BOTTOM),
+              onTap: () => Get.snackbar(
+                "Watchlist",
+                "${model.shortName} added!",
+                snackPosition: SnackPosition.bottom,
+              ),
               child: favList
                   ? const Icon(Icons.favorite, color: Colors.red, size: 20)
-                  : SvgPicture.asset(AssetsConstants.loveIconSvg, width: 16, height: 16),
+                  : SvgPicture.asset(
+                      AssetsConstants.loveIconSvg,
+                      width: 16,
+                      height: 16,
+                    ),
             ),
           ),
           AppSpace.spaceW6,
@@ -373,7 +464,10 @@ class GlobalSearchScreen extends HookWidget {
                 trackValue: currentPrice,
                 child: Text(
                   currentPrice.toStringAsFixed(2),
-                  style: Get.textTheme.titleSmall!.copyWith(fontSize: 12, fontWeight: FontWeight.w600),
+                  style: Get.context!.textTheme.titleSmall!.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               AppSpace.spaceH2,
@@ -384,7 +478,7 @@ class GlobalSearchScreen extends HookWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                 child: Text(
                   '${NumberHelper.formatSigned(percentChange)}%',
-                  style: Get.textTheme.titleSmall!.copyWith(
+                  style: Get.context!.textTheme.titleSmall!.copyWith(
                     color: Colors.white,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -406,10 +500,17 @@ class GlobalSearchScreen extends HookWidget {
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: 16.0,
-          vertical: viewMode == 'Small' ? 8.0 : (viewMode == 'Classic' ? 12.0 : 10.0),
+          vertical: viewMode == 'Small'
+              ? 8.0
+              : (viewMode == 'Classic' ? 12.0 : 10.0),
         ),
         decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: context.borderColor.withAlpha(128), width: 1)),
+          border: Border(
+            bottom: BorderSide(
+              color: context.borderColor.withAlpha(128),
+              width: 1,
+            ),
+          ),
         ),
         child: childWidget,
       ),
@@ -449,7 +550,11 @@ class GlobalSearchScreen extends HookWidget {
               const SizedBox(width: 4),
               Text(
                 "Back",
-                style: TextStyle(color: context.buttonColor, fontSize: 16, fontWeight: FontWeight.w500),
+                style: TextStyle(
+                  color: context.buttonColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),
@@ -473,13 +578,24 @@ class GlobalSearchScreen extends HookWidget {
                     focusNode: focusNode,
                     onChanged: searchCon.searchData,
                     textInputAction: TextInputAction.search,
-                    style: TextStyle(color: context.textColor, fontSize: 13, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      color: context.textColor,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
                     cursorColor: context.buttonColor,
                     decoration: InputDecoration(
                       hintText: StringConstants.stocksShares,
-                      hintStyle: TextStyle(color: context.textColor.withAlpha(128), fontSize: 13),
+                      hintStyle: TextStyle(
+                        color: context.textColor.withAlpha(128),
+                        fontSize: 13,
+                      ),
                       border: InputBorder.none,
-                      prefixIcon: Icon(Icons.search, color: context.textColor.withAlpha(128), size: 20),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: context.textColor.withAlpha(128),
+                        size: 20,
+                      ),
                       contentPadding: const EdgeInsets.symmetric(vertical: 10),
                       isDense: true,
                     ),
@@ -506,7 +622,11 @@ class GlobalSearchScreen extends HookWidget {
                           padding: const EdgeInsets.only(left: 12.0),
                           child: Text(
                             "Cancel",
-                            style: TextStyle(color: context.buttonColor, fontSize: 15, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              color: context.buttonColor,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       )
@@ -525,14 +645,28 @@ class GlobalSearchScreen extends HookWidget {
               // Sorting and View Mode Dropdowns
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 8.0,
+                ),
                 child: Row(
                   children: [
-                    Text("Sort:", style: TextStyle(fontSize: 13, color: Colors.grey[600])),
+                    Text(
+                      "Sort:",
+                      style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                    ),
                     const SizedBox(width: 8),
                     CommonMinimalDropdown(
                       currentValue: controller.currentSortCategory,
-                      items: const ['A-Z', 'Change(%)', 'Value', 'Volume', 'Trade', 'Price', 'Paidup'],
+                      items: const [
+                        'A-Z',
+                        'Change(%)',
+                        'Value',
+                        'Volume',
+                        'Trade',
+                        'Price',
+                        'Paidup',
+                      ],
                       onSelected: controller.updateSortCategory,
                       widthDropdown: 130,
                     ),
@@ -547,7 +681,10 @@ class GlobalSearchScreen extends HookWidget {
                       widthDropdown: 90,
                     ),
                     const SizedBox(width: 16),
-                    Text("View:", style: TextStyle(fontSize: 13, color: Colors.grey[600])),
+                    Text(
+                      "View:",
+                      style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                    ),
                     const SizedBox(width: 8),
                     CommonMinimalDropdown(
                       currentValue: controller.currentViewMode,
@@ -561,13 +698,19 @@ class GlobalSearchScreen extends HookWidget {
               Divider(height: 1, color: context.dividerColor),
 
               // Loading State
-              if (controller.filteredItems.isEmpty && Get.find<HomeController>().shownMarket.quotes.isEmpty)
+              if (controller.filteredItems.isEmpty &&
+                  Get.find<HomeController>().shownMarket.quotes.isEmpty)
                 const Expanded(
                   child: WatchlistLoader(), // 🚀 সাধারণ স্পিনারের বদলে প্রিমিয়াম শিমার লোডার
                 )
               else if (isTextEmpty && controller.recentSearches.isNotEmpty) ...[
                 Padding(
-                  padding: const EdgeInsets.only(left: 16.0, top: 12.0, bottom: 8.0, right: 16.0),
+                  padding: const EdgeInsets.only(
+                    left: 16.0,
+                    top: 12.0,
+                    bottom: 8.0,
+                    right: 16.0,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -597,19 +740,27 @@ class GlobalSearchScreen extends HookWidget {
                 Expanded(
                   child: ListView.builder(
                     itemCount: controller.recentSearches.length,
-                    itemBuilder: (context, index) =>
-                        _buildMarketRow(controller.recentSearches[index], index, context, controller, textController),
+                    itemBuilder: (context, index) => _buildMarketRow(
+                      controller.recentSearches[index],
+                      index,
+                      context,
+                      controller,
+                      textController,
+                    ),
                   ),
                 ),
-              ]
-              else ...[
+              ] else ...[
                 if (controller.filteredItems.isEmpty)
                   Expanded(
                     child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.search_off_rounded, size: 60, color: context.textColor.withAlpha(51)),
+                          Icon(
+                            Icons.search_off_rounded,
+                            size: 60,
+                            color: context.textColor.withAlpha(51),
+                          ),
                           const SizedBox(height: 12),
                           Text(
                             "No stock found",
@@ -640,7 +791,11 @@ class GlobalSearchScreen extends HookWidget {
                             controller.addToRecent(model);
                             Get.back(result: model);
                           },
-                          onFavoriteTap: () => MarketDialogHelper.showFavouriteBottomSheet(context, model),
+                          onFavoriteTap: () =>
+                              MarketDialogHelper.showFavouriteBottomSheet(
+                                context,
+                                model,
+                              ),
                         );
                       },
                     ),

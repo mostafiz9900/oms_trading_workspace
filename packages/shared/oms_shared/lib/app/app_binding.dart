@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import 'data/providers/auth_provider.dart';
 import 'data/providers/home_provider.dart';
@@ -7,7 +7,7 @@ import 'data/repositories/home_repository.dart';
 import 'data/network_info/network_manager.dart';
 import 'data/services/recent_search_service.dart';
 
-class AppBinding extends Bindings {
+class AppBinding extends Binding {
   @override
   void dependencies() async {
     Get.put(NetworkManager(), permanent: true);

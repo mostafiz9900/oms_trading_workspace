@@ -1,7 +1,7 @@
 import 'package:broker_config/broker_config.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:oms_shared/app/core/utils/helpers/hex_color.dart';
 import 'package:oms_shared/app/data/enums/app_enum.dart';
 import 'package:oms_shared/app/data/models/order_confirm_holder.dart';
@@ -55,6 +55,9 @@ void main() {
     ExchangeMode mode = ExchangeMode.dseOnly,
     StockExchange? exchange,
   }) async {
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(milliseconds: 1));
+    Get.reset();
     initTestAppConfig(exchangeMode: mode);
     await tester.binding.setSurfaceSize(const Size(800, 1600));
     addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -86,6 +89,7 @@ void main() {
         ),
       ),
     );
+    await tester.pump(const Duration(milliseconds: 1));
   }
 
   /// Colour of the BUY / SELL badge.

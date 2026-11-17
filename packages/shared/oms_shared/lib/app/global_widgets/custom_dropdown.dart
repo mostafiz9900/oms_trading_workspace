@@ -1,7 +1,10 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+// dropdown_button2 still uses Flutter SDK Material types.
+// ignore: deprecated_member_use
+import 'package:flutter/material.dart' as legacy show ScrollbarThemeData;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../core/utils/extensions/app_context.dart';
 import '../core/values/dimens.dart';
@@ -32,14 +35,18 @@ class OrderTypeDropdownListWidget extends ConsumerWidget {
       // Container থেকে ফিক্সড হাইট সরিয়ে দেওয়া হয়েছে
       decoration: BoxDecoration(
         color: context.tapBg,
-        borderRadius: BorderRadius.circular(0), // আপনার দেওয়া 0 রেডিয়াস রাখা হয়েছে
+        borderRadius: BorderRadius.circular(
+          0,
+        ), // আপনার দেওয়া 0 রেডিয়াস রাখা হয়েছে
       ),
       // v3.1.0 এ valueListenable না থাকায় পুরো ড্রপডাউনকে ValueListenableBuilder দিয়ে র‍্যাপ করা হয়েছে
       child: ValueListenableBuilder<String?>(
         valueListenable: selectedValueNotifier,
         builder: (context, selectedValue, _) {
           // Safety Check
-          final String? safeValue = result.contains(selectedValue) ? selectedValue : null;
+          final String? safeValue = result.contains(selectedValue)
+              ? selectedValue
+              : null;
 
           return DropdownButton2<String>(
             isExpanded: true,
@@ -50,7 +57,10 @@ class OrderTypeDropdownListWidget extends ConsumerWidget {
               alignment: Alignment.centerLeft,
               child: Text(
                 hintText ?? 'Order Type',
-                style: TextStyle(fontSize: 14, color: context.textColor.withAlpha((0.50 * 255).toInt())),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: context.textColor.withAlpha((0.50 * 255).toInt()),
+                ),
               ),
             ),
 
@@ -61,7 +71,7 @@ class OrderTypeDropdownListWidget extends ConsumerWidget {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     item,
-                    style: Get.textTheme.bodyMedium?.copyWith(
+                    style: Get.context!.textTheme.bodyMedium?.copyWith(
                       fontSize: 14,
                       color: context.textColor,
                       fontWeight: FontWeight.w500,
@@ -83,11 +93,18 @@ class OrderTypeDropdownListWidget extends ConsumerWidget {
                         style: TextStyle(
                           fontSize: 14,
                           color: isSelected ? Colors.blue : context.textColor,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                         ),
                       ),
                     ),
-                    if (isSelected) const Icon(Icons.check_circle, color: Colors.blue, size: 18),
+                    if (isSelected)
+                      const Icon(
+                        Icons.check_circle,
+                        color: Colors.blue,
+                        size: 18,
+                      ),
                   ],
                 ),
               );
@@ -113,11 +130,17 @@ class OrderTypeDropdownListWidget extends ConsumerWidget {
                 color: context.cardColor,
                 borderRadius: BorderRadius.circular(8),
                 boxShadow: [
-                  BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 4, offset: const Offset(0, 2)),
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
                 ],
               ),
             ),
-            menuItemStyleData: const MenuItemStyleData(padding: EdgeInsets.symmetric(horizontal: 16)),
+            menuItemStyleData: const MenuItemStyleData(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+            ),
           );
         },
       ),
@@ -147,14 +170,20 @@ class TypeDropdownListWidget extends ConsumerWidget {
 
     return Container(
       height: AppDimens.space46,
-      decoration: BoxDecoration(color: context.tapBg, borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(
+        color: context.tapBg,
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton2<String>(
           isExpanded: true,
           underline: const SizedBox.shrink(),
           hint: Text(
             hintText ?? 'Type',
-            style: TextStyle(fontSize: 14, color: context.textColor.withAlpha((0.50 * 255).toInt())),
+            style: TextStyle(
+              fontSize: 14,
+              color: context.textColor.withAlpha((0.50 * 255).toInt()),
+            ),
           ),
 
           // সিলেক্টেড আইটেমের কাস্টম স্টাইল
@@ -164,7 +193,7 @@ class TypeDropdownListWidget extends ConsumerWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   item,
-                  style: Get.textTheme.bodyMedium?.copyWith(
+                  style: Get.context!.textTheme.bodyMedium?.copyWith(
                     fontSize: 14,
                     color: context.textColor,
                     fontWeight: FontWeight.w500,
@@ -190,11 +219,18 @@ class TypeDropdownListWidget extends ConsumerWidget {
                           style: TextStyle(
                             fontSize: 14,
                             color: isSelected ? Colors.blue : context.textColor,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                           ),
                         ),
                       ),
-                      if (isSelected) const Icon(Icons.check_circle, color: Colors.blue, size: 18),
+                      if (isSelected)
+                        const Icon(
+                          Icons.check_circle,
+                          color: Colors.blue,
+                          size: 18,
+                        ),
                     ],
                   );
                 },
@@ -218,15 +254,23 @@ class TypeDropdownListWidget extends ConsumerWidget {
             decoration: BoxDecoration(
               color: context.cardColor,
               borderRadius: BorderRadius.circular(8),
-              boxShadow: [BoxShadow(color: Colors.black.withAlpha(26), blurRadius: 4, offset: const Offset(0, 2))],
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withAlpha(26),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-            scrollbarTheme: ScrollbarThemeData(
+            scrollbarTheme: legacy.ScrollbarThemeData(
               radius: const Radius.circular(40),
               thickness: WidgetStateProperty.all(6),
               thumbVisibility: WidgetStateProperty.all(true),
             ),
           ),
-          menuItemStyleData: const MenuItemStyleData(padding: EdgeInsets.symmetric(horizontal: 16)),
+          menuItemStyleData: const MenuItemStyleData(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+          ),
         ),
       ),
     );
@@ -256,7 +300,10 @@ class ValidityDropdownListWidget extends ConsumerWidget {
     final String? safeValue = result.contains(value) ? value : null;
 
     return Container(
-      decoration: BoxDecoration(color: context.tapBg, borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(
+        color: context.tapBg,
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: DropdownButton2<String>(
         isExpanded: true,
         underline: const SizedBox.shrink(),
@@ -266,7 +313,10 @@ class ValidityDropdownListWidget extends ConsumerWidget {
           alignment: Alignment.centerLeft,
           child: Text(
             hintText ?? 'Validity',
-            style: TextStyle(fontSize: 14, color: context.textColor.withValues(alpha: 0.50)),
+            style: TextStyle(
+              fontSize: 14,
+              color: context.textColor.withValues(alpha: 0.50),
+            ),
           ),
         ),
 
@@ -277,9 +327,11 @@ class ValidityDropdownListWidget extends ConsumerWidget {
               alignment: Alignment.centerLeft,
               child: Text(
                 item,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(fontSize: 14, color: context.textColor, fontWeight: FontWeight.w500),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontSize: 14,
+                  color: context.textColor,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             );
           }).toList();
@@ -298,11 +350,14 @@ class ValidityDropdownListWidget extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 14,
                       color: isSelected ? Colors.blue : context.textColor,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                     ),
                   ),
                 ),
-                if (isSelected) const Icon(Icons.check_circle, color: Colors.blue, size: 18),
+                if (isSelected)
+                  const Icon(Icons.check_circle, color: Colors.blue, size: 18),
               ],
             ),
           );
@@ -323,16 +378,21 @@ class ValidityDropdownListWidget extends ConsumerWidget {
             color: context.cardColor,
             borderRadius: BorderRadius.circular(8),
             boxShadow: [
-              BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 4, offset: const Offset(0, 2)),
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
             ],
           ),
         ),
         menuItemStyleData: MenuItemStyleData(
           padding: const EdgeInsets.symmetric(horizontal: 8),
-          overlayColor: WidgetStateProperty.all(Colors.blue.withValues(alpha: 0.1)),
+          overlayColor: WidgetStateProperty.all(
+            Colors.blue.withValues(alpha: 0.1),
+          ),
         ),
       ),
     );
   }
 }
-

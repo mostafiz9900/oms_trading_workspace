@@ -1,14 +1,15 @@
-import '../../../data/models/response/index_chart_model.dart' show IndexChartModel;
-import '../../../data/repositories/market_chart_repository.dart' show MarketChartRepository;
+import '../../../data/models/response/index_chart_model.dart'
+    show IndexChartModel;
+import '../../../data/repositories/market_chart_repository.dart'
+    show MarketChartRepository;
 
 import 'dart:math';
 
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+
 import '../../../core/utils/extensions/app_context.dart';
-
-
 
 class MarketIndexController extends GetxController {
   final MarketChartRepository repository;

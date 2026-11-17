@@ -325,9 +325,8 @@ class BrokerHouseConfig {
       case 'OMS_CSE_SOCKET_INDEX_URL':
         return const String.fromEnvironment('OMS_CSE_SOCKET_INDEX_URL').trim();
       case 'OMS_CSE_SOCKET_MARKET_DEPTH_URL':
-        return const String.fromEnvironment(
-          'OMS_CSE_SOCKET_MARKET_DEPTH_URL',
-        ).trim();
+        return const String.fromEnvironment('OMS_CSE_SOCKET_MARKET_DEPTH_URL')
+            .trim();
       case 'OMS_CSE_SOCKET_NEWS_TIME_SALES_URL':
         return const String.fromEnvironment(
           'OMS_CSE_SOCKET_NEWS_TIME_SALES_URL',

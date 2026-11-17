@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:oms_shared/app/global_widgets/custom_button.dart';
 
 import '../helpers/test_env.dart';
@@ -8,19 +8,27 @@ import '../helpers/test_env.dart';
 void main() {
   setUpAll(initTestAppConfig);
 
-  Future<void> pumpButton(WidgetTester tester, String title, double width) =>
-      tester.pumpWidget(
-        GetMaterialApp(
-          home: Scaffold(
-            body: Center(
-              child: SizedBox(
-                width: width,
-                child: CustomButton(title: title, onPressed: () {}),
-              ),
+  Future<void> pumpButton(
+    WidgetTester tester,
+    String title,
+    double width,
+  ) async {
+    await tester.pumpWidget(
+      GetMaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: SizedBox(
+              width: width,
+              child: CustomButton(title: title, onPressed: () {}),
             ),
           ),
         ),
-      );
+      ),
+    );
+    await tester.pump(
+      const Duration(milliseconds: 1),
+    ); // Flush GetXify's deferred onReady callback.
+  }
 
   /// Width the title takes on screen.
   double shownWidth(WidgetTester tester, String title) =>

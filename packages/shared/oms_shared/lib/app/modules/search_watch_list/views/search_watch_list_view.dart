@@ -7,8 +7,10 @@ import '../../../data/models/response/market_model.dart';
 import '../../../global_widgets/custom_app_bar.dart';
 import '../../../global_widgets/custom_button.dart';
 import '../../../global_widgets/custom_edit_text_form_field.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
+
 import '../controllers/search_watch_list_controller.dart';
 
 class SearchWatchListView extends GetView<SearchWatchListController> {
@@ -36,10 +38,14 @@ class SearchWatchListView extends GetView<SearchWatchListController> {
                     : ListView.builder(
                         shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
-                        itemCount: searchCont.homeController.filtersSectorList.length,
+                        itemCount:
+                            searchCont.homeController.filtersSectorList.length,
                         padding: .only(left: 6),
                         itemBuilder: (context, sectionIndex) {
-                          var model = searchCont.homeController.filtersSectorList.elementAt(sectionIndex);
+                          var model = searchCont
+                              .homeController
+                              .filtersSectorList
+                              .elementAt(sectionIndex);
                           return InkWell(
                             onTap: () {
                               controller.searchSector(model);
@@ -50,13 +56,17 @@ class SearchWatchListView extends GetView<SearchWatchListController> {
                               padding: .only(left: 5, right: 5),
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: model == searchCont.selectSector ? Colors.grey.shade300 : null,
+                                color: model == searchCont.selectSector
+                                    ? Colors.grey.shade300
+                                    : null,
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
                                 '$model   ',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(color: ColorConstants.textColorLight),
+                                style: TextStyle(
+                                  color: ColorConstants.textColorLight,
+                                ),
                               ),
                             ),
                           );
@@ -79,7 +89,10 @@ class SearchWatchListView extends GetView<SearchWatchListController> {
                           cursorWidth: 1.5,
                           prefixIcon: AssetsConstants.searchIconSvg,
                           hintText: 'Search...',
-                          hintStyle: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                          hintStyle: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 12,
+                          ),
                           onChanged: (String value) {},
                         ),
                       ),
@@ -91,7 +104,9 @@ class SearchWatchListView extends GetView<SearchWatchListController> {
                       child: CustomButton(
                         onPressed: () {
                           FocusScope.of(context).unfocus();
-                          controller.textController.text.isNotEmpty ? controller.textController.clear() : null;
+                          controller.textController.text.isNotEmpty
+                              ? controller.textController.clear()
+                              : null;
                         },
                         title: 'Cancel',
                       ),
@@ -109,11 +124,15 @@ class SearchWatchListView extends GetView<SearchWatchListController> {
                             onTap: () {
                               controller.homeController.goBottomNabBarPage(
                                 0,
-                                controller.filteredItems.elementAt(index).orderBook!,
+                                controller.filteredItems
+                                    .elementAt(index)
+                                    .orderBook!,
                               );
                               Get.back();
                             },
-                            child: _WitchListItemWidget(model: controller.filteredItems.elementAt(index)),
+                            child: _WitchListItemWidget(
+                              model: controller.filteredItems.elementAt(index),
+                            ),
                           );
                         },
                       ),
@@ -148,7 +167,7 @@ class _WitchListItemWidget extends StatelessWidget {
                     children: [
                       TextSpan(
                         text: model.shortName ?? "",
-                        style: Get.textTheme.titleLarge?.copyWith(
+                        style: Get.context!.textTheme.titleLarge?.copyWith(
                           color: context.textColor,
                           fontWeight: FontWeight.w500,
                           fontSize: 14,
@@ -167,7 +186,10 @@ class _WitchListItemWidget extends StatelessWidget {
                 ),
                 Text(
                   'Vol: ${model.volume ?? "0"}, Val: ${model.val ?? "0"}, Trd: ${model.trades ?? "0"}',
-                  style: Get.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300, fontSize: 12),
+                  style: Get.context!.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w300,
+                    fontSize: 12,
+                  ),
                 ),
               ],
             ),
@@ -180,12 +202,18 @@ class _WitchListItemWidget extends StatelessWidget {
               children: [
                 Text(
                   "${model.last ?? "0.0"}",
-                  style: Get.textTheme.bodyLarge?.copyWith(fontSize: 12, fontWeight: FontWeight.w500),
+                  style: Get.context!.textTheme.bodyLarge?.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 Text(
                   model.marketType ?? "",
                   maxLines: 2,
-                  style: Get.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300, fontSize: 10),
+                  style: Get.context!.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w300,
+                    fontSize: 10,
+                  ),
                 ),
               ],
             ),
@@ -212,7 +240,7 @@ class _WitchListItemWidget extends StatelessWidget {
                   ),
                   child: Text(
                     '${model.chg}%',
-                    style: Get.textTheme.bodyLarge?.copyWith(
+                    style: Get.context!.textTheme.bodyLarge?.copyWith(
                       color: ColorConstants.white,
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -221,7 +249,7 @@ class _WitchListItemWidget extends StatelessWidget {
                 ),
                 Text(
                   '${model.d}',
-                  style: Get.textTheme.bodyLarge?.copyWith(
+                  style: Get.context!.textTheme.bodyLarge?.copyWith(
                     color: model.d! > 0
                         ? ColorConstants.greenColor
                         : model.d! < 0

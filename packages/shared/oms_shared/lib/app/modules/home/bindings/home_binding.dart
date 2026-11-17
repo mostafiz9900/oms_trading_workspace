@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../data/repositories/home_repository.dart';
 import '../controllers/home_controller.dart';
@@ -9,7 +9,7 @@ import '../../market/controllers/live_index_controller.dart';
 import '../../market/controllers/market_index_controller.dart';
 import '../../auth/controllers/password_reset_controller.dart';
 
-class HomeBinding extends Bindings {
+class HomeBinding extends Binding {
   @override
   void dependencies() {
     Get.lazyPut<HomeController>(

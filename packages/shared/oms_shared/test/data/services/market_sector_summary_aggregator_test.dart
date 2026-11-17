@@ -51,7 +51,10 @@ void main() {
   });
 
   test('stocks without a sector are grouped under their group', () {
-    final result = aggregator.generate([stock(sector: null), stock(sector: '')]);
+    final result = aggregator.generate([
+      stock(sector: null),
+      stock(sector: ''),
+    ]);
     expect(result.single.sectorName, 'PUBLIC');
   });
 

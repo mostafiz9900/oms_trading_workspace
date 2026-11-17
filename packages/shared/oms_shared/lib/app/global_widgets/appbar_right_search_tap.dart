@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../core/values/assets.dart';
 import '../modules/global_search/controllers/global_search_controller.dart';
@@ -36,7 +36,11 @@ class AppbarRightSearchTapWidget extends StatelessWidget {
           }
         }
       },
-      icon: SvgPicture.asset(AssetsConstants.searchIconSvg, width: 20, height: 20),
+      icon: SvgPicture.asset(
+        AssetsConstants.searchIconSvg,
+        width: 20,
+        height: 20,
+      ),
     );
   }
 }

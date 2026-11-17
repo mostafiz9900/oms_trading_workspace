@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/utils/helpers/app_helper.dart';
@@ -22,12 +22,16 @@ class TimeSalesTabWidget extends StatelessWidget {
     return VisibleGetBuilder<HomeController>(
       id: 'timeAndSales',
       builder: (homeCon) {
-        final sortedList = Helpers.sortByTstDesc([...homeCon.shownMarket.timeAndSales], (m) => m.tst ?? "");
+        final sortedList = Helpers.sortByTstDesc([
+          ...homeCon.shownMarket.timeAndSales,
+        ], (m) => m.tst ?? "");
         return CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
             SliverToBoxAdapter(
-              child: Column(children: [_OpenCloseBalanceWidget(homeCon: homeCon)]),
+              child: Column(
+                children: [_OpenCloseBalanceWidget(homeCon: homeCon)],
+              ),
             ),
 
             SliverPersistentHeader(
@@ -38,19 +42,28 @@ class TimeSalesTabWidget extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   decoration: BoxDecoration(
                     color: Get.theme.scaffoldBackgroundColor, // ব্যাকগ্রাউন্ড কালার ঠিক রাখার জন্য
-                    border: Border(bottom: BorderSide(color: context.dividerColor.withAlpha(50), width: 1)),
+                    border: Border(
+                      bottom: BorderSide(
+                        color: context.dividerColor.withAlpha(50),
+                        width: 1,
+                      ),
+                    ),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         homeCon.isShowTimeSalesChart ? "Charts" : "List",
-                        style: Get.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                        style: Get.context!.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       IconButton(
                         onPressed: () => homeCon.toggleTimeSalesChart(),
                         icon: Icon(
-                          homeCon.isShowTimeSalesChart ? Icons.format_list_bulleted_rounded : Icons.bar_chart_rounded,
+                          homeCon.isShowTimeSalesChart
+                              ? Icons.format_list_bulleted_rounded
+                              : Icons.bar_chart_rounded,
                           color: context.buttonColor,
                           size: 26,
                         ),
@@ -66,7 +79,9 @@ class TimeSalesTabWidget extends StatelessWidget {
                 : homeCon.shownMarket.timeAndSales.isEmpty
                 ? SliverToBoxAdapter(child: EmptyWidget())
                 : homeCon.isShowTimeSalesChart
-                ? SliverToBoxAdapter(child: TimeSalesChartsView(data: sortedList))
+                ? SliverToBoxAdapter(
+                    child: TimeSalesChartsView(data: sortedList),
+                  )
                 : _StickyTapeListView(sortedList: sortedList),
           ],
         );
@@ -97,15 +112,27 @@ class _StickyTapeListView extends StatelessWidget {
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(flex: 3, child: _TableTitleTextWidget(title: 'Time')),
-                  Expanded(flex: 2, child: _TableTitleTextWidget(title: 'Price')),
                   Expanded(
-                    flex: 2,
-                    child: _TableTitleTextWidget(title: 'Volume', textAlign: TextAlign.center),
+                    flex: 3,
+                    child: _TableTitleTextWidget(title: 'Time'),
                   ),
                   Expanded(
                     flex: 2,
-                    child: _TableTitleTextWidget(title: 'Side', textAlign: TextAlign.end),
+                    child: _TableTitleTextWidget(title: 'Price'),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: _TableTitleTextWidget(
+                      title: 'Volume',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: _TableTitleTextWidget(
+                      title: 'Side',
+                      textAlign: TextAlign.end,
+                    ),
                   ),
                 ],
               ),
@@ -117,22 +144,37 @@ class _StickyTapeListView extends StatelessWidget {
             final model = sortedList[index];
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(color: index % 2 != 0 ? context.evenColor : context.oddColor),
+              decoration: BoxDecoration(
+                color: index % 2 != 0 ? context.evenColor : context.oddColor,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(flex: 3, child: _TableTitleTextWidget(title: Helpers.formatTimeToString(model.tst ?? ''))),
-                  Expanded(flex: 2, child: _TableTitleTextWidget(title: '${model.p ?? ''}')),
+                  Expanded(
+                    flex: 3,
+                    child: _TableTitleTextWidget(
+                      title: Helpers.formatTimeToString(model.tst ?? ''),
+                    ),
+                  ),
                   Expanded(
                     flex: 2,
-                    child: _TableTitleTextWidget(title: '${model.v ?? ''}', textAlign: TextAlign.center),
+                    child: _TableTitleTextWidget(title: '${model.p ?? ''}'),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: _TableTitleTextWidget(
+                      title: '${model.v ?? ''}',
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                   Expanded(
                     flex: 2,
                     child: _TableTitleTextWidget(
                       title: model.s ?? '',
                       textAlign: TextAlign.end,
-                      textColor: model.s == 'BUY' ? ColorConstants.success : ColorConstants.error,
+                      textColor: model.s == 'BUY'
+                          ? ColorConstants.success
+                          : ColorConstants.error,
                     ),
                   ),
                 ],
@@ -151,7 +193,11 @@ class _ToggleHeaderDelegate extends SliverPersistentHeaderDelegate {
   _ToggleHeaderDelegate({required this.child});
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) => child;
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) => child;
 
   @override
   double get maxExtent => 45;
@@ -160,7 +206,8 @@ class _ToggleHeaderDelegate extends SliverPersistentHeaderDelegate {
   double get minExtent => 45;
 
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => true;
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      true;
 }
 
 // 🚀 টেবিল হেডারের জন্য ডেলিগেট ক্লাস
@@ -169,7 +216,11 @@ class _SliverHeaderDelegate extends SliverPersistentHeaderDelegate {
   _SliverHeaderDelegate({required this.child});
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) => child;
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) => child;
 
   @override
   double get maxExtent => 35;
@@ -178,14 +229,19 @@ class _SliverHeaderDelegate extends SliverPersistentHeaderDelegate {
   double get minExtent => 35;
 
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => true;
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      true;
 }
 
 // =========================================================================
 // 🚀 3. Helper Widgets
 // =========================================================================
 class _TableTitleTextWidget extends StatelessWidget {
-  const _TableTitleTextWidget({required this.title, this.textAlign, this.textColor});
+  const _TableTitleTextWidget({
+    required this.title,
+    this.textAlign,
+    this.textColor,
+  });
   final String title;
   final TextAlign? textAlign;
   final Color? textColor;
@@ -194,7 +250,7 @@ class _TableTitleTextWidget extends StatelessWidget {
     return Text(
       title,
       textAlign: textAlign,
-      style: Get.textTheme.bodyLarge?.copyWith(
+      style: Get.context!.textTheme.bodyLarge?.copyWith(
         fontSize: 16,
         fontWeight: FontWeight.w500,
         color: textColor ?? context.textColor,
@@ -223,8 +279,14 @@ class _OpenCloseBalanceWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _TitleValueColumnWidget(title: "Open", value: '${homeCon.marketData.open ?? '0.0'}'),
-              _TitleValueColumnWidget(title: "High", value: '${homeCon.marketData.high ?? '0.0'}'),
+              _TitleValueColumnWidget(
+                title: "Open",
+                value: '${homeCon.marketData.open ?? '0.0'}',
+              ),
+              _TitleValueColumnWidget(
+                title: "High",
+                value: '${homeCon.marketData.high ?? '0.0'}',
+              ),
               _TitleValueColumnWidget(
                 title: "Low",
                 value: '${homeCon.marketData.low ?? '0.0'}',
@@ -238,12 +300,16 @@ class _OpenCloseBalanceWidget extends StatelessWidget {
             children: [
               _TitleValueColumnWidget(
                 title: "YCP",
-                value: homeCon.marketData.reference?.toStringAsFixed(2) ?? '0.0',
+                value:
+                    homeCon.marketData.reference?.toStringAsFixed(2) ?? '0.0',
                 valueColor: ColorConstants.success,
               ),
               _TitleValueColumnWidget(
                 title: "Volume",
-                value: NumberFormatter.bdFormat(homeCon.marketData.volume ?? 0.0, decimalPlaces: 1),
+                value: NumberFormatter.bdFormat(
+                  homeCon.marketData.volume ?? 0.0,
+                  decimalPlaces: 1,
+                ),
                 valueColor: context.buttonColor,
               ),
               _TitleValueColumnWidget(
@@ -260,7 +326,11 @@ class _OpenCloseBalanceWidget extends StatelessWidget {
 }
 
 class _TitleValueColumnWidget extends StatelessWidget {
-  const _TitleValueColumnWidget({required this.title, required this.value, this.valueColor});
+  const _TitleValueColumnWidget({
+    required this.title,
+    required this.value,
+    this.valueColor,
+  });
   final String title;
   final String value;
   final Color? valueColor;
@@ -269,10 +339,16 @@ class _TitleValueColumnWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(title, style: Get.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w400, fontSize: 12)),
+        Text(
+          title,
+          style: Get.context!.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w400,
+            fontSize: 12,
+          ),
+        ),
         Text(
           value,
-          style: Get.textTheme.bodyLarge?.copyWith(
+          style: Get.context!.textTheme.bodyLarge?.copyWith(
             fontWeight: FontWeight.w500,
             fontSize: 16,
             color: valueColor ?? ColorConstants.success,

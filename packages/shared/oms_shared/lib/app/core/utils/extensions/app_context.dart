@@ -2,13 +2,13 @@ import '../functions/network_util.dart';
 import '../helpers/hex_color.dart';
 import '../../values/assets.dart';
 import '../../values/colors.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 extension BuildContextExtensions on BuildContext {
   ThemeData get theme => Theme.of(this);
 
-  TextTheme get textTheme => theme.textTheme;
   double get dynamicHeight => MediaQuery.of(this).size.height;
   double get dynamicWidth => MediaQuery.of(this).size.width;
   ColorScheme get colorScheme => theme.colorScheme;

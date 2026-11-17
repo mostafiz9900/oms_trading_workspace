@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../core/utils/extensions/app_context.dart';
 import '../../../core/utils/helpers/app_helper.dart';
@@ -50,14 +50,22 @@ class WithdrawalRequestView extends GetView<WithdrawalRequestController> {
 
           if (controller.withdrawList.isEmpty) {
             return Center(
-              child: Text("No withdrawal requests found.", style: TextStyle(fontSize: 16, color: Colors.grey.shade500)),
+              child: Text(
+                "No withdrawal requests found.",
+                style: TextStyle(fontSize: 16, color: Colors.grey.shade500),
+              ),
             );
           }
 
           return RefreshIndicator(
             onRefresh: () => controller.fetchWithdrawList(),
             child: ListView.builder(
-              padding: const EdgeInsets.only(top: 8, bottom: 80, left: 16, right: 16),
+              padding: const EdgeInsets.only(
+                top: 8,
+                bottom: 80,
+                left: 16,
+                right: 16,
+              ),
               itemCount: controller.withdrawList.length,
               itemBuilder: (context, index) {
                 final item = controller.withdrawList[index];
@@ -72,7 +80,11 @@ class WithdrawalRequestView extends GetView<WithdrawalRequestController> {
 
   // ==========================================
   // ==========================================
-  Widget _buildWithdrawItem(BuildContext context, WithdrawModel item, bool isDark) {
+  Widget _buildWithdrawItem(
+    BuildContext context,
+    WithdrawModel item,
+    bool isDark,
+  ) {
     String status = item.status?.toUpperCase() ?? 'PENDING';
     Color statusColor = status == 'PENDING'
         ? Colors.orange
@@ -84,10 +96,18 @@ class WithdrawalRequestView extends GetView<WithdrawalRequestController> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.withValues(alpha: 0.2),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.05)
+              : Colors.grey.withValues(alpha: 0.2),
           width: 1,
         ),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,7 +119,7 @@ class WithdrawalRequestView extends GetView<WithdrawalRequestController> {
               Expanded(
                 child: Text(
                   item.investorName ?? 'Unknown Investor',
-                  style: Get.textTheme.titleMedium?.copyWith(
+                  style: Get.context!.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
                     color: context.textColor,
@@ -110,14 +130,21 @@ class WithdrawalRequestView extends GetView<WithdrawalRequestController> {
               ),
               const SizedBox(width: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: statusColor.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   status,
-                  style: TextStyle(color: statusColor, fontSize: 11, fontWeight: FontWeight.w800),
+                  style: TextStyle(
+                    color: statusColor,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
             ],
@@ -125,7 +152,10 @@ class WithdrawalRequestView extends GetView<WithdrawalRequestController> {
 
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Divider(height: 1, color: Colors.grey.withValues(alpha: 0.2)),
+            child: Divider(
+              height: 1,
+              color: Colors.grey.withValues(alpha: 0.2),
+            ),
           ),
 
           Row(
@@ -133,24 +163,44 @@ class WithdrawalRequestView extends GetView<WithdrawalRequestController> {
             children: [
               Row(
                 children: [
-                  Icon(Icons.calendar_today_outlined, size: 14, color: Colors.grey.shade500),
+                  Icon(
+                    Icons.calendar_today_outlined,
+                    size: 14,
+                    color: Colors.grey.shade500,
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     _formatDate(item.createdAt),
-                    style: TextStyle(fontSize: 13, color: Colors.grey.shade600, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   const SizedBox(width: 12),
-                  Icon(Icons.access_time, size: 14, color: Colors.grey.shade500),
+                  Icon(
+                    Icons.access_time,
+                    size: 14,
+                    color: Colors.grey.shade500,
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     _formatTime(item.createdAt),
-                    style: TextStyle(fontSize: 13, color: Colors.grey.shade600, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ],
               ),
               Text(
                 "৳ ${item.withdrawRequest ?? '0'}",
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Colors.teal),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.teal,
+                ),
               ),
             ],
           ),
@@ -162,11 +212,16 @@ class WithdrawalRequestView extends GetView<WithdrawalRequestController> {
   // ==========================================
   //  3. WITHDRAW DIALOG
   // ==========================================
-  void _openWithdrawDialog(BuildContext context, WithdrawalRequestController controller) {
+  void _openWithdrawDialog(
+    BuildContext context,
+    WithdrawalRequestController controller,
+  ) {
     controller.clearForm();
 
     // 🚀 Controller থেকে ডেটা নেওয়া হচ্ছে
-    double rawAvailableAmount = controller.userBalance?.amount ?? 0.0; // 🚀 ভ্যালিডেশনের জন্য রিয়েল ডাটা
+    double rawAvailableAmount =
+        controller.userBalance?.amount ??
+        0.0; // 🚀 ভ্যালিডেশনের জন্য রিয়েল ডাটা
     var formattedAvailableAmount = rawAvailableAmount.toStringAsFixed(2);
 
     showDialog(
@@ -175,8 +230,13 @@ class WithdrawalRequestView extends GetView<WithdrawalRequestController> {
       builder: (_) {
         return Dialog(
           backgroundColor: context.bgColor,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 24,
+          ),
           child: GetBuilder<WithdrawalRequestController>(
             builder: (_) {
               return SingleChildScrollView(
@@ -194,25 +254,39 @@ class WithdrawalRequestView extends GetView<WithdrawalRequestController> {
                             children: [
                               Text(
                                 "Withdrawal Request",
-                                style: Get.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800, fontSize: 18),
+                                style: Get.context!.textTheme.titleLarge
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 18,
+                                    ),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 "Request for client withdrawal",
-                                style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey.shade500,
+                                ),
                               ),
                             ],
                           ),
                           InkWell(
                             onTap: () => Get.back(),
-                            child: Icon(Icons.close, color: context.textColor, size: 24),
+                            child: Icon(
+                              Icons.close,
+                              color: context.textColor,
+                              size: 24,
+                            ),
                           ),
                         ],
                       ),
 
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: Divider(height: 1, color: Colors.grey.withValues(alpha: 0.2)),
+                        child: Divider(
+                          height: 1,
+                          color: Colors.grey.withValues(alpha: 0.2),
+                        ),
                       ),
 
                       Row(
@@ -232,11 +306,16 @@ class WithdrawalRequestView extends GetView<WithdrawalRequestController> {
                                 const SizedBox(height: 6),
                                 Container(
                                   width: double.infinity,
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 14,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Colors.teal.withValues(alpha: 0.05),
                                     borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(color: Colors.teal.withValues(alpha: 0.3)),
+                                    border: Border.all(
+                                      color: Colors.teal.withValues(alpha: 0.3),
+                                    ),
                                   ),
                                   child: Text(
                                     "৳ $formattedAvailableAmount",
@@ -260,7 +339,11 @@ class WithdrawalRequestView extends GetView<WithdrawalRequestController> {
                       RichText(
                         text: TextSpan(
                           text: "Withdraw Amount (BDT) ",
-                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.grey.shade500),
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade500,
+                          ),
                           children: const [
                             TextSpan(
                               text: "*",
@@ -272,7 +355,9 @@ class WithdrawalRequestView extends GetView<WithdrawalRequestController> {
                       const SizedBox(height: 8),
                       CustomEditTextFormField(
                         controller: controller.amountController,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
                         hintText: "Enter amount",
                         onChanged: (value) {
                           // 🚀 ইউজার টাইপ করার সাথে সাথে চেক করবে
@@ -280,9 +365,14 @@ class WithdrawalRequestView extends GetView<WithdrawalRequestController> {
 
                           if (enteredAmount > rawAvailableAmount) {
                             // 🚀 বেশি দিলে অটোমেটিক ম্যাক্সিমাম অ্যামাউন্ট বসিয়ে দিবে এবং কার্সর শেষে নিয়ে যাবে
-                            controller.amountController.text = rawAvailableAmount.toInt().toString();
-                            controller.amountController.selection = TextSelection.fromPosition(
-                              TextPosition(offset: controller.amountController.text.length),
+                            controller.amountController.text =
+                                rawAvailableAmount.toInt().toString();
+                            controller
+                                .amountController
+                                .selection = TextSelection.fromPosition(
+                              TextPosition(
+                                offset: controller.amountController.text.length,
+                              ),
                             );
 
                             // 🚀 ইউজারকে একটি ওয়ার্নিং দেখাবে
@@ -300,7 +390,11 @@ class WithdrawalRequestView extends GetView<WithdrawalRequestController> {
                       RichText(
                         text: TextSpan(
                           text: "Narration ",
-                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.grey.shade500),
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade500,
+                          ),
                           children: const [
                             TextSpan(
                               text: "*",
@@ -328,19 +422,30 @@ class WithdrawalRequestView extends GetView<WithdrawalRequestController> {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.teal,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                             elevation: 0,
                           ),
-                          onPressed: controller.isSubmitting ? null : () => controller.submitWithdrawRequest(context),
+                          onPressed: controller.isSubmitting
+                              ? null
+                              : () => controller.submitWithdrawRequest(context),
                           child: controller.isSubmitting
                               ? const SizedBox(
                                   height: 20,
                                   width: 20,
-                                  child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.5,
+                                    color: Colors.white,
+                                  ),
                                 )
                               : const Text(
                                   "Submit Request",
-                                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                         ),
                       ),

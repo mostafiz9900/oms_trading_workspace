@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/widgets.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:web_socket_channel/status.dart' as status;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -28,7 +28,8 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
   // ─── Private State ────────────────────────────────────────────────────────
 
   final Map<String, WebSocketChannel> _channels = {};
-  final Map<String, StreamSubscription> _subscriptions = {}; // 🚀 Memory Leak রোধ করার জন্য
+  final Map<String, StreamSubscription> _subscriptions =
+      {}; // 🚀 Memory Leak রোধ করার জন্য
   final Map<String, bool> _connectionStatus = {};
   final Map<String, String> _socketUrls = {};
   final Set<String> _connecting = {};
@@ -66,9 +67,9 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
     debugPrint('WebSocketService closed');
   }
 
-  static Stream<bool> _connectivityOnline() => Connectivity().onConnectivityChanged.map(
-    (results) => !results.contains(ConnectivityResult.none),
-  );
+  static Stream<bool> _connectivityOnline() => Connectivity()
+      .onConnectivityChanged
+      .map((results) => !results.contains(ConnectivityResult.none));
 
   void _onOnlineChanged(bool online) {
     final cameBack = online && !_online;
@@ -112,7 +113,9 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
     _socketUrls[socketId] = url;
     _messageHandlers[socketId] = onMessage;
     if (onConnected != null) _connectedCallbacks[socketId] = onConnected;
-    if (onDisconnected != null) _disconnectedCallbacks[socketId] = onDisconnected;
+    if (onDisconnected != null) {
+      _disconnectedCallbacks[socketId] = onDisconnected;
+    }
     if (onError != null) _errorCallbacks[socketId] = onError;
 
     WebSocketChannel? channel;
@@ -191,7 +194,10 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
   bool isConnected(String socketId) => _connectionStatus[socketId] ?? false;
 
   /// IDs of all currently connected sockets.
-  List<String> getConnectedSockets() => _connectionStatus.entries.where((e) => e.value).map((e) => e.key).toList();
+  List<String> getConnectedSockets() => _connectionStatus.entries
+      .where((e) => e.value)
+      .map((e) => e.key)
+      .toList();
 
   /// Reconnect now instead of waiting for the back-off timer.
   void forceReconnect(String socketId) {
@@ -199,8 +205,13 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
     _retryCount[socketId] = 0;
     _cancelReconnectTimer(socketId);
 
-    if (_socketUrls.containsKey(socketId) && _messageHandlers.containsKey(socketId)) {
-      connect(socketId: socketId, url: _socketUrls[socketId]!, onMessage: _messageHandlers[socketId]!);
+    if (_socketUrls.containsKey(socketId) &&
+        _messageHandlers.containsKey(socketId)) {
+      connect(
+        socketId: socketId,
+        url: _socketUrls[socketId]!,
+        onMessage: _messageHandlers[socketId]!,
+      );
     }
   }
 
@@ -225,7 +236,8 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
   void _scheduleReconnect(String socketId) {
     _cancelReconnectTimer(socketId); // আগের টাইমার ক্লিয়ার করা
 
-    if (!_socketUrls.containsKey(socketId) || !_messageHandlers.containsKey(socketId)) {
+    if (!_socketUrls.containsKey(socketId) ||
+        !_messageHandlers.containsKey(socketId)) {
       return;
     }
 
@@ -238,12 +250,18 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
     if (delaySeconds > _maxDelaySeconds) delaySeconds = _maxDelaySeconds;
 
     final delay = Duration(seconds: delaySeconds);
-    debugPrint('🔄 Reconnect attempt ${retries + 1} for $socketId in ${delay.inSeconds}s');
+    debugPrint(
+      '🔄 Reconnect attempt ${retries + 1} for $socketId in ${delay.inSeconds}s',
+    );
 
     _reconnectTimers[socketId] = Timer(delay, () {
       final stillDisconnected = (_connectionStatus[socketId] ?? false) == false;
       if (stillDisconnected && _socketUrls.containsKey(socketId)) {
-        connect(socketId: socketId, url: _socketUrls[socketId]!, onMessage: _messageHandlers[socketId]!);
+        connect(
+          socketId: socketId,
+          url: _socketUrls[socketId]!,
+          onMessage: _messageHandlers[socketId]!,
+        );
       }
     });
   }

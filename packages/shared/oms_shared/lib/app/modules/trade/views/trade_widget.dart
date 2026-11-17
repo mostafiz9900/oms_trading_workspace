@@ -15,9 +15,9 @@ import '../../../global_widgets/visible_get_builder.dart';
 import '../../home/controllers/home_controller.dart';
 import '/app/modules/trade/views/local_widgets/trade_confirm_order.dart';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../global_widgets/appbar_right_search_tap.dart';
 import '../../../global_widgets/exchange/exchange_switcher.dart';
@@ -415,11 +415,12 @@ class TradeWidget extends StatelessWidget {
                                       border: InputBorder.none,
                                       hintText: "0.0",
                                     ),
-                                    style: Get.textTheme.titleLarge?.copyWith(
-                                      fontSize: AppDimens.space16,
-                                      fontWeight: FontWeight.w500,
-                                      color: context.textColor,
-                                    ),
+                                    style: Get.context!.textTheme.titleLarge
+                                        ?.copyWith(
+                                          fontSize: AppDimens.space16,
+                                          fontWeight: FontWeight.w500,
+                                          color: context.textColor,
+                                        ),
                                   ),
                                 ),
                               ),
@@ -454,10 +455,11 @@ class TradeWidget extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: Text(
                               "Value: ${NumberFormatter.bdFormat(con.totalAmount)} BDT",
-                              style: Get.textTheme.bodyMedium?.copyWith(
-                                fontSize: AppDimens.space16,
-                                color: context.textColor,
-                              ),
+                              style: Get.context!.textTheme.bodyMedium
+                                  ?.copyWith(
+                                    fontSize: AppDimens.space16,
+                                    color: context.textColor,
+                                  ),
                             ),
                           ),
                         ),

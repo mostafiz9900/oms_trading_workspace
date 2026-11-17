@@ -3,9 +3,11 @@ import '../../../core/values/space.dart';
 import '../../../global_widgets/custom_button.dart';
 import '../../../global_widgets/custom_edit_text_form_field.dart';
 import '../controllers/auth_controller.dart';
-import 'package:flutter/material.dart';
+
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
+import 'package:email_validator/email_validator.dart';
 
 class SendOTPScreen extends GetView<AuthController> {
   SendOTPScreen({super.key});
@@ -34,12 +36,14 @@ class SendOTPScreen extends GetView<AuthController> {
                   key: _formKey,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch, //  ফিল্ড এবং বাটন ফুল-উইডথ করার জন্য
+                    crossAxisAlignment: CrossAxisAlignment
+                        .stretch, //  ফিল্ড এবং বাটন ফুল-উইডথ করার জন্য
                     children: [
                       Center(
                         child: SvgPicture.asset(
                           context.bannerLogo,
-                          height: 80, //  চ্যাপ্টা যেন না লাগে তাই নির্দিষ্ট সাইজ
+                          height:
+                              80, //  চ্যাপ্টা যেন না লাগে তাই নির্দিষ্ট সাইজ
                           width: 80,
                           fit: BoxFit.contain,
                         ),
@@ -52,9 +56,10 @@ class SendOTPScreen extends GetView<AuthController> {
                       Text(
                         "Enter your email to reset your password.",
                         textAlign: TextAlign.center,
-                        style: Get.textTheme.titleSmall?.copyWith(
+                        style: Get.context!.textTheme.titleSmall?.copyWith(
                           fontSize: 14,
-                          color: Colors.grey.shade400, //  দেখতে সুন্দর লাগার জন্য
+                          color:
+                              Colors.grey.shade400, //  দেখতে সুন্দর লাগার জন্য
                         ),
                       ),
                       AppSpace.spaceH30,
@@ -68,7 +73,7 @@ class SendOTPScreen extends GetView<AuthController> {
                           if (value == null || value.trim().isEmpty) {
                             return 'Email is required';
                           }
-                          if (!GetUtils.isEmail(value.trim())) {
+                          if (!EmailValidator.validate(value.trim())) {
                             return 'Enter a valid email address';
                           }
                           return null;
@@ -82,8 +87,11 @@ class SendOTPScreen extends GetView<AuthController> {
                         onPressed: () {
                           //  শুধু ভ্যালিড ইমেইল দিলেই রিকোয়েস্ট যাবে
                           if (_formKey.currentState?.validate() ?? false) {
-                            FocusScope.of(context).unfocus(); // কীবোর্ড নামিয়ে দিবে
-                            authCon.sentOtpForForgotPassword(authCon.forgotPassEditController.text.trim());
+                            FocusScope.of(context)
+                                .unfocus(); // কীবোর্ড নামিয়ে দিবে
+                            authCon.sentOtpForForgotPassword(
+                              authCon.forgotPassEditController.text.trim(),
+                            );
                           }
                         },
                         title: "Forgot Password",

@@ -1,10 +1,11 @@
 import '../../../core/utils/extensions/app_context.dart';
 import '../../../global_widgets/custom_button.dart';
 import '../controllers/auth_controller.dart';
-import 'package:flutter/material.dart';
+
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class OtpVerifyScreen extends HookConsumerWidget {
@@ -23,7 +24,10 @@ class OtpVerifyScreen extends HookConsumerWidget {
       if (otp.length < 6) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Please enter the complete 6-digit OTP', style: TextStyle(color: Colors.white)),
+            content: Text(
+              'Please enter the complete 6-digit OTP',
+              style: TextStyle(color: Colors.white),
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -38,7 +42,10 @@ class OtpVerifyScreen extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Verify OTP'),
-        leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Get.back()),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Get.back(),
+        ),
       ),
       body: SafeArea(
         child: Center(
@@ -50,18 +57,30 @@ class OtpVerifyScreen extends HookConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Logo
-                SvgPicture.asset(context.bannerLogo, width: 80, height: 80, fit: BoxFit.contain),
+                SvgPicture.asset(
+                  context.bannerLogo,
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.contain,
+                ),
                 const SizedBox(height: 40),
 
                 Text(
                   'Enter 6-digit OTP',
-                  style: Get.textTheme.titleLarge?.copyWith(fontSize: 22, fontWeight: FontWeight.bold),
+                  style: Get.context!.textTheme.titleLarge?.copyWith(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   "We have sent a verification code to\n$email",
                   textAlign: TextAlign.center,
-                  style: Get.textTheme.bodyMedium?.copyWith(color: Colors.grey.shade400, fontSize: 14, height: 1.5),
+                  style: Get.context!.textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey.shade400,
+                    fontSize: 14,
+                    height: 1.5,
+                  ),
                 ),
                 const SizedBox(height: 32),
 
@@ -85,7 +104,9 @@ class OtpVerifyScreen extends HookConsumerWidget {
 
                               // কোন বক্সটি এখন একটিভ আছে তা বের করার লজিক
                               final isActive =
-                                  focusNode.hasFocus && (index == text.length || (index == 5 && text.length == 6));
+                                  focusNode.hasFocus &&
+                                  (index == text.length ||
+                                      (index == 5 && text.length == 6));
 
                               return Container(
                                 width: 45,
@@ -98,13 +119,19 @@ class OtpVerifyScreen extends HookConsumerWidget {
                                     color: isActive
                                         ? Colors
                                               .blue // একটিভ বক্সের বর্ডার
-                                        : (isFilled ? Colors.blue.withAlpha(128) : Colors.grey.shade700),
+                                        : (isFilled
+                                              ? Colors.blue.withAlpha(128)
+                                              : Colors.grey.shade700),
                                     width: isActive ? 2 : 1.5,
                                   ),
                                 ),
                                 child: Text(
                                   char,
-                                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: context.textColor),
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: context.textColor,
+                                  ),
                                 ),
                               );
                             }),
@@ -117,10 +144,15 @@ class OtpVerifyScreen extends HookConsumerWidget {
                               keyboardType: TextInputType.number,
                               maxLength: 6,
                               autofocus: true,
-                              cursorColor: Colors.transparent, // কীবোর্ড কার্সার লুকানো
+                              cursorColor:
+                                  Colors.transparent, // কীবোর্ড কার্সার লুকানো
                               showCursor: false,
-                              enableInteractiveSelection: false, // কপি/পেস্ট পপআপ অফ রাখা হলো
-                              style: const TextStyle(color: Colors.transparent, fontSize: 1), // টেক্সট অদৃশ্য
+                              enableInteractiveSelection:
+                                  false, // কপি/পেস্ট পপআপ অফ রাখা হলো
+                              style: const TextStyle(
+                                color: Colors.transparent,
+                                fontSize: 1,
+                              ), // টেক্সট অদৃশ্য
                               decoration: const InputDecoration(
                                 counterText: '', // maxLength এর কাউন্টার লুকানো
                                 border: InputBorder.none,
@@ -167,10 +199,14 @@ class OtpVerifyScreen extends HookConsumerWidget {
                         return const Text("Failed to fetch OTP duration");
                       }
                       final notifier = ref.read(countDownProvider(2).notifier);
-                      if (!notifier.seconds.isFinite || notifier.seconds == minutes * 60) {
+                      if (!notifier.seconds.isFinite ||
+                          notifier.seconds == minutes * 60) {
                         notifier.start();
                       }
-                      return CircularCountdownWidget(apiMinutes: minutes, email: email);
+                      return CircularCountdownWidget(
+                        apiMinutes: minutes,
+                        email: email,
+                      );
                     },
                     loading: () => const CircularProgressIndicator(),
                     error: (err, _) => Text("Error: $err"),
@@ -226,7 +262,11 @@ class CircularCountdownWidget extends ConsumerWidget {
             ),
             Text(
               "$minutesText:$secondsText",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: context.textColor),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: context.textColor,
+              ),
             ),
           ],
         ),
@@ -234,14 +274,20 @@ class CircularCountdownWidget extends ConsumerWidget {
         TextButton(
           onPressed: seconds == 0
               ? () {
-                  Get.find<AuthController>().sentOtpForForgotPassword(email, isReset: true);
+                  Get.find<AuthController>().sentOtpForForgotPassword(
+                    email,
+                    isReset: true,
+                  );
                   ref.read(countDownProvider(apiMinutes).notifier).reset();
                   ref.read(countDownProvider(apiMinutes).notifier).start();
                 }
               : null,
           child: Text(
             "Resend OTP",
-            style: TextStyle(color: seconds == 0 ? Colors.green : Colors.grey, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              color: seconds == 0 ? Colors.green : Colors.grey,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ],

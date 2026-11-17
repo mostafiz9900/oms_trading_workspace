@@ -12,7 +12,13 @@ void main() {
       aggregator.processGainerTick({'sn': 'BT', 'sc': 'Telecom', 's': 'uc'});
 
       expect(aggregator.chartData, [
-        {'sector': 'Telecom', 'up': 1.0, 'down': 1.0, 'equal': 1.0, 'total': 3.0},
+        {
+          'sector': 'Telecom',
+          'up': 1.0,
+          'down': 1.0,
+          'equal': 1.0,
+          'total': 3.0,
+        },
       ]);
     });
 
@@ -27,8 +33,14 @@ void main() {
     });
 
     test('ignores treasury bonds, unknown states and incomplete ticks', () {
-      expect(aggregator.processGainerTick({'sn': 'T', 'sc': 'TBond', 's': 'u'}), isFalse);
-      expect(aggregator.processGainerTick({'sn': 'A', 'sc': 'Bank', 's': 'x'}), isFalse);
+      expect(
+        aggregator.processGainerTick({'sn': 'T', 'sc': 'TBond', 's': 'u'}),
+        isFalse,
+      );
+      expect(
+        aggregator.processGainerTick({'sn': 'A', 'sc': 'Bank', 's': 'x'}),
+        isFalse,
+      );
       expect(aggregator.processGainerTick({'sc': 'Bank', 's': 'u'}), isFalse);
       expect(aggregator.processGainerTick({'sn': 'A', 's': 'u'}), isFalse);
       expect(aggregator.sectorSummary, isEmpty);
@@ -39,7 +51,10 @@ void main() {
       for (final s in ['u', 'd', 'uc']) {
         aggregator.processGainerTick({'sn': 'B', 'sc': 'Pharma', 's': s});
       }
-      expect(aggregator.getGainerChartData().map((e) => e['sector']), ['Pharma', 'Bank']);
+      expect(aggregator.getGainerChartData().map((e) => e['sector']), [
+        'Pharma',
+        'Bank',
+      ]);
     });
 
     // Current behaviour: there is no per-stock de-duplication, so repeated
@@ -54,24 +69,48 @@ void main() {
   group('share-type (A/B/N/Z) counts per sector', () {
     test('counts each order book once', () {
       aggregator.processShareTypeTick({'ob': 1, 'sc': 'Bank', 'st': 'A'});
-      expect(aggregator.processShareTypeTick({'ob': 1, 'sc': 'Bank', 'st': 'A'}), isFalse);
+      expect(
+        aggregator.processShareTypeTick({'ob': 1, 'sc': 'Bank', 'st': 'A'}),
+        isFalse,
+      );
       aggregator.processShareTypeTick({'ob': 2, 'sc': 'Bank', 'st': 'Z'});
 
       expect(aggregator.chartDataShareType, [
-        {'sector': 'Bank', 'A': 1.0, 'B': 0.0, 'N': 0.0, 'Z': 1.0, 'total': 2.0},
+        {
+          'sector': 'Bank',
+          'A': 1.0,
+          'B': 0.0,
+          'N': 0.0,
+          'Z': 1.0,
+          'total': 2.0,
+        },
       ]);
     });
 
     test('a category change moves the stock, it is not counted twice', () {
       aggregator.processShareTypeTick({'ob': 1, 'sc': 'Bank', 'st': 'A'});
       aggregator.processShareTypeTick({'ob': 1, 'sc': 'Bank', 'st': 'Z'});
-      expect(aggregator.sectorShareTypeSummary['Bank'], {'A': 0, 'B': 0, 'N': 0, 'Z': 1});
+      expect(aggregator.sectorShareTypeSummary['Bank'], {
+        'A': 0,
+        'B': 0,
+        'N': 0,
+        'Z': 1,
+      });
     });
 
     test('ignores bonds, unknown categories and ticks without ids', () {
-      expect(aggregator.processShareTypeTick({'ob': 1, 'sc': 'TBond', 'st': 'A'}), isFalse);
-      expect(aggregator.processShareTypeTick({'ob': 1, 'sc': 'Bank', 'st': 'Q'}), isFalse);
-      expect(aggregator.processShareTypeTick({'sc': 'Bank', 'st': 'A'}), isFalse);
+      expect(
+        aggregator.processShareTypeTick({'ob': 1, 'sc': 'TBond', 'st': 'A'}),
+        isFalse,
+      );
+      expect(
+        aggregator.processShareTypeTick({'ob': 1, 'sc': 'Bank', 'st': 'Q'}),
+        isFalse,
+      );
+      expect(
+        aggregator.processShareTypeTick({'sc': 'Bank', 'st': 'A'}),
+        isFalse,
+      );
       expect(aggregator.processShareTypeTick({'ob': 1, 'st': 'A'}), isFalse);
       expect(aggregator.chartDataShareType, isEmpty);
     });

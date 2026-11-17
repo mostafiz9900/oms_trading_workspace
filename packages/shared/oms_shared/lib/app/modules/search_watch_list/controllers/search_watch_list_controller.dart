@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../core/utils/helpers/log_helper.dart';
 import '../../../data/models/response/market_model.dart';
 import '../../home/controllers/home_controller.dart';
-import 'package:get/get.dart';
+
+import 'package:getxify/getxify.dart';
 
 class SearchWatchListController extends GetxController {
   final homeController = Get.find<HomeController>();
@@ -25,7 +26,6 @@ class SearchWatchListController extends GetxController {
     update();
   }
 
-
   @override
   void onClose() {
     textController.dispose();
@@ -38,7 +38,11 @@ class SearchWatchListController extends GetxController {
       filteredItems = allItems;
     } else {
       filteredItems = allItems
-          .where((item) => (item.filterName ?? "").toLowerCase().contains(query.toLowerCase()))
+          .where(
+            (item) => (item.filterName ?? "").toLowerCase().contains(
+              query.toLowerCase(),
+            ),
+          )
           .toList();
     }
     update();
@@ -51,7 +55,10 @@ class SearchWatchListController extends GetxController {
       filteredItems = allItems;
     } else {
       filteredItems = allItems
-          .where((item) => (item.sector ?? "").toLowerCase().contains(query.toLowerCase()))
+          .where(
+            (item) =>
+                (item.sector ?? "").toLowerCase().contains(query.toLowerCase()),
+          )
           .toList();
     }
     update();

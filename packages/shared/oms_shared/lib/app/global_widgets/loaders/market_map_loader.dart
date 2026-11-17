@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../core/utils/extensions/app_context.dart';
@@ -10,13 +10,24 @@ class MarketMapLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseColor = context.isDark ? Colors.grey.shade800 : Colors.grey.shade300;
-    final highlightColor = context.isDark ? Colors.grey.shade700 : Colors.grey.shade100;
+    final baseColor = context.isDark
+        ? Colors.grey.shade800
+        : Colors.grey.shade300;
+    final highlightColor = context.isDark
+        ? Colors.grey.shade700
+        : Colors.grey.shade100;
 
     return Container(
-      constraints: BoxConstraints(minHeight: height, maxHeight: height, maxWidth: double.infinity),
+      constraints: BoxConstraints(
+        minHeight: height,
+        maxHeight: height,
+        maxWidth: double.infinity,
+      ),
       margin: const EdgeInsets.symmetric(vertical: 4),
-      decoration: BoxDecoration(color: Get.theme.scaffoldBackgroundColor, borderRadius: BorderRadius.circular(6)),
+      decoration: BoxDecoration(
+        color: Get.theme.scaffoldBackgroundColor,
+        borderRadius: BorderRadius.circular(6),
+      ),
       child: Column(
         children: [
           // Fake Header
@@ -26,7 +37,9 @@ class MarketMapLoader extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 color: context.tapBg,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(6),
+                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -34,12 +47,20 @@ class MarketMapLoader extends StatelessWidget {
                   Shimmer.fromColors(
                     baseColor: baseColor,
                     highlightColor: highlightColor,
-                    child: Container(width: 120, height: 14, color: Colors.white),
+                    child: Container(
+                      width: 120,
+                      height: 14,
+                      color: Colors.white,
+                    ),
                   ),
                   Shimmer.fromColors(
                     baseColor: baseColor,
                     highlightColor: highlightColor,
-                    child: Container(width: 70, height: 10, color: Colors.white),
+                    child: Container(
+                      width: 70,
+                      height: 10,
+                      color: Colors.white,
+                    ),
                   ),
                 ],
               ),
@@ -63,7 +84,10 @@ class MarketMapLoader extends StatelessWidget {
                   itemCount: 12, // ১২টি মক বক্স গ্রিডের জন্য
                   itemBuilder: (context, index) {
                     return Container(
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(3)),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(3),
+                      ),
                     );
                   },
                 ),

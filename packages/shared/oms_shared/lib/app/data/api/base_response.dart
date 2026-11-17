@@ -1,6 +1,5 @@
-import 'package:get/get.dart';
-
 import '../../core/utils/helpers/log_helper.dart';
+import 'http_response.dart';
 
 abstract class BaseResponse {
   BaseResponse._();

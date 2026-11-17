@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
@@ -31,7 +31,7 @@ class RelatedItemWatchlist extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
           child: Text(
             "Related assets",
-            style: Get.textTheme.titleMedium?.copyWith(
+            style: Get.context!.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w500,
               fontSize: 16,
               color: context.isDark ? Colors.white : Colors.black87,

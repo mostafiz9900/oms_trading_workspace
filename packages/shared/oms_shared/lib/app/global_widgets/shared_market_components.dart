@@ -1,9 +1,9 @@
 import 'dart:math' as math;
 
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../core/utils/extensions/app_context.dart';
 import '../core/utils/extensions/market_model_extensions.dart';
@@ -389,7 +389,7 @@ class SharedMarketListItem extends StatelessWidget {
                       if (model.shareType != null)
                         TextSpan(
                           text: ' [${model.shareType}]',
-                          style: Get.textTheme.bodySmall?.copyWith(
+                          style: Get.context!.textTheme.bodySmall?.copyWith(
                             fontSize: 8,
                             color: context.textColor,
                             fontFeatures: const [FontFeature.superscripts()],
@@ -398,7 +398,7 @@ class SharedMarketListItem extends StatelessWidget {
                       if (model.marketType != null)
                         TextSpan(
                           text: ' [${model.marketType}]',
-                          style: Get.textTheme.bodySmall?.copyWith(
+                          style: Get.context!.textTheme.bodySmall?.copyWith(
                             fontSize: 8,
                             color: context.textColor,
                             fontFeatures: const [FontFeature.superscripts()],
@@ -495,7 +495,7 @@ class SharedMarketListItem extends StatelessWidget {
                       if (model.shareType != null)
                         TextSpan(
                           text: ' [${model.shareType}]',
-                          style: Get.textTheme.bodySmall?.copyWith(
+                          style: Get.context!.textTheme.bodySmall?.copyWith(
                             fontSize: 8,
                             color: context.textColor,
                             fontFeatures: const [FontFeature.superscripts()],
@@ -504,7 +504,7 @@ class SharedMarketListItem extends StatelessWidget {
                       if (model.marketType != null)
                         TextSpan(
                           text: ' [${model.marketType}]',
-                          style: Get.textTheme.bodySmall?.copyWith(
+                          style: Get.context!.textTheme.bodySmall?.copyWith(
                             fontSize: 8,
                             color: context.textColor,
                             fontFeatures: const [FontFeature.superscripts()],
@@ -649,7 +649,7 @@ class SharedMarketListItem extends StatelessWidget {
                             ),
                             TextSpan(
                               text: ' [${model.shareType}]',
-                              style: Get.textTheme.bodySmall?.copyWith(
+                              style: Get.context!.textTheme.bodySmall?.copyWith(
                                 fontSize: 8,
                                 color: context.textColor,
                                 fontFeatures: const [
@@ -659,7 +659,7 @@ class SharedMarketListItem extends StatelessWidget {
                             ),
                             TextSpan(
                               text: ' [${model.marketType}]',
-                              style: Get.textTheme.bodySmall?.copyWith(
+                              style: Get.context!.textTheme.bodySmall?.copyWith(
                                 fontSize: 8,
                                 color: context.textColor,
                                 fontFeatures: const [
@@ -675,7 +675,7 @@ class SharedMarketListItem extends StatelessWidget {
                       trackValue: absoluteChange,
                       child: Text(
                         NumberHelper.formatSigned(absoluteChange),
-                        style: Get.textTheme.titleSmall!.copyWith(
+                        style: Get.context!.textTheme.titleSmall!.copyWith(
                           color: NumberHelper.getColor(absoluteChange),
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -694,7 +694,7 @@ class SharedMarketListItem extends StatelessWidget {
                         trackValue: (model.volume ?? 0).toDouble(),
                         child: Text(
                           "${index + 1} | Vol:${NumberFormatter.fixedDecimal2(model.volume ?? 0.0, decimal: 0)}, ",
-                          style: Get.textTheme.bodyMedium?.copyWith(
+                          style: Get.context!.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w500,
                             fontSize: 12,
                           ),
@@ -704,7 +704,7 @@ class SharedMarketListItem extends StatelessWidget {
                         trackValue: model.val ?? 0.0,
                         child: Text(
                           "Val:${NumberFormatter.croreFormat(model.val ?? 0.0)}, ",
-                          style: Get.textTheme.bodyMedium?.copyWith(
+                          style: Get.context!.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w500,
                             fontSize: 12,
                           ),
@@ -716,7 +716,7 @@ class SharedMarketListItem extends StatelessWidget {
                         child: Text(
                           'Trd:${(model.trades ?? 0).toStringAsFixed(0)}',
                           maxLines: 1,
-                          style: Get.textTheme.bodyMedium?.copyWith(
+                          style: Get.context!.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w500,
                             fontSize: 12,
                           ),
@@ -752,7 +752,7 @@ class SharedMarketListItem extends StatelessWidget {
                 trackValue: currentPrice,
                 child: Text(
                   currentPrice.toStringAsFixed(2),
-                  style: Get.textTheme.titleSmall!.copyWith(
+                  style: Get.context!.textTheme.titleSmall!.copyWith(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
@@ -766,7 +766,7 @@ class SharedMarketListItem extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                 child: Text(
                   '${NumberHelper.formatSigned(percentChange)}%',
-                  style: Get.textTheme.titleSmall!.copyWith(
+                  style: Get.context!.textTheme.titleSmall!.copyWith(
                     color: Colors.white,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -852,7 +852,7 @@ class SharedMarketGridItem extends StatelessWidget {
                   Expanded(
                     child: Text(
                       model.displayName,
-                      style: Get.textTheme.titleMedium?.copyWith(
+                      style: Get.context!.textTheme.titleMedium?.copyWith(
                         color: context.textColor,
                         fontWeight: FontWeight.w500,
                         fontSize: 14,
@@ -895,30 +895,33 @@ class SharedMarketGridItem extends StatelessWidget {
                             trackValue: (model.volume ?? 0).toDouble(),
                             child: Text(
                               'Vol: ${model.volume ?? '0'}',
-                              style: Get.textTheme.bodyMedium?.copyWith(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w300,
-                              ),
+                              style: Get.context!.textTheme.bodyMedium
+                                  ?.copyWith(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w300,
+                                  ),
                             ),
                           ),
                           LiveProBlinker(
                             trackValue: model.val ?? 0.0,
                             child: Text(
                               'Val: ${NumberFormatter.croreFormat(model.val ?? 0.0)}',
-                              style: Get.textTheme.bodyMedium?.copyWith(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w300,
-                              ),
+                              style: Get.context!.textTheme.bodyMedium
+                                  ?.copyWith(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w300,
+                                  ),
                             ),
                           ),
                           LiveProBlinker(
                             trackValue: (model.trades ?? 0).toDouble(),
                             child: Text(
                               'Trd: ${model.trades ?? "0"}',
-                              style: Get.textTheme.bodyMedium?.copyWith(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w300,
-                              ),
+                              style: Get.context!.textTheme.bodyMedium
+                                  ?.copyWith(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w300,
+                                  ),
                             ),
                           ),
                           AppSpace.spaceH4,
@@ -932,11 +935,12 @@ class SharedMarketGridItem extends StatelessWidget {
                             ),
                             child: Text(
                               '${percentChange.toStringAsFixed(2)}%',
-                              style: Get.textTheme.bodyMedium?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 11,
-                              ),
+                              style: Get.context!.textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 11,
+                                  ),
                             ),
                           ),
                         ],
@@ -952,10 +956,11 @@ class SharedMarketGridItem extends StatelessWidget {
                             trackValue: currentPrice,
                             child: Text(
                               NumberFormatter.bdFormat(currentPrice),
-                              style: Get.textTheme.bodyMedium?.copyWith(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w500,
-                              ),
+                              style: Get.context!.textTheme.bodyMedium
+                                  ?.copyWith(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                             ),
                           ),
                           AppSpace.spaceH2,
@@ -963,14 +968,14 @@ class SharedMarketGridItem extends StatelessWidget {
                             Helpers.formatTimeToString(
                               model.lastTradeTime ?? '',
                             ),
-                            style: Get.textTheme.bodyMedium?.copyWith(
+                            style: Get.context!.textTheme.bodyMedium?.copyWith(
                               fontSize: 11,
                             ),
                           ),
                           AppSpace.spaceH2,
                           Text(
                             model.group ?? "",
-                            style: Get.textTheme.bodyMedium?.copyWith(
+                            style: Get.context!.textTheme.bodyMedium?.copyWith(
                               fontSize: 11,
                               fontWeight: FontWeight.w300,
                             ),
@@ -986,11 +991,12 @@ class SharedMarketGridItem extends StatelessWidget {
                             ),
                             child: Text(
                               absoluteChange.toStringAsFixed(2),
-                              style: Get.textTheme.bodyMedium?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 11,
-                              ),
+                              style: Get.context!.textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 11,
+                                  ),
                             ),
                           ),
                         ],

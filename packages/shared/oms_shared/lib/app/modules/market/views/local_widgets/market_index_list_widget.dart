@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
@@ -28,7 +28,8 @@ class MarketIndexListWidget extends StatelessWidget {
         if (indexCon.indexList.isEmpty) {
           return const IndexListLoader();
         }
-        final DateTime updateTime = indexCon.lastIndexUpdateTime ?? DateTime.now();
+        final DateTime updateTime =
+            indexCon.lastIndexUpdateTime ?? DateTime.now();
         final visibleIndices = indexCon.visibleIndexList;
 
         return Container(
@@ -41,8 +42,12 @@ class MarketIndexListWidget extends StatelessWidget {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  border: const Border(bottom: BorderSide(color: Colors.black26)),
-                  color: context.isDark ? hexToColor('#161A33') : ColorConstants.yaleBlue,
+                  border: const Border(
+                    bottom: BorderSide(color: Colors.black26),
+                  ),
+                  color: context.isDark
+                      ? hexToColor('#161A33')
+                      : ColorConstants.yaleBlue,
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Row(
@@ -63,7 +68,7 @@ class MarketIndexListWidget extends StatelessWidget {
                   IndexModel model = visibleIndices[index];
                   final bool isSelected = indexCon.newArr?.sn == model.sn;
 
-                  var style = Get.textTheme.titleMedium?.copyWith(
+                  var style = Get.context!.textTheme.titleMedium?.copyWith(
                     fontSize: AppDimens.space14,
                     fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
                   );
@@ -72,7 +77,12 @@ class MarketIndexListWidget extends StatelessWidget {
                     key: ValueKey(model.sn),
                     decoration: BoxDecoration(
                       color: context.isDark ? hexToColor('#161A33') : null,
-                      border: Border(bottom: BorderSide(color: context.borderSideColor, width: 1)),
+                      border: Border(
+                        bottom: BorderSide(
+                          color: context.borderSideColor,
+                          width: 1,
+                        ),
+                      ),
                     ),
                     child: InkWell(
                       onTap: () {
@@ -87,13 +97,20 @@ class MarketIndexListWidget extends StatelessWidget {
                               flex: 2,
                               child: Container(
                                 padding: const EdgeInsets.all(4),
-                                decoration: BoxDecoration(color: context.isDark ? null : ColorConstants.yaleBlue),
+                                decoration: BoxDecoration(
+                                  color: context.isDark
+                                      ? null
+                                      : ColorConstants.yaleBlue,
+                                ),
                                 child: Text(
                                   model.sn ?? "",
-                                  style: Get.textTheme.titleMedium?.copyWith(
-                                    fontSize: AppDimens.space16,
-                                    color: context.isDark ? ColorConstants.secondaryColorDark : Colors.white,
-                                  ),
+                                  style: Get.context!.textTheme.titleMedium
+                                      ?.copyWith(
+                                        fontSize: AppDimens.space16,
+                                        color: context.isDark
+                                            ? ColorConstants.secondaryColorDark
+                                            : Colors.white,
+                                      ),
                                 ),
                               ),
                             ),
@@ -101,20 +118,35 @@ class MarketIndexListWidget extends StatelessWidget {
                               flex: 3,
                               child: Container(
                                 padding: const EdgeInsets.all(4),
-                                decoration: BoxDecoration(color: context.isDark ? null : const Color(0xFFF8F9FA)),
-                                child: Center(child: Text(NumberFormatter.bdFormat(model.civ ?? 0), style: style)),
+                                decoration: BoxDecoration(
+                                  color: context.isDark
+                                      ? null
+                                      : const Color(0xFFF8F9FA),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    NumberFormatter.bdFormat(model.civ ?? 0),
+                                    style: style,
+                                  ),
+                                ),
                               ),
                             ),
                             Expanded(
                               flex: 2,
                               child: Center(
                                 child: Text(
-                                  model.ivd?.toDouble().toStringAsFixed(2) ?? "",
-                                  style: Get.textTheme.titleMedium?.copyWith(
-                                    fontSize: AppDimens.space14,
-                                    fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
-                                    color: model.ivd?.isNegative == true ? Colors.redAccent : Colors.green,
-                                  ),
+                                  model.ivd?.toDouble().toStringAsFixed(2) ??
+                                      "",
+                                  style: Get.context!.textTheme.titleMedium
+                                      ?.copyWith(
+                                        fontSize: AppDimens.space14,
+                                        fontWeight: isSelected
+                                            ? FontWeight.w800
+                                            : FontWeight.w500,
+                                        color: model.ivd?.isNegative == true
+                                            ? Colors.redAccent
+                                            : Colors.green,
+                                      ),
                                 ),
                               ),
                             ),
@@ -123,16 +155,23 @@ class MarketIndexListWidget extends StatelessWidget {
                               child: Container(
                                 padding: const EdgeInsets.all(4),
                                 decoration: BoxDecoration(
-                                  color: context.isDark ? null : ColorConstants.unselectedItemColorLight,
+                                  color: context.isDark
+                                      ? null
+                                      : ColorConstants.unselectedItemColorLight,
                                 ),
                                 child: Center(
                                   child: Text(
                                     '${model.ip?.toDouble().toStringAsFixed(2) ?? ""}%',
-                                    style: Get.textTheme.titleMedium?.copyWith(
-                                      fontSize: AppDimens.space14,
-                                      fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
-                                      color: model.ip?.isNegative == true ? Colors.redAccent : Colors.green,
-                                    ),
+                                    style: Get.context!.textTheme.titleMedium
+                                        ?.copyWith(
+                                          fontSize: AppDimens.space14,
+                                          fontWeight: isSelected
+                                              ? FontWeight.w800
+                                              : FontWeight.w500,
+                                          color: model.ip?.isNegative == true
+                                              ? Colors.redAccent
+                                              : Colors.green,
+                                        ),
                                   ),
                                 ),
                               ),
@@ -143,7 +182,9 @@ class MarketIndexListWidget extends StatelessWidget {
                                 model.ip?.isNegative == true
                                     ? Icons.keyboard_double_arrow_down
                                     : Icons.keyboard_double_arrow_up,
-                                color: model.ip?.isNegative == true ? Colors.redAccent : Colors.green,
+                                color: model.ip?.isNegative == true
+                                    ? Colors.redAccent
+                                    : Colors.green,
                                 size: 15,
                               ),
                             ),
@@ -220,7 +261,8 @@ class TradeSummaryGridWidget extends StatelessWidget {
               color: ColorConstants.brightBlue,
               title: "UNCHANGED",
               subtitle: "${newArr?.uc ?? 0}",
-              onClick: () => Get.toNamed(Routes.TOP_SHARE, arguments: 'Unchanged'),
+              onClick: () =>
+                  Get.toNamed(Routes.TOP_SHARE, arguments: 'Unchanged'),
             ),
           ],
         );
@@ -248,13 +290,26 @@ class _CustomCardWidget extends StatelessWidget {
     return InkWell(
       onTap: onClick,
       child: Container(
-        decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(5)),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(5),
+        ),
         child: Column(
           crossAxisAlignment: .center,
           mainAxisAlignment: .center,
           children: [
-            Text(title, style: Get.textTheme.labelLarge?.copyWith(color: ColorConstants.white)),
-            Text(subtitle, style: Get.textTheme.labelLarge?.copyWith(color: ColorConstants.white)),
+            Text(
+              title,
+              style: Get.context!.textTheme.labelLarge?.copyWith(
+                color: ColorConstants.white,
+              ),
+            ),
+            Text(
+              subtitle,
+              style: Get.context!.textTheme.labelLarge?.copyWith(
+                color: ColorConstants.white,
+              ),
+            ),
           ],
         ),
       ),

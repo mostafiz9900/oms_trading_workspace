@@ -78,10 +78,11 @@ void main() {
     });
 
     test('never sends the replace-only ids', () {
-      final json = (buyLimit()
-            ..clientOrderId = 'CL-1'
-            ..orderId = 'OR-1')
-          .toJson();
+      final json =
+          (buyLimit()
+                ..clientOrderId = 'CL-1'
+                ..orderId = 'OR-1')
+              .toJson();
       expect(json.containsKey('orig_client_order_id'), isFalse);
       expect(json.containsKey('order_id'), isFalse);
     });
@@ -92,10 +93,11 @@ void main() {
       expect(dse.containsKey('cse_trader_code'), isTrue);
       expect(dse['cse_trader_code'], isNull);
 
-      final cse = (buyLimit()
-            ..exchange = 'CSE'
-            ..cseTraderCode = 'CSE-TR9')
-          .toJsonReplaceOrder();
+      final cse =
+          (buyLimit()
+                ..exchange = 'CSE'
+                ..cseTraderCode = 'CSE-TR9')
+              .toJsonReplaceOrder();
       expect(cse['exchange'], 'CSE');
       expect(cse['cse_trader_code'], 'CSE-TR9');
     });
@@ -126,10 +128,10 @@ void main() {
         ..orderId = 'OR-1';
       final replace = request.toJsonReplaceOrder();
       final order = request.toJson();
-      expect(
-        replace.keys.toSet().difference(order.keys.toSet()),
-        {'orig_client_order_id', 'order_id'},
-      );
+      expect(replace.keys.toSet().difference(order.keys.toSet()), {
+        'orig_client_order_id',
+        'order_id',
+      });
       for (final key in order.keys) {
         expect(replace[key], order[key], reason: key);
       }

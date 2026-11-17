@@ -4,9 +4,9 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:crypto/crypto.dart' as crypto_info;
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
@@ -40,13 +40,16 @@ class Helpers {
 
   static Future<String> getSecureDeviceIdLogin() async {
     // Missing key → empty id (the server rejects it) instead of a TypeError.
-    String deviceId = await StorageService.read(StorageConstants.deviceSecIdKey) ?? '';
+    String deviceId =
+        await StorageService.read(StorageConstants.deviceSecIdKey) ?? '';
     printLog('shat key:: $deviceId');
     return deviceId;
   }
 
   static Future<String?> getSecureDeviceId() async {
-    String? deviceId = await StorageService.read(StorageConstants.deviceSecIdKey);
+    String? deviceId = await StorageService.read(
+      StorageConstants.deviceSecIdKey,
+    );
     var res = StorageService.getMap(StorageConstants.userInfo);
     if (deviceId == null && res != null) {
       UserProfile? user = UserProfile.fromJson(res);
@@ -60,7 +63,9 @@ class Helpers {
       // Combine all parts with the secret key
       final combined = "${user.id}$uuidPart$randomPart$timestamp$_uniqueKey";
       // Hash with SHA-256
-      final digest = crypto_info.sha256.convert(utf8.encode(combined)).toString();
+      final digest = crypto_info.sha256
+          .convert(utf8.encode(combined))
+          .toString();
       printLog('shat key:: $digest');
       // Save hashed device ID
       await StorageService.save(StorageConstants.deviceSecIdKey, digest);
@@ -110,7 +115,10 @@ class Helpers {
     return value == 'true';
   }
 
-  static String? formatCustomDateTime({required String? rawDate, String outputPattern = 'yyyy-MM-dd hh:mm a'}) {
+  static String? formatCustomDateTime({
+    required String? rawDate,
+    String outputPattern = 'yyyy-MM-dd hh:mm a',
+  }) {
     if (rawDate == null || rawDate.isEmpty) return null;
 
     try {
@@ -132,9 +140,19 @@ class Helpers {
       final hour = int.parse(time[0]);
       final minute = int.parse(time[1]);
       final second = int.parse(time[2]);
-      final millisecond = timeWithMillis.length > 1 ? int.parse(timeWithMillis[1]) : 0;
+      final millisecond = timeWithMillis.length > 1
+          ? int.parse(timeWithMillis[1])
+          : 0;
 
-      final dateTime = DateTime(year, month, day, hour, minute, second, millisecond);
+      final dateTime = DateTime(
+        year,
+        month,
+        day,
+        hour,
+        minute,
+        second,
+        millisecond,
+      );
 
       return DateFormat(outputPattern).format(dateTime);
     } catch (e) {
@@ -154,7 +172,8 @@ class Helpers {
       String formattedTimestamp = '${timestamp.replaceFirst('-', 'T')}Z';
       DateTime dateTimeUtc = DateTime.parse(formattedTimestamp);
       DateTime dateTimeLocal = dateTimeUtc.toLocal();
-      String formattedLocalTime = DateFormat('hh:mm:ss a').format(dateTimeLocal);
+      String formattedLocalTime = DateFormat('hh:mm:ss a')
+          .format(dateTimeLocal);
       return formattedLocalTime;
     } catch (e) {
       printLog('Error parsing timestamp "$timestamp": $e');
@@ -211,9 +230,15 @@ class Helpers {
         return FadeTransition(
           opacity: animation,
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0), // 👈 ফিক্সড ব্লার (অ্যানিমেট হবে না)
+            filter: ImageFilter.blur(
+              sigmaX: 4.0,
+              sigmaY: 4.0,
+            ), // 👈 ফিক্সড ব্লার (অ্যানিমেট হবে না)
             child: ScaleTransition(
-              scale: CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
+              scale: CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOutBack,
+              ),
               child: child,
             ),
           ),
@@ -237,9 +262,14 @@ class Helpers {
 
         return Dialog(
           backgroundColor: context.bgColor, // Apnar extension theke ashbe
-          insetPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 24.0),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 12.0,
+            vertical: 24.0,
+          ),
           clipBehavior: Clip.antiAliasWithSaveLayer,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
           child: Container(
             constraints: BoxConstraints(
               maxHeight: screenHeight * 0.80, // সর্বোচ্চ ৮০% হাইট
@@ -251,14 +281,19 @@ class Helpers {
                 // --- Title & Close Button ---
                 Padding(
                   // Padding top ebon bottom aro komiye 4.0 kora holo
-                  padding: const EdgeInsets.only(left: 16.0, right: 12.0, top: 4.0, bottom: 4.0),
+                  padding: const EdgeInsets.only(
+                    left: 16.0,
+                    right: 12.0,
+                    top: 4.0,
+                    bottom: 4.0,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
                         child: Text(
                           title ?? "Select Option",
-                          style: Get.textTheme.titleLarge?.copyWith(
+                          style: Get.context!.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w600,
                             fontSize: fontSize ?? 18,
                             color: context.titleTextAlertDialog, // Apnar extension theke ashbe
@@ -268,7 +303,8 @@ class Helpers {
                         ),
                       ),
                       IconButton(
-                        padding: EdgeInsets.zero, // Default padding remove kora holo
+                        padding:
+                            EdgeInsets.zero, // Default padding remove kora holo
                         constraints: const BoxConstraints(), // Default touch target constraint remove kora holo
                         visualDensity: VisualDensity.compact,
                         icon: const Icon(Icons.close_rounded, size: 22),
@@ -285,7 +321,10 @@ class Helpers {
                 // --- Content Area ---
                 if (children != null && children.isNotEmpty)
                   Flexible(
-                    child: Column(mainAxisSize: MainAxisSize.min, children: children),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: children,
+                    ),
                   ),
               ],
             ),
@@ -299,7 +338,9 @@ class Helpers {
     var sha256 = crypto_info.sha256;
     List<int> bytes = utf8.encode(text);
     List<int> digest = sha256.convert(bytes).bytes;
-    String hexString = digest.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
+    String hexString = digest
+        .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+        .join();
     if (length < hexString.length) {
       return hexString.substring(0, length);
     } else {
@@ -307,24 +348,35 @@ class Helpers {
     }
   }
 
-  static void snackbarForErorr({String? titleText, required String bodyText, double? topMargin}) {
+  static void snackbarForErorr({
+    String? titleText,
+    required String bodyText,
+    double? topMargin,
+  }) {
     Get.snackbar(
       "",
       "",
       titleText: const SizedBox.shrink(),
       messageText: Text(
         bodyText,
-        style: const TextStyle(color: Colors.white, fontSize: AppDimens.space15),
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: AppDimens.space15,
+        ),
       ),
-      snackPosition: SnackPosition.TOP,
-      maxWidth: Get.width * 0.7,
+      snackPosition: SnackPosition.top,
+      maxWidth: Get.context!.width * 0.7,
       padding: const .only(
         bottom: AppDimens.space15,
         left: AppDimens.space12,
         right: AppDimens.space10,
         top: AppDimens.space5,
       ),
-      margin: .only(top: AppDimens.space25, left: Get.width * 0.05, right: Get.width * 0.05),
+      margin: .only(
+        top: AppDimens.space25,
+        left: Get.context!.width * 0.05,
+        right: Get.context!.width * 0.05,
+      ),
       borderRadius: AppDimens.space4,
       backgroundColor: Colors.red.withAlpha((0.9 * 255).toInt()),
       colorText: Colors.white,
@@ -355,32 +407,54 @@ class Helpers {
     );
   }
 
-  static void snackbarForErorr2({String? titleText, required String bodyText, double? topMargin}) {
+  static void snackbarForErorr2({
+    String? titleText,
+    required String bodyText,
+    double? topMargin,
+  }) {
     Get.snackbar(
       "",
       "",
       titleText: const SizedBox.shrink(),
-      messageText: Text(bodyText, style: const TextStyle(color: Colors.white, fontSize: 15)),
-      snackPosition: SnackPosition.TOP,
-      maxWidth: Get.width * 0.7,
+      messageText: Text(
+        bodyText,
+        style: const TextStyle(color: Colors.white, fontSize: 15),
+      ),
+      snackPosition: SnackPosition.top,
+      maxWidth: Get.context!.width * 0.7,
       padding: const .only(bottom: 15, left: 12, right: 10, top: 5),
-      margin: .only(top: 25, left: Get.width * 0.05, right: Get.width * 0.05),
+      margin: .only(
+        top: 25,
+        left: Get.context!.width * 0.05,
+        right: Get.context!.width * 0.05,
+      ),
       borderRadius: 4,
       backgroundColor: Colors.red.withAlpha((0.9 * 255).toInt()),
       colorText: Colors.white,
     );
   }
 
-  static Future<void> snackBarForSuccess2({String? titleText, required String bodyText, double? topMargin}) async {
+  static Future<void> snackBarForSuccess2({
+    String? titleText,
+    required String bodyText,
+    double? topMargin,
+  }) async {
     Get.snackbar(
       "",
       "",
       titleText: const SizedBox.shrink(),
-      messageText: Text(bodyText, style: const TextStyle(color: Colors.white, fontSize: 15)),
-      snackPosition: SnackPosition.TOP,
-      maxWidth: Get.width * 0.7,
+      messageText: Text(
+        bodyText,
+        style: const TextStyle(color: Colors.white, fontSize: 15),
+      ),
+      snackPosition: SnackPosition.top,
+      maxWidth: Get.context!.width * 0.7,
       padding: const .only(bottom: 15, left: 12, right: 10, top: 5),
-      margin: .only(top: 25, left: Get.width * 0.05, right: Get.width * 0.05),
+      margin: .only(
+        top: 25,
+        left: Get.context!.width * 0.05,
+        right: Get.context!.width * 0.05,
+      ),
       borderRadius: 4,
       backgroundColor: Colors.green.withAlpha((0.8 * 255).toInt()),
       colorText: Colors.white,
@@ -419,8 +493,11 @@ class Helpers {
       Padding(
         padding: const EdgeInsets.all(20),
         child: AlertDialog(
-          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
-          backgroundColor: Theme.of(ctx).cardColor, // আপনার অ্যাপের কালার অনুযায়ী পরিবর্তন করুন
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          ),
+          backgroundColor: Theme.of(ctx)
+              .cardColor, // আপনার অ্যাপের কালার অনুযায়ী পরিবর্তন করুন
           contentPadding: EdgeInsets.zero,
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -428,10 +505,13 @@ class Helpers {
               // Header
               Container(
                 padding: const EdgeInsets.all(15),
-                width: Get.width,
+                width: Get.context!.width,
                 child: Text(
                   title,
-                  style: Get.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 18),
+                  style: Get.context!.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
                 ),
               ),
               // List
@@ -450,19 +530,34 @@ class Helpers {
                         Get.back();
                       },
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 15,
+                        ),
                         decoration: BoxDecoration(
-                          border: Border(bottom: BorderSide(color: Colors.grey.withAlpha(51))),
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Colors.grey.withAlpha(51),
+                            ),
+                          ),
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.check, color: isSelected ? Colors.blue : Colors.transparent, size: 20),
+                            Icon(
+                              Icons.check,
+                              color: isSelected
+                                  ? Colors.blue
+                                  : Colors.transparent,
+                              size: 20,
+                            ),
                             const SizedBox(width: 10),
                             Text(
                               model,
                               style: TextStyle(
                                 color: isSelected ? Colors.blue : ctx.textColor,
-                                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                                fontWeight: isSelected
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
                               ),
                             ),
                           ],
@@ -482,7 +577,9 @@ class Helpers {
   static dynamic openLoginAlertDialog(VoidCallback? onPressed) {
     Get.dialog(
       AlertDialog(
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+        ),
         elevation: 0.0,
         titlePadding: .zero,
         insetPadding: .zero,
@@ -491,10 +588,13 @@ class Helpers {
           width: double.infinity,
           padding: .all(16),
           decoration: BoxDecoration(
-            color: Get.isDarkMode
+            color: Get.context!.isDarkMode
                 ? ColorConstants.primaryColorDark
                 : ColorConstants.primaryColor, // 👈 Title background color here
-            borderRadius: const BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(16),
+              topRight: Radius.circular(16),
+            ),
           ),
           child: const Text(
             'Are You Sure?',
@@ -512,7 +612,11 @@ class Helpers {
             mainAxisSize: MainAxisSize.min,
             children: [
               AppSpace.spaceH30,
-              Text("You must login first !", textAlign: TextAlign.center, style: TextStyle(fontSize: 14)),
+              Text(
+                "You must login first !",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14),
+              ),
               AppSpace.spaceH10,
               Container(
                 padding: const .only(right: 10, left: 10, top: 10),
@@ -527,9 +631,16 @@ class Helpers {
                           minimumSize: const Size(80, 40),
                           padding: const .symmetric(vertical: 5),
                           textStyle: const TextStyle(fontSize: 15),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22.0)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(22.0),
+                          ),
                         ),
-                        child: Text("No", style: Get.textTheme.titleSmall?.copyWith(color: Colors.white)),
+                        child: Text(
+                          "No",
+                          style: Get.context!.textTheme.titleSmall?.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ),
                     AppSpace.spaceW20,
@@ -541,9 +652,16 @@ class Helpers {
                           minimumSize: const Size(80, 40),
                           padding: const .symmetric(vertical: 5),
                           textStyle: const TextStyle(fontSize: 15),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22.0)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(22.0),
+                          ),
                         ),
-                        child: Text("Yes", style: Get.textTheme.titleSmall?.copyWith(color: Colors.white)),
+                        child: Text(
+                          "Yes",
+                          style: Get.context!.textTheme.titleSmall?.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -567,10 +685,16 @@ class Helpers {
     });
   }
 
-  static dynamic openCustomAlertDialog(VoidCallback? onPressed, {String? title, String? bodyText}) {
+  static dynamic openCustomAlertDialog(
+    VoidCallback? onPressed, {
+    String? title,
+    String? bodyText,
+  }) {
     Get.dialog(
       AlertDialog(
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+        ),
         elevation: 0.0,
         titlePadding: .zero,
         insetPadding: .zero,
@@ -580,10 +704,13 @@ class Helpers {
           width: double.infinity,
           padding: .all(16),
           decoration: BoxDecoration(
-            color: Get.isDarkMode
+            color: Get.context!.isDarkMode
                 ? ColorConstants.tapBgDark
                 : ColorConstants.primaryColor, // 👈 Title background color here
-            borderRadius: const BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(16),
+              topRight: Radius.circular(16),
+            ),
           ),
           child: Text(
             title ?? 'Are You Sure?',
@@ -615,9 +742,14 @@ class Helpers {
                           minimumSize: const Size(80, 40),
                           padding: const .symmetric(vertical: 5),
                           textStyle: const TextStyle(fontSize: 15),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22.0)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(22.0),
+                          ),
                         ),
-                        child: const Text("No", style: TextStyle(color: Colors.black)),
+                        child: const Text(
+                          "No",
+                          style: TextStyle(color: Colors.black),
+                        ),
                       ),
                     ),
                     AppSpace.spaceW20,
@@ -629,9 +761,14 @@ class Helpers {
                           minimumSize: const Size(80, 40),
                           padding: const .symmetric(vertical: 5),
                           textStyle: const TextStyle(fontSize: 15),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22.0)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(22.0),
+                          ),
                         ),
-                        child: const Text("Yes", style: TextStyle(color: Colors.black)),
+                        child: const Text(
+                          "Yes",
+                          style: TextStyle(color: Colors.black),
+                        ),
                       ),
                     ),
                   ],
@@ -647,12 +784,14 @@ class Helpers {
   }
 
   //passwordVisivilityMethod
-  static IconButton passwordVisivilityMethod(void Function()? onPressed, bool isVisible) {
+  static IconButton passwordVisivilityMethod(
+    void Function()? onPressed,
+    bool isVisible,
+  ) {
     return IconButton(
       splashColor: Colors.transparent,
       onPressed: onPressed,
       icon: Icon(isVisible ? Icons.visibility_off : Icons.visibility),
     );
   }
-
 }

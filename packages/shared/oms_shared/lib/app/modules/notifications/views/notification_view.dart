@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
+
 import '../../../core/utils/extensions/app_context.dart';
 import '../../../core/values/app_config.dart';
 import '../../../data/models/response/news_model.dart';
@@ -29,11 +30,14 @@ class NotificationView extends StatelessWidget {
 
           return ListView.separated(
             itemCount: controller.news.length,
-            separatorBuilder: (_, _) => Divider(height: 1, color: context.dividerColor),
+            separatorBuilder: (_, _) =>
+                Divider(height: 1, color: context.dividerColor),
             padding: .zero,
             itemBuilder: (context, index) {
               NewsModel? model = controller.news[index];
-              return model.tl == null ? SizedBox() : NewsItemWidget(model: model);
+              return model.tl == null
+                  ? SizedBox()
+                  : NewsItemWidget(model: model);
             },
           );
         },

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../core/utils/extensions/market_model_extensions.dart';
 import '../../../data/models/response/market_model.dart';

@@ -18,9 +18,9 @@ import '../routes/app_routes.dart';
 import 'package:localization/localization.dart';
 
 import 'package:oms_shared/generated/assets.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../modules/auth/controllers/password_reset_controller.dart';
@@ -34,7 +34,7 @@ class CustomDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.find<HomeController>();
     final ThemeServices themeController = Get.find();
-    bool isDark = Get.isDarkMode;
+    bool isDark = Get.context!.isDarkMode;
     Widget customDivider = Divider(
       color: Colors.grey.shade300,
       height: 1,
@@ -61,7 +61,7 @@ class CustomDrawer extends StatelessWidget {
                       Text(
                         homeCon.userInfo.userDetail?.investorName ?? "",
                         textAlign: TextAlign.center,
-                        style: Get.textTheme.bodyLarge!.copyWith(
+                        style: Get.context!.textTheme.bodyLarge!.copyWith(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                           color: context.textColor,
@@ -296,7 +296,7 @@ class CustomDrawer extends StatelessWidget {
                           ),
                           title: Text(
                             isDark ? "Switch to Light" : "Switch to Dark",
-                            style: Get.textTheme.bodyMedium!.copyWith(
+                            style: Get.context!.textTheme.bodyMedium!.copyWith(
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
                               color: context.textColor,
@@ -455,7 +455,8 @@ class CustomDrawer extends StatelessWidget {
                                 if (value == null || value.isEmpty) {
                                   return 'Please confirm your password';
                                 }
-                                if (value != controller.passwordController.text) {
+                                if (value !=
+                                    controller.passwordController.text) {
                                   return 'Passwords do not match';
                                 }
                                 return null;
@@ -510,7 +511,7 @@ class CustomDrawer extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: Text(
         title.toUpperCase(),
-        style: Get.textTheme.titleMedium!.copyWith(
+        style: Get.context!.textTheme.titleMedium!.copyWith(
           fontSize: 16,
           fontWeight: FontWeight.w400,
           color: Colors.white,
@@ -549,7 +550,7 @@ class CustomDrawer extends StatelessWidget {
             AppSpace.spaceW6,
             Text(
               title,
-              style: Get.textTheme.bodyMedium!.copyWith(
+              style: Get.context!.textTheme.bodyMedium!.copyWith(
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 color: context.textColor,

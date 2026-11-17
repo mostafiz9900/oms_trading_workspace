@@ -1,7 +1,7 @@
 import '../../../../global_widgets/info_tooltip_icon.dart';
 
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/utils/helpers/formatter_helper.dart';
@@ -22,11 +22,11 @@ class QuoteUIHelper {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(period, style: Get.textTheme.labelSmall),
+          Text(period, style: Get.context!.textTheme.labelSmall),
           const SizedBox(height: 2),
           Text(
             value,
-            style: Get.textTheme.bodySmall?.copyWith(
+            style: Get.context!.textTheme.bodySmall?.copyWith(
               color: color ?? context.textColor,
             ),
           ),
@@ -46,11 +46,13 @@ class QuoteUIHelper {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(period, style: Get.textTheme.labelSmall),
+          Text(period, style: Get.context!.textTheme.labelSmall),
           const SizedBox(height: 2),
           Text(
             value,
-            style: Get.textTheme.bodySmall?.copyWith(color: context.textColor),
+            style: Get.context!.textTheme.bodySmall?.copyWith(
+              color: context.textColor,
+            ),
           ),
         ],
       ),
@@ -72,7 +74,7 @@ class QuoteUIHelper {
         children: [
           Text(
             period,
-            style: Get.textTheme.labelSmall,
+            style: Get.context!.textTheme.labelSmall,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 2),
@@ -85,7 +87,7 @@ class QuoteUIHelper {
                   NumberFormatter.croreFormat(value),
                   // value,
                   overflow: TextOverflow.ellipsis,
-                  style: Get.textTheme.bodySmall?.copyWith(
+                  style: Get.context!.textTheme.bodySmall?.copyWith(
                     color: context.textColor,
                   ),
                 ),
@@ -121,7 +123,7 @@ class QuoteUIHelper {
         children: [
           Text(
             period,
-            style: Get.textTheme.bodyMedium?.copyWith(
+            style: Get.context!.textTheme.bodyMedium?.copyWith(
               fontSize: 11,
               color: HexColor('#9C9FA4'),
             ),
@@ -129,7 +131,7 @@ class QuoteUIHelper {
           AppSpace.spaceH2,
           Text(
             value,
-            style: Get.textTheme.bodyMedium?.copyWith(
+            style: Get.context!.textTheme.bodyMedium?.copyWith(
               fontSize: 11,
               fontWeight: FontWeight.bold,
               color: context.textColor,
@@ -138,7 +140,7 @@ class QuoteUIHelper {
           AppSpace.spaceH2,
           Text(
             value2,
-            style: Get.textTheme.bodyMedium?.copyWith(
+            style: Get.context!.textTheme.bodyMedium?.copyWith(
               fontSize: 10,
               fontWeight: FontWeight.bold,
               color: context.textColor,

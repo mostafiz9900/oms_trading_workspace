@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'dimens.dart';
 
@@ -54,4 +54,3 @@ class AppSpace {
   static SizedBox spaceW342 = const SizedBox(width: AppDimens.space32);
   static SizedBox spaceW50 = const SizedBox(width: AppDimens.space50);
 }
-

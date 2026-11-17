@@ -5,7 +5,8 @@ import 'package:oms_shared/app/core/utils/helpers/jwt_helper.dart';
 
 /// Builds an unsigned JWT; the app only decodes tokens, it never verifies them.
 String jwt(Map<String, dynamic> payload) {
-  String part(Object o) => base64Url.encode(utf8.encode(jsonEncode(o))).replaceAll('=', '');
+  String part(Object o) =>
+      base64Url.encode(utf8.encode(jsonEncode(o))).replaceAll('=', '');
   return '${part({'alg': 'HS256', 'typ': 'JWT'})}.${part(payload)}.signature';
 }
 
@@ -25,7 +26,9 @@ void main() {
   });
 
   test('expiry date is read from the exp claim', () {
-    final exp = DateTime.fromMillisecondsSinceEpoch(epoch(now) * 1000 + 3600 * 1000);
+    final exp = DateTime.fromMillisecondsSinceEpoch(
+      epoch(now) * 1000 + 3600 * 1000,
+    );
     final token = jwt({'exp': epoch(exp)});
     expect(JWTHelper.getTokenExpiryDate(token), exp);
   });

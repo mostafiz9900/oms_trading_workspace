@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:broker_config/broker_config.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:oms_shared/app/core/utils/extensions/market_model_extensions.dart';
 import 'package:oms_shared/app/data/models/marquee_holder.dart';
 import 'package:oms_shared/app/data/models/response/fav_market_response.dart';
@@ -65,6 +65,7 @@ class _CountingPositions extends PositionController {
 
 void main() {
   late List<FakeChannel> sockets;
+  var sectorSummaryBuilds = 0;
 
   setUpAll(() async {
     await initTestStorage();
@@ -81,8 +82,20 @@ void main() {
 
   tearDown(Get.reset);
 
-  Future<HomeController> startHome(WidgetTester tester) async {
-    await tester.pumpWidget(const GetMaterialApp(home: Scaffold()));
+  Future<HomeController> startHome(
+    WidgetTester tester, {
+    bool observeSectorSummary = false,
+  }) async {
+    final rootContent = ValueNotifier<Widget>(const Scaffold());
+    await tester.pumpWidget(
+      GetMaterialApp(
+        home: ValueListenableBuilder<Widget>(
+          valueListenable: rootContent,
+          builder: (_, child, _) => child,
+        ),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 1));
     final repo = _FakeHomeRepository();
     Get.put<HomeRepository>(repo);
     Get.put(ExchangeService());
@@ -95,13 +108,29 @@ void main() {
         onlineChanges: const Stream.empty(),
       ),
     );
-    return HomeController(homeRepository: repo);
+    final home = HomeController(homeRepository: repo);
+    if (observeSectorSummary) {
+      sectorSummaryBuilds = 0;
+      rootContent.value = GetBuilder<HomeController>(
+        init: home,
+        id: 'sectorSummary',
+        builder: (_) {
+          sectorSummaryBuilds++;
+          return const SizedBox.shrink();
+        },
+      );
+      await tester.pump(const Duration(milliseconds: 1));
+    }
+    return home;
   }
 
   Future<void> finish(WidgetTester tester) async {
-    await Get.delete<WebSocketService>(force: true);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(milliseconds: 1));
+    Get.delete<WebSocketService>(force: true);
     // Lets the switch windows (Quote fallback, favourites) run out.
     await tester.pump(QuoteMixin.quoteSwitchFallback);
+    await tester.pump(HomeController.fieldsDisposeDelay);
   }
 
   testWidgets('switching to CSE reconnects the market feed to the CSE URL '
@@ -352,28 +381,15 @@ void main() {
     testWidgets('sector details screen refreshes once the new sectors exist', (
       tester,
     ) async {
-      final home = await startHome(tester);
-      Get.put<HomeController>(home);
-      var builds = 0;
-      await tester.pumpWidget(
-        GetMaterialApp(
-          home: GetBuilder<HomeController>(
-            id: 'sectorSummary',
-            builder: (_) {
-              builds++;
-              return const SizedBox();
-            },
-          ),
-        ),
-      );
+      final home = await startHome(tester, observeSectorSummary: true);
       await switchToCse(tester, home);
-      final afterSwitch = builds;
+      final afterSwitch = sectorSummaryBuilds;
 
       await cseSends(tester, {'ob': 7, 'sn': 'GP', 't': 'GP', 'sc': 'Telecom'});
       await tester.pump(const Duration(seconds: 3));
 
       expect(home.sectorSummaryList, isNotEmpty);
-      expect(builds, greaterThan(afterSwitch));
+      expect(sectorSummaryBuilds, greaterThan(afterSwitch));
       await finish(tester);
     });
 

@@ -1,6 +1,5 @@
 // To parse this JSON data, do
 
-
 class ShareSituation {
   final int? id;
   final String? name;

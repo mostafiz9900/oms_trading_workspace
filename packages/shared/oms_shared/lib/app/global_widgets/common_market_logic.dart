@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../data/models/market_identifier.dart';
 
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../core/utils/extensions/app_context.dart';
 import '../core/utils/helpers/app_helper.dart';
@@ -24,7 +24,7 @@ class SharedMarketLogic {
   }) {
     // 🚀 ১. ডিফল্ট টেক্সটের কালার
     final defaultStyle =
-        Get.textTheme.titleMedium?.copyWith(
+        Get.context!.textTheme.titleMedium?.copyWith(
           color: context.textColor,
           fontWeight: FontWeight.w500,
           fontSize: fontSize,
@@ -86,7 +86,9 @@ class MarketDialogHelper {
             },
             child: Text(
               "Buy",
-              style: Get.textTheme.bodyLarge!.copyWith(color: Colors.white),
+              style: Get.context!.textTheme.bodyLarge!.copyWith(
+                color: Colors.white,
+              ),
             ),
           ),
           const SizedBox(width: 10),
@@ -102,7 +104,9 @@ class MarketDialogHelper {
             },
             child: Text(
               "Sell",
-              style: Get.textTheme.bodyLarge!.copyWith(color: Colors.white),
+              style: Get.context!.textTheme.bodyLarge!.copyWith(
+                color: Colors.white,
+              ),
             ),
           ),
         ],
@@ -145,7 +149,7 @@ class MarketDialogHelper {
                       ),
                       child: Text(
                         '${favCat.name}',
-                        style: Get.textTheme.bodyLarge?.copyWith(
+                        style: Get.context!.textTheme.bodyLarge?.copyWith(
                           fontSize: 16,
                           color: isSelected
                               ? ColorConstants.secondaryColorLight

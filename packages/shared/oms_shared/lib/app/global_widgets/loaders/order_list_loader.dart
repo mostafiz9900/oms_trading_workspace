@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../core/utils/extensions/app_context.dart';
@@ -8,8 +8,12 @@ class OrderListLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseColor = context.isDark ? Colors.grey.shade800 : Colors.grey.shade300;
-    final highlightColor = context.isDark ? Colors.grey.shade700 : Colors.grey.shade100;
+    final baseColor = context.isDark
+        ? Colors.grey.shade800
+        : Colors.grey.shade300;
+    final highlightColor = context.isDark
+        ? Colors.grey.shade700
+        : Colors.grey.shade100;
 
     return ListView.builder(
       itemCount: 8, // স্ক্রিনে দেখানোর জন্য ৮টি শিমার কার্ড
@@ -39,19 +43,28 @@ class OrderListLoader extends StatelessWidget {
                       Container(
                         width: 90,
                         height: 14,
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(3)),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(3),
+                        ),
                       ),
                       const SizedBox(height: 6),
                       Container(
                         width: 60,
                         height: 10,
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(3)),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(3),
+                        ),
                       ),
                       const SizedBox(height: 6),
                       Container(
                         width: 45,
                         height: 10,
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(3)),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(3),
+                        ),
                       ),
                     ],
                   ),
@@ -67,19 +80,28 @@ class OrderListLoader extends StatelessWidget {
                       Container(
                         width: 45,
                         height: 12,
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(3)),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(3),
+                        ),
                       ),
                       const SizedBox(height: 6),
                       Container(
                         width: 35,
                         height: 10,
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(3)),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(3),
+                        ),
                       ),
                       const SizedBox(height: 6),
                       Container(
                         width: 40,
                         height: 10,
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(3)),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(3),
+                        ),
                       ),
                     ],
                   ),
@@ -95,13 +117,19 @@ class OrderListLoader extends StatelessWidget {
                       Container(
                         width: 50,
                         height: 12,
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(3)),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(3),
+                        ),
                       ),
                       const SizedBox(height: 6),
                       Container(
                         width: 65,
                         height: 10,
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(3)),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(3),
+                        ),
                       ),
                     ],
                   ),

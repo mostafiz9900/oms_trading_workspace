@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../core/utils/extensions/market_model_extensions.dart';
 import '../../../data/models/response/market_model.dart';
@@ -145,9 +145,11 @@ class SearchHelper {
       transition: Transition.downToUp,
       curve: Curves.easeOutQuart,
       duration: const Duration(milliseconds: 250),
-      binding: BindingsBuilder(() {
-        Get.put(GlobalSearchController());
-      }),
+      bindings: [
+        Binding.builder(() {
+          Get.put(GlobalSearchController());
+        }),
+      ],
     );
 
     return selectedItem as MarketModel?;

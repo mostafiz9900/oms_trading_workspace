@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 final orderTypeProvider = Provider<List<String>>((Ref ref) {
   var result = ['Limit', 'Market', 'Market At Based'];
   return result;

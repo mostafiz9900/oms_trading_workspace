@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 import '../../../data/models/response/index_candle_model.dart'
     show IndexCandleModel, indexCandleModelFromJson;
 
@@ -6,7 +8,7 @@ import 'dart:convert';
 
 import 'package:broker_config/broker_config.dart' show StockExchange;
 
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../core/utils/helpers/log_helper.dart';
 import '../../../core/utils/helpers/update_throttle.dart';
@@ -17,7 +19,14 @@ import '../../../data/services/socket_db_service.dart';
 
 class LiveIndexController extends GetxController {
   final WebSocketService _webSocketService = WebSocketService.instance;
-  final _connection = GetConnect();
+  final _connection = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 20),
+      receiveTimeout: const Duration(seconds: 30),
+      responseType: ResponseType.json,
+      validateStatus: (status) => status != null,
+    ),
+  );
 
   // ================= State Variables =================
   List<IndexModel> indexList = <IndexModel>[];
@@ -171,6 +180,7 @@ class LiveIndexController extends GetxController {
     _exchangeWorker?.dispose();
     _indexUpdateTimer?.cancel();
     _chartThrottle.cancel();
+    _connection.close(force: true);
     _webSocketService.disconnect(AppConfig.indexSocketId);
     super.onClose();
   }
@@ -186,9 +196,11 @@ class LiveIndexController extends GetxController {
       printLog('Fetching Index Chart Data: $url');
 
       final response = await _connection.get(url);
-      printLog(response.body);
-      if (response.isOk) {
-        final data = response.body;
+      printLog(response.data);
+      if (response.statusCode != null &&
+          response.statusCode! >= 200 &&
+          response.statusCode! < 300) {
+        final data = response.data;
         List<IndexCandleModel> tempList = [];
 
         if (data != null && data is List) {

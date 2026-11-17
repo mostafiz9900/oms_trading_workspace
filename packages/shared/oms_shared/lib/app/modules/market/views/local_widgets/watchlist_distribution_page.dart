@@ -1,15 +1,17 @@
 import 'dart:math';
+
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/values/colors.dart';
 import '../../../../core/values/space.dart';
 import '../../../../data/models/response/market_model.dart';
 import '../../../../global_widgets/visible_get_builder.dart';
 import '../../../home/controllers/home_controller.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import '../../../../global_widgets/loaders/distribution_chart_loader.dart';
 
+import 'package:fl_chart/fl_chart.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
+
+import '../../../../global_widgets/loaders/distribution_chart_loader.dart';
 
 class WatchlistDistributionPage extends StatelessWidget {
   WatchlistDistributionPage({super.key});
@@ -57,13 +59,20 @@ class WatchlistDistributionPage extends StatelessWidget {
               const double maxGap = 48.0;
 
               final totalBarsWidth = barWidthFixed * buckets.length;
-              double computedGap = (availableWidth - totalBarsWidth) / (buckets.length + 1);
+              double computedGap =
+                  (availableWidth - totalBarsWidth) / (buckets.length + 1);
 
               if (computedGap < minGap) {
-                final spareForBars = availableWidth - minGap * (buckets.length + 1);
-                barWidthFixed = (spareForBars / buckets.length).clamp(8.0, 28.0);
+                final spareForBars =
+                    availableWidth - minGap * (buckets.length + 1);
+                barWidthFixed = (spareForBars / buckets.length).clamp(
+                  8.0,
+                  28.0,
+                );
                 final recomputedTotalBarsWidth = barWidthFixed * buckets.length;
-                computedGap = (availableWidth - recomputedTotalBarsWidth) / (buckets.length + 1);
+                computedGap =
+                    (availableWidth - recomputedTotalBarsWidth) /
+                    (buckets.length + 1);
               }
 
               final groupsSpace = computedGap.clamp(minGap, maxGap);
@@ -79,7 +88,10 @@ class WatchlistDistributionPage extends StatelessWidget {
                       AppSpace.spaceW4,
                       Text(
                         'Advance Decline',
-                        style: Get.textTheme.titleMedium?.copyWith(fontSize: 16, color: context.textColor),
+                        style: Get.context!.textTheme.titleMedium?.copyWith(
+                          fontSize: 16,
+                          color: context.textColor,
+                        ),
                       ),
                     ],
                   ),
@@ -98,7 +110,9 @@ class WatchlistDistributionPage extends StatelessWidget {
                           final bucket = buckets[i];
                           final color = bucket.isCenter
                               ? ColorConstants.unchangedColor
-                              : (_represent(bucket) >= 0 ? ColorConstants.upColor : ColorConstants.downColor);
+                              : (_represent(bucket) >= 0
+                                    ? ColorConstants.upColor
+                                    : ColorConstants.downColor);
 
                           return BarChartGroupData(
                             x: i,
@@ -137,7 +151,9 @@ class WatchlistDistributionPage extends StatelessWidget {
                               final i = group.x.toInt();
                               final bucket = buckets[i];
                               final cnt = counts[i];
-                              final pct = (total == 0) ? 0.0 : (cnt / total) * 100;
+                              final pct = (total == 0)
+                                  ? 0.0
+                                  : (cnt / total) * 100;
                               return BarTooltipItem(
                                 "${bucket.label}\n$cnt items\n${pct.toStringAsFixed(1)}% of total",
                                 const TextStyle(color: Colors.white),
@@ -161,7 +177,10 @@ class WatchlistDistributionPage extends StatelessWidget {
                                       child: Text(
                                         "${value.toInt()}",
                                         textAlign: TextAlign.right,
-                                        style: TextStyle(fontSize: 10, color: context.textColor),
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          color: context.textColor,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -175,8 +194,13 @@ class WatchlistDistributionPage extends StatelessWidget {
                               reservedSize: 50,
                               getTitlesWidget: (value, meta) {
                                 final i = value.toInt();
-                                if (i < 0 || i >= buckets.length) return const SizedBox();
-                                final fontSize = (labelWidth * 0.12).clamp(10.0, 12.0);
+                                if (i < 0 || i >= buckets.length) {
+                                  return const SizedBox();
+                                }
+                                final fontSize = (labelWidth * 0.12).clamp(
+                                  10.0,
+                                  12.0,
+                                );
                                 final label = buckets[i].label;
 
                                 return SizedBox(
@@ -190,11 +214,12 @@ class WatchlistDistributionPage extends StatelessWidget {
                                         maxLines: 2,
                                         softWrap: false,
                                         overflow: TextOverflow.ellipsis,
-                                        style: Get.textTheme.bodyMedium?.copyWith(
-                                          fontSize: fontSize,
-                                          color: context.textColor,
-                                          height: 1,
-                                        ),
+                                        style: Get.context!.textTheme.bodyMedium
+                                            ?.copyWith(
+                                              fontSize: fontSize,
+                                              color: context.textColor,
+                                              height: 1,
+                                            ),
                                       ),
                                     ),
                                   ),
@@ -202,15 +227,22 @@ class WatchlistDistributionPage extends StatelessWidget {
                               },
                             ),
                           ),
-                          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          topTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          rightTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
                         ),
                         gridData: FlGridData(
                           show: true,
                           drawHorizontalLine: true,
                           drawVerticalLine: true,
                           verticalInterval: 1.0,
-                          getDrawingVerticalLine: (value) => const FlLine(color: Colors.black12, strokeWidth: 0.5),
+                          getDrawingVerticalLine: (value) => const FlLine(
+                            color: Colors.black12,
+                            strokeWidth: 0.5,
+                          ),
                         ),
                         borderData: FlBorderData(show: false),
                       ),
@@ -253,7 +285,10 @@ class WatchlistDistributionPage extends StatelessWidget {
         Container(
           width: 14,
           height: 14,
-          decoration: BoxDecoration(color: c, borderRadius: BorderRadius.circular(3)),
+          decoration: BoxDecoration(
+            color: c,
+            borderRadius: BorderRadius.circular(3),
+          ),
         ),
         const SizedBox(width: 6),
         Text(label),

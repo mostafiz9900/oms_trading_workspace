@@ -92,12 +92,18 @@ void main() {
         'OMS_CSE_SOCKET_MARKET_DEPTH_URL': 'wss://cse.test/depth',
         'OMS_CSE_SOCKET_NEWS_TIME_SALES_URL': 'wss://cse.test/events',
       });
-      expect(set.marketDepthSocketUrlFor(StockExchange.cse), 'wss://cse.test/depth');
+      expect(
+        set.marketDepthSocketUrlFor(StockExchange.cse),
+        'wss://cse.test/depth',
+      );
       expect(
         set.newsTimeSalesSocketUrlFor(StockExchange.cse),
         'wss://cse.test/events',
       );
-      expect(set.marketDepthSocketUrlFor(StockExchange.dse), 'wss://dse.test/depth');
+      expect(
+        set.marketDepthSocketUrlFor(StockExchange.dse),
+        'wss://dse.test/depth',
+      );
       expect(
         set.newsTimeSalesSocketUrlFor(StockExchange.dse),
         'wss://dse.test/news-time-sales',

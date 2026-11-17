@@ -5,8 +5,9 @@ void main() {
   const interval = Duration(milliseconds: 500);
 
   // testWidgets runs in a fake-async zone, so tester.pump() drives the timer.
-  testWidgets('first update is immediate, a burst ends on the latest value',
-      (tester) async {
+  testWidgets('first update is immediate, a burst ends on the latest value', (
+    tester,
+  ) async {
     var now = DateTime(2026, 1, 1, 10);
     final throttle = UpdateThrottle(now: () => now);
     final shown = <int>[];

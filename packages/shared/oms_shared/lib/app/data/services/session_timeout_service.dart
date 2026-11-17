@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../core/utils/helpers/log_helper.dart';
 import '../../core/values/session_timeout_config.dart';

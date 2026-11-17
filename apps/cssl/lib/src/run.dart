@@ -19,7 +19,11 @@ Future<void> bootstrap(OmsEnvironment environment) => runOmsApp(
 );
 
 /// Sends uncaught errors from release builds to Firebase Crashlytics.
-void _reportToCrashlytics(Object error, StackTrace? stack, {required bool fatal}) {
+void _reportToCrashlytics(
+  Object error,
+  StackTrace? stack, {
+  required bool fatal,
+}) {
   // Debug builds only log; errors before Firebase is ready cannot be sent.
   if (kDebugMode || Firebase.apps.isEmpty) return;
   FirebaseCrashlytics.instance.recordError(error, stack, fatal: fatal);

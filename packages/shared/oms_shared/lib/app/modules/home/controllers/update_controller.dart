@@ -1,10 +1,11 @@
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_in_store_app_version_checker/flutter_in_store_app_version_checker.dart';
 import 'package:new_version_plus/new_version_plus.dart';
 
 import '../../../core/utils/helpers/log_helper.dart';
 import '../../../core/values/app_config.dart';
-import 'package:get/get.dart';
+
+import 'package:getxify/getxify.dart';
 
 class UpdateController extends GetxController {
   bool forceUpdate = false;
@@ -55,7 +56,6 @@ class UpdateController extends GetxController {
       printLog('Current version : ${result.currentVersion}');
       printLog('New version     : ${result.newVersion}');
       printLog('Error           : ${result.errorMessage}');
-
     } catch (e) {
       forceUpdate = false;
       update();

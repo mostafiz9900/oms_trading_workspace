@@ -1,9 +1,24 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:broker_config/broker_config.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart' as widgets;
+import 'package:flutter/material.dart' as legacy show Material, MaterialType;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:oms_shared/app/core/values/app_config.dart';
 
 const testSocketBaseUrl = 'wss://socket.test/';
+
+widgets.Widget testLegacyMaterialBuilder(
+  widgets.BuildContext context,
+  widgets.Widget? child,
+) => MaterialUiCompatibilityBridge(
+  child: legacy.Material(
+    type: legacy.MaterialType.transparency,
+    child: child ?? const widgets.SizedBox.shrink(),
+  ),
+);
 
 /// Binds a UAT-like house config, as `--dart-define-from-file` does in the app.
 /// [exchangeMode] picks DSE / CSE / both; [extra] adds env keys (e.g. CSE URLs).

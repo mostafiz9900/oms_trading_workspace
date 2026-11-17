@@ -1,6 +1,9 @@
-import 'package:flutter/material.dart';
-import '../../../../data/models/response/market_depth_model.dart' show MarketDepthModel;
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+
+import '../../../../data/models/response/market_depth_model.dart'
+    show MarketDepthModel;
+
+import 'package:getxify/getxify.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
@@ -119,7 +122,7 @@ class _MarketDepthSummaryCard extends StatelessWidget {
                   children: [
                     Text(
                       "Total Buy",
-                      style: Get.textTheme.labelSmall?.copyWith(
+                      style: Get.context!.textTheme.labelSmall?.copyWith(
                         color: Colors.grey,
                       ),
                     ),
@@ -127,7 +130,7 @@ class _MarketDepthSummaryCard extends StatelessWidget {
                       fit: BoxFit.scaleDown,
                       child: Text(
                         NumberFormatter.bdFormatInt(totalBuyQty),
-                        style: Get.textTheme.titleMedium?.copyWith(
+                        style: Get.context!.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: ColorConstants.success,
                         ),
@@ -144,7 +147,7 @@ class _MarketDepthSummaryCard extends StatelessWidget {
                 ),
                 child: Text(
                   "VS",
-                  style: Get.textTheme.labelSmall?.copyWith(
+                  style: Get.context!.textTheme.labelSmall?.copyWith(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),
@@ -156,7 +159,7 @@ class _MarketDepthSummaryCard extends StatelessWidget {
                   children: [
                     Text(
                       "Total Sell",
-                      style: Get.textTheme.labelSmall?.copyWith(
+                      style: Get.context!.textTheme.labelSmall?.copyWith(
                         color: Colors.grey,
                       ),
                     ),
@@ -164,7 +167,7 @@ class _MarketDepthSummaryCard extends StatelessWidget {
                       fit: BoxFit.scaleDown,
                       child: Text(
                         NumberFormatter.bdFormatInt(totalSellQty),
-                        style: Get.textTheme.titleMedium?.copyWith(
+                        style: Get.context!.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: ColorConstants.error,
                         ),
@@ -224,11 +227,15 @@ class DepthTableHeader extends StatelessWidget {
               children: [
                 Text(
                   'Qty',
-                  style: Get.textTheme.labelSmall?.copyWith(color: Colors.grey),
+                  style: Get.context!.textTheme.labelSmall?.copyWith(
+                    color: Colors.grey,
+                  ),
                 ),
                 Text(
                   'Bid',
-                  style: Get.textTheme.labelSmall?.copyWith(color: Colors.grey),
+                  style: Get.context!.textTheme.labelSmall?.copyWith(
+                    color: Colors.grey,
+                  ),
                 ),
               ],
             ),
@@ -240,11 +247,15 @@ class DepthTableHeader extends StatelessWidget {
               children: [
                 Text(
                   'Ask',
-                  style: Get.textTheme.labelSmall?.copyWith(color: Colors.grey),
+                  style: Get.context!.textTheme.labelSmall?.copyWith(
+                    color: Colors.grey,
+                  ),
                 ),
                 Text(
                   'Qty',
-                  style: Get.textTheme.labelSmall?.copyWith(color: Colors.grey),
+                  style: Get.context!.textTheme.labelSmall?.copyWith(
+                    color: Colors.grey,
+                  ),
                 ),
               ],
             ),
@@ -284,7 +295,9 @@ class _OrderBookSliverList extends StatelessWidget {
           child: Center(
             child: Text(
               'No Market Depth Available',
-              style: Get.textTheme.bodyMedium?.copyWith(color: Colors.grey),
+              style: Get.context!.textTheme.bodyMedium?.copyWith(
+                color: Colors.grey,
+              ),
             ),
           ),
         ),
@@ -390,7 +403,7 @@ class BidRowItem extends StatelessWidget {
                       trackValue: qty.toDouble(),
                       child: Text(
                         NumberFormatter.bdFormatInt(qty),
-                        style: Get.textTheme.bodySmall?.copyWith(
+                        style: Get.context!.textTheme.bodySmall?.copyWith(
                           fontWeight: FontWeight.w500,
                           fontSize: 13,
                         ),
@@ -406,7 +419,7 @@ class BidRowItem extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     child: Text(
                       model.p != null ? model.p!.toStringAsFixed(2) : '0.00',
-                      style: Get.textTheme.bodySmall?.copyWith(
+                      style: Get.context!.textTheme.bodySmall?.copyWith(
                         color: ColorConstants.success,
                         fontWeight: FontWeight.bold,
                         fontSize: 13,
@@ -483,7 +496,7 @@ class AskRowItem extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       model.p != null ? model.p!.toStringAsFixed(2) : '0.00',
-                      style: Get.textTheme.bodySmall?.copyWith(
+                      style: Get.context!.textTheme.bodySmall?.copyWith(
                         color: ColorConstants.error,
                         fontWeight: FontWeight.bold,
                         fontSize: 13,
@@ -501,7 +514,7 @@ class AskRowItem extends StatelessWidget {
                       trackValue: qty.toDouble(),
                       child: Text(
                         NumberFormatter.bdFormatInt(qty),
-                        style: Get.textTheme.bodySmall?.copyWith(
+                        style: Get.context!.textTheme.bodySmall?.copyWith(
                           fontWeight: FontWeight.w500,
                           fontSize: 13,
                         ),
@@ -589,7 +602,7 @@ class _MarketDepthChart extends StatelessWidget {
           edgeLabelPlacement: EdgeLabelPlacement.shift,
           majorGridLines: const MajorGridLines(width: 0),
           axisLine: const AxisLine(width: 0.5, color: Colors.grey),
-          labelStyle: Get.textTheme.labelSmall?.copyWith(
+          labelStyle: Get.context!.textTheme.labelSmall?.copyWith(
             color: Colors.grey,
             fontSize: 10,
           ),
@@ -632,7 +645,7 @@ class _MarketDepthChart extends StatelessWidget {
             dashArray: const [4, 4],
           ),
           axisLine: const AxisLine(width: 0),
-          labelStyle: Get.textTheme.labelSmall?.copyWith(
+          labelStyle: Get.context!.textTheme.labelSmall?.copyWith(
             color: Colors.grey,
             fontSize: 10,
           ),

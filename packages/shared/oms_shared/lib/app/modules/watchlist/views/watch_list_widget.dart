@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../controllers/watchlist_controller.dart';
 import '../../../core/utils/extensions/app_context.dart';
@@ -22,7 +22,8 @@ import '../../../global_widgets/shared_market_components.dart';
 import '../../../global_widgets/visible_get_builder.dart';
 import '../../home/controllers/home_controller.dart';
 
-import '../../../data/models/request/add_fav_item_request.dart' show AddFavItemRequest;
+import '../../../data/models/request/add_fav_item_request.dart'
+    show AddFavItemRequest;
 
 import '../../../global_widgets/empty_widget.dart';
 import '../../../global_widgets/loaders/watchlist_loader.dart';
@@ -42,7 +43,9 @@ class _WatchListWidgetState extends State<WatchListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (!Get.isRegistered<WatchListController>()) Get.put(WatchListController());
+    if (!Get.isRegistered<WatchListController>()) {
+      Get.put(WatchListController());
+    }
     final dividerWidget = Divider(height: 1, color: context.dividerColor);
 
     return VisibleGetBuilder<WatchListController>(
@@ -487,7 +490,6 @@ class _WatchListWidgetState extends State<WatchListWidget> {
       ],
     );
   }
-
 }
 
 class _WatchListSearchBar extends StatelessWidget {
@@ -590,7 +592,7 @@ void favouriteBottomSheet(BuildContext ctx, MarketModel model) {
                     ),
                     child: Text(
                       '${favCat.name}',
-                      style: Get.textTheme.bodyLarge?.copyWith(
+                      style: Get.context!.textTheme.bodyLarge?.copyWith(
                         fontSize: 16,
                         color: isSelected
                             ? ColorConstants.secondaryColorLight

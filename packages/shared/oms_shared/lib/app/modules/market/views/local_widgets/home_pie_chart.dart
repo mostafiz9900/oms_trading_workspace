@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
@@ -56,8 +56,15 @@ class HomePieChart extends StatelessWidget {
           height: 260,
           child: SfCircularChart(
             title: ChartTitle(text: 'Market Movement'),
-            legend: Legend(isVisible: true, overflowMode: LegendItemOverflowMode.wrap, position: LegendPosition.bottom),
-            tooltipBehavior: TooltipBehavior(enable: true, format: 'point.x : point.y'),
+            legend: Legend(
+              isVisible: true,
+              overflowMode: LegendItemOverflowMode.wrap,
+              position: LegendPosition.bottom,
+            ),
+            tooltipBehavior: TooltipBehavior(
+              enable: true,
+              format: 'point.x : point.y',
+            ),
             series: <PieSeries<_ChartData, String>>[
               PieSeries<_ChartData, String>(
                 dataSource: data,

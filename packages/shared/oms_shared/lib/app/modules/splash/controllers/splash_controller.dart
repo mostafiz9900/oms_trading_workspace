@@ -1,5 +1,5 @@
 import 'package:oms_shared/app/modules/auth/controllers/token_controller.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:trading_core/trading_core.dart';
 
 import '../../../core/utils/helpers/log_helper.dart';

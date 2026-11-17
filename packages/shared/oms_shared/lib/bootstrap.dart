@@ -3,10 +3,9 @@ import 'dart:ui' show PlatformDispatcher;
 import 'package:broker_config/broker_config.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -19,13 +18,17 @@ import 'app/di.dart';
 import 'app/data/services/notification_service.dart';
 
 final providerContainer = ProviderContainer();
-bool isDarkMode = Get.isDarkMode;
+bool isDarkMode = false;
 int initScreen = 0;
 const _definedEnvironment = String.fromEnvironment('OMS_ENV');
 
 /// Receives every uncaught error (framework and async). Plug crash reporting
 /// in here, e.g. `FirebaseCrashlytics.instance.recordError`.
-typedef OmsErrorReporter = void Function(Object error, StackTrace? stack, {required bool fatal});
+typedef OmsErrorReporter = void Function(
+  Object error,
+  StackTrace? stack, {
+  required bool fatal,
+});
 
 /// Starts the shared OMS trading app for one broker house.
 ///
@@ -55,18 +58,22 @@ Future<void> runOmsApp({
     Firebase.initializeApp(options: firebaseOptions),
   ]);
 
-  await NotificationService.initialize(backgroundHandler: firebaseBackgroundHandler);
+  await NotificationService.initialize(
+    backgroundHandler: firebaseBackgroundHandler,
+  );
   initScreen = await StorageService.read("initScreen") ?? 0;
   StorageService.save("initScreen", 1);
   outCreateErrorWidget();
 
   await DependencyInjection.init();
-  isDarkMode = await StorageService.read(StorageConstants.isDarkMode) ?? Get.isDarkMode;
+  isDarkMode = await StorageService.read(StorageConstants.isDarkMode) ?? false;
   printLog(isDarkMode);
   printLog('isDarkMode');
-  printLog(Get.isDarkMode);
 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(UncontrolledProviderScope(container: providerContainer, child: app()));
   configLoading();
 }

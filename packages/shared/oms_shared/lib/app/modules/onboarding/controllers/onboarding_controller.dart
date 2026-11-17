@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../core/values/app_config.dart';
 import '../../../core/values/assets.dart';
 import '../../../routes/app_routes.dart';
+
 import 'package:localization/localization.dart';
 
 class OnboardingController extends GetxController {
@@ -14,7 +15,6 @@ class OnboardingController extends GetxController {
     super.onInit();
     pageController = PageController(initialPage: selectedIndex);
   }
-
 
   @override
   void onClose() {

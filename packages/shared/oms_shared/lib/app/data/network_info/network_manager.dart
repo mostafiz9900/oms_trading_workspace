@@ -1,6 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:get/get.dart';
-import 'package:flutter/material.dart';
+import 'package:getxify/getxify.dart';
+import 'package:material_ui/material_ui.dart';
 
 class NetworkManager extends GetxController {
   // ইন্টারনেট আছে কি নেই তা ট্র্যাক করবে
@@ -13,7 +13,9 @@ class NetworkManager extends GetxController {
     Connectivity().onConnectivityChanged.listen(_updateConnectionStatus);
   }
 
-  Future<void> _updateConnectionStatus(List<ConnectivityResult> connectivityResult) async {
+  Future<void> _updateConnectionStatus(
+    List<ConnectivityResult> connectivityResult,
+  ) async {
     if (connectivityResult.contains(ConnectivityResult.none)) {
       // Only on the online -> offline change; repeated "none" events used to
       // queue several day-long bars behind each other.
@@ -23,7 +25,9 @@ class NetworkManager extends GetxController {
       Get.rawSnackbar(
         message: "No internet connection. Please check your network.",
         backgroundColor: Colors.red,
-        duration: const Duration(days: 1), // যতক্ষণ না ইন্টারনেট আসে ততক্ষণ দেখাবে
+        duration: const Duration(
+          days: 1,
+        ), // যতক্ষণ না ইন্টারনেট আসে ততক্ষণ দেখাবে
         isDismissible: false,
       );
     } else {
@@ -36,7 +40,11 @@ class NetworkManager extends GetxController {
           await Future.delayed(const Duration(milliseconds: 50));
         }
         // ইন্টারনেট ফিরে আসার মেসেজ
-        Get.rawSnackbar(message: "Back online!", backgroundColor: Colors.green, duration: const Duration(seconds: 3));
+        Get.rawSnackbar(
+          message: "Back online!",
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 3),
+        );
       }
       isConnected = true;
     }

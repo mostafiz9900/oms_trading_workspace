@@ -7,8 +7,8 @@ import '/app/modules/quote/controllers/historical_volume_controller.dart';
 import '/app/modules/portfolio/controllers/position_controller.dart';
 
 import 'package:broker_config/broker_config.dart' show StockExchange;
-import 'package:flutter/material.dart' hide Actions;
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart' hide Actions;
+import 'package:getxify/getxify.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../data/models/request/add_fav_item_request.dart'

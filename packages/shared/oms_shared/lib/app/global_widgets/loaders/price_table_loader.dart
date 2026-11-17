@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../core/utils/extensions/app_context.dart';
@@ -8,8 +8,12 @@ class PriceTableLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseColor = context.isDark ? Colors.grey.shade800 : Colors.grey.shade300;
-    final highlightColor = context.isDark ? Colors.grey.shade700 : Colors.grey.shade100;
+    final baseColor = context.isDark
+        ? Colors.grey.shade800
+        : Colors.grey.shade300;
+    final highlightColor = context.isDark
+        ? Colors.grey.shade700
+        : Colors.grey.shade100;
 
     return SingleChildScrollView(
       physics: const NeverScrollableScrollPhysics(),
@@ -27,7 +31,10 @@ class PriceTableLoader extends StatelessWidget {
                   Container(
                     width: 120,
                     height: 30,
-                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                 ],
               ),
@@ -67,14 +74,22 @@ class PriceTableLoader extends StatelessWidget {
               child: Column(
                 children: [
                   // Table Header Row
-                  Container(height: 40, width: double.infinity, color: Colors.white),
+                  Container(
+                    height: 40,
+                    width: double.infinity,
+                    color: Colors.white,
+                  ),
                   const SizedBox(height: 8),
                   // Table Data Rows
                   ...List.generate(
                     8,
                     (index) => Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Container(height: 36, width: double.infinity, color: Colors.white),
+                      child: Container(
+                        height: 36,
+                        width: double.infinity,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],

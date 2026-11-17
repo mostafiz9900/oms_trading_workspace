@@ -1,12 +1,13 @@
-
 import '../../../../core/values/colors.dart';
 import '../../../../data/models/response/time_sales_model.dart';
 import '../../../../global_widgets/visible_get_builder.dart';
 import '../../../home/controllers/home_controller.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
+
 import 'time_sales_sort.dart';
 
 class TimeAndSalesBarChart extends StatefulWidget {
@@ -19,7 +20,12 @@ class TimeAndSalesBarChart extends StatefulWidget {
   /// maximum number of buckets to render (for performance)
   final int maxBuckets;
 
-  const TimeAndSalesBarChart({super.key, this.bucketSeconds = 30, this.usePriceValue = false, this.maxBuckets = 300});
+  const TimeAndSalesBarChart({
+    super.key,
+    this.bucketSeconds = 30,
+    this.usePriceValue = false,
+    this.maxBuckets = 300,
+  });
 
   @override
   State<TimeAndSalesBarChart> createState() => _TimeAndSalesBarChartState();
@@ -45,17 +51,25 @@ class _TimeAndSalesBarChartState extends State<TimeAndSalesBarChart> {
   }
 
   /// aggregate raw ticks into time buckets
-  List<_Bucket> _aggregateBuckets(List<TimeAndSalesModel> raw, int bucketSeconds) {
+  List<_Bucket> _aggregateBuckets(
+    List<TimeAndSalesModel> raw,
+    int bucketSeconds,
+  ) {
     if (raw.isEmpty) return [];
 
     // sort by time ascending
-    sortTimeSalesByKey(raw, (t) => _parseTstToToday(t.tst), (a, b) => a.compareTo(b));
+    sortTimeSalesByKey(
+      raw,
+      (t) => _parseTstToToday(t.tst),
+      (a, b) => a.compareTo(b),
+    );
 
     final buckets = <int, _Bucket>{}; // key = epochSeconds of bucket start
     for (var tick in raw) {
       final dt = _parseTstToToday(tick.tst);
       final epoch = dt.millisecondsSinceEpoch;
-      final bucketStartEpoch = (epoch ~/ (bucketSeconds * 1000)) * (bucketSeconds * 1000);
+      final bucketStartEpoch =
+          (epoch ~/ (bucketSeconds * 1000)) * (bucketSeconds * 1000);
       final bucketStart = DateTime.fromMillisecondsSinceEpoch(bucketStartEpoch);
       final bucketEnd = dt;
 
@@ -102,7 +116,9 @@ class _TimeAndSalesBarChartState extends State<TimeAndSalesBarChart> {
     return VisibleGetBuilder<HomeController>(
       id: 'timeAndSales',
       builder: (_) {
-        final raw = List<TimeAndSalesModel>.from(homeCont.shownMarket.timeAndSales);
+        final raw = List<TimeAndSalesModel>.from(
+          homeCont.shownMarket.timeAndSales,
+        );
         if (raw.isEmpty) return const Center(child: Text('No trades'));
 
         final buckets = _aggregateBuckets(raw, widget.bucketSeconds);
@@ -112,7 +128,13 @@ class _TimeAndSalesBarChartState extends State<TimeAndSalesBarChart> {
         final chartData = buckets.map((b) {
           final y = widget.usePriceValue ? b.valueSum : b.volumeSum.toDouble();
           final up = b.close >= b.open;
-          return _BarPoint(time: b.start, y: y, color: up ? Colors.green : Colors.red, open: b.open, close: b.close);
+          return _BarPoint(
+            time: b.start,
+            y: y,
+            color: up ? Colors.green : Colors.red,
+            open: b.open,
+            close: b.close,
+          );
         }).toList();
 
         final ys = chartData.map((e) => e.y).toList();
@@ -137,7 +159,10 @@ class _TimeAndSalesBarChartState extends State<TimeAndSalesBarChart> {
               intervalType: DateTimeIntervalType.minutes,
               interval: widget.bucketSeconds.toDouble(),
               dateFormat: DateFormat('HH:mm'),
-              majorGridLines: MajorGridLines(color: Colors.grey.alphaSafe(0.12), width: 1),
+              majorGridLines: MajorGridLines(
+                color: Colors.grey.alphaSafe(0.12),
+                width: 1,
+              ),
               labelRotation: -45,
               edgeLabelPlacement: EdgeLabelPlacement.shift,
             ),
@@ -145,7 +170,10 @@ class _TimeAndSalesBarChartState extends State<TimeAndSalesBarChart> {
               minimum: minY,
               maximum: maxY,
               numberFormat: NumberFormat.compact(),
-              majorGridLines: MajorGridLines(color: Colors.grey.alphaSafe(0.12), width: 1),
+              majorGridLines: MajorGridLines(
+                color: Colors.grey.alphaSafe(0.12),
+                width: 1,
+              ),
             ),
 
             series: <CartesianSeries<dynamic, dynamic>>[
@@ -158,7 +186,10 @@ class _TimeAndSalesBarChartState extends State<TimeAndSalesBarChart> {
                 borderRadius: BorderRadius.circular(6),
               ),
             ],
-            tooltipBehavior: TooltipBehavior(enable: true, format: 'point.x : point.y'),
+            tooltipBehavior: TooltipBehavior(
+              enable: true,
+              format: 'point.x : point.y',
+            ),
           ),
         );
       },
@@ -172,7 +203,13 @@ class _BarPoint {
   final Color color;
   final double open;
   final double close;
-  _BarPoint({required this.time, required this.y, required this.color, required this.open, required this.close});
+  _BarPoint({
+    required this.time,
+    required this.y,
+    required this.color,
+    required this.open,
+    required this.close,
+  });
 }
 
 /// Bar bucket aggregation

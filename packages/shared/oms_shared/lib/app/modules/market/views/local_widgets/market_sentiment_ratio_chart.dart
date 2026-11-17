@@ -1,11 +1,10 @@
-
 import 'package:oms_shared/app/modules/market/controllers/live_index_controller.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/values/colors.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 class MarketSentimentRatioChart extends StatelessWidget {
   const MarketSentimentRatioChart({super.key});
@@ -27,7 +26,13 @@ class MarketSentimentRatioChart extends StatelessWidget {
             color: context.isDark ? hexToColor('#161A33') : Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: context.borderSideColor.withAlpha(128)),
-            boxShadow: [BoxShadow(color: Colors.black.withAlpha(13), blurRadius: 10, offset: const Offset(0, 4))],
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(13),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,7 +43,7 @@ class MarketSentimentRatioChart extends StatelessWidget {
                 children: [
                   Text(
                     'Market Sentiment',
-                    style: Get.textTheme.titleMedium?.copyWith(
+                    style: Get.context!.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w800,
                       fontSize: 15,
                       color: context.textColor,
@@ -76,7 +81,11 @@ class MarketSentimentRatioChart extends StatelessWidget {
                     children: [
                       Text(
                         data.sn ?? '',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: context.textColor),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: context.textColor,
+                        ),
                       ),
                       const SizedBox(height: 8),
 
@@ -89,17 +98,23 @@ class MarketSentimentRatioChart extends StatelessWidget {
                               if (up > 0)
                                 Expanded(
                                   flex: up,
-                                  child: Container(color: hexToColor('#22C665')),
+                                  child: Container(
+                                    color: hexToColor('#22C665'),
+                                  ),
                                 ),
                               if (uc > 0)
                                 Expanded(
                                   flex: uc,
-                                  child: Container(color: hexToColor('#177DFF')),
+                                  child: Container(
+                                    color: hexToColor('#177DFF'),
+                                  ),
                                 ),
                               if (down > 0)
                                 Expanded(
                                   flex: down,
-                                  child: Container(color: hexToColor('#F54D64')),
+                                  child: Container(
+                                    color: hexToColor('#F54D64'),
+                                  ),
                                 ),
                             ],
                           ),
@@ -110,9 +125,24 @@ class MarketSentimentRatioChart extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          _buildLegendItem('Adv', upPct, hexToColor('#22C665'), context),
-                          _buildLegendItem('Unch', ucPct, hexToColor('#177DFF'), context),
-                          _buildLegendItem('Dec', downPct, hexToColor('#F54D64'), context),
+                          _buildLegendItem(
+                            'Adv',
+                            upPct,
+                            hexToColor('#22C665'),
+                            context,
+                          ),
+                          _buildLegendItem(
+                            'Unch',
+                            ucPct,
+                            hexToColor('#177DFF'),
+                            context,
+                          ),
+                          _buildLegendItem(
+                            'Dec',
+                            downPct,
+                            hexToColor('#F54D64'),
+                            context,
+                          ),
                         ],
                       ),
                     ],
@@ -127,7 +157,12 @@ class MarketSentimentRatioChart extends StatelessWidget {
   }
 
   // 🚀 নিচে দেখানোর জন্য কাস্টম লেবেল উইজেট
-  Widget _buildLegendItem(String title, double pct, Color color, BuildContext context) {
+  Widget _buildLegendItem(
+    String title,
+    double pct,
+    Color color,
+    BuildContext context,
+  ) {
     return Row(
       children: [
         Container(
@@ -139,11 +174,18 @@ class MarketSentimentRatioChart extends StatelessWidget {
         RichText(
           text: TextSpan(
             text: '$title ',
-            style: TextStyle(fontSize: 11, color: context.textColor.withAlpha(179)),
+            style: TextStyle(
+              fontSize: 11,
+              color: context.textColor.withAlpha(179),
+            ),
             children: [
               TextSpan(
                 text: '${pct.toStringAsFixed(1)}%',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: context.textColor),
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: context.textColor,
+                ),
               ),
             ],
           ),

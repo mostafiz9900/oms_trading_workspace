@@ -7,10 +7,11 @@ import '../../../core/values/space.dart';
 import '../../../global_widgets/custom_button.dart';
 import '../controllers/auth_controller.dart';
 import 'login_view.dart';
+
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../data/models/response/register_model.dart';
 import '../../onboarding/views/local_widgets/create_new_account.dart';
@@ -33,98 +34,121 @@ class SignupVerify extends GetView<AuthController> {
                     AppSpace.spaceH30,
                     Align(child: SvgPicture.asset(AssetsConstants.logoSvg)),
                     AppSpace.spaceH30,
-                    Align(child: Text("Verify UserSelf", style: Get.textTheme.titleLarge)),
+                    Align(
+                      child: Text(
+                        "Verify UserSelf",
+                        style: Get.context!.textTheme.titleLarge,
+                      ),
+                    ),
                     AppSpace.spaceH30,
                     Align(
                       child: Text(
                         "Bio Id: ${authCon.registerInformation?.boId}",
-                        style: Get.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                        style: Get.context!.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     AppSpace.spaceH10,
                     Text(
                       "Choose Name",
-                      style: Get.textTheme.titleMedium?.copyWith(
+                      style: Get.context!.textTheme.titleMedium?.copyWith(
                         color: ColorConstants.gray,
                         fontSize: AppDimens.space17,
                       ),
                     ),
                     Column(
-                      children: List.generate(authCon.registerInformation!.nameList!.length, (index) {
-                        NameList model = authCon.registerInformation!.nameList!.elementAt(index);
-                        return InkWell(
-                          onTap: () {
-                            authCon.setChooseName(model.name);
-                          },
-                          child: Row(
-                            mainAxisAlignment: .start,
-                            children: [
-                              RadioGroup<String?>(
-                                groupValue: authCon.chooseName,
-                                onChanged: (value) {
-                                  printLog(value);
-                                  authCon.setChooseName(value);
-                                },
-                                child: Radio<String?>(
-                                  value: model.name,
-                                  activeColor: context.buttonColor,
-                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      children: List.generate(
+                        authCon.registerInformation!.nameList!.length,
+                        (index) {
+                          NameList model = authCon
+                              .registerInformation!
+                              .nameList!
+                              .elementAt(index);
+                          return InkWell(
+                            onTap: () {
+                              authCon.setChooseName(model.name);
+                            },
+                            child: Row(
+                              mainAxisAlignment: .start,
+                              children: [
+                                RadioGroup<String?>(
+                                  groupValue: authCon.chooseName,
+                                  onChanged: (value) {
+                                    printLog(value);
+                                    authCon.setChooseName(value);
+                                  },
+                                  child: Radio<String?>(
+                                    value: model.name,
+                                    activeColor: context.buttonColor,
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                '${model.name}',
-                                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                  fontSize: AppDimens.space14,
-                                  fontWeight: FontWeight.w400,
-                                  color: ColorConstants.gray,
+                                Text(
+                                  '${model.name}',
+                                  style: Theme.of(context).textTheme.titleSmall
+                                      ?.copyWith(
+                                        fontSize: AppDimens.space14,
+                                        fontWeight: FontWeight.w400,
+                                        color: ColorConstants.gray,
+                                      ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     ),
                     AppSpace.spaceH10,
                     Text(
                       "Father Name",
-                      style: Get.textTheme.titleMedium?.copyWith(
+                      style: Get.context!.textTheme.titleMedium?.copyWith(
                         color: ColorConstants.gray,
                         fontSize: AppDimens.space17,
                       ),
                     ),
                     Column(
-                      children: List.generate(authCon.registerInformation!.nameList!.length, (index) {
-                        NameList model = authCon.registerInformation!.nameList!.elementAt(index);
-                        return InkWell(
-                          onTap: () {
-                            authCon.setChooseFatherName(model.fathersName);
-                          },
-                          child: Row(
-                            mainAxisAlignment: .start,
-                            children: [
-                              RadioGroup<String?>(
-                                groupValue: authCon.chooseFatherName,
-                                onChanged: (value) {
-                                  authCon.setChooseFatherName(value);
-                                },
-                                child: Radio<String?>(
-                                  value: model.fathersName,
-                                  activeColor: context.buttonColor,
-                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      children: List.generate(
+                        authCon.registerInformation!.nameList!.length,
+                        (index) {
+                          NameList model = authCon
+                              .registerInformation!
+                              .nameList!
+                              .elementAt(index);
+                          return InkWell(
+                            onTap: () {
+                              authCon.setChooseFatherName(model.fathersName);
+                            },
+                            child: Row(
+                              mainAxisAlignment: .start,
+                              children: [
+                                RadioGroup<String?>(
+                                  groupValue: authCon.chooseFatherName,
+                                  onChanged: (value) {
+                                    authCon.setChooseFatherName(value);
+                                  },
+                                  child: Radio<String?>(
+                                    value: model.fathersName,
+                                    activeColor: context.buttonColor,
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                '${model.fathersName}',
-                                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                  fontSize: AppDimens.space14,
-                                  fontWeight: FontWeight.w400,
-                                  color: ColorConstants.gray,
+                                Text(
+                                  '${model.fathersName}',
+                                  style: Theme.of(context).textTheme.titleSmall
+                                      ?.copyWith(
+                                        fontSize: AppDimens.space14,
+                                        fontWeight: FontWeight.w400,
+                                        color: ColorConstants.gray,
+                                      ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     ),
                     AppSpace.spaceH10,
                     CustomButton(

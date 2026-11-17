@@ -1,12 +1,10 @@
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../controllers/order_alert_controller.dart';
 
-class OrderAlertBinding extends Bindings {
+class OrderAlertBinding extends Binding {
   @override
   void dependencies() {
-    Get.lazyPut<OrderAlertController>(
-      () => OrderAlertController(),
-    );
+    Get.lazyPut<OrderAlertController>(() => OrderAlertController());
   }
 }

@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:broker_config/broker_config.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:oms_shared/app/core/values/storage.dart';
 import 'package:oms_shared/app/data/enums/app_enum.dart';
 import 'package:oms_shared/app/data/models/response/market_model.dart';
@@ -123,7 +123,7 @@ void main() {
   /// Ends the test cleanly: socket closed, order timeout elapsed, snackbars
   /// dismissed (GetX keeps them in a global queue across tests).
   Future<void> finish(WidgetTester tester) async {
-    await Get.delete<WebSocketService>(force: true);
+    Get.delete<WebSocketService>(force: true);
     await pumpFor(tester, const Duration(seconds: 16));
     Get.closeAllSnackbars();
     await tester.pumpAndSettle();

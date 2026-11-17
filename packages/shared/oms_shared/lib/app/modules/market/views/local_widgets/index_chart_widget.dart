@@ -1,7 +1,7 @@
 import '../../../../data/models/response/index_candle_model.dart'
     show IndexCandleModel;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
 

@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../models/marquee_holder.dart';
 import '../models/response/market_depth_model.dart';

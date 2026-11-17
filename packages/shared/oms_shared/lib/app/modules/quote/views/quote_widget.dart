@@ -7,8 +7,9 @@ import '../../../global_widgets/custom_drawer.dart';
 import '../../home/controllers/home_controller.dart';
 import '/app/modules/quote/views/local_widgets/quote_tab_widget.dart';
 import '/app/modules/quote/views/local_widgets/time_sales_tab_history_widget.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../global_widgets/appbar_right_search_tap.dart';
 import '../../../global_widgets/exchange/exchange_switcher.dart';
@@ -43,7 +44,10 @@ class _QuoteWidgetState extends State<QuoteWidget> {
           children: [
             // DSE | CSE; shows only for houses on both exchanges.
             const ExchangeSwitcher(padding: EdgeInsets.only(right: 8)),
-            CommonWidget.buySell(context: context, onTap: () => Get.find<HomeController>().changeCurrentIndex(5)),
+            CommonWidget.buySell(
+              context: context,
+              onTap: () => Get.find<HomeController>().changeCurrentIndex(5),
+            ),
             AppbarRightSearchTapWidget(),
             AppSpace.spaceW4,
           ],
@@ -70,7 +74,7 @@ class _CustomTabWidget extends StatelessWidget {
               Container(
                 color: context.tapBg,
                 height: 40,
-                width: Get.width,
+                width: Get.context!.width,
                 child: TabBar(
                   dividerHeight: 0,
                   indicatorSize: TabBarIndicatorSize.tab,
@@ -78,8 +82,14 @@ class _CustomTabWidget extends StatelessWidget {
                   tabAlignment: TabAlignment.start,
                   labelColor: Colors.white,
                   unselectedLabelColor: context.textColor,
-                  labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-                  unselectedLabelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+                  labelStyle: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  unselectedLabelStyle: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                  ),
                   padding: const .symmetric(horizontal: 4, vertical: 0),
                   indicator: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
@@ -114,4 +124,3 @@ class _CustomTabWidget extends StatelessWidget {
     );
   }
 }
-

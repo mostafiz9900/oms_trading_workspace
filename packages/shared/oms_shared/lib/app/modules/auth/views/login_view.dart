@@ -9,12 +9,15 @@ import '../../../global_widgets/custom_button.dart';
 import '../../../global_widgets/custom_edit_text_form_field.dart';
 import '../controllers/auth_controller.dart';
 import '../../../routes/app_routes.dart';
+
 import 'package:localization/localization.dart';
+
 import '/app/modules/onboarding/views/local_widgets/create_new_account.dart';
+
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../../generated/assets.dart';
 import 'send_otp_screen.dart';
@@ -38,17 +41,22 @@ class LoginView extends GetView<AuthController> {
                     //  App Logo Banner
                     SvgPicture.asset(
                       context.bannerLogo,
-                      width: Get.width * 0.8,
-                      height: Get.width * 0.20,
+                      width: Get.context!.width * 0.8,
+                      height: Get.context!.width * 0.20,
                       fit: BoxFit.contain,
                     ),
                     AppSpace.spaceH60,
-                    Text(AppTranslations.signIn.tr, style: Get.textTheme.titleLarge),
+                    Text(
+                      AppTranslations.signIn.tr,
+                      style: Get.context!.textTheme.titleLarge,
+                    ),
                     AppSpace.spaceH10,
                     Text(
                       AppTranslations.yourAssetsAtAGlanceKeepUp.tr,
                       textAlign: TextAlign.center,
-                      style: Get.textTheme.titleSmall!.copyWith(fontSize: 14),
+                      style: Get.context!.textTheme.titleSmall!.copyWith(
+                        fontSize: 14,
+                      ),
                     ),
                     AppSpace.spaceH30,
 
@@ -84,9 +92,16 @@ class LoginView extends GetView<AuthController> {
                       isLoading: authCon.isLoading,
                       onPressed: () {
                         if (authCon.loginUserNameController.text.isEmpty) {
-                          Helpers.snackbarForErorr2(bodyText: 'Please enter investor ID Or Gmail');
-                        } else if (authCon.loginPasswordController.text.isEmpty) {
-                          Helpers.snackbarForErorr2(bodyText: 'Please enter password');
+                          Helpers.snackbarForErorr2(
+                            bodyText: 'Please enter investor ID Or Gmail',
+                          );
+                        } else if (authCon
+                            .loginPasswordController
+                            .text
+                            .isEmpty) {
+                          Helpers.snackbarForErorr2(
+                            bodyText: 'Please enter password',
+                          );
                         } else {
                           authCon.login();
                         }
@@ -108,11 +123,12 @@ class LoginView extends GetView<AuthController> {
                             ),
                             Text(
                               "Remember Me",
-                              style: Get.textTheme.titleSmall!.copyWith(
-                                color: context.textColor,
-                                fontSize: AppDimens.fontSizeMedium,
-                                fontWeight: FontWeight.normal,
-                              ),
+                              style: Get.context!.textTheme.titleSmall!
+                                  .copyWith(
+                                    color: context.textColor,
+                                    fontSize: AppDimens.fontSizeMedium,
+                                    fontWeight: FontWeight.normal,
+                                  ),
                             ),
                           ],
                         ),
@@ -135,7 +151,9 @@ class LoginView extends GetView<AuthController> {
                         printLog('success:: $success');
 
                         if (!success) {
-                          Helpers.snackbarForErorr2(bodyText: "Biometric login failed");
+                          Helpers.snackbarForErorr2(
+                            bodyText: "Biometric login failed",
+                          );
                         }
                       },
                     ),
@@ -152,7 +170,7 @@ class LoginView extends GetView<AuthController> {
                       },
                       child: Text(
                         "Skip & Continue",
-                        style: Get.textTheme.bodyMedium?.copyWith(
+                        style: Get.context!.textTheme.bodyMedium?.copyWith(
                           color: context.buttonColor,
                           fontWeight: FontWeight.w600,
                           decoration: TextDecoration.underline,
@@ -188,14 +206,25 @@ class FingerprintButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: context.tapBg,
           borderRadius: BorderRadius.circular(20),
-          boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2))],
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 4,
+              offset: Offset(0, 2),
+            ),
+          ],
         ),
         child: Center(
           child: SvgPicture.asset(
-            GetPlatform.isIOS ? Assets.svgImageFaceId : Assets.svgImageFingerScan,
+            GetPlatform.isIOS
+                ? Assets.svgImageFaceId
+                : Assets.svgImageFingerScan,
             width: 60,
             height: 60,
-            colorFilter: ColorFilter.mode(ColorConstants.secondaryColorLight, BlendMode.srcIn),
+            colorFilter: ColorFilter.mode(
+              ColorConstants.secondaryColorLight,
+              BlendMode.srcIn,
+            ),
           ),
         ),
       ),

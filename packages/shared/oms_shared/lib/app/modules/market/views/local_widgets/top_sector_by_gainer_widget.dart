@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
@@ -46,17 +46,21 @@ class TopSectorByGainerWidget extends StatelessWidget {
                   crosshairBehavior: CrosshairBehavior(
                     enable: true, // Enable crosshair
                     activationMode: ActivationMode.singleTap, // Show on tap
-                    lineType: CrosshairLineType.both, // Show both vertical and horizontal lines
+                    lineType: CrosshairLineType
+                        .both, // Show both vertical and horizontal lines
                   ),
 
                   primaryXAxis: CategoryAxis(
                     labelRotation: -90, // rotate labels to fit
                     interval: 1,
                     minimum: -0.5, // বামপাশের গ্যাপ (আগের মতোই থাকবে)
-                    maximum: homeCon.shownMarket.chartData.isNotEmpty ? homeCon.shownMarket.chartData.length - 0.5 : null,
+                    maximum: homeCon.shownMarket.chartData.isNotEmpty
+                        ? homeCon.shownMarket.chartData.length - 0.5
+                        : null,
                     majorGridLines: const MajorGridLines(width: 0),
                     labelPlacement: LabelPlacement.onTicks,
-                    labelIntersectAction: AxisLabelIntersectAction.rotate90, // show all labels
+                    labelIntersectAction:
+                        AxisLabelIntersectAction.rotate90, // show all labels
                     labelAlignment: LabelAlignment.center,
                   ),
                   zoomPanBehavior: ZoomPanBehavior(
@@ -72,11 +76,12 @@ class TopSectorByGainerWidget extends StatelessWidget {
                   ),
                   legend: Legend(
                     isVisible: true, // Enable the legend
-                    position: LegendPosition.top, // Position the legend at the top
+                    position:
+                        LegendPosition.top, // Position the legend at the top
                     alignment: ChartAlignment.center, // Center align the legend
                     title: LegendTitle(
                       text: 'Top Sectors By Gainer',
-                      textStyle: Get.textTheme.titleMedium?.copyWith(
+                      textStyle: Get.context!.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w500,
                         fontSize: 18,
                         color: context.textColor,

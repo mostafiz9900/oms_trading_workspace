@@ -1,6 +1,6 @@
 import 'package:oms_shared/app/data/models/response/user_balance.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 // আপনার প্রোজেক্টের মডেল এবং অন্যান্য ইম্পোর্টগুলো এখানে ঠিকঠাক আছে কি না দেখে নিবেন
 import '../../../core/utils/helpers/app_helper.dart';
@@ -27,7 +27,9 @@ class WithdrawalRequestController extends GetxController {
   void onInit() {
     super.onInit();
     userBalance = homeController.userBalanceData;
-    printLog('withdrawal request : controller init: ${homeController.userInfo.toJson()}');
+    printLog(
+      'withdrawal request : controller init: ${homeController.userInfo.toJson()}',
+    );
     fetchWithdrawList();
   }
 
@@ -49,11 +51,16 @@ class WithdrawalRequestController extends GetxController {
     var investorCode = homeController.userInfo.userDetail?.investorCode;
 
     if (investorCode == null || investorCode.isEmpty) {
-      Helpers.snackbarForErorr2(titleText: "Error", bodyText: "Investor code not found. Please re-login.");
+      Helpers.snackbarForErorr2(
+        titleText: "Error",
+        bodyText: "Investor code not found. Please re-login.",
+      );
       return;
     }
     try {
-      final response = await homeController.homeRepository.getWithdrawList(investorCode);
+      final response = await homeController.homeRepository.getWithdrawList(
+        investorCode,
+      );
 
       if (response.data != null) {
         withdrawList = response.data!;
@@ -64,7 +71,10 @@ class WithdrawalRequestController extends GetxController {
         );
       }
     } catch (e) {
-      Helpers.snackbarForErorr2(titleText: "Exception", bodyText: "Something went wrong: ${e.toString()}");
+      Helpers.snackbarForErorr2(
+        titleText: "Exception",
+        bodyText: "Something went wrong: ${e.toString()}",
+      );
     } finally {
       isFetching = false;
       update(); // স্পিনার বন্ধ করে লিস্ট দেখানোর জন্য update()
@@ -80,7 +90,10 @@ class WithdrawalRequestController extends GetxController {
     double availableAmount = userBalance?.amount ?? 0.0;
 
     if (amountController.text.trim().isEmpty || enteredAmount <= 0) {
-      Helpers.snackbarForErorr2(titleText: "Validation Error", bodyText: "Please enter a valid withdraw amount.");
+      Helpers.snackbarForErorr2(
+        titleText: "Validation Error",
+        bodyText: "Please enter a valid withdraw amount.",
+      );
       return;
     }
 
@@ -104,7 +117,10 @@ class WithdrawalRequestController extends GetxController {
     var investorCode = homeController.userInfo.userDetail?.investorCode;
 
     if (investorCode == null || investorCode.isEmpty) {
-      Helpers.snackbarForErorr2(titleText: "Error", bodyText: "Investor code not found. Please re-login.");
+      Helpers.snackbarForErorr2(
+        titleText: "Error",
+        bodyText: "Investor code not found. Please re-login.",
+      );
       return;
     }
 
@@ -120,11 +136,15 @@ class WithdrawalRequestController extends GetxController {
       WithdrawRequest requestData = WithdrawRequest(
         investorCode: investorCode,
         withdrawRequest: amountController.text.trim(),
-        narration: narrationController.text.trim().isEmpty ? null : narrationController.text.trim(),
+        narration: narrationController.text.trim().isEmpty
+            ? null
+            : narrationController.text.trim(),
       );
 
       // 5. Call API
-      final response = await homeController.homeRepository.createWithdraw(requestData);
+      final response = await homeController.homeRepository.createWithdraw(
+        requestData,
+      );
 
       if (response.data != null) {
         if (context.mounted) {
@@ -145,7 +165,10 @@ class WithdrawalRequestController extends GetxController {
         );
       }
     } catch (e) {
-      Helpers.snackbarForErorr2(titleText: "Exception", bodyText: "Something went wrong: ${e.toString()}");
+      Helpers.snackbarForErorr2(
+        titleText: "Exception",
+        bodyText: "Something went wrong: ${e.toString()}",
+      );
     } finally {
       isSubmitting = false;
       update();

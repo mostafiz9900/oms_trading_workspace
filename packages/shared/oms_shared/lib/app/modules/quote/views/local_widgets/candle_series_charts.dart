@@ -1,7 +1,8 @@
 import 'dart:math';
-import 'package:flutter/material.dart';
+
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -59,12 +60,17 @@ class CandleSeriesChartsWidget extends HookWidget {
   }
 
   DateTime _getBucketStart(DateTime dt, int intervalMins) {
-    if (intervalMins == 60) return DateTime(dt.year, dt.month, dt.day, dt.hour, 0);
+    if (intervalMins == 60) {
+      return DateTime(dt.year, dt.month, dt.day, dt.hour, 0);
+    }
     final int bucketMin = (dt.minute ~/ intervalMins) * intervalMins;
     return DateTime(dt.year, dt.month, dt.day, dt.hour, bucketMin);
   }
 
-  List<_VolBucket> _aggregateVolumeBuckets(List<TimeAndSalesModel> raw, int bucketMins) {
+  List<_VolBucket> _aggregateVolumeBuckets(
+    List<TimeAndSalesModel> raw,
+    int bucketMins,
+  ) {
     if (raw.isEmpty) return [];
 
     final now = DateTime.now();
@@ -90,7 +96,14 @@ class CandleSeriesChartsWidget extends HookWidget {
       final vol = (t.v ?? 0).toDouble();
 
       if (!map.containsKey(key)) {
-        map[key] = _VolBucket(start: bucketStart, volume: vol, open: price, high: price, low: price, close: price);
+        map[key] = _VolBucket(
+          start: bucketStart,
+          volume: vol,
+          open: price,
+          high: price,
+          low: price,
+          close: price,
+        );
       } else {
         final b = map[key]!;
         b.volume += vol;
@@ -134,7 +147,12 @@ class CandleSeriesChartsWidget extends HookWidget {
     final hoveredCandle = useState<_VolBucket?>(null);
 
     final zoomPanBehavior = useMemoized(
-      () => ZoomPanBehavior(enablePanning: true, enablePinching: true, zoomMode: ZoomMode.x, maximumZoomLevel: 0.05),
+      () => ZoomPanBehavior(
+        enablePanning: true,
+        enablePinching: true,
+        zoomMode: ZoomMode.x,
+        maximumZoomLevel: 0.05,
+      ),
     );
 
     final trackballBehavior = useMemoized(
@@ -151,7 +169,13 @@ class CandleSeriesChartsWidget extends HookWidget {
       ),
     );
 
-    final isIntradayTab = ['1m', '5m', '15m', '30m', '1H'].contains(selectedTab.value);
+    final isIntradayTab = [
+      '1m',
+      '5m',
+      '15m',
+      '30m',
+      '1H',
+    ].contains(selectedTab.value);
     final timeframes = ['1m', '5m', '15m', '30m', '1H', '1D'];
 
     return GetBuilder<HomeController>(
@@ -164,8 +188,13 @@ class CandleSeriesChartsWidget extends HookWidget {
             List<_VolBucket> volBuckets = [];
 
             if (isIntradayTab) {
-              final rawTicks = List<TimeAndSalesModel>.from(homeCont.shownMarket.timeAndSales);
-              volBuckets = _aggregateVolumeBuckets(rawTicks, _getBucketMinutes(selectedTab.value));
+              final rawTicks = List<TimeAndSalesModel>.from(
+                homeCont.shownMarket.timeAndSales,
+              );
+              volBuckets = _aggregateVolumeBuckets(
+                rawTicks,
+                _getBucketMinutes(selectedTab.value),
+              );
             } else if (selectedTab.value == '1D') {
               volBuckets = histCont.chartData
                   .map(
@@ -187,7 +216,9 @@ class CandleSeriesChartsWidget extends HookWidget {
                   const SizedBox(height: 12),
                   _buildTimeframeBar(timeframes, selectedTab, hoveredCandle),
                   const SizedBox(height: 80),
-                  const Center(child: CircularProgressIndicator(strokeWidth: 2.5)),
+                  const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2.5),
+                  ),
                   const SizedBox(height: 80),
                 ],
               );
@@ -209,14 +240,18 @@ class CandleSeriesChartsWidget extends HookWidget {
             }
 
             final pad = (maxY - minY) * 0.12;
-            final volAxisMax = volBuckets.map((e) => e.volume).reduce(max) * 4.5;
+            final volAxisMax =
+                volBuckets.map((e) => e.volume).reduce(max) * 4.5;
             final double candleWidth = selectedTab.value == '1D' ? 0.6 : 0.7;
 
             final activeCandle = hoveredCandle.value ?? volBuckets.last;
             final bool isCandleUp = activeCandle.close >= activeCandle.open;
             final Color candleColor = isCandleUp ? bullColor : bearColor;
 
-            final double dynamicChartHeight = (screenHeight * 0.45).clamp(350.0, 550.0);
+            final double dynamicChartHeight = (screenHeight * 0.45).clamp(
+              350.0,
+              550.0,
+            );
 
             return SingleChildScrollView(
               physics: const ClampingScrollPhysics(),
@@ -234,31 +269,64 @@ class CandleSeriesChartsWidget extends HookWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor.withAlpha(179),
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Theme.of(context).dividerColor.withAlpha(51)),
+                        border: Border.all(
+                          color: Theme.of(context).dividerColor.withAlpha(51),
+                        ),
                       ),
                       child: Wrap(
                         spacing: 12,
                         runSpacing: 8,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          _buildInfoTag('O', activeCandle.open.toStringAsFixed(2), context),
-                          _buildInfoTag('H', activeCandle.high.toStringAsFixed(2), context),
-                          _buildInfoTag('L', activeCandle.low.toStringAsFixed(2), context),
-                          _buildInfoTag('C', activeCandle.close.toStringAsFixed(2), context, color: candleColor),
-                          _buildInfoTag('V', NumberFormat.compact().format(activeCandle.volume), context),
+                          _buildInfoTag(
+                            'O',
+                            activeCandle.open.toStringAsFixed(2),
+                            context,
+                          ),
+                          _buildInfoTag(
+                            'H',
+                            activeCandle.high.toStringAsFixed(2),
+                            context,
+                          ),
+                          _buildInfoTag(
+                            'L',
+                            activeCandle.low.toStringAsFixed(2),
+                            context,
+                          ),
+                          _buildInfoTag(
+                            'C',
+                            activeCandle.close.toStringAsFixed(2),
+                            context,
+                            color: candleColor,
+                          ),
+                          _buildInfoTag(
+                            'V',
+                            NumberFormat.compact().format(activeCandle.volume),
+                            context,
+                          ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: candleColor.withAlpha(31),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
                               '${isCandleUp ? '+' : ''}${activeCandle.change.toStringAsFixed(2)} (${activeCandle.percentChange.toStringAsFixed(2)}%)',
-                              style: TextStyle(color: candleColor, fontSize: 11, fontWeight: FontWeight.w700),
+                              style: TextStyle(
+                                color: candleColor,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                           ),
                         ],
@@ -275,7 +343,12 @@ class CandleSeriesChartsWidget extends HookWidget {
                       backgroundColor: Colors.transparent,
                       plotAreaBorderWidth: 0,
                       // 🚀 Right & Left margin increased slightly
-                      margin: const EdgeInsets.only(right: 18, left: 8, top: 4, bottom: 4),
+                      margin: const EdgeInsets.only(
+                        right: 18,
+                        left: 8,
+                        top: 4,
+                        bottom: 4,
+                      ),
                       zoomPanBehavior: zoomPanBehavior,
                       trackballBehavior: trackballBehavior,
                       onTrackballPositionChanging: (TrackballArgs args) {
@@ -288,7 +361,9 @@ class CandleSeriesChartsWidget extends HookWidget {
                       },
                       primaryXAxis: DateTimeAxis(
                         intervalType: DateTimeIntervalType.auto,
-                        dateFormat: selectedTab.value == '1D' ? DateFormat('dd MMM') : DateFormat('hh:mm a'),
+                        dateFormat: selectedTab.value == '1D'
+                            ? DateFormat('dd MMM')
+                            : DateFormat('hh:mm a'),
                         // 🚀 Prevents the extreme left/right labels from being cut off
                         edgeLabelPlacement: EdgeLabelPlacement.shift,
                         majorGridLines: MajorGridLines(
@@ -298,7 +373,8 @@ class CandleSeriesChartsWidget extends HookWidget {
                         ),
                         axisLine: const AxisLine(width: 0),
                         labelStyle: TextStyle(
-                          color: Theme.of(context).textTheme.bodySmall?.color?.withAlpha(179),
+                          color: Theme.of(context).textTheme.bodySmall?.color
+                              ?.withAlpha(179),
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
                         ),
@@ -328,7 +404,8 @@ class CandleSeriesChartsWidget extends HookWidget {
                                   borderColor: liveColor,
                                   borderWidth: 1.2,
                                   dashArray: const <double>[3, 3],
-                                  text: ' ${currentLivePrice.toStringAsFixed(2)}',
+                                  text:
+                                      ' ${currentLivePrice.toStringAsFixed(2)}',
                                   textStyle: TextStyle(
                                     color: Colors.white,
                                     backgroundColor: liveColor,
@@ -356,7 +433,9 @@ class CandleSeriesChartsWidget extends HookWidget {
                           yValueMapper: (_VolBucket b, _) => b.volume,
                           yAxisName: 'volumeAxis',
                           pointColorMapper: (_VolBucket b, _) =>
-                              b.close >= b.open ? bullColor.withAlpha(64) : bearColor.withAlpha(64),
+                              b.close >= b.open
+                              ? bullColor.withAlpha(64)
+                              : bearColor.withAlpha(64),
                           width: candleWidth,
                         ),
                         if (selectedTab.value == '1m') ...[
@@ -365,7 +444,10 @@ class CandleSeriesChartsWidget extends HookWidget {
                             xValueMapper: (_VolBucket b, _) => b.start,
                             yValueMapper: (_VolBucket b, _) => b.close,
                             gradient: LinearGradient(
-                              colors: [liveColor.withAlpha(64), liveColor.withAlpha(0)],
+                              colors: [
+                                liveColor.withAlpha(64),
+                                liveColor.withAlpha(0),
+                              ],
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                             ),
@@ -442,9 +524,14 @@ class CandleSeriesChartsWidget extends HookWidget {
                 },
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
-                  padding: const .symmetric(vertical: 6, horizontal: 2), // 🚀 Added horizontal padding limit
+                  padding: const .symmetric(
+                    vertical: 6,
+                    horizontal: 2,
+                  ), // 🚀 Added horizontal padding limit
                   decoration: BoxDecoration(
-                    color: isSelected ? ColorConstants.unchangedColor : Colors.transparent,
+                    color: isSelected
+                        ? ColorConstants.unchangedColor
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(7),
                   ),
                   child: Center(
@@ -454,8 +541,13 @@ class CandleSeriesChartsWidget extends HookWidget {
                       child: Text(
                         t,
                         style: TextStyle(
-                          color: isSelected ? Colors.white : Get.theme.textTheme.bodyMedium?.color?.withAlpha(204),
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                          color: isSelected
+                              ? Colors.white
+                              : Get.theme.textTheme.bodyMedium?.color
+                                    ?.withAlpha(204),
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.w500,
                           fontSize: 12,
                         ),
                       ),
@@ -470,9 +562,15 @@ class CandleSeriesChartsWidget extends HookWidget {
     );
   }
 
-  Widget _buildInfoTag(String label, String value, BuildContext context, {Color? color}) {
+  Widget _buildInfoTag(
+    String label,
+    String value,
+    BuildContext context, {
+    Color? color,
+  }) {
     return Row(
-      mainAxisSize: MainAxisSize.min, // 🚀 Important for Wrap to measure properly
+      mainAxisSize:
+          MainAxisSize.min, // 🚀 Important for Wrap to measure properly
       children: [
         Text(
           '$label: ',

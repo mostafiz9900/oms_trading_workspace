@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 import 'languages/bn_bd.dart';
 import 'languages/en_us.dart';
@@ -7,6 +7,7 @@ import 'languages/en_us.dart';
 //Worker use backround task
 class LocalizationService extends Translations {
   static const Locale fallbackLocale = Locale('en', 'US');
+
   /// Parses a locale tag such as `en_US` or `bn_BD`.
   static Locale parseLocale(String tag) {
     final parts = tag.split('_');

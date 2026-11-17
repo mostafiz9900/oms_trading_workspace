@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 import 'dart:io';
 
 import '../../../core/utils/extensions/app_context.dart';
@@ -10,13 +12,21 @@ import '../../../data/services/storage_service.dart';
 import '../../../global_widgets/custom_edit_text_form_field.dart';
 import '../../../global_widgets/shared_market_components.dart';
 import '../../home/controllers/home_controller.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class LimitRequestController extends GetxController {
-  final GetConnect _connect = GetConnect();
+  final Dio _connect = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 20),
+      receiveTimeout: const Duration(seconds: 30),
+      responseType: ResponseType.json,
+      validateStatus: (status) => status != null,
+    ),
+  );
   final ScrollController scrollController = ScrollController();
   final homeController = Get.find<HomeController>();
 
@@ -28,7 +38,8 @@ class LimitRequestController extends GetxController {
 
   List clientLimitList = [];
 
-  final String baseUrl = "${AppConfig.baseUrl}api/broker_house/client-limit-requests/";
+  final String baseUrl =
+      "${AppConfig.baseUrl}api/broker_house/client-limit-requests/";
   late String token;
 
   /// form fields
@@ -48,7 +59,8 @@ class LimitRequestController extends GetxController {
 
   void _scrollListener() {
     scrollController.addListener(() {
-      if (scrollController.position.pixels >= scrollController.position.maxScrollExtent - 150 &&
+      if (scrollController.position.pixels >=
+              scrollController.position.maxScrollExtent - 150 &&
           !isMoreLoading &&
           currentPage < totalPages) {
         fetchClientLimits(page: currentPage + 1);
@@ -59,11 +71,17 @@ class LimitRequestController extends GetxController {
   Future<void> _initTokenAndApi() async {
     token = await StorageService.read(StorageConstants.token);
 
-    _connect.httpClient.addRequestModifier<dynamic>((request) {
-      request.headers['Authorization'] = "Bearer $token"; // 🔥 only token
-      request.headers['Accept'] = 'application/json';
-      return request;
-    });
+    _connect.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          if (token.isNotEmpty) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          options.headers['Accept'] = 'application/json';
+          handler.next(options);
+        },
+      ),
+    );
 
     fetchClientLimits(page: 1);
   }
@@ -95,12 +113,15 @@ class LimitRequestController extends GetxController {
     try {
       final Response response = await _connect.get(
         baseUrl,
-        query: {"investor_code": investorCode, "page": page.toString()},
+        queryParameters: {
+          "investor_code": investorCode,
+          "page": page.toString(),
+        },
       );
 
-      printLog('response ====: ${response.body}');
-      if (response.statusCode == 200 && response.body['success'] == true) {
-        final List data = response.body['data'];
+      printLog('response ====: ${response.data}');
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        final List data = response.data['data'];
 
         if (page == 1) {
           clientLimitList = data;
@@ -109,7 +130,7 @@ class LimitRequestController extends GetxController {
         }
 
         currentPage = page;
-        totalPages = response.body['total_pages'] ?? 1;
+        totalPages = response.data['total_pages'] ?? 1;
       }
     } on Exception catch (e) {
       Get.snackbar("Error", e.toString());
@@ -124,6 +145,7 @@ class LimitRequestController extends GetxController {
   void onClose() {
     scrollController.dispose();
     amountController.dispose();
+    _connect.close(force: true);
     super.onClose();
   }
 
@@ -138,12 +160,18 @@ class LimitRequestController extends GetxController {
   void openLimitRequestDialog(BuildContext context) {
     showDialog(
       context: context,
-      barrierDismissible: false, //  ফাঁকা জায়গায় ক্লিক করলে ডায়ালগ আর গায়েব হবে না
+      barrierDismissible:
+          false, //  ফাঁকা জায়গায় ক্লিক করলে ডায়ালগ আর গায়েব হবে না
       builder: (_) {
         return Dialog(
           backgroundColor: context.bgColor,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 24,
+          ),
           child: GetBuilder<LimitRequestController>(
             builder: (controller) {
               //  SingleChildScrollView অ্যাড করা হয়েছে, তাই কীবোর্ড ওপেন হলেও আর OverFlow/ফাঁটা এরর আসবে না!
@@ -160,7 +188,10 @@ class LimitRequestController extends GetxController {
                         children: [
                           Text(
                             "Limit Request",
-                            style: Get.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800, fontSize: 18),
+                            style: Get.context!.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 18,
+                            ),
                           ),
                           InkWell(
                             borderRadius: BorderRadius.circular(20),
@@ -168,7 +199,11 @@ class LimitRequestController extends GetxController {
                               controller.clearForm();
                               Get.back(); // ডায়ালগ ক্লোজ করবে
                             },
-                            child: Icon(Icons.close, color: context.textColor, size: 24),
+                            child: Icon(
+                              Icons.close,
+                              color: context.textColor,
+                              size: 24,
+                            ),
                           ),
                         ],
                       ),
@@ -253,7 +288,11 @@ class LimitRequestController extends GetxController {
                       //  File Upload & Preview Section
                       Text(
                         "Upload Receipt(Accepted formates: JPG,PNG)",
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.grey.shade500),
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade500,
+                        ),
                       ),
                       const SizedBox(height: 8),
 
@@ -266,26 +305,45 @@ class LimitRequestController extends GetxController {
                             padding: const EdgeInsets.symmetric(vertical: 24),
                             decoration: BoxDecoration(
                               color: Colors.blueAccent.withAlpha(13),
-                              border: Border.all(color: Colors.blueAccent.withAlpha(77), width: 1.5),
+                              border: Border.all(
+                                color: Colors.blueAccent.withAlpha(77),
+                                width: 1.5,
+                              ),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Column(
                               children: [
-                                Icon(Icons.cloud_upload_outlined, size: 36, color: Colors.blueAccent),
+                                Icon(
+                                  Icons.cloud_upload_outlined,
+                                  size: 36,
+                                  color: Colors.blueAccent,
+                                ),
                                 SizedBox(height: 8),
                                 Text(
                                   "Tap to upload receipt",
-                                  style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.w700),
+                                  style: TextStyle(
+                                    color: Colors.blueAccent,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
                                 SizedBox(height: 4),
-                                Text("JPG, PNG support", style: TextStyle(color: Colors.grey, fontSize: 11)),
+                                Text(
+                                  "JPG, PNG support",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 11,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
                         )
                       else
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
+                          ),
                           decoration: BoxDecoration(
                             color: context.bgColor,
                             border: Border.all(color: context.borderSideColor),
@@ -299,7 +357,11 @@ class LimitRequestController extends GetxController {
                                   color: ColorConstants.success.withAlpha(26),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
-                                child: Icon(Icons.image, color: ColorConstants.success, size: 24),
+                                child: Icon(
+                                  Icons.image,
+                                  color: ColorConstants.success,
+                                  size: 24,
+                                ),
                               ),
                               const SizedBox(width: 12),
                               Expanded(
@@ -308,25 +370,32 @@ class LimitRequestController extends GetxController {
                                   children: [
                                     Text(
                                       controller.selectedFile!.name,
-                                      style: Get.textTheme.titleMedium?.copyWith(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 14,
-                                        color: context.textColor,
-                                      ),
+                                      style: Get.context!.textTheme.titleMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 14,
+                                            color: context.textColor,
+                                          ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
                                       "Ready to submit",
-                                      style: TextStyle(fontSize: 11, color: ColorConstants.success),
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: ColorConstants.success,
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
                               //  ফাইল রিমুভ করার বাটন
                               IconButton(
-                                icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+                                icon: const Icon(
+                                  Icons.delete_outline,
+                                  color: Colors.redAccent,
+                                ),
                                 splashRadius: 20,
                                 onPressed: () {
                                   controller.removeSelectedFile();
@@ -345,19 +414,30 @@ class LimitRequestController extends GetxController {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: context.buttonColor,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                             elevation: 0,
                           ),
-                          onPressed: controller.isSubmitting ? null : () => controller.submitLimitRequest(context),
+                          onPressed: controller.isSubmitting
+                              ? null
+                              : () => controller.submitLimitRequest(context),
                           child: controller.isSubmitting
                               ? const SizedBox(
                                   height: 20,
                                   width: 20,
-                                  child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.5,
+                                    color: Colors.white,
+                                  ),
                                 )
                               : const Text(
                                   "Submit Request",
-                                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                         ),
                       ),
@@ -385,7 +465,10 @@ class LimitRequestController extends GetxController {
               title: const Text("Camera"),
               onTap: () async {
                 Get.back();
-                selectedFile = await _picker.pickImage(source: ImageSource.camera, imageQuality: 85);
+                selectedFile = await _picker.pickImage(
+                  source: ImageSource.camera,
+                  imageQuality: 85,
+                );
                 update();
               },
             ),
@@ -394,7 +477,9 @@ class LimitRequestController extends GetxController {
               title: const Text("Gallery"),
               onTap: () async {
                 Get.back();
-                selectedFile = await _picker.pickImage(source: ImageSource.gallery);
+                selectedFile = await _picker.pickImage(
+                  source: ImageSource.gallery,
+                );
                 update();
               },
             ),
@@ -409,12 +494,18 @@ class LimitRequestController extends GetxController {
     var investorCode = homeController.userInfo.userDetail?.investorCode;
 
     if (amountController.text.isEmpty) {
-      Helpers.snackbarForErorr2(titleText: "Error", bodyText: "Amount is required. Please enter an amount.");
+      Helpers.snackbarForErorr2(
+        titleText: "Error",
+        bodyText: "Amount is required. Please enter an amount.",
+      );
       return;
     }
 
     if (investorCode == null) {
-      Helpers.snackbarForErorr2(titleText: "Error", bodyText: "Investor code not found. Please re-login.");
+      Helpers.snackbarForErorr2(
+        titleText: "Error",
+        bodyText: "Investor code not found. Please re-login.",
+      );
       return;
     }
 
@@ -436,16 +527,17 @@ class LimitRequestController extends GetxController {
       if (selectedFile != null) {
         final file = File(selectedFile!.path);
         final fileName = selectedFile!.name;
-        final ext = fileName.split('.').last.toLowerCase();
-        final mimeType = (ext == 'png') ? 'image/png' : 'image/jpeg';
 
-        requestData["receipt"] = MultipartFile(file, filename: fileName, contentType: mimeType);
+        requestData["receipt"] = await MultipartFile.fromFile(
+          file.path,
+          filename: fileName,
+        );
       }
 
       // ম্যাপ থেকে FormData তৈরি করা হলো
-      final formData = FormData(requestData);
+      final formData = FormData.fromMap(requestData);
 
-      final Response response = await _connect.post(baseUrl, formData);
+      final Response response = await _connect.post(baseUrl, data: formData);
 
       //  ৪. Robust Response Handling
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -457,17 +549,27 @@ class LimitRequestController extends GetxController {
 
         Helpers.snackBarForSuccess2(
           titleText: "Success",
-          bodyText: response.body?['message'] ?? "Limit request submitted successfully",
+          bodyText:
+              response.data?['message'] ??
+              "Limit request submitted successfully",
         );
         clearForm();
         fetchClientLimits(page: 1);
       } else {
-        String errorMsg = response.body?['message'] ?? "Failed to submit request. Please try again later.";
-        Helpers.snackbarForErorr2(titleText: "Request Failed", bodyText: errorMsg);
+        String errorMsg =
+            response.data?['message'] ??
+            "Failed to submit request. Please try again later.";
+        Helpers.snackbarForErorr2(
+          titleText: "Request Failed",
+          bodyText: errorMsg,
+        );
       }
     } catch (e) {
       //  Catch Exception safely
-      Helpers.snackbarForErorr2(titleText: "Exception", bodyText: "An unexpected error occurred: ${e.toString()}");
+      Helpers.snackbarForErorr2(
+        titleText: "Exception",
+        bodyText: "An unexpected error occurred: ${e.toString()}",
+      );
     } finally {
       isSubmitting = false;
       update();

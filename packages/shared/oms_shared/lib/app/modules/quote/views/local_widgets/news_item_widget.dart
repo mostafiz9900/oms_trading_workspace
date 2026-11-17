@@ -1,7 +1,5 @@
-
-
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/utils/extensions/date_time_extensions.dart';
@@ -24,7 +22,7 @@ class NewsItemWidget extends StatelessWidget {
           if ((model.tl ?? "").isNotEmpty)
             Text(
               model.tl!,
-              style: Get.textTheme.titleMedium?.copyWith(
+              style: Get.context!.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w400,
                 fontSize: 16,
                 color: context.buttonColor,
@@ -37,11 +35,11 @@ class NewsItemWidget extends StatelessWidget {
               children: [
                 Text(
                   Helpers.getTimeAgoFromDateTime('${model.dt}', '${model.t}'),
-                  style: Get.textTheme.bodySmall,
+                  style: Get.context!.textTheme.bodySmall,
                 ),
                 Text(
                   "${model.dt?.standardDate}",
-                  style: Get.textTheme.bodySmall,
+                  style: Get.context!.textTheme.bodySmall,
                 ),
               ],
             ),
@@ -51,7 +49,7 @@ class NewsItemWidget extends StatelessWidget {
             Text(
               model.nt!,
               textAlign: TextAlign.justify,
-              style: Get.textTheme.bodyMedium?.copyWith(
+              style: Get.context!.textTheme.bodyMedium?.copyWith(
                 color: context.textColor,
               ),
             ),

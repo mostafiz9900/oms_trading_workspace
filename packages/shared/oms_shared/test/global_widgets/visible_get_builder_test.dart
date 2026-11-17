@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:oms_shared/app/global_widgets/visible_get_builder.dart';
 
 class _Counter extends GetxController {
@@ -38,7 +38,10 @@ void main() {
       app(
         Column(
           children: [
-            GetBuilder<_Counter>(id: 'v', builder: (c) => Text('get=${c.value}')),
+            GetBuilder<_Counter>(
+              id: 'v',
+              builder: (c) => Text('get=${c.value}'),
+            ),
             visibleBuilder(),
           ],
         ),
@@ -62,56 +65,76 @@ void main() {
     expect(find.text('visible=3'), findsOneWidget);
   });
 
-  testWidgets('hidden IndexedStack tab skips rebuilds and catches up when shown',
-      (tester) async {
-    Widget tabs(int index) => app(
-      IndexedStack(index: index, children: [visibleBuilder(), const Text('other tab')]),
-    );
+  testWidgets(
+    'hidden IndexedStack tab skips rebuilds and catches up when shown',
+    (tester) async {
+      Widget tabs(int index) => app(
+        IndexedStack(
+          index: index,
+          children: [visibleBuilder(), const Text('other tab')],
+        ),
+      );
 
-    await tester.pumpWidget(tabs(0));
-    expect(builds, 1);
+      await tester.pumpWidget(tabs(0));
+      expect(builds, 1);
 
-    await tester.pumpWidget(tabs(1)); // switch away
-    final buildsWhenHidden = builds;
+      await tester.pumpWidget(tabs(1)); // switch away
+      final buildsWhenHidden = builds;
 
-    for (var i = 0; i < 5; i++) {
+      for (var i = 0; i < 5; i++) {
+        counter.bump();
+        await tester.pump();
+      }
+      expect(
+        builds,
+        buildsWhenHidden,
+        reason: 'no work while the tab is hidden',
+      );
+
+      await tester.pumpWidget(tabs(0)); // switch back
+      expect(find.text('visible=5'), findsOneWidget);
+      expect(
+        builds,
+        buildsWhenHidden + 1,
+        reason: 'one rebuild with latest data',
+      );
+
       counter.bump();
       await tester.pump();
-    }
-    expect(builds, buildsWhenHidden, reason: 'no work while the tab is hidden');
+      expect(find.text('visible=6'), findsOneWidget);
+    },
+  );
 
-    await tester.pumpWidget(tabs(0)); // switch back
-    expect(find.text('visible=5'), findsOneWidget);
-    expect(builds, buildsWhenHidden + 1, reason: 'one rebuild with latest data');
+  testWidgets(
+    'screen covered by another page skips rebuilds until it returns',
+    (tester) async {
+      final navigator = GlobalKey<NavigatorState>();
+      await tester.pumpWidget(
+        MaterialApp(
+          navigatorKey: navigator,
+          home: Scaffold(body: visibleBuilder()),
+        ),
+      );
 
-    counter.bump();
-    await tester.pump();
-    expect(find.text('visible=6'), findsOneWidget);
-  });
+      navigator.currentState!.push(
+        MaterialPageRoute<void>(
+          builder: (_) => const Scaffold(body: Text('confirm page')),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final buildsWhenCovered = builds;
 
-  testWidgets('screen covered by another page skips rebuilds until it returns',
-      (tester) async {
-    final navigator = GlobalKey<NavigatorState>();
-    await tester.pumpWidget(
-      MaterialApp(navigatorKey: navigator, home: Scaffold(body: visibleBuilder())),
-    );
+      for (var i = 0; i < 3; i++) {
+        counter.bump();
+        await tester.pump();
+      }
+      expect(builds, buildsWhenCovered);
 
-    navigator.currentState!.push(
-      MaterialPageRoute<void>(builder: (_) => const Scaffold(body: Text('confirm page'))),
-    );
-    await tester.pumpAndSettle();
-    final buildsWhenCovered = builds;
-
-    for (var i = 0; i < 3; i++) {
-      counter.bump();
-      await tester.pump();
-    }
-    expect(builds, buildsWhenCovered);
-
-    navigator.currentState!.pop();
-    await tester.pumpAndSettle();
-    expect(find.text('visible=3'), findsOneWidget);
-  });
+      navigator.currentState!.pop();
+      await tester.pumpAndSettle();
+      expect(find.text('visible=3'), findsOneWidget);
+    },
+  );
 
   testWidgets('stops listening when disposed', (tester) async {
     await tester.pumpWidget(app(visibleBuilder()));

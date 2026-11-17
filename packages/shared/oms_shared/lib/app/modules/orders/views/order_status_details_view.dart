@@ -1,6 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../core/utils/extensions/app_context.dart';
 import '../../../core/utils/helpers/app_helper.dart';
@@ -41,53 +41,90 @@ class OrderStatusDetailsView extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    _TitleAndValueRowWidget(title: 'Name', value: order.name ?? ''),
+                    _TitleAndValueRowWidget(
+                      title: 'Name',
+                      value: order.name ?? '',
+                    ),
                     AppSpace.spaceH10,
                     dividerWidget,
                     AppSpace.spaceH10,
-                    _TitleAndValueRowWidget(title: 'Client A/C', value: order.clientCode ?? ''),
+                    _TitleAndValueRowWidget(
+                      title: 'Client A/C',
+                      value: order.clientCode ?? '',
+                    ),
                     AppSpace.spaceH10,
                     dividerWidget,
                     AppSpace.spaceH10,
-                    _TitleAndValueRowWidget(title: 'Side', value: order.side ?? ""),
+                    _TitleAndValueRowWidget(
+                      title: 'Side',
+                      value: order.side ?? "",
+                    ),
                     AppSpace.spaceH10,
                     dividerWidget,
                     AppSpace.spaceH10,
-                    _TitleAndValueRowWidget(title: 'Exec Qty', value: '${order.sentQty ?? 0.0}'),
+                    _TitleAndValueRowWidget(
+                      title: 'Exec Qty',
+                      value: '${order.sentQty ?? 0.0}',
+                    ),
                     AppSpace.spaceH10,
                     dividerWidget,
                     AppSpace.spaceH10,
-                    _TitleAndValueRowWidget(title: 'Order Type', value: order.ordType ?? ""),
+                    _TitleAndValueRowWidget(
+                      title: 'Order Type',
+                      value: order.ordType ?? "",
+                    ),
                     AppSpace.spaceH10,
                     dividerWidget,
                     AppSpace.spaceH10,
-                    _TitleAndValueRowWidget(title: 'Cum Qty', value: '${order.cumQty ?? 0.0}'),
+                    _TitleAndValueRowWidget(
+                      title: 'Cum Qty',
+                      value: '${order.cumQty ?? 0.0}',
+                    ),
                     AppSpace.spaceH10,
                     dividerWidget,
                     AppSpace.spaceH10,
-                    _TitleAndValueRowWidget(title: 'Last Price', value: '${order.lastPx ?? 0.0}'),
+                    _TitleAndValueRowWidget(
+                      title: 'Last Price',
+                      value: '${order.lastPx ?? 0.0}',
+                    ),
                     AppSpace.spaceH10,
                     dividerWidget,
                     AppSpace.spaceH10,
-                    _TitleAndValueRowWidget(title: 'Limit', value: '${order.limit ?? 0.0}'),
+                    _TitleAndValueRowWidget(
+                      title: 'Limit',
+                      value: '${order.limit ?? 0.0}',
+                    ),
                     AppSpace.spaceH10,
                     dividerWidget,
                     AppSpace.spaceH10,
-                    _TitleAndValueRowWidget(title: 'Execution', value: '${order.execution ?? 0.0}'),
+                    _TitleAndValueRowWidget(
+                      title: 'Execution',
+                      value: '${order.execution ?? 0.0}',
+                    ),
                     AppSpace.spaceH10,
                     dividerWidget,
                     AppSpace.spaceH10,
-                    _TitleAndValueRowWidget(title: 'Order Status', value: order.orderStatus ?? ""),
+                    _TitleAndValueRowWidget(
+                      title: 'Order Status',
+                      value: order.orderStatus ?? "",
+                    ),
                     AppSpace.spaceH10,
                     dividerWidget,
                     AppSpace.spaceH10,
-                    _TitleAndValueRowWidget(title: 'Status', value: order.status ?? ""),
+                    _TitleAndValueRowWidget(
+                      title: 'Status',
+                      value: order.status ?? "",
+                    ),
                     AppSpace.spaceH10,
                     dividerWidget,
                     AppSpace.spaceH10,
                     _TitleAndValueRowWidget(
                       title: 'Transaction Time',
-                      value: Helpers.formatCustomDateTime(rawDate: order.transactTime) ?? "",
+                      value:
+                          Helpers.formatCustomDateTime(
+                            rawDate: order.transactTime,
+                          ) ??
+                          "",
                     ),
                     AppSpace.spaceH10,
                   ],
@@ -103,7 +140,8 @@ class OrderStatusDetailsView extends StatelessWidget {
 }
 
 class _TitleAndValueRowWidget extends StatelessWidget {
-  const _TitleAndValueRowWidget({required this.title, required this.value}) : valueColor = null;
+  const _TitleAndValueRowWidget({required this.title, required this.value})
+    : valueColor = null;
   final String title;
   final String value;
   final Color? valueColor;
@@ -116,12 +154,15 @@ class _TitleAndValueRowWidget extends StatelessWidget {
         Text(
           title,
           textAlign: TextAlign.left,
-          style: Get.textTheme.bodyMedium?.copyWith(fontSize: 12, fontWeight: FontWeight.w400),
+          style: Get.context!.textTheme.bodyMedium?.copyWith(
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+          ),
         ),
         Text(
           value,
           textAlign: TextAlign.right,
-          style: Get.textTheme.bodyMedium?.copyWith(
+          style: Get.context!.textTheme.bodyMedium?.copyWith(
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: valueColor ?? context.textColor,

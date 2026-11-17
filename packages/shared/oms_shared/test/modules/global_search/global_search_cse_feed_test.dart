@@ -1,7 +1,7 @@
 import 'package:broker_config/broker_config.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:oms_shared/app/core/values/storage.dart';
 import 'package:oms_shared/app/data/models/response/market_model.dart';
 import 'package:oms_shared/app/data/repositories/home_repository.dart';
@@ -76,7 +76,7 @@ void main() {
   }
 
   Future<void> finish(WidgetTester tester) async {
-    await Get.delete<WebSocketService>(force: true);
+    Get.delete<WebSocketService>(force: true);
     await tester.pump(const Duration(seconds: 6));
   }
 
@@ -117,9 +117,7 @@ void main() {
     await finish(tester);
   });
 
-  testWidgets('back to DSE: DSE results and DSE recents again', (
-    tester,
-  ) async {
+  testWidgets('back to DSE: DSE results and DSE recents again', (tester) async {
     await start(tester, ExchangeMode.dseAndCse);
     final search = await openSearch();
     search.addToRecent(_dseGp);

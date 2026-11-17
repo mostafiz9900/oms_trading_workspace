@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
+
 import '../../../core/utils/extensions/app_context.dart';
 import '../../../core/values/colors.dart';
 import '../../../core/values/space.dart';
@@ -45,7 +46,10 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
           children: [
             // DSE | CSE; shows only for houses on both exchanges.
             const ExchangeSwitcher(padding: EdgeInsets.only(right: 8)),
-            CommonWidget.buySell(context: context, onTap: () => Get.find<HomeController>().changeCurrentIndex(5)),
+            CommonWidget.buySell(
+              context: context,
+              onTap: () => Get.find<HomeController>().changeCurrentIndex(5),
+            ),
             AppbarRightSearchTapWidget(),
           ],
         ),
@@ -62,14 +66,19 @@ class _CustomTabWidget extends StatefulWidget {
   State<_CustomTabWidget> createState() => _CustomTabWidgetState();
 }
 
-class _CustomTabWidgetState extends State<_CustomTabWidget> with SingleTickerProviderStateMixin {
+class _CustomTabWidgetState extends State<_CustomTabWidget>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
     final homeCon = Get.find<HomeController>();
-    _tabController = TabController(length: 3, vsync: this, initialIndex: homeCon.currentTabIndexPortfolio);
+    _tabController = TabController(
+      length: 3,
+      vsync: this,
+      initialIndex: homeCon.currentTabIndexPortfolio,
+    );
   }
 
   @override
@@ -93,9 +102,18 @@ class _CustomTabWidgetState extends State<_CustomTabWidget> with SingleTickerPro
             indicatorSize: TabBarIndicatorSize.tab,
             labelColor: Colors.white,
             unselectedLabelColor: context.textColor,
-            labelStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-            unselectedLabelStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-            indicator: BoxDecoration(borderRadius: BorderRadius.circular(0), color: ColorConstants.buttonColorLight),
+            labelStyle: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+            unselectedLabelStyle: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+            ),
+            indicator: BoxDecoration(
+              borderRadius: BorderRadius.circular(0),
+              color: ColorConstants.buttonColorLight,
+            ),
             onTap: (index) {
               homeCon.currentTabIndexPortfolio = index;
             },
@@ -111,11 +129,14 @@ class _CustomTabWidgetState extends State<_CustomTabWidget> with SingleTickerPro
           child: TabBarView(
             controller: _tabController,
             physics: const NeverScrollableScrollPhysics(),
-            children: const [PositionTabWidget(), OrderListTabWidget(), AccountSummaryTabWidget()],
+            children: const [
+              PositionTabWidget(),
+              OrderListTabWidget(),
+              AccountSummaryTabWidget(),
+            ],
           ),
         ),
       ],
     );
   }
 }
-

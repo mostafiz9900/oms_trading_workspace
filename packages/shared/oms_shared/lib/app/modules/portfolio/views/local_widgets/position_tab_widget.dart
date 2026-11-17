@@ -1,7 +1,7 @@
 import 'package:oms_shared/app/data/models/response/position_response.dart';
 import 'package:oms_shared/app/modules/portfolio/controllers/position_controller.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/utils/extensions/market_model_extensions.dart';

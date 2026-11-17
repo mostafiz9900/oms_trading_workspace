@@ -1,9 +1,13 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 abstract class AppDimens {
   AppDimens._();
 
-  static EdgeInsets pagePadding({double? horizontal, double? vertical}) => EdgeInsets.symmetric(horizontal: horizontal ?? 15, vertical: vertical ?? 15);
+  static EdgeInsets pagePadding({double? horizontal, double? vertical}) =>
+      EdgeInsets.symmetric(
+        horizontal: horizontal ?? 15,
+        vertical: vertical ?? 15,
+      );
   static const double mobileScreenSize = 340;
   static const double tabletScreenSize = 640;
   static const double desktopScreenSize = 1440;
@@ -35,7 +39,8 @@ abstract class AppDimens {
   static const double textSizeVerySmall = 13.0;
   static const double textSizeSmall = 16.0;
   static const double textSizeMedium = 18.0;
-  static const double textSizeLarge = 18.0; // Note: this duplicates textSizeLarge from Android, check if needed
+  static const double textSizeLarge =
+      18.0; // Note: this duplicates textSizeLarge from Android, check if needed
   static const double textSizeTiny = 10.0;
   static const double textHeader = 25.0;
   static const double textProfile = 32.0;

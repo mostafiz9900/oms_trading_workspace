@@ -1,5 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 class AppNetworkController extends GetxController {
   final _connectivityResult = ConnectivityResult.none.obs;
@@ -12,12 +12,14 @@ class AppNetworkController extends GetxController {
   }
 
   void showConnectivitySnackBar(ConnectivityResult result) {
-    String message = result != ConnectivityResult.none ? 'Connected to the internet' : 'No internet connection';
+    String message = result != ConnectivityResult.none
+        ? 'Connected to the internet'
+        : 'No internet connection';
 
     Get.snackbar(
       'Connection Status',
       message,
-      snackPosition: SnackPosition.BOTTOM,
+      snackPosition: SnackPosition.bottom,
       duration: const Duration(seconds: 3),
     );
   }

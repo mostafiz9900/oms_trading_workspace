@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
@@ -56,7 +56,11 @@ class WhaleTrackerChart extends StatelessWidget {
       chart: SfCartesianChart(
         margin: EdgeInsets.zero,
         plotAreaBorderWidth: 0,
-        zoomPanBehavior: ZoomPanBehavior(enablePinching: true, enablePanning: true, zoomMode: ZoomMode.x),
+        zoomPanBehavior: ZoomPanBehavior(
+          enablePinching: true,
+          enablePanning: true,
+          zoomMode: ZoomMode.x,
+        ),
         trackballBehavior: TrackballBehavior(
           enable: true,
           activationMode: ActivationMode.singleTap,
@@ -66,7 +70,11 @@ class WhaleTrackerChart extends StatelessWidget {
             enable: true,
             color: context.isDark ? Colors.grey.shade900 : Colors.black87,
             format: 'Price: point.y\nVol: point.size',
-            textStyle: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+            textStyle: const TextStyle(
+              color: Colors.white,
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+            ),
             borderRadius: 6,
           ),
         ),
@@ -74,11 +82,20 @@ class WhaleTrackerChart extends StatelessWidget {
         primaryYAxis: NumericAxis(
           opposedPosition: true,
           edgeLabelPlacement: EdgeLabelPlacement.shift,
-          majorGridLines: MajorGridLines(color: Colors.grey.withAlpha(38), dashArray: const [4, 4]),
+          majorGridLines: MajorGridLines(
+            color: Colors.grey.withAlpha(38),
+            dashArray: const [4, 4],
+          ),
           axisLine: const AxisLine(width: 0),
-          labelStyle: Get.textTheme.labelSmall?.copyWith(color: Colors.grey, fontSize: 10),
+          labelStyle: Get.context!.textTheme.labelSmall?.copyWith(
+            color: Colors.grey,
+            fontSize: 10,
+          ),
           axisLabelFormatter: (AxisLabelRenderDetails details) {
-            return ChartAxisLabel(details.value.toStringAsFixed(2), details.textStyle);
+            return ChartAxisLabel(
+              details.value.toStringAsFixed(2),
+              details.textStyle,
+            );
           },
         ),
         series: <CartesianSeries>[
@@ -87,9 +104,12 @@ class WhaleTrackerChart extends StatelessWidget {
             xValueMapper: (_, index) => index,
             yValueMapper: (model, _) => model.p,
             sizeValueMapper: (model, _) => model.v,
-            pointColorMapper: (model, _) =>
-                model.s == 'BUY' ? ColorConstants.success.withAlpha(153) : ColorConstants.error.withAlpha(153),
-            borderColor: context.isDark ? Colors.white.withAlpha(77) : Colors.black.withAlpha(51),
+            pointColorMapper: (model, _) => model.s == 'BUY'
+                ? ColorConstants.success.withAlpha(153)
+                : ColorConstants.error.withAlpha(153),
+            borderColor: context.isDark
+                ? Colors.white.withAlpha(77)
+                : Colors.black.withAlpha(51),
             borderWidth: 1,
             minimumRadius: 3,
             maximumRadius: 18,
@@ -125,7 +145,9 @@ class CombinedPriceVolumeChart extends StatelessWidget {
     if (maxVol == 0) maxVol = 10;
     if (minPrice == double.infinity) minPrice = 0;
 
-    double baselinePrice = chartData.isNotEmpty ? (chartData.first.p ?? minPrice) : minPrice;
+    double baselinePrice = chartData.isNotEmpty
+        ? (chartData.first.p ?? minPrice)
+        : minPrice;
     double priceDiff = maxPrice - minPrice;
     if (priceDiff == 0) priceDiff = 1;
 
@@ -138,7 +160,9 @@ class CombinedPriceVolumeChart extends StatelessWidget {
       double lastPrice = (chartData.last.p ?? 0.0).toDouble();
       isOverallPositive = lastPrice >= firstPrice;
     }
-    final Color trendColor = isOverallPositive ? ColorConstants.success : ColorConstants.error;
+    final Color trendColor = isOverallPositive
+        ? ColorConstants.success
+        : ColorConstants.error;
 
     return _ChartCard(
       context: context,
@@ -147,7 +171,11 @@ class CombinedPriceVolumeChart extends StatelessWidget {
       chart: SfCartesianChart(
         margin: EdgeInsets.zero,
         plotAreaBorderWidth: 0,
-        zoomPanBehavior: ZoomPanBehavior(enablePinching: true, enablePanning: true, zoomMode: ZoomMode.x),
+        zoomPanBehavior: ZoomPanBehavior(
+          enablePinching: true,
+          enablePanning: true,
+          zoomMode: ZoomMode.x,
+        ),
         trackballBehavior: TrackballBehavior(
           enable: true,
           activationMode: ActivationMode.singleTap,
@@ -157,7 +185,11 @@ class CombinedPriceVolumeChart extends StatelessWidget {
           tooltipSettings: InteractiveTooltip(
             enable: true,
             color: context.isDark ? Colors.grey.shade900 : Colors.black87,
-            textStyle: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+            textStyle: const TextStyle(
+              color: Colors.white,
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+            ),
             borderRadius: 6,
           ),
         ),
@@ -166,13 +198,22 @@ class CombinedPriceVolumeChart extends StatelessWidget {
           name: 'PriceAxis',
           opposedPosition: true,
           edgeLabelPlacement: EdgeLabelPlacement.shift,
-          majorGridLines: MajorGridLines(color: Colors.grey.withAlpha(38), dashArray: const [4, 4]),
+          majorGridLines: MajorGridLines(
+            color: Colors.grey.withAlpha(38),
+            dashArray: const [4, 4],
+          ),
           axisLine: const AxisLine(width: 0),
-          labelStyle: Get.textTheme.labelSmall?.copyWith(color: Colors.grey, fontSize: 10),
+          labelStyle: Get.context!.textTheme.labelSmall?.copyWith(
+            color: Colors.grey,
+            fontSize: 10,
+          ),
           minimum: yAxisMin,
           maximum: yAxisMax,
           axisLabelFormatter: (AxisLabelRenderDetails details) {
-            return ChartAxisLabel(details.value.toStringAsFixed(2), details.textStyle);
+            return ChartAxisLabel(
+              details.value.toStringAsFixed(2),
+              details.textStyle,
+            );
           },
           plotBands: <PlotBand>[
             PlotBand(
@@ -183,13 +224,23 @@ class CombinedPriceVolumeChart extends StatelessWidget {
               borderWidth: 1.2,
               dashArray: const <double>[5, 5],
               text: 'Ref',
-              textStyle: TextStyle(color: trendColor, fontSize: 9, fontWeight: FontWeight.bold),
+              textStyle: TextStyle(
+                color: trendColor,
+                fontSize: 9,
+                fontWeight: FontWeight.bold,
+              ),
               horizontalTextAlignment: TextAnchor.start,
             ),
           ],
         ),
         axes: <ChartAxis>[
-          NumericAxis(name: 'VolumeAxis', opposedPosition: false, isVisible: false, minimum: 0, maximum: maxVol * 1.5),
+          NumericAxis(
+            name: 'VolumeAxis',
+            opposedPosition: false,
+            isVisible: false,
+            minimum: 0,
+            maximum: maxVol * 1.5,
+          ),
         ],
         series: <CartesianSeries>[
           ColumnSeries<dynamic, int>(
@@ -200,8 +251,9 @@ class CombinedPriceVolumeChart extends StatelessWidget {
             yAxisName: 'VolumeAxis',
             width: 0.9,
             spacing: 0.1,
-            pointColorMapper: (model, _) =>
-                model.s == 'BUY' ? ColorConstants.success.withAlpha(179) : ColorConstants.error.withAlpha(179),
+            pointColorMapper: (model, _) => model.s == 'BUY'
+                ? ColorConstants.success.withAlpha(179)
+                : ColorConstants.error.withAlpha(179),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(2)),
             animationDuration: 0,
           ),
@@ -266,7 +318,11 @@ class CvdLineChart extends StatelessWidget {
       chart: SfCartesianChart(
         margin: EdgeInsets.zero,
         plotAreaBorderWidth: 0,
-        zoomPanBehavior: ZoomPanBehavior(enablePinching: true, enablePanning: true, zoomMode: ZoomMode.x),
+        zoomPanBehavior: ZoomPanBehavior(
+          enablePinching: true,
+          enablePanning: true,
+          zoomMode: ZoomMode.x,
+        ),
         trackballBehavior: TrackballBehavior(
           enable: true,
           activationMode: ActivationMode.singleTap,
@@ -276,7 +332,11 @@ class CvdLineChart extends StatelessWidget {
             enable: true,
             color: context.isDark ? Colors.grey.shade900 : Colors.black87,
             format: 'CVD: point.y',
-            textStyle: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+            textStyle: const TextStyle(
+              color: Colors.white,
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+            ),
             borderRadius: 6,
           ),
         ),
@@ -284,9 +344,15 @@ class CvdLineChart extends StatelessWidget {
         primaryYAxis: NumericAxis(
           opposedPosition: true,
           edgeLabelPlacement: EdgeLabelPlacement.shift,
-          majorGridLines: MajorGridLines(color: Colors.grey.withAlpha(38), dashArray: const [4, 4]),
+          majorGridLines: MajorGridLines(
+            color: Colors.grey.withAlpha(38),
+            dashArray: const [4, 4],
+          ),
           axisLine: const AxisLine(width: 0),
-          labelStyle: Get.textTheme.labelSmall?.copyWith(color: Colors.grey, fontSize: 10),
+          labelStyle: Get.context!.textTheme.labelSmall?.copyWith(
+            color: Colors.grey,
+            fontSize: 10,
+          ),
         ),
         series: <CartesianSeries>[
           FastLineSeries<CvdModel, int>(
@@ -319,7 +385,11 @@ class BuySellBreakdownChart extends StatelessWidget {
       chart: SfCartesianChart(
         margin: EdgeInsets.zero,
         plotAreaBorderWidth: 0,
-        zoomPanBehavior: ZoomPanBehavior(enablePinching: true, enablePanning: true, zoomMode: ZoomMode.x),
+        zoomPanBehavior: ZoomPanBehavior(
+          enablePinching: true,
+          enablePanning: true,
+          zoomMode: ZoomMode.x,
+        ),
         trackballBehavior: TrackballBehavior(
           enable: true,
           activationMode: ActivationMode.singleTap,
@@ -329,7 +399,11 @@ class BuySellBreakdownChart extends StatelessWidget {
             enable: true,
             color: context.isDark ? Colors.grey.shade900 : Colors.black87,
             format: 'series.name: point.y',
-            textStyle: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+            textStyle: const TextStyle(
+              color: Colors.white,
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+            ),
             borderRadius: 6,
           ),
         ),
@@ -337,9 +411,15 @@ class BuySellBreakdownChart extends StatelessWidget {
         primaryYAxis: NumericAxis(
           opposedPosition: true,
           edgeLabelPlacement: EdgeLabelPlacement.shift,
-          majorGridLines: MajorGridLines(color: Colors.grey.withAlpha(38), dashArray: const [4, 4]),
+          majorGridLines: MajorGridLines(
+            color: Colors.grey.withAlpha(38),
+            dashArray: const [4, 4],
+          ),
           axisLine: const AxisLine(width: 0),
-          labelStyle: Get.textTheme.labelSmall?.copyWith(color: Colors.grey, fontSize: 10),
+          labelStyle: Get.context!.textTheme.labelSmall?.copyWith(
+            color: Colors.grey,
+            fontSize: 10,
+          ),
         ),
         series: <CartesianSeries>[
           ColumnSeries<dynamic, int>(
@@ -382,7 +462,11 @@ class TradeSizeHistogramChart extends StatelessWidget {
       chart: SfCartesianChart(
         margin: EdgeInsets.zero,
         plotAreaBorderWidth: 0,
-        zoomPanBehavior: ZoomPanBehavior(enablePinching: true, enablePanning: true, zoomMode: ZoomMode.x),
+        zoomPanBehavior: ZoomPanBehavior(
+          enablePinching: true,
+          enablePanning: true,
+          zoomMode: ZoomMode.x,
+        ),
         trackballBehavior: TrackballBehavior(
           enable: true,
           activationMode: ActivationMode.singleTap,
@@ -392,7 +476,11 @@ class TradeSizeHistogramChart extends StatelessWidget {
             enable: true,
             color: context.isDark ? Colors.grey.shade900 : Colors.black87,
             format: 'Volume: point.y',
-            textStyle: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+            textStyle: const TextStyle(
+              color: Colors.white,
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+            ),
             borderRadius: 6,
           ),
         ),
@@ -400,9 +488,15 @@ class TradeSizeHistogramChart extends StatelessWidget {
         primaryYAxis: NumericAxis(
           opposedPosition: true,
           edgeLabelPlacement: EdgeLabelPlacement.shift,
-          majorGridLines: MajorGridLines(color: Colors.grey.withAlpha(38), dashArray: const [4, 4]),
+          majorGridLines: MajorGridLines(
+            color: Colors.grey.withAlpha(38),
+            dashArray: const [4, 4],
+          ),
           axisLine: const AxisLine(width: 0),
-          labelStyle: Get.textTheme.labelSmall?.copyWith(color: Colors.grey, fontSize: 10),
+          labelStyle: Get.context!.textTheme.labelSmall?.copyWith(
+            color: Colors.grey,
+            fontSize: 10,
+          ),
         ),
         series: <CartesianSeries>[
           SplineAreaSeries<dynamic, int>(
@@ -448,7 +542,12 @@ class _ChartCard extends StatelessWidget {
   final double height;
   final Widget chart;
 
-  const _ChartCard({required this.context, required this.title, required this.height, required this.chart});
+  const _ChartCard({
+    required this.context,
+    required this.title,
+    required this.height,
+    required this.chart,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -457,19 +556,28 @@ class _ChartCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.isDark ? Colors.black12 : Colors.white,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: context.isDark ? Colors.white10 : Colors.grey.shade200, width: 1.2),
+        border: Border.all(
+          color: context.isDark ? Colors.white10 : Colors.grey.shade200,
+          width: 1.2,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.analytics_rounded, size: 14, color: Colors.grey.shade500),
+              Icon(
+                Icons.analytics_rounded,
+                size: 14,
+                color: Colors.grey.shade500,
+              ),
               const SizedBox(width: 6),
               Text(
                 title,
-                style: Get.textTheme.labelMedium?.copyWith(
-                  color: context.isDark ? Colors.grey.shade400 : Colors.grey.shade700,
+                style: Get.context!.textTheme.labelMedium?.copyWith(
+                  color: context.isDark
+                      ? Colors.grey.shade400
+                      : Colors.grey.shade700,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.3,
                 ),

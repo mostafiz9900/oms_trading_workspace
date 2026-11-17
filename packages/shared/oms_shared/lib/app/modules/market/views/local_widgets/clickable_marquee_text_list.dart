@@ -1,12 +1,11 @@
 import 'dart:async';
 
-
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/values/space.dart';
 import '../../../home/controllers/home_controller.dart';
 import '/app/data/models/marquee_holder.dart';
-import 'package:flutter/material.dart';
 
+import 'package:material_ui/material_ui.dart';
 
 class ClickableMarqueeTextList extends StatefulWidget {
   final HomeController homeCon;
@@ -14,10 +13,12 @@ class ClickableMarqueeTextList extends StatefulWidget {
   const ClickableMarqueeTextList({super.key, required this.homeCon});
 
   @override
-  State<ClickableMarqueeTextList> createState() => _ClickableMarqueeTextListState();
+  State<ClickableMarqueeTextList> createState() =>
+      _ClickableMarqueeTextListState();
 }
 
-class _ClickableMarqueeTextListState extends State<ClickableMarqueeTextList> with SingleTickerProviderStateMixin {
+class _ClickableMarqueeTextListState extends State<ClickableMarqueeTextList>
+    with SingleTickerProviderStateMixin {
   late ScrollController _scrollController;
   Timer? _scrollTimer;
   bool _isScrolling = true;
@@ -36,7 +37,8 @@ class _ClickableMarqueeTextListState extends State<ClickableMarqueeTextList> wit
     // Pause the auto-scroll while the Market tab is hidden or another page
     // covers it (the timer used to run 33 times a second all session); it
     // resumes from the same spot when visible again.
-    final onScreen = Visibility.of(context) && TickerMode.valuesOf(context).enabled;
+    final onScreen =
+        Visibility.of(context) && TickerMode.valuesOf(context).enabled;
     if (onScreen == _onScreen) return;
     _onScreen = onScreen;
     if (!onScreen) {
@@ -125,7 +127,11 @@ class _ClickableMarqueeTextListState extends State<ClickableMarqueeTextList> wit
               children: [
                 Text(
                   marqueeHolder.shortName ?? "",
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: context.textColor),
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: context.textColor,
+                  ),
                 ),
 
                 Text(
@@ -171,7 +177,6 @@ class _ClickableMarqueeTextListState extends State<ClickableMarqueeTextList> wit
   }
 
   Color _getColorForValue(String value) {
-
     // Handle "+" and "-" signs explicitly
     if (value.startsWith('+')) {
       return Colors.green;
@@ -200,7 +205,8 @@ class _ClickableMarqueeTextListState extends State<ClickableMarqueeTextList> wit
 
   @override
   Widget build(BuildContext context) {
-    return widget.homeCon.shownMarket.marqueeList == [] || widget.homeCon.shownMarket.marqueeList.isEmpty
+    return widget.homeCon.shownMarket.marqueeList == [] ||
+            widget.homeCon.shownMarket.marqueeList.isEmpty
         ? SizedBox.shrink()
         : RepaintBoundary(
             child: SizedBox(
@@ -210,7 +216,8 @@ class _ClickableMarqueeTextListState extends State<ClickableMarqueeTextList> wit
                 scrollDirection: Axis.horizontal,
                 itemCount: widget.homeCon.shownMarket.marqueeList.length,
                 // marqueeList is kept sorted by shortName in the controller.
-                itemBuilder: (_, index) => _buildItem(widget.homeCon.shownMarket.marqueeList[index]),
+                itemBuilder: (_, index) =>
+                    _buildItem(widget.homeCon.shownMarket.marqueeList[index]),
               ),
             ),
           );

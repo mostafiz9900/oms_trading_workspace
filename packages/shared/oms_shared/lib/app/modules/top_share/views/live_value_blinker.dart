@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class LiveProBlinker extends StatefulWidget {
   final double trackValue;
@@ -20,7 +20,8 @@ class LiveProBlinker extends StatefulWidget {
   State<LiveProBlinker> createState() => _LiveProBlinkerState();
 }
 
-class _LiveProBlinkerState extends State<LiveProBlinker> with SingleTickerProviderStateMixin {
+class _LiveProBlinkerState extends State<LiveProBlinker>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Color?> _colorAnimation;
 
@@ -28,7 +29,10 @@ class _LiveProBlinkerState extends State<LiveProBlinker> with SingleTickerProvid
   void initState() {
     super.initState();
     // 🕒 প্রফেশনাল স্মুথনেসের জন্য 400ms ডিউরেশন বেস্ট
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 400));
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
     _colorAnimation = AlwaysStoppedAnimation(widget.defaultColor);
   }
 
@@ -50,10 +54,10 @@ class _LiveProBlinkerState extends State<LiveProBlinker> with SingleTickerProvid
       }
 
       // 🚀 ২. Organic Animation: easeOutQuad দিলে ব্লিংকটা হুট করে নিভে না গিয়ে খুব স্মুথলি ফেড আউট হয়
-      _colorAnimation = ColorTween(
-        begin: targetColor,
-        end: widget.defaultColor,
-      ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutQuad));
+      _colorAnimation = ColorTween(begin: targetColor, end: widget.defaultColor)
+          .animate(
+            CurvedAnimation(parent: _controller, curve: Curves.easeOutQuad),
+          );
 
       _controller.forward(from: 0.0);
     }

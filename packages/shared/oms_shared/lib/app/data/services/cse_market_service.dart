@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:broker_config/broker_config.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../core/utils/helpers/log_helper.dart';
 import '../../core/values/app_config.dart';

@@ -1,7 +1,10 @@
 import '../../../data/services/storage_service.dart';
-import 'package:get/get.dart';
+
+import 'package:getxify/getxify.dart';
 import 'package:local_auth/local_auth.dart';
+
 import '../../../core/utils/helpers/log_helper.dart';
+
 // Note: You no longer need services.dart for PlatformException. local_auth 3.0 uses LocalAuthException.
 
 class BiometricController extends GetxController implements GetxService {

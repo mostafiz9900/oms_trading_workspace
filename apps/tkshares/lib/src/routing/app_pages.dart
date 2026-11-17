@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:oms_shared/app/routes/app_routes.dart';
 import 'package:oms_shared/bootstrap.dart';
 import 'package:oms_shared/app/modules/app_network/bindings/app_network_binding.dart';
@@ -33,20 +33,60 @@ class AppPages {
   static final INITIAL = initScreen == 0 ? Routes.ONBOARDING : Routes.SPLASH;
 
   static final routes = [
-    GetPage(name: Routes.LOGIN, page: () => const LoginView(), binding: AuthBinding()),
-    GetPage(name: Routes.HOME, page: () => const HomeView(), binding: HomeBinding()),
-    GetPage(name: Routes.SPLASH, page: () => const SplashView(), binding: SplashBinding()),
-    GetPage(name: Routes.APP_NETWORK, page: () => const AppNetworkView(), binding: AppNetworkBinding()),
-    GetPage(name: Routes.ONBOARDING, page: () => const OnboardingView(), binding: OnboardingBinding()),
-    GetPage(name: Routes.TOP_SHARE, page: () => const TopShareView(), binding: TopShareBinding()),
-    GetPage(name: Routes.SEARCH_WATCH_LIST, page: () => const SearchWatchListView(), binding: SearchWatchListBinding()),
-    GetPage(name: Routes.CONTACT_US, page: () => const ContactUsView(), binding: ContactUsBinding()),
-    GetPage(name: Routes.ORDER_ALERT, page: () => const OrderAlertView(), binding: OrderAlertBinding()),
-    GetPage(name: Routes.LIMIT_REQUEST, page: () => const LimitRequestView(), binding: LimitRequestBinding()),
+    GetPage(
+      name: Routes.LOGIN,
+      page: () => const LoginView(),
+      bindings: [AuthBinding()],
+    ),
+    GetPage(
+      name: Routes.HOME,
+      page: () => const HomeView(),
+      bindings: [HomeBinding()],
+    ),
+    GetPage(
+      name: Routes.SPLASH,
+      page: () => const SplashView(),
+      bindings: [SplashBinding()],
+    ),
+    GetPage(
+      name: Routes.APP_NETWORK,
+      page: () => const AppNetworkView(),
+      bindings: [AppNetworkBinding()],
+    ),
+    GetPage(
+      name: Routes.ONBOARDING,
+      page: () => const OnboardingView(),
+      bindings: [OnboardingBinding()],
+    ),
+    GetPage(
+      name: Routes.TOP_SHARE,
+      page: () => const TopShareView(),
+      bindings: [TopShareBinding()],
+    ),
+    GetPage(
+      name: Routes.SEARCH_WATCH_LIST,
+      page: () => const SearchWatchListView(),
+      bindings: [SearchWatchListBinding()],
+    ),
+    GetPage(
+      name: Routes.CONTACT_US,
+      page: () => const ContactUsView(),
+      bindings: [ContactUsBinding()],
+    ),
+    GetPage(
+      name: Routes.ORDER_ALERT,
+      page: () => const OrderAlertView(),
+      bindings: [OrderAlertBinding()],
+    ),
+    GetPage(
+      name: Routes.LIMIT_REQUEST,
+      page: () => const LimitRequestView(),
+      bindings: [LimitRequestBinding()],
+    ),
     GetPage(
       name: Routes.WITHDRAWAL_REQUEST,
       page: () => const WithdrawalRequestView(),
-      binding: WithdrawalRequestBinding(),
+      bindings: [WithdrawalRequestBinding()],
     ),
   ];
 }

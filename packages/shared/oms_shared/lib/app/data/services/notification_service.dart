@@ -15,7 +15,9 @@ class NotificationService {
   /// [backgroundHandler] must be a top-level `@pragma('vm:entry-point')`
   /// function in the app that calls [handleBackgroundMessage] with the app's
   /// own Firebase options (background isolates cannot see injected state).
-  static Future<void> initialize({required BackgroundMessageHandler backgroundHandler}) async {
+  static Future<void> initialize({
+    required BackgroundMessageHandler backgroundHandler,
+  }) async {
     // Initialize local notifications
     await LocalNotificationService.initialize();
 
@@ -41,7 +43,11 @@ class NotificationService {
   }
 
   static Future<void> _requestPermissions() async {
-    NotificationSettings settings = await _fcm.requestPermission(alert: true, badge: true, sound: true);
+    NotificationSettings settings = await _fcm.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
     printLog('✅ Permission status: ${settings.authorizationStatus}');
   }
 
@@ -84,11 +90,16 @@ class NotificationService {
     });
   }
 
-  static void _setupBackgroundHandler(BackgroundMessageHandler backgroundHandler) {
+  static void _setupBackgroundHandler(
+    BackgroundMessageHandler backgroundHandler,
+  ) {
     FirebaseMessaging.onBackgroundMessage(backgroundHandler);
   }
 
-  static Future<void> handleBackgroundMessage(RemoteMessage message, FirebaseOptions options) async {
+  static Future<void> handleBackgroundMessage(
+    RemoteMessage message,
+    FirebaseOptions options,
+  ) async {
     printLog('📨 Background message received');
     if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(options: options);

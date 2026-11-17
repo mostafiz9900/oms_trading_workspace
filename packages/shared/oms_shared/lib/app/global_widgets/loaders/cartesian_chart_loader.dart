@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../core/utils/extensions/app_context.dart';
@@ -11,8 +11,12 @@ class CartesianChartLoader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 🚀 থিম অনুযায়ী শিমার কালার
-    final baseColor = context.isDark ? Colors.grey.shade800 : Colors.grey.shade200;
-    final highlightColor = context.isDark ? Colors.grey.shade700 : Colors.grey.shade50;
+    final baseColor = context.isDark
+        ? Colors.grey.shade800
+        : Colors.grey.shade200;
+    final highlightColor = context.isDark
+        ? Colors.grey.shade700
+        : Colors.grey.shade50;
 
     final shapeColor = Colors.white;
 
@@ -24,7 +28,13 @@ class CartesianChartLoader extends StatelessWidget {
         color: context.cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Get.theme.dividerColor.withAlpha(26)),
-        boxShadow: [BoxShadow(color: Colors.black.withAlpha(8), blurRadius: 8, offset: const Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(8),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Shimmer.fromColors(
         baseColor: baseColor,
@@ -38,12 +48,18 @@ class CartesianChartLoader extends StatelessWidget {
                 Container(
                   width: 140,
                   height: 16,
-                  decoration: BoxDecoration(color: shapeColor, borderRadius: BorderRadius.circular(4)),
+                  decoration: BoxDecoration(
+                    color: shapeColor,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                 ),
                 Container(
                   width: 50,
                   height: 12,
-                  decoration: BoxDecoration(color: shapeColor, borderRadius: BorderRadius.circular(4)),
+                  decoration: BoxDecoration(
+                    color: shapeColor,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                 ),
               ],
             ),
@@ -57,7 +73,11 @@ class CartesianChartLoader extends StatelessWidget {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: List.generate(5, (index) {
-                      return Container(height: 1, width: double.infinity, color: shapeColor.withAlpha(128));
+                      return Container(
+                        height: 1,
+                        width: double.infinity,
+                        color: shapeColor.withAlpha(128),
+                      );
                     }),
                   ),
 
@@ -88,7 +108,10 @@ class CartesianChartLoader extends StatelessWidget {
                 return Container(
                   width: 30,
                   height: 8,
-                  decoration: BoxDecoration(color: shapeColor, borderRadius: BorderRadius.circular(2)),
+                  decoration: BoxDecoration(
+                    color: shapeColor,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 );
               }),
             ),

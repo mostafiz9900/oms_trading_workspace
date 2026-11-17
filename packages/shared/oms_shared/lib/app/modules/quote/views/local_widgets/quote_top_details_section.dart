@@ -1,8 +1,8 @@
 import '/app/global_widgets/responsive_wrap_widget.dart';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/utils/extensions/date_time_extensions.dart';
@@ -84,7 +84,7 @@ class _StockHeaderInfo extends StatelessWidget {
     return RichText(
       text: TextSpan(
         text: marketData.fullName ?? "",
-        style: Get.textTheme.bodySmall?.copyWith(
+        style: Get.context!.textTheme.bodySmall?.copyWith(
           fontSize: AppDimens.space14,
           fontWeight: FontWeight.w600,
           color: context.textColor,
@@ -92,7 +92,7 @@ class _StockHeaderInfo extends StatelessWidget {
         children: [
           TextSpan(
             text: ' [${marketData.shareType ?? ""}]',
-            style: Get.textTheme.bodySmall?.copyWith(
+            style: Get.context!.textTheme.bodySmall?.copyWith(
               fontWeight: FontWeight.w400,
               fontSize: AppDimens.space12,
               color: context.textColor,
@@ -100,7 +100,7 @@ class _StockHeaderInfo extends StatelessWidget {
           ),
           TextSpan(
             text: ' [${marketData.sector ?? ""}]',
-            style: Get.textTheme.bodySmall?.copyWith(
+            style: Get.context!.textTheme.bodySmall?.copyWith(
               fontWeight: FontWeight.w400,
               fontSize: AppDimens.space12,
               color: context.textColor,
@@ -121,7 +121,7 @@ class _TimeAndSalesButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 33,
-      width: Get.width,
+      width: Get.context!.width,
       decoration: BoxDecoration(
         color: context.isDark ? ColorConstants.tapBgDark : Colors.grey[200],
         borderRadius: BorderRadius.circular(8),
@@ -139,7 +139,7 @@ class _TimeAndSalesButton extends StatelessWidget {
                   return Expanded(
                     child: Text(
                       'Traded ${firstItem.v ?? 0.0} shares @${firstItem.p ?? 0.0}Tk',
-                      style: Get.textTheme.bodySmall?.copyWith(
+                      style: Get.context!.textTheme.bodySmall?.copyWith(
                         fontSize: AppDimens.space14,
                         fontWeight: FontWeight.w600,
                         color: context.textColor,
@@ -150,7 +150,7 @@ class _TimeAndSalesButton extends StatelessWidget {
                   return Expanded(
                     child: Text(
                       'No data available',
-                      style: Get.textTheme.bodySmall?.copyWith(
+                      style: Get.context!.textTheme.bodySmall?.copyWith(
                         fontSize: AppDimens.space14,
                         fontWeight: FontWeight.w600,
                         color: context.textColor,
@@ -164,7 +164,7 @@ class _TimeAndSalesButton extends StatelessWidget {
               children: [
                 Text(
                   'List ',
-                  style: Get.textTheme.bodySmall?.copyWith(
+                  style: Get.context!.textTheme.bodySmall?.copyWith(
                     fontSize: AppDimens.space14,
                     fontWeight: FontWeight.w600,
                     color: context.buttonColor,
@@ -207,7 +207,7 @@ class _PriceAndFavSection extends StatelessWidget {
           child: RichText(
             text: TextSpan(
               text: homeCon.marketData.activePrice.toStringAsFixed(1),
-              style: Get.textTheme.bodySmall?.copyWith(
+              style: Get.context!.textTheme.bodySmall?.copyWith(
                 fontSize: AppDimens.space14,
                 fontWeight: FontWeight.w600,
                 color: context.textColor,
@@ -216,7 +216,7 @@ class _PriceAndFavSection extends StatelessWidget {
                 TextSpan(
                   text:
                       ' ${updatePriceWithColor.text} (${homeCon.marketData.d?.toStringAsFixed(2) ?? "0.00"}%)',
-                  style: Get.textTheme.bodySmall?.copyWith(
+                  style: Get.context!.textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.w600,
                     fontSize: AppDimens.space14,
                     color: updatePriceWithColor.color,
@@ -225,7 +225,7 @@ class _PriceAndFavSection extends StatelessWidget {
                 TextSpan(
                   text:
                       ' Avg: ${homeCon.marketData.vwap?.toStringAsFixed(2) ?? 0.0}',
-                  style: Get.textTheme.bodySmall?.copyWith(
+                  style: Get.context!.textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.w600,
                     fontSize: AppDimens.space14,
                     color: context.textColor,
@@ -530,7 +530,7 @@ class _DividendInfo extends StatelessWidget {
     return RichText(
       text: TextSpan(
         text: label,
-        style: Get.textTheme.bodySmall?.copyWith(
+        style: Get.context!.textTheme.bodySmall?.copyWith(
           fontSize: AppDimens.space14,
           fontWeight: FontWeight.w600,
           color: HexColor('#9C9FA4'),
@@ -538,7 +538,7 @@ class _DividendInfo extends StatelessWidget {
         children: [
           TextSpan(
             text: ' $value',
-            style: Get.textTheme.bodySmall?.copyWith(
+            style: Get.context!.textTheme.bodySmall?.copyWith(
               fontWeight: FontWeight.w600,
               fontSize: AppDimens.space14,
               color: context.textColor,
@@ -563,7 +563,9 @@ class _ShareholdingInfo extends StatelessWidget {
       children: [
         Text(
           'Share Holding as on (30,sep 25)',
-          style: Get.textTheme.bodyMedium?.copyWith(color: HexColor('#A8A8AA')),
+          style: Get.context!.textTheme.bodyMedium?.copyWith(
+            color: HexColor('#A8A8AA'),
+          ),
         ),
         AppSpace.spaceH10,
         Wrap(

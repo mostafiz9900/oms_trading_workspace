@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/services.dart';
+
 import '../../../core/utils/helpers/app_helper.dart';
 import '../../../core/values/app_config.dart';
 
@@ -20,7 +21,6 @@ class ContactUsController extends GetxController {
 
   String get androidLink => AppConfig.profile.store.playStoreShareUrl;
   String get iosLink => AppConfig.profile.store.appStoreShareUrl;
-
 
   Future<void> makePhoneCall(String phoneNumber) async {
     final Uri launchUri = Uri(scheme: 'tel', path: phoneNumber);
@@ -45,7 +45,8 @@ class ContactUsController extends GetxController {
     final Uri launchUri = Uri(
       scheme: 'mailto',
       path: email,
-      query: 'subject=Support Inquiry - ${AppConfig.profile.legalName}&body=Hello Support Team,',
+      query:
+          'subject=Support Inquiry - ${AppConfig.profile.legalName}&body=Hello Support Team,',
     );
     if (await canLaunchUrl(launchUri)) {
       await launchUrl(launchUri);
@@ -57,7 +58,8 @@ class ContactUsController extends GetxController {
   Future<void> launchMap() async {
     //  ভেরিয়েবল ব্যবহার করা হলো
     final String addressQuery = Uri.encodeComponent(officeAddressFull);
-    final String mapUrl = "https://www.google.com/maps/search/?api=1&query=$addressQuery";
+    final String mapUrl =
+        "https://www.google.com/maps/search/?api=1&query=$addressQuery";
     final Uri launchUri = Uri.parse(mapUrl);
 
     if (await canLaunchUrl(launchUri)) {
@@ -82,7 +84,12 @@ class ContactUsController extends GetxController {
     final String shareText =
         "Experience the best stock market trading with ${AppConfig.profile.companyName}!\n\nDownload our Android app now:\n📱 $androidLink";
 
-    SharePlus.instance.share(ShareParams(text: shareText, subject: 'Download ${AppConfig.houseName} App (Android)'));
+    SharePlus.instance.share(
+      ShareParams(
+        text: shareText,
+        subject: 'Download ${AppConfig.houseName} App (Android)',
+      ),
+    );
   }
 
   void shareIosApp() {
@@ -90,7 +97,12 @@ class ContactUsController extends GetxController {
     final String shareText =
         "Experience the best stock market trading with ${AppConfig.profile.companyName}!\n\nDownload our iOS app now:\n🍏 $iosLink";
 
-    SharePlus.instance.share(ShareParams(text: shareText, subject: 'Download ${AppConfig.houseName} App (iOS)'));
+    SharePlus.instance.share(
+      ShareParams(
+        text: shareText,
+        subject: 'Download ${AppConfig.houseName} App (iOS)',
+      ),
+    );
   }
 
   void copyToClipboard(String text, String itemType) {
@@ -99,12 +111,11 @@ class ContactUsController extends GetxController {
     Get.rawSnackbar(
       message: '$itemType copied to clipboard',
       backgroundColor: const Color(0xFF22C665),
-      snackPosition: SnackPosition.BOTTOM,
+      snackPosition: SnackPosition.bottom,
       borderRadius: 8,
       margin: const EdgeInsets.all(12),
       duration: const Duration(seconds: 2),
       icon: const Icon(Icons.check_circle_outline, color: Colors.white),
     );
   }
-
 }

@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../core/utils/extensions/app_context.dart';
 import '../../../core/values/assets.dart';
@@ -24,7 +24,8 @@ class OrderListTabWidget extends StatefulWidget {
   State<OrderListTabWidget> createState() => _OrderListTabWidgetState();
 }
 
-class _OrderListTabWidgetState extends State<OrderListTabWidget> with AutomaticKeepAliveClientMixin {
+class _OrderListTabWidgetState extends State<OrderListTabWidget>
+    with AutomaticKeepAliveClientMixin {
   bool isActionViewExpanded = true;
 
   @override
@@ -45,10 +46,15 @@ class _OrderListTabWidgetState extends State<OrderListTabWidget> with AutomaticK
         AppSpace.spaceH8,
 
         //  Dynamic Title: Shows Original OR New Header based on state
-        isActionViewExpanded ? const _NewItemTitleWidget() : const _OriginalItemTitleWidget(),
+        isActionViewExpanded
+            ? const _NewItemTitleWidget()
+            : const _OriginalItemTitleWidget(),
 
         Expanded(
-          child: OrderHistoryWidget(isActionViewExpanded: isActionViewExpanded, onToggleView: toggleView),
+          child: OrderHistoryWidget(
+            isActionViewExpanded: isActionViewExpanded,
+            onToggleView: toggleView,
+          ),
         ),
       ],
     );
@@ -170,11 +176,17 @@ class _ClientCodeWidget extends ConsumerWidget {
                 children: [
                   Text(
                     'Client Code',
-                    style: Get.textTheme.bodySmall?.copyWith(fontSize: 13, fontWeight: FontWeight.w400),
+                    style: Get.context!.textTheme.bodySmall?.copyWith(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                   Text(
                     userInfo.userDetail?.investorCode ?? "",
-                    style: Get.textTheme.titleLarge?.copyWith(fontSize: 14, fontWeight: FontWeight.w700),
+                    style: Get.context!.textTheme.titleLarge?.copyWith(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ],
               ),
@@ -189,7 +201,11 @@ class _ClientCodeWidget extends ConsumerWidget {
                 var allOrders = homeCotByOrder.userOrder.data ?? [];
                 if (AppConfig.hasBothExchanges) {
                   allOrders = allOrders
-                      .where((order) => homeCotByOrder.exchangeOfOrder(order) == ExchangeService.current)
+                      .where(
+                        (order) =>
+                            homeCotByOrder.exchangeOfOrder(order) ==
+                            ExchangeService.current,
+                      )
                       .toList();
                 }
                 for (var order in allOrders) {
@@ -201,21 +217,29 @@ class _ClientCodeWidget extends ConsumerWidget {
                 }
                 showMenu(
                   context: context,
-                  position: RelativeRect.fromLTRB(position.dx, position.dy + 30, position.dx, 0),
+                  position: RelativeRect.fromLTRB(
+                    position.dx,
+                    position.dy + 30,
+                    position.dx,
+                    0,
+                  ),
                   color: ColorConstants.primaryColor,
                   items: uniqueInstruments.map((instrumentName) {
                     return PopupMenuItem<String>(
                       value: instrumentName,
                       child: Text(
                         instrumentName,
-                        style: Get.textTheme.bodyMedium?.copyWith(
-                          color: homeCotByOrder.selectedInstrument == instrumentName
+                        style: Get.context!.textTheme.bodyMedium?.copyWith(
+                          color:
+                              homeCotByOrder.selectedInstrument ==
+                                  instrumentName
                               ? ColorConstants.success
                               : Colors.white,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      onTap: () => homeCotByOrder.changeInstrument(instrumentName),
+                      onTap: () =>
+                          homeCotByOrder.changeInstrument(instrumentName),
                     );
                   }).toList(),
                 );
@@ -228,7 +252,10 @@ class _ClientCodeWidget extends ConsumerWidget {
                   children: [
                     Text(
                       'Instrument',
-                      style: Get.textTheme.bodySmall?.copyWith(fontSize: 13, fontWeight: FontWeight.w400),
+                      style: Get.context!.textTheme.bodySmall?.copyWith(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -241,7 +268,11 @@ class _ClientCodeWidget extends ConsumerWidget {
                                 controller.selectedInstrument,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: Get.textTheme.titleLarge?.copyWith(fontSize: 14, fontWeight: FontWeight.w700),
+                                style: Get.context!.textTheme.titleLarge
+                                    ?.copyWith(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                               );
                             },
                           ),
@@ -249,7 +280,9 @@ class _ClientCodeWidget extends ConsumerWidget {
                         SvgPicture.asset(
                           AssetsConstants.dropManuIconSvg,
                           colorFilter: ColorFilter.mode(
-                            context.isDarkMode ? ColorConstants.white : hexToColor('#988181'),
+                            context.isDarkMode
+                                ? ColorConstants.white
+                                : hexToColor('#988181'),
                             BlendMode.srcIn,
                           ),
                         ),

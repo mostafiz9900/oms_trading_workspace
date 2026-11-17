@@ -1,8 +1,8 @@
 import 'package:broker_config/broker_config.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:oms_shared/app/data/models/response/user_order.dart';
 import 'package:oms_shared/app/data/repositories/home_repository.dart';
 import 'package:oms_shared/app/data/services/exchange_service.dart';
@@ -82,12 +82,18 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           child: GetMaterialApp(
+            builder: testLegacyMaterialBuilder,
             home: Scaffold(
               body: TextFormField(controller: home.tradPriceTextEditField),
             ),
           ),
         ),
       );
+      await tester.pump(const Duration(milliseconds: 1));
+      addTearDown(() async {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump(const Duration(milliseconds: 1));
+      });
 
       showOrderFormDialog(
         UserOrder(
@@ -124,6 +130,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         child: GetMaterialApp(
+          builder: testLegacyMaterialBuilder,
           home: Scaffold(
             body: Column(
               children: [
@@ -136,6 +143,11 @@ void main() {
         ),
       ),
     );
+    await tester.pump(const Duration(milliseconds: 1));
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 1));
+    });
     home.qtyTextEditField.text = '7';
     showOrderFormDialog(
       UserOrder(
@@ -170,9 +182,18 @@ void main() {
       expect(c, isNot(same(home.minQtyTextEditField)), reason: hint);
       expect(c, isNot(same(home.disclosedQtyTextEditField)), reason: hint);
     }
-    expect(find.descendant(of: find.byType(AlertDialog), matching: find.text('10')), findsOneWidget);
-    expect(find.descendant(of: find.byType(AlertDialog), matching: find.text('2')), findsOneWidget);
-    expect(find.descendant(of: find.byType(AlertDialog), matching: find.text('3')), findsOneWidget);
+    expect(
+      find.descendant(of: find.byType(AlertDialog), matching: find.text('10')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: find.byType(AlertDialog), matching: find.text('2')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: find.byType(AlertDialog), matching: find.text('3')),
+      findsOneWidget,
+    );
 
     await tester.enterText(dialogField('Qty.'), '25');
     await tester.pump();

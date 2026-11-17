@@ -9,7 +9,7 @@ import '../../../data/services/storage_service.dart';
 import '../../../routes/app_routes.dart';
 import '/app/core/utils/helpers/jwt_helper.dart';
 
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 class TokenController extends GetxController {
   static const Duration _refreshBuffer = Duration(minutes: 2);

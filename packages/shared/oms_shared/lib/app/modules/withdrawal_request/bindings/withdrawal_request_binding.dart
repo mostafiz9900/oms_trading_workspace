@@ -1,8 +1,8 @@
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../controllers/withdrawal_request_controller.dart';
 
-class WithdrawalRequestBinding extends Bindings {
+class WithdrawalRequestBinding extends Binding {
   @override
   void dependencies() {
     Get.lazyPut<WithdrawalRequestController>(

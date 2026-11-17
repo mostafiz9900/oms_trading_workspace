@@ -1,8 +1,8 @@
-import '../../../../data/models/request/add_fav_item_request.dart' show AddFavItemRequest;
+import '../../../../data/models/request/add_fav_item_request.dart'
+    show AddFavItemRequest;
 
-
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/utils/helpers/app_helper.dart';
@@ -49,7 +49,7 @@ void favouriteBottomSheet(BuildContext ctx, MarketModel model) {
                     ),
                     child: Text(
                       '${homeCont.favCatList.elementAt(index).name}',
-                      style: Get.textTheme.bodyLarge?.copyWith(
+                      style: Get.context!.textTheme.bodyLarge?.copyWith(
                         fontSize: 16,
                         color:
                             homeCont.selectFavCatId ==

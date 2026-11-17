@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/utils/helpers/formatter_helper.dart';
@@ -15,8 +15,7 @@ class TimeSalesTabHistoryWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<HomeController>(
       id: 'timeAndSalesHistory',
-      initState: (_) {
-      },
+      initState: (_) {},
       builder: (homeCon) {
         return Column(
           children: [
@@ -30,19 +29,31 @@ class TimeSalesTabHistoryWidget extends StatelessWidget {
                 children: [
                   Expanded(
                     flex: 2,
-                    child: _TableTitleTextWidget(title: 'Price', textAlign: TextAlign.center),
+                    child: _TableTitleTextWidget(
+                      title: 'Price',
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                   Expanded(
                     flex: 3,
-                    child: _TableTitleTextWidget(title: 'Volume', textAlign: TextAlign.center),
+                    child: _TableTitleTextWidget(
+                      title: 'Volume',
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                   Expanded(
                     flex: 2,
-                    child: _TableTitleTextWidget(title: 'Trades', textAlign: TextAlign.center),
+                    child: _TableTitleTextWidget(
+                      title: 'Trades',
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                   Expanded(
                     flex: 3,
-                    child: _TableTitleTextWidget(title: 'Value', textAlign: TextAlign.center),
+                    child: _TableTitleTextWidget(
+                      title: 'Value',
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ],
               ),
@@ -56,37 +67,56 @@ class TimeSalesTabHistoryWidget extends StatelessWidget {
                   : ListView.builder(
                       itemCount: homeCon.shownMarket.timeAndSalesHistory.length,
                       itemBuilder: (context, index) {
-                        final reverseIndex = homeCon.shownMarket.timeAndSalesHistory.length - 1 - index;
-                        final model = homeCon.shownMarket.timeAndSalesHistory[reverseIndex];
+                        final reverseIndex =
+                            homeCon.shownMarket.timeAndSalesHistory.length -
+                            1 -
+                            index;
+                        final model = homeCon
+                            .shownMarket
+                            .timeAndSalesHistory[reverseIndex];
                         return Container(
-                          padding: const .symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(color: index % 2 == 0 ? context.evenColor : context.oddColor),
+                          padding: const .symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: index % 2 == 0
+                                ? context.evenColor
+                                : context.oddColor,
+                          ),
                           child: Row(
                             mainAxisAlignment: .spaceBetween,
                             children: [
                               Expanded(
                                 flex: 2,
-                                child: _TableTitleTextWidget(title: '${model.p ?? ''}', textAlign: TextAlign.center),
+                                child: _TableTitleTextWidget(
+                                  title: '${model.p ?? ''}',
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
                               Expanded(
                                 flex: 3,
                                 child: _TableTitleTextWidget(
-                                  title: NumberFormatter.bdFormat(model.v ?? 0.0, decimalPlaces: 0),
+                                  title: NumberFormatter.bdFormat(
+                                    model.v ?? 0.0,
+                                    decimalPlaces: 0,
+                                  ),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
                               Expanded(
                                 flex: 2,
                                 child: _TableTitleTextWidget(
-                                  title:
-                                      model.tds ?? "",
+                                  title: model.tds ?? "",
                                   textAlign: TextAlign.center,
                                 ),
                               ),
                               Expanded(
                                 flex: 3,
                                 child: _TableTitleTextWidget(
-                                  title: NumberFormatter.croreFormat('${model.vl ?? 0.0}'),
+                                  title: NumberFormatter.croreFormat(
+                                    '${model.vl ?? 0.0}',
+                                  ),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -112,7 +142,10 @@ class _TableTitleTextWidget extends StatelessWidget {
     return Text(
       title,
       textAlign: textAlign,
-      style: Get.textTheme.bodyLarge?.copyWith(fontSize: 16, fontWeight: FontWeight.w500),
+      style: Get.context!.textTheme.bodyLarge?.copyWith(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
     );
   }
 }

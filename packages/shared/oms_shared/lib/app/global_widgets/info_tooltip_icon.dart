@@ -1,9 +1,14 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../core/utils/helpers/app_popover.dart';
 
 class InfoTooltipIcon extends StatelessWidget {
-  const InfoTooltipIcon({super.key, required this.infoText, this.size = 15.0, this.color = Colors.blue});
+  const InfoTooltipIcon({
+    super.key,
+    required this.infoText,
+    this.size = 15.0,
+    this.color = Colors.blue,
+  });
 
   final String infoText;
   final double size;
@@ -28,7 +33,11 @@ class InfoTooltipIcon extends StatelessWidget {
           child: Center(
             child: Text(
               '?',
-              style: TextStyle(color: color, fontSize: size * 0.60, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: color,
+                fontSize: size * 0.60,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),

@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
+
 import '../../../../global_widgets/empty_widget.dart';
 import '../../../../global_widgets/appbar_right_search_tap.dart';
 import '../../../../global_widgets/exchange/exchange_switcher.dart';
@@ -40,8 +41,12 @@ class ProSectorHorizontalList extends StatelessWidget {
               final sector = sectorList[index];
               final bool isPositive = sector.avgTodayChange >= 0;
 
-              final changeColor = isPositive ? Colors.green.shade700 : Colors.red.shade700;
-              final trendIcon = isPositive ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded;
+              final changeColor = isPositive
+                  ? Colors.green.shade700
+                  : Colors.red.shade700;
+              final trendIcon = isPositive
+                  ? Icons.arrow_upward_rounded
+                  : Icons.arrow_downward_rounded;
 
               return Padding(
                 padding: .only(
@@ -52,7 +57,9 @@ class ProSectorHorizontalList extends StatelessWidget {
                 ), //  প্রথম আইটেমের জন্য বাম মার্জিন
                 child: InkWell(
                   onTap: () async {
-                    var model = await Get.to(() => SectorDetailsView(sectorName: sector.sectorName));
+                    final model = await Get.to(
+                      () => SectorDetailsView(sectorName: sector.sectorName),
+                    ) as MarketModel?;
                     if (model != null) {
                       homeCon.goBottomNabBarPage(1, model.orderBook!);
                       homeCon.loadComanyDividentEPS(model.shortName ?? "");
@@ -63,13 +70,22 @@ class ProSectorHorizontalList extends StatelessWidget {
                     width: 155,
                     padding: const .symmetric(horizontal: 14, vertical: 12),
                     decoration: BoxDecoration(
-                      color: context.isDark ? Colors.grey.shade900 : Colors.white,
+                      color: context.isDark
+                          ? Colors.grey.shade900
+                          : Colors.white,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: context.isDark ? Colors.white12 : Colors.grey.shade200, width: 1),
+                      border: Border.all(
+                        color: context.isDark
+                            ? Colors.white12
+                            : Colors.grey.shade200,
+                        width: 1,
+                      ),
                       //  প্রফেশনাল শ্যাডো অ্যাড করা হয়েছে
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withAlpha((255.0 * (context.isDark ? 0.3 : 0.04)).round()),
+                          color: Colors.black.withAlpha(
+                            (255.0 * (context.isDark ? 0.3 : 0.04)).round(),
+                          ),
                           blurRadius: 8,
                           offset: const Offset(0, 3),
                         ),
@@ -81,7 +97,10 @@ class ProSectorHorizontalList extends StatelessWidget {
                       children: [
                         Text(
                           sector.sectorName,
-                          style: Get.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700, fontSize: 14),
+                          style: Get.context!.textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -92,16 +111,24 @@ class ProSectorHorizontalList extends StatelessWidget {
                           children: [
                             Text(
                               '${(sector.totalValue / 1000000).toStringAsFixed(1)}M',
-                              style: Get.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13,
-                                color: context.isDark ? Colors.white70 : Colors.grey.shade600,
-                              ),
+                              style: Get.context!.textTheme.bodyMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                    color: context.isDark
+                                        ? Colors.white70
+                                        : Colors.grey.shade600,
+                                  ),
                             ),
                             Container(
-                              padding: const .symmetric(horizontal: 4, vertical: 2),
+                              padding: const .symmetric(
+                                horizontal: 4,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
-                                color: changeColor.withAlpha(26), //  ব্যাকগ্রাউন্ড টিন্ট
+                                color: changeColor.withAlpha(
+                                  26,
+                                ), //  ব্যাকগ্রাউন্ড টিন্ট
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Row(
@@ -110,7 +137,11 @@ class ProSectorHorizontalList extends StatelessWidget {
                                   const SizedBox(width: 2),
                                   Text(
                                     '${sector.avgTodayChange.toStringAsFixed(2)}%',
-                                    style: TextStyle(color: changeColor, fontWeight: FontWeight.bold, fontSize: 11),
+                                    style: TextStyle(
+                                      color: changeColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 11,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -157,8 +188,12 @@ class SectorDetailsView extends StatelessWidget {
       body: GetBuilder<HomeController>(
         id: 'sectorSummary',
         builder: (homeCon) {
-          final sectorList = homeCon.shownMarket.sectorSummaryList.where((s) => s.sectorName == sectorName).toList();
-          if (sectorList.isEmpty) return const Center(child: Text("Sector data not found"));
+          final sectorList = homeCon.shownMarket.sectorSummaryList
+              .where((s) => s.sectorName == sectorName)
+              .toList();
+          if (sectorList.isEmpty) {
+            return const Center(child: Text("Sector data not found"));
+          }
 
           final sector = sectorList.first;
 
@@ -173,10 +208,17 @@ class SectorDetailsView extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: context.isDark ? Colors.grey.shade900 : Colors.white,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: context.isDark ? Colors.white10 : Colors.grey.shade200, width: 1),
+                    border: Border.all(
+                      color: context.isDark
+                          ? Colors.white10
+                          : Colors.grey.shade200,
+                      width: 1,
+                    ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withAlpha((255.0 * (context.isDark ? 0.3 : 0.03)).round()),
+                        color: Colors.black.withAlpha(
+                          (255.0 * (context.isDark ? 0.3 : 0.03)).round(),
+                        ),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),
@@ -187,32 +229,40 @@ class SectorDetailsView extends StatelessWidget {
                       Expanded(
                         child: Builder(
                           builder: (context) {
-                            final updatePriceWithColor = NumberHelper.formatPriceChange(sector.totalChangeTk, context);
+                            final updatePriceWithColor =
+                                NumberHelper.formatPriceChange(
+                                  sector.totalChangeTk,
+                                  context,
+                                );
                             return RichText(
                               text: TextSpan(
                                 text: sector.avgLastPrice.toStringAsFixed(1),
-                                style: Get.textTheme.bodySmall?.copyWith(
-                                  fontSize: AppDimens.space14,
-                                  fontWeight: FontWeight.w600,
-                                  color: context.textColor,
-                                ),
+                                style: Get.context!.textTheme.bodySmall
+                                    ?.copyWith(
+                                      fontSize: AppDimens.space14,
+                                      fontWeight: FontWeight.w600,
+                                      color: context.textColor,
+                                    ),
                                 children: [
                                   TextSpan(
                                     text:
                                         ' ${updatePriceWithColor.text} (${sector.avgTodayChange.toStringAsFixed(2)}%)',
-                                    style: Get.textTheme.bodySmall?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: AppDimens.space14,
-                                      color: updatePriceWithColor.color,
-                                    ),
+                                    style: Get.context!.textTheme.bodySmall
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: AppDimens.space14,
+                                          color: updatePriceWithColor.color,
+                                        ),
                                   ),
                                   TextSpan(
-                                    text: ' Avg: ${sector.avgVwap.toStringAsFixed(2)}',
-                                    style: Get.textTheme.bodySmall?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: AppDimens.space14,
-                                      color: context.textColor,
-                                    ),
+                                    text:
+                                        ' Avg: ${sector.avgVwap.toStringAsFixed(2)}',
+                                    style: Get.context!.textTheme.bodySmall
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: AppDimens.space14,
+                                          color: context.textColor,
+                                        ),
                                   ),
                                 ],
                               ),
@@ -227,9 +277,15 @@ class SectorDetailsView extends StatelessWidget {
                   margin: const .symmetric(horizontal: 10, vertical: 6),
                   padding: const .symmetric(vertical: 8, horizontal: 6),
                   decoration: BoxDecoration(
-                    color: context.isDark ? Colors.grey.shade900 : Colors.grey.shade50,
+                    color: context.isDark
+                        ? Colors.grey.shade900
+                        : Colors.grey.shade50,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: context.isDark ? Colors.white10 : Colors.black.withAlpha(13)),
+                    border: Border.all(
+                      color: context.isDark
+                          ? Colors.white10
+                          : Colors.black.withAlpha(13),
+                    ),
                   ),
                   child: ResponsiveWrap(
                     minItemWidth: 50,
@@ -275,9 +331,17 @@ class SectorDetailsView extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: context.isDark ? Colors.grey.shade900 : Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: context.isDark ? Colors.white10 : Colors.black.withAlpha(13)),
+                    border: Border.all(
+                      color: context.isDark
+                          ? Colors.white10
+                          : Colors.black.withAlpha(13),
+                    ),
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withAlpha(5), blurRadius: 10, offset: const Offset(0, 4)),
+                      BoxShadow(
+                        color: Colors.black.withAlpha(5),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
                     ],
                   ),
                   child: BetterResponsiveWrap(
@@ -286,15 +350,33 @@ class SectorDetailsView extends StatelessWidget {
                       QuoteUIHelper.buildPerformanceItem(
                         context,
                         'Open:',
-                        NumberFormatter.bdFormat(sector.totalOpen, decimalPlaces: 1),
+                        NumberFormatter.bdFormat(
+                          sector.totalOpen,
+                          decimalPlaces: 1,
+                        ),
                       ),
-                      QuoteUIHelper.buildPerformanceItem(context, 'High:', NumberFormatter.bdFormat(sector.totalHigh)),
-                      QuoteUIHelper.buildPerformanceItem(context, 'Low:', NumberFormatter.bdFormat(sector.totalLow)),
-                      QuoteUIHelper.buildPerformanceItem(context, 'YCP:', NumberFormatter.bdFormat(sector.totalYcp)),
+                      QuoteUIHelper.buildPerformanceItem(
+                        context,
+                        'High:',
+                        NumberFormatter.bdFormat(sector.totalHigh),
+                      ),
+                      QuoteUIHelper.buildPerformanceItem(
+                        context,
+                        'Low:',
+                        NumberFormatter.bdFormat(sector.totalLow),
+                      ),
+                      QuoteUIHelper.buildPerformanceItem(
+                        context,
+                        'YCP:',
+                        NumberFormatter.bdFormat(sector.totalYcp),
+                      ),
                       QuoteUIHelper.buildPerformanceItem(
                         context,
                         'Vol:',
-                        NumberFormatter.bdFormat(sector.totalVolume.toDouble(), decimalPlaces: 0),
+                        NumberFormatter.bdFormat(
+                          sector.totalVolume.toDouble(),
+                          decimalPlaces: 0,
+                        ),
                       ),
                       QuoteUIHelper.buildPerformanceItem(
                         context,
@@ -306,8 +388,16 @@ class SectorDetailsView extends StatelessWidget {
                         'Value:',
                         NumberFormatter.croreFormat("${sector.totalValue}"),
                       ),
-                      QuoteUIHelper.buildPerformanceItem(context, 'Bid Qty:', '${sector.totalBidQty}'),
-                      QuoteUIHelper.buildPerformanceItem(context, 'Ask Qty:', '${sector.totalAskQty}'),
+                      QuoteUIHelper.buildPerformanceItem(
+                        context,
+                        'Bid Qty:',
+                        '${sector.totalBidQty}',
+                      ),
+                      QuoteUIHelper.buildPerformanceItem(
+                        context,
+                        'Ask Qty:',
+                        '${sector.totalAskQty}',
+                      ),
                       QuoteUIHelper.buildPerformanceItem(
                         context,
                         'Change Tk:',
@@ -322,9 +412,15 @@ class SectorDetailsView extends StatelessWidget {
                   ),
                 ),
 
-                Divider(color: context.isDark ? Colors.white10 : Colors.grey.shade200, thickness: 6),
+                Divider(
+                  color: context.isDark ? Colors.white10 : Colors.grey.shade200,
+                  thickness: 6,
+                ),
 
-                ReusableLiveStockList(stocks: sector.stocks, homeCon: Get.find<HomeController>()),
+                ReusableLiveStockList(
+                  stocks: sector.stocks,
+                  homeCon: Get.find<HomeController>(),
+                ),
                 const SizedBox(height: 40),
               ],
             ),
@@ -342,7 +438,11 @@ class ReusableLiveStockList extends StatefulWidget {
   final List<MarketModel> stocks;
   final HomeController homeCon;
 
-  const ReusableLiveStockList({super.key, required this.stocks, required this.homeCon});
+  const ReusableLiveStockList({
+    super.key,
+    required this.stocks,
+    required this.homeCon,
+  });
 
   @override
   State<ReusableLiveStockList> createState() => _ReusableLiveStockListState();
@@ -360,7 +460,12 @@ class _ReusableLiveStockListState extends State<ReusableLiveStockList> {
     return Column(
       children: [
         Padding(
-          padding: const .fromLTRB(16, 0, 16, 8), //  হেডার এবং লিস্টের মাঝের স্পেস অপটিমাইজড
+          padding: const .fromLTRB(
+            16,
+            0,
+            16,
+            8,
+          ), //  হেডার এবং লিস্টের মাঝের স্পেস অপটিমাইজড
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -400,7 +505,9 @@ class _ReusableLiveStockListState extends State<ReusableLiveStockList> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: displayList.length,
-            padding: const .symmetric(vertical: 8), //  লিস্টের বাইরের স্পেস কমানো হয়েছে
+            padding: const .symmetric(
+              vertical: 8,
+            ), //  লিস্টের বাইরের স্পেস কমানো হয়েছে
             separatorBuilder: (_, _) => dividerWidget,
             itemBuilder: (context, index) {
               final model = displayList[index];

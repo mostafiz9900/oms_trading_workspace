@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:broker_config/broker_config.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:oms_shared/app/core/values/storage.dart';
 import 'package:oms_shared/app/data/models/marquee_holder.dart';
 import 'package:oms_shared/app/data/models/response/market_model.dart';
@@ -49,6 +49,8 @@ void main() {
   late List<FakeChannel> sockets;
   late HomeController home;
   late ExchangeService exchange;
+  var marqueeBuilds = 0;
+  var homeBuilds = 0;
 
   setUpAll(initTestStorage);
 
@@ -69,7 +71,6 @@ void main() {
         'OMS_CSE_SOCKET_NEWS_TIME_SALES_URL': _cseTsUrl,
       },
     );
-    await tester.pumpWidget(const GetMaterialApp(home: Scaffold()));
     final repo = _FakeHomeRepository();
     Get.put<HomeRepository>(repo);
     exchange = Get.put(ExchangeService());
@@ -83,8 +84,37 @@ void main() {
       ),
     );
     Get.put<CseMarketService>(CseMarketService());
-    home = Get.put<HomeController>(HomeController(homeRepository: repo));
-    await tester.pump();
+    home = HomeController(homeRepository: repo);
+    marqueeBuilds = 0;
+    homeBuilds = 0;
+    await tester.pumpWidget(
+      GetMaterialApp(
+        home: Column(
+          children: [
+            GetBuilder<HomeController>(
+              init: home,
+              builder: (_) {
+                homeBuilds++;
+                return const SizedBox.shrink();
+              },
+            ),
+            GetBuilder<HomeController>(
+              id: 'marquee',
+              autoRemove: false,
+              builder: (_) {
+                marqueeBuilds++;
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 1));
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 1));
+    });
     home.marketList.add(_gp);
     home.marketListAll.add(_gp);
     home.marqueeList.add(MarqueeHolder(shortName: 'GP'));
@@ -100,7 +130,8 @@ void main() {
       sockets.map((s) => s.uri.toString()).where((u) => u == _dseUrl).toList();
 
   Future<void> finish(WidgetTester tester) async {
-    await Get.delete<WebSocketService>(force: true);
+    Get.delete<HomeController>(force: true);
+    Get.delete<WebSocketService>(force: true);
     await tester.pump(const Duration(seconds: 11));
   }
 
@@ -170,24 +201,12 @@ void main() {
     tester,
   ) async {
     await start(tester);
-    var draws = 0;
-    await tester.pumpWidget(
-      GetMaterialApp(
-        home: GetBuilder<HomeController>(
-          id: 'marquee',
-          builder: (_) {
-            draws++;
-            return const SizedBox();
-          },
-        ),
-      ),
-    );
-    final before = draws;
+    final before = marqueeBuilds;
 
     exchange.select(StockExchange.cse);
-    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 1));
 
-    expect(draws, greaterThan(before));
+    expect(marqueeBuilds, greaterThan(before));
     await finish(tester);
   });
 
@@ -363,20 +382,9 @@ void main() {
   group('switch speed: the whole Home screen is not rebuilt', () {
     /// A bare update() rebuilds HomeView (all six tabs); count those builds
     /// with an id-less builder like HomeView's.
-    Future<int Function()> countHomeRebuilds(WidgetTester tester) async {
-      var builds = 0;
-      await tester.pumpWidget(
-        GetMaterialApp(
-          home: GetBuilder<HomeController>(
-            builder: (_) {
-              builds++;
-              return const SizedBox();
-            },
-          ),
-        ),
-      );
-      final before = builds;
-      return () => builds - before;
+    int Function() countHomeRebuilds() {
+      final before = homeBuilds;
+      return () => homeBuilds - before;
     }
 
     Future<void> switchAndFeed(WidgetTester tester, StockExchange to) async {
@@ -396,7 +404,7 @@ void main() {
     ) async {
       await start(tester);
       home.currentIndex = 0;
-      final rebuilds = await countHomeRebuilds(tester);
+      final rebuilds = countHomeRebuilds();
 
       await switchAndFeed(tester, StockExchange.cse);
       await switchAndFeed(tester, StockExchange.dse);
@@ -410,7 +418,7 @@ void main() {
     ) async {
       await start(tester);
       home.currentIndex = 3;
-      final rebuilds = await countHomeRebuilds(tester);
+      final rebuilds = countHomeRebuilds();
 
       await switchAndFeed(tester, StockExchange.cse);
 

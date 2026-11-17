@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/utils/extensions/app_context.dart';
@@ -25,7 +25,9 @@ class LimitRequestView extends GetView<LimitRequestController> {
             return IconButton(
               splashRadius: 24,
               icon: Icon(
-                cont.isShortView ? Icons.view_agenda_rounded : Icons.format_list_bulleted_rounded,
+                cont.isShortView
+                    ? Icons.view_agenda_rounded
+                    : Icons.format_list_bulleted_rounded,
                 color: context.buttonColor,
                 size: 22,
               ),
@@ -83,7 +85,9 @@ class _ClientLimitView extends StatelessWidget {
 
         return ListView.builder(
           controller: controller.scrollController,
-          itemCount: controller.clientLimitList.length + (controller.currentPage < controller.totalPages ? 1 : 0),
+          itemCount:
+              controller.clientLimitList.length +
+              (controller.currentPage < controller.totalPages ? 1 : 0),
           itemBuilder: (context, index) {
             // Bottom loader for pagination
             if (index == controller.clientLimitList.length) {
@@ -96,7 +100,10 @@ class _ClientLimitView extends StatelessWidget {
             final item = controller.clientLimitList[index];
 
             //  Common Reusable Widget Call
-            return CommonLimitItemWidget(item: item, isShortView: controller.isShortView);
+            return CommonLimitItemWidget(
+              item: item,
+              isShortView: controller.isShortView,
+            );
           },
         );
       },
@@ -108,7 +115,11 @@ class CommonLimitItemWidget extends StatelessWidget {
   final dynamic item;
   final bool isShortView;
 
-  const CommonLimitItemWidget({super.key, required this.item, required this.isShortView});
+  const CommonLimitItemWidget({
+    super.key,
+    required this.item,
+    required this.isShortView,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +129,9 @@ class CommonLimitItemWidget extends StatelessWidget {
 
     if (status == 'APPROVED' || status == 'ACCEPTED') {
       statusColor = ColorConstants.success;
-    } else if (status == 'REJECTED' || status == 'DECLINED' || status == 'CANCELLED') {
+    } else if (status == 'REJECTED' ||
+        status == 'DECLINED' ||
+        status == 'CANCELLED') {
       statusColor = Colors.red;
     } else {
       statusColor = Colors.orange;
@@ -136,12 +149,18 @@ class CommonLimitItemWidget extends StatelessWidget {
 
   // ==========================================
   // ==========================================
-  Widget _buildShortView(BuildContext context, String status, Color statusColor) {
+  Widget _buildShortView(
+    BuildContext context,
+    String status,
+    Color statusColor,
+  ) {
     return Container(
       key: const ValueKey('short_view'),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: context.dividerColor, width: 1)),
+        border: Border(
+          bottom: BorderSide(color: context.dividerColor, width: 1),
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -156,7 +175,7 @@ class CommonLimitItemWidget extends StatelessWidget {
                     Flexible(
                       child: Text(
                         item['investor_name'] ?? 'Unknown',
-                        style: Get.textTheme.titleMedium?.copyWith(
+                        style: Get.context!.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
                           color: context.textColor,
@@ -167,14 +186,21 @@ class CommonLimitItemWidget extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.blueAccent.withAlpha(26),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         item['market'] ?? 'N/A',
-                        style: const TextStyle(fontSize: 10, color: Colors.blueAccent, fontWeight: FontWeight.w700),
+                        style: const TextStyle(
+                          fontSize: 10,
+                          color: Colors.blueAccent,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                   ],
@@ -184,11 +210,19 @@ class CommonLimitItemWidget extends StatelessWidget {
                 //  ক্লায়েন্ট কোড সরিয়ে এখানে Date & Time দেওয়া হলো
                 Row(
                   children: [
-                    Icon(Icons.access_time, size: 12, color: Colors.grey.shade400),
+                    Icon(
+                      Icons.access_time,
+                      size: 12,
+                      color: Colors.grey.shade400,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       formatDateTime(item['created_at']),
-                      style: TextStyle(fontSize: 12, color: Colors.grey.shade500, fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade500,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
@@ -202,7 +236,7 @@ class CommonLimitItemWidget extends StatelessWidget {
             children: [
               Text(
                 "৳ ${item['requested_amount']}",
-                style: Get.textTheme.titleMedium?.copyWith(
+                style: Get.context!.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w800,
                   fontSize: 15,
                   color: context.textColor,
@@ -211,10 +245,17 @@ class CommonLimitItemWidget extends StatelessWidget {
               const SizedBox(height: 6),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(color: statusColor.withAlpha(26), borderRadius: BorderRadius.circular(20)),
+                decoration: BoxDecoration(
+                  color: statusColor.withAlpha(26),
+                  borderRadius: BorderRadius.circular(20),
+                ),
                 child: Text(
                   status,
-                  style: TextStyle(color: statusColor, fontSize: 10, fontWeight: FontWeight.w800),
+                  style: TextStyle(
+                    color: statusColor,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
             ],
@@ -226,7 +267,11 @@ class CommonLimitItemWidget extends StatelessWidget {
 
   // ==========================================
   // ==========================================
-  Widget _buildDetailedView(BuildContext context, String status, Color statusColor) {
+  Widget _buildDetailedView(
+    BuildContext context,
+    String status,
+    Color statusColor,
+  ) {
     return Container(
       key: const ValueKey('detail_view'),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -235,7 +280,13 @@ class CommonLimitItemWidget extends StatelessWidget {
         color: context.isDark ? Colors.grey.shade900 : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: context.dividerColor, width: 1),
-        boxShadow: [BoxShadow(color: Colors.black.withAlpha(10), blurRadius: 8, offset: const Offset(0, 2))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(10),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -247,7 +298,7 @@ class CommonLimitItemWidget extends StatelessWidget {
               Expanded(
                 child: Text(
                   item['investor_name'] ?? 'Unknown Investor',
-                  style: Get.textTheme.titleLarge?.copyWith(
+                  style: Get.context!.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                     color: context.textColor,
@@ -256,11 +307,21 @@ class CommonLimitItemWidget extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(color: statusColor.withAlpha(38), borderRadius: BorderRadius.circular(6)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: statusColor.withAlpha(38),
+                  borderRadius: BorderRadius.circular(6),
+                ),
                 child: Text(
                   status,
-                  style: TextStyle(color: statusColor, fontSize: 12, fontWeight: FontWeight.w800),
+                  style: TextStyle(
+                    color: statusColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
             ],
@@ -273,7 +334,11 @@ class CommonLimitItemWidget extends StatelessWidget {
 
           _buildInfoRow(context, "Market Type:", item['market'] ?? 'N/A'),
           const SizedBox(height: 10),
-          _buildInfoRow(context, "Request Date:", formatDateTime(item['created_at'])),
+          _buildInfoRow(
+            context,
+            "Request Date:",
+            formatDateTime(item['created_at']),
+          ),
 
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 12),
@@ -285,11 +350,19 @@ class CommonLimitItemWidget extends StatelessWidget {
             children: [
               Text(
                 "Requested Amount",
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.grey.shade600),
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey.shade600,
+                ),
               ),
               Text(
                 "৳ ${item['requested_amount']}",
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.blueAccent),
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.blueAccent,
+                ),
               ),
             ],
           ),
@@ -305,11 +378,15 @@ class CommonLimitItemWidget extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(fontSize: 14, color: Colors.grey.shade500, fontWeight: FontWeight.w500),
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.grey.shade500,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         Text(
           value,
-          style: Get.textTheme.titleMedium?.copyWith(
+          style: Get.context!.textTheme.titleMedium?.copyWith(
             fontSize: 15,
             fontWeight: FontWeight.bold,
             color: context.textColor,

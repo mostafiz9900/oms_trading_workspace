@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/values/space.dart';
@@ -26,7 +26,7 @@ class TitleAndSubTitleColumWidget extends StatelessWidget {
         Text(
           titleText,
           textAlign: TextAlign.center,
-          style: Get.textTheme.titleLarge?.copyWith(
+          style: Get.context!.textTheme.titleLarge?.copyWith(
             fontSize: 12,
             fontWeight: FontWeight.w700,
             color: context.textColor,
@@ -37,7 +37,7 @@ class TitleAndSubTitleColumWidget extends StatelessWidget {
           visible: subTitle != null,
           child: Text(
             subTitle ?? "",
-            style: Get.textTheme.bodyLarge?.copyWith(
+            style: Get.context!.textTheme.bodyLarge?.copyWith(
               fontSize: 10,
               fontWeight: FontWeight.w400,
               color: context.textColor,
@@ -49,7 +49,7 @@ class TitleAndSubTitleColumWidget extends StatelessWidget {
           visible: subTitle2 != null,
           child: Text(
             subTitle2 ?? '',
-            style: Get.textTheme.bodyLarge?.copyWith(
+            style: Get.context!.textTheme.bodyLarge?.copyWith(
               fontSize: 10,
               fontWeight: FontWeight.w400,
               color: context.textColor,

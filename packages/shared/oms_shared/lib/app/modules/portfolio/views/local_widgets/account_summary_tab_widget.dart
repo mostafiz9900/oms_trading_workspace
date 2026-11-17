@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/utils/helpers/formatter_helper.dart';
@@ -114,7 +114,7 @@ class _SectionCard extends StatelessWidget {
                       title!,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: Get.textTheme.titleSmall?.copyWith(
+                      style: Get.context!.textTheme.titleSmall?.copyWith(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                         color: context.textColor,
@@ -163,7 +163,7 @@ class _Amount extends StatelessWidget {
         children: [
           Text(
             '$prefix${NumberFormatter.bdFormat(value)}',
-            style: Get.textTheme.titleMedium?.copyWith(
+            style: Get.context!.textTheme.titleMedium?.copyWith(
               fontSize: fontSize,
               fontWeight: FontWeight.bold,
               color: color ?? context.textColor,
@@ -173,7 +173,7 @@ class _Amount extends StatelessWidget {
           if (showCurrency)
             Text(
               'BDT',
-              style: Get.textTheme.bodySmall?.copyWith(
+              style: Get.context!.textTheme.bodySmall?.copyWith(
                 fontSize: (fontSize * 0.45).clamp(10, 14),
                 fontWeight: FontWeight.w600,
                 color: muted,
@@ -196,7 +196,7 @@ class _Label extends StatelessWidget {
       text,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: Get.textTheme.bodySmall?.copyWith(
+      style: Get.context!.textTheme.bodySmall?.copyWith(
         fontSize: 12,
         color: context.textColor.withValues(alpha: 0.6),
       ),
@@ -315,7 +315,7 @@ class _BalanceCard extends StatelessWidget {
                         clientCode.isNotEmpty ? clientCode : 'N/A',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: Get.textTheme.titleMedium?.copyWith(
+                        style: Get.context!.textTheme.titleMedium?.copyWith(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: context.textColor,
@@ -571,7 +571,7 @@ class _DetailRow extends StatelessWidget {
                   label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: Get.textTheme.bodyMedium?.copyWith(
+                  style: Get.context!.textTheme.bodyMedium?.copyWith(
                     fontSize: 13,
                     color: muted,
                   ),
@@ -587,7 +587,7 @@ class _DetailRow extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.end,
-                        style: Get.textTheme.bodyMedium?.copyWith(
+                        style: Get.context!.textTheme.bodyMedium?.copyWith(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: context.textColor,

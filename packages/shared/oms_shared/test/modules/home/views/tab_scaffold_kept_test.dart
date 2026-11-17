@@ -1,8 +1,11 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:broker_config/broker_config.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart' as legacy show Material, MaterialType;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:oms_shared/app/data/repositories/home_repository.dart';
 import 'package:oms_shared/app/data/services/exchange_service.dart';
 import 'package:oms_shared/app/data/services/market_socket_service.dart';
@@ -84,14 +87,24 @@ void main() {
           child: GetMaterialApp(
             // As HomeView: a bare GetBuilder making a new tab widget each time.
             home: GetBuilder<HomeController>(builder: (_) => tab()),
+            builder: (context, child) => MaterialUiCompatibilityBridge(
+              child: legacy.Material(
+                type: legacy.MaterialType.transparency,
+                child: child ?? const SizedBox.shrink(),
+              ),
+            ),
           ),
         ),
       );
-      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 1));
+      addTearDown(() async {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump(const Duration(milliseconds: 1));
+      });
       final before = tester.state<ScaffoldState>(find.byType(Scaffold).first);
 
       home.update();
-      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(
         tester.state<ScaffoldState>(find.byType(Scaffold).first),

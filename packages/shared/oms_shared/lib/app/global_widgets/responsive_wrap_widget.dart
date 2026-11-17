@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// ResponsiveWrap: fills width, keeps `spacing` between items,
 /// auto computes itemsPerRow based on minItemWidth (and maxItemWidth optional).
@@ -38,30 +38,41 @@ class ResponsiveWrap extends StatelessWidget {
         final totalWidth = constraints.maxWidth;
 
         if (totalWidth.isInfinite || totalWidth <= 0) {
-          return Wrap(spacing: spacing, runSpacing: runSpacing, children: children);
+          return Wrap(
+            spacing: spacing,
+            runSpacing: runSpacing,
+            children: children,
+          );
         }
 
         // compute effective min/max item width based on screen width
-        final effectiveMin = (totalWidth * minFraction).clamp(minItemWidth, double.infinity);
+        final effectiveMin = (totalWidth * minFraction).clamp(
+          minItemWidth,
+          double.infinity,
+        );
         final effectiveMax = (totalWidth * maxFraction).clamp(0, maxItemWidth);
 
         // find the maximum possible items per row that still respect effectiveMin
-        int maxPossible = ((totalWidth + spacing) / (effectiveMin + spacing)).floor();
+        int maxPossible = ((totalWidth + spacing) / (effectiveMin + spacing))
+            .floor();
         maxPossible = maxPossible.clamp(1, children.length);
 
         // choose itemsPerRow = maxPossible by default
         int itemsPerRow = maxPossible;
 
         // compute itemWidth for this itemsPerRow
-        double? itemWidth = (totalWidth - spacing * (itemsPerRow - 1)) / itemsPerRow;
+        double? itemWidth =
+            (totalWidth - spacing * (itemsPerRow - 1)) / itemsPerRow;
 
         // If computed itemWidth is larger than effectiveMax, try increasing itemsPerRow (if possible)
         if (itemWidth > effectiveMax) {
-          final alt = ((totalWidth + spacing) / (effectiveMax + spacing)).floor();
+          final alt = ((totalWidth + spacing) / (effectiveMax + spacing))
+              .floor();
           final newItemsPerRow = alt.clamp(1, children.length);
           if (newItemsPerRow > itemsPerRow) {
             itemsPerRow = newItemsPerRow;
-            itemWidth = (totalWidth - spacing * (itemsPerRow - 1)) / itemsPerRow;
+            itemWidth =
+                (totalWidth - spacing * (itemsPerRow - 1)) / itemsPerRow;
           } else {
             itemWidth = itemWidth.clamp(effectiveMin, effectiveMax).toDouble();
           }
@@ -78,9 +89,15 @@ class ResponsiveWrap extends StatelessWidget {
         // ensure final clamping
         itemWidth = itemWidth.clamp(effectiveMin, effectiveMax).toDouble();
 
-        final wrapped = children.map((w) => SizedBox(width: itemWidth, child: w)).toList();
+        final wrapped = children
+            .map((w) => SizedBox(width: itemWidth, child: w))
+            .toList();
 
-        return Wrap(spacing: spacing, runSpacing: runSpacing, children: wrapped);
+        return Wrap(
+          spacing: spacing,
+          runSpacing: runSpacing,
+          children: wrapped,
+        );
       },
     );
   }
@@ -117,15 +134,22 @@ class BetterResponsiveWrap extends StatelessWidget {
         final totalWidth = constraints.maxWidth;
 
         if (totalWidth.isInfinite || totalWidth <= 0) {
-          return Wrap(spacing: spacing, runSpacing: runSpacing, children: children);
+          return Wrap(
+            spacing: spacing,
+            runSpacing: runSpacing,
+            children: children,
+          );
         }
 
         // ১. এক লাইনে সর্বোচ্চ কয়টি আইটেম ধরবে তা বের করা
         int itemsPerRow = (totalWidth + spacing) ~/ (minItemWidth + spacing);
-        if (itemsPerRow == 0) itemsPerRow = 1; // স্ক্রিন খুব ছোট হলেও অন্তত ১টি দেখাবে
+        if (itemsPerRow == 0) {
+          itemsPerRow = 1; // স্ক্রিন খুব ছোট হলেও অন্তত ১টি দেখাবে
+        }
 
         // ২. স্ক্রিনের জায়গা অনুযায়ী প্রতিটি আইটেমের পারফেক্ট Width বের করা
-        double itemWidth = (totalWidth - (spacing * (itemsPerRow - 1))) / itemsPerRow;
+        double itemWidth =
+            (totalWidth - (spacing * (itemsPerRow - 1))) / itemsPerRow;
 
         // ৩. যদি আইটেম সাইজ ম্যাক্সিমাম সাইজের চেয়ে বড় হয়ে যায়, তবে লিমিট করে দেওয়া
         if (itemWidth > maxItemWidth) {
@@ -136,7 +160,9 @@ class BetterResponsiveWrap extends StatelessWidget {
           spacing: spacing,
           runSpacing: runSpacing,
           alignment: alignment, // Center দিলে বড় স্ক্রিনে দেখতে ভালো লাগে
-          children: children.map((w) => SizedBox(width: itemWidth, child: w)).toList(),
+          children: children
+              .map((w) => SizedBox(width: itemWidth, child: w))
+              .toList(),
         );
       },
     );

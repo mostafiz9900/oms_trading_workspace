@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:oms_shared/app/data/models/marquee_holder.dart';
 import 'package:oms_shared/app/data/services/market_feed_view.dart';
@@ -24,7 +24,13 @@ class _FakeFeed extends Fake implements MarketFeedView {
 void main() {
   final home = _FakeHome([
     for (var i = 0; i < 80; i++)
-      MarqueeHolder(shortName: 'S${i.toString().padLeft(2, '0')}', status: 'Up', chg: 1.5, last: 100, d: 0.5),
+      MarqueeHolder(
+        shortName: 'S${i.toString().padLeft(2, '0')}',
+        status: 'Up',
+        chg: 1.5,
+        last: 100,
+        d: 0.5,
+      ),
   ]);
 
   double offset(WidgetTester tester) => tester
@@ -36,13 +42,17 @@ void main() {
     home: Scaffold(
       body: IndexedStack(
         index: index,
-        children: [ClickableMarqueeTextList(homeCon: home), const Text('trade tab')],
+        children: [
+          ClickableMarqueeTextList(homeCon: home),
+          const Text('trade tab'),
+        ],
       ),
     ),
   );
 
-  testWidgets('scrolls 1 px every 30 ms, pauses while the tab is hidden',
-      (tester) async {
+  testWidgets('scrolls 1 px every 30 ms, pauses while the tab is hidden', (
+    tester,
+  ) async {
     await tester.pumpWidget(tabs(0));
     await tester.pump(); // post-frame callback starts the auto-scroll
 
@@ -64,12 +74,22 @@ void main() {
   testWidgets('items are shown sorted by name', (tester) async {
     final unsorted = _FakeHome([
       MarqueeHolder(shortName: 'BETA', status: 'Up', chg: 1, last: 1, d: 1),
-      MarqueeHolder(shortName: 'ALPHA', status: 'Down', chg: -1, last: 1, d: -1),
+      MarqueeHolder(
+        shortName: 'ALPHA',
+        status: 'Down',
+        chg: -1,
+        last: 1,
+        d: -1,
+      ),
     ]);
     // The controller keeps marqueeList sorted; the widget shows it in order.
-    unsorted.shownMarket.marqueeList.sort((a, b) => (a.shortName ?? '').compareTo(b.shortName ?? ''));
+    unsorted.shownMarket.marqueeList.sort(
+      (a, b) => (a.shortName ?? '').compareTo(b.shortName ?? ''),
+    );
     await tester.pumpWidget(
-      MaterialApp(home: Scaffold(body: ClickableMarqueeTextList(homeCon: unsorted))),
+      MaterialApp(
+        home: Scaffold(body: ClickableMarqueeTextList(homeCon: unsorted)),
+      ),
     );
     final alpha = tester.getTopLeft(find.text('ALPHA')).dx;
     final beta = tester.getTopLeft(find.text('BETA')).dx;

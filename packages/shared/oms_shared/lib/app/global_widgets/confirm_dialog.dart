@@ -1,7 +1,8 @@
 import '../core/utils/extensions/app_context.dart';
 import '../core/utils/helpers/hex_color.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 class ConfirmDialog extends StatelessWidget {
   final String title;
@@ -38,7 +39,13 @@ class ConfirmDialog extends StatelessWidget {
         decoration: BoxDecoration(
           color: dialogBg,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 5))],
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 10,
+              offset: Offset(0, 5),
+            ),
+          ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -48,7 +55,10 @@ class ConfirmDialog extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
                 color: appThemeColor,
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
+                ),
               ),
               child: Row(
                 children: [
@@ -57,7 +67,11 @@ class ConfirmDialog extends StatelessWidget {
                   Expanded(
                     child: Text(
                       title,
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ],
@@ -68,7 +82,11 @@ class ConfirmDialog extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
               child: Text(
                 message,
-                style: Get.textTheme.bodyMedium?.copyWith(fontSize: 15, height: 1.4, color: context.textColor),
+                style: Get.context!.textTheme.bodyMedium?.copyWith(
+                  fontSize: 15,
+                  height: 1.4,
+                  color: context.textColor,
+                ),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -83,7 +101,9 @@ class ConfirmDialog extends StatelessWidget {
                       onPressed: () => Navigator.pop(context),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                         side: BorderSide(color: context.borderSideColor),
                       ),
                       child: Text(
@@ -108,11 +128,17 @@ class ConfirmDialog extends StatelessWidget {
                         backgroundColor: appThemeColor,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                       child: Text(
                         confirmText,
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),

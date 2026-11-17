@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../core/utils/extensions/app_context.dart';
 import '../core/values/assets.dart';
@@ -57,7 +57,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: titleText != null
           ? Text(
               titleText!,
-              style: Get.textTheme.titleMedium?.copyWith(
+              style: Get.context!.textTheme.titleMedium?.copyWith(
                 fontSize: titleFontSize,
               ),
             )

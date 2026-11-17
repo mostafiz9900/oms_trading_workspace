@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Selects a child from the same breakpoints as the legacy OMS widget.
 class ResponsiveLayout extends StatelessWidget {

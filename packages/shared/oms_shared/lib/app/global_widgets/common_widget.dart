@@ -1,12 +1,12 @@
 import '../core/utils/extensions/app_context.dart';
 import '../core/values/colors.dart';
 import '../modules/home/controllers/home_controller.dart';
-import 'package:flutter/material.dart';
+
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get/get.dart';
-
+import 'package:getxify/getxify.dart';
 
 class CommonWidget {
   static AppBar appBar(
@@ -54,7 +54,7 @@ class CommonWidget {
         child: RichText(
           text: TextSpan(
             text: "Buy",
-            style: Get.textTheme.bodySmall?.copyWith(
+            style: Get.context!.textTheme.bodySmall?.copyWith(
               fontSize: fontSize,
               fontWeight: FontWeight.w400,
               color: buyColor ?? ColorConstants.success,
@@ -62,7 +62,7 @@ class CommonWidget {
             children: [
               TextSpan(
                 text: '/',
-                style: Get.textTheme.bodySmall?.copyWith(
+                style: Get.context!.textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w400,
                   fontSize: fontSize,
                   color: context != null ? context.textColor : Colors.black,
@@ -70,7 +70,7 @@ class CommonWidget {
               ),
               TextSpan(
                 text: 'Sell',
-                style: Get.textTheme.bodySmall?.copyWith(
+                style: Get.context!.textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w400,
                   fontSize: fontSize,
                   color: sellColor ?? ColorConstants.error,
@@ -103,8 +103,15 @@ class CommonWidget {
     );
   }
 
-  static BoxDecoration customCircularDecoration(BuildContext context, Color? color, double value) {
-    return BoxDecoration(color: color, borderRadius: BorderRadius.circular(value));
+  static BoxDecoration customCircularDecoration(
+    BuildContext context,
+    Color? color,
+    double value,
+  ) {
+    return BoxDecoration(
+      color: color,
+      borderRadius: BorderRadius.circular(value),
+    );
   }
 }
 
@@ -113,7 +120,12 @@ class CustomSvgIcon extends StatelessWidget {
   final double size;
   final Color? color;
 
-  const CustomSvgIcon({super.key, required this.assetName, this.size = 24.0, this.color});
+  const CustomSvgIcon({
+    super.key,
+    required this.assetName,
+    this.size = 24.0,
+    this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +136,9 @@ class CustomSvgIcon extends StatelessWidget {
         assetName,
         width: size,
         height: size,
-        colorFilter: color != null ? ColorFilter.mode(color!, BlendMode.srcIn) : null,
+        colorFilter: color != null
+            ? ColorFilter.mode(color!, BlendMode.srcIn)
+            : null,
         fit: BoxFit.contain,
       ),
     );
@@ -139,7 +153,9 @@ void showLogoutDialog(BuildContext context) {
       return Consumer(
         builder: (context, ref, child) {
           return Dialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
             backgroundColor: context.bgColor,
             child: Padding(
               padding: const .all(20),
@@ -148,7 +164,10 @@ void showLogoutDialog(BuildContext context) {
                 children: [
                   const Icon(Icons.logout, size: 50, color: Colors.red),
                   const SizedBox(height: 15),
-                  const Text("Logout", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const Text(
+                    "Logout",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 10),
                   const Text(
                     "Are you sure you want to log out?",
@@ -160,20 +179,34 @@ void showLogoutDialog(BuildContext context) {
                     mainAxisAlignment: .end,
                     children: [
                       ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red[300]),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red[300],
+                        ),
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Text("Cancel", style: Get.textTheme.bodyMedium!.copyWith(color: Colors.white)),
+                        child: Text(
+                          "Cancel",
+                          style: Get.context!.textTheme.bodyMedium!.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                       const SizedBox(width: 20),
                       ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: context.buttonColor),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: context.buttonColor,
+                        ),
                         onPressed: () async {
                           Get.back();
                           Get.find<HomeController>().logout();
                         },
-                        child: Text("Logout", style: Get.textTheme.bodyMedium!.copyWith(color: Colors.white)),
+                        child: Text(
+                          "Logout",
+                          style: Get.context!.textTheme.bodyMedium!.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -186,4 +219,3 @@ void showLogoutDialog(BuildContext context) {
     },
   );
 }
-

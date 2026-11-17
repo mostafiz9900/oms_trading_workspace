@@ -1,7 +1,7 @@
 import 'package:broker_config/broker_config.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:oms_shared/app/data/services/exchange_service.dart';
 import 'package:oms_shared/app/global_widgets/exchange/exchange_switcher.dart';
 
@@ -21,6 +21,8 @@ void main() {
         home: Scaffold(appBar: AppBar(actions: const [ExchangeSwitcher()])),
       ),
     );
+    // GetXify schedules its root onReady callback on the next event turn.
+    await tester.pump(const Duration(milliseconds: 1));
     return service;
   }
 
@@ -40,7 +42,9 @@ void main() {
     expect(find.text('DSE'), findsNothing);
   });
 
-  testWidgets('hidden switch takes no space, even with padding', (tester) async {
+  testWidgets('hidden switch takes no space, even with padding', (
+    tester,
+  ) async {
     initTestAppConfig();
     Get.put(ExchangeService());
     await tester.pumpWidget(

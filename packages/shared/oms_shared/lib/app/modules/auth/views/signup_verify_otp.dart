@@ -6,11 +6,12 @@ import '../../../global_widgets/custom_button.dart';
 import '../../../global_widgets/custom_edit_text_form_field.dart';
 import '../controllers/auth_controller.dart';
 import 'login_view.dart';
+
 import 'package:oms_shared/app/modules/onboarding/views/local_widgets/create_new_account.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 class SignupVerifyOtp extends GetView<AuthController> {
   const SignupVerifyOtp({super.key});
@@ -28,7 +29,7 @@ class SignupVerifyOtp extends GetView<AuthController> {
                 children: [
                   SvgPicture.asset(AssetsConstants.logoSvg),
                   AppSpace.spaceH60,
-                  Text("Verify Otp", style: Get.textTheme.titleLarge),
+                  Text("Verify Otp", style: Get.context!.textTheme.titleLarge),
                   AppSpace.spaceH30,
                   CustomEditTextFormField(
                     controller: authCon.otpVerifyEditController,

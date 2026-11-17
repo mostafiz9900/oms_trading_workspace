@@ -1,7 +1,7 @@
 import 'package:broker_config/broker_config.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:oms_shared/app/data/services/exchange_service.dart';
 import 'package:oms_shared/app/data/services/socket_db_service.dart';
 import 'package:oms_shared/app/modules/market/controllers/live_index_controller.dart';
@@ -49,7 +49,7 @@ void main() {
   }
 
   Future<void> finish(WidgetTester tester) async {
-    await Get.delete<WebSocketService>(force: true);
+    Get.delete<WebSocketService>(force: true);
     await tester.pump(const Duration(seconds: 2));
   }
 
@@ -74,10 +74,13 @@ void main() {
         await sends(tester, sn);
       }
 
-      expect(
-        index.visibleIndexList.map((e) => e.sn),
-        ['DSEX', 'DS30', 'ATBX', 'BANK', 'CASPI'],
-      );
+      expect(index.visibleIndexList.map((e) => e.sn), [
+        'DSEX',
+        'DS30',
+        'ATBX',
+        'BANK',
+        'CASPI',
+      ]);
       await finish(tester);
     });
   });
@@ -113,16 +116,30 @@ void main() {
       final index = await start(tester, ExchangeMode.cseOnly);
       // Names as the CSE UAT index feed sent them on 2026-11-09.
       for (final sn in [
-        'BANK', 'CASPI', 'CASPI2', 'CSCX', 'CSE30', 'CSE30Index', 'CSE50',
-        'CSI', 'DS30', 'DSEX', 'DSMEX', 'TEST30', 'TELECOMMUNICATION',
+        'BANK',
+        'CASPI',
+        'CASPI2',
+        'CSCX',
+        'CSE30',
+        'CSE30Index',
+        'CSE50',
+        'CSI',
+        'DS30',
+        'DSEX',
+        'DSMEX',
+        'TEST30',
+        'TELECOMMUNICATION',
       ]) {
         await sends(tester, sn);
       }
 
-      expect(
-        index.visibleIndexList.map((e) => e.sn),
-        ['CASPI', 'CSE30', 'CSCX', 'CSE50', 'CSI'],
-      );
+      expect(index.visibleIndexList.map((e) => e.sn), [
+        'CASPI',
+        'CSE30',
+        'CSCX',
+        'CSE50',
+        'CSI',
+      ]);
       expect(index.selectedSn, 'CASPI');
       await finish(tester);
     });

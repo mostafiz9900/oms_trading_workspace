@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:oms_shared/app/data/services/socket_db_service.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -69,7 +69,7 @@ void main() {
 
   tearDown(() async {
     if (Get.isRegistered<WebSocketService>()) {
-      await Get.delete<WebSocketService>(force: true); // runs onClose
+      Get.delete<WebSocketService>(force: true); // runs onClose
     }
     Get.reset();
     await online.close();
@@ -107,7 +107,11 @@ void main() {
   // testWidgets gives fake time, so back-off timers run instantly via pump.
   testWidgets('connects, delivers messages and sends', (tester) async {
     await connect(tester);
-    expect(service.sendMessage('market', 'sub'), isFalse, reason: 'not open yet');
+    expect(
+      service.sendMessage('market', 'sub'),
+      isFalse,
+      reason: 'not open yet',
+    );
 
     opened.last.open();
     await tester.pump();
@@ -122,7 +126,9 @@ void main() {
     expect(opened.last.sent, ['sub']);
   });
 
-  testWidgets('reconnects after the server drops the connection', (tester) async {
+  testWidgets('reconnects after the server drops the connection', (
+    tester,
+  ) async {
     await connect(tester);
     opened.last.open();
     await tester.pump();
@@ -205,10 +211,14 @@ void main() {
     expect(service.sendMessage('market', 'x'), isFalse);
   });
 
-  testWidgets('a superseded connection cannot affect the new one', (tester) async {
+  testWidgets('a superseded connection cannot affect the new one', (
+    tester,
+  ) async {
     await connect(tester);
     final first = opened.last;
-    await connect(tester); // e.g. resume reconnects while the first is still opening
+    await connect(
+      tester,
+    ); // e.g. resume reconnects while the first is still opening
     final second = opened.last;
     expect(first.closedByClient, isTrue);
 

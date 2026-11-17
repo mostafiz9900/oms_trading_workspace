@@ -1,13 +1,14 @@
-
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/values/colors.dart';
 import '../../../../core/values/space.dart';
 import '../../../../global_widgets/visible_get_builder.dart';
 import '../../../home/controllers/home_controller.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
+
 import 'time_sales_sort.dart';
 
 // FastLineChart widget
@@ -25,12 +26,19 @@ class _FastLineChartState extends State<FastLineChart> {
   @override
   void initState() {
     super.initState();
-    _zoomPanBehavior = ZoomPanBehavior(enablePanning: true, enablePinching: true, zoomMode: ZoomMode.x);
+    _zoomPanBehavior = ZoomPanBehavior(
+      enablePanning: true,
+      enablePinching: true,
+      zoomMode: ZoomMode.x,
+    );
 
     _trackballBehavior = TrackballBehavior(
       enable: true,
       activationMode: ActivationMode.singleTap,
-      tooltipSettings: const InteractiveTooltip(enable: true, format: 'point.x : point.y'),
+      tooltipSettings: const InteractiveTooltip(
+        enable: true,
+        format: 'point.x : point.y',
+      ),
     );
   }
 
@@ -51,7 +59,10 @@ class _FastLineChartState extends State<FastLineChart> {
   }
 
   // here a simple uniform sampling to keep example short.
-  List<_ChartPoint> _downsampleIfNeeded(List<_ChartPoint> pts, {int threshold = 1500}) {
+  List<_ChartPoint> _downsampleIfNeeded(
+    List<_ChartPoint> pts, {
+    int threshold = 1500,
+  }) {
     if (pts.length <= threshold) return pts;
     final step = (pts.length / threshold).ceil();
     final res = <_ChartPoint>[];
@@ -71,7 +82,13 @@ class _FastLineChartState extends State<FastLineChart> {
     sortTimeSalesByKey(raw, (t) => _parseTst(t.tst), (a, b) => a.compareTo(b));
 
     final points = raw.map((e) {
-      return _ChartPoint(xDate: _parseTst(e.tst), y: e.p ?? 0.0, index: 0, label: '', volume: null);
+      return _ChartPoint(
+        xDate: _parseTst(e.tst),
+        y: e.p ?? 0.0,
+        index: 0,
+        label: '',
+        volume: null,
+      );
     }).toList();
     return _downsampleIfNeeded(points, threshold: 1500);
   }
@@ -82,7 +99,9 @@ class _FastLineChartState extends State<FastLineChart> {
       id: 'timeAndSales',
       builder: (_) {
         final data = _buildChartData();
-        if (data.isEmpty) return const Center(child: CircularProgressIndicator());
+        if (data.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
         final ys = data.map((e) => e.y).toList();
         final minY = ys.reduce((a, b) => a < b ? a : b);
         final maxY = ys.reduce((a, b) => a > b ? a : b);
@@ -109,7 +128,9 @@ class _FastLineChartState extends State<FastLineChart> {
                 Expanded(
                   child: Text(
                     homeCont.marketData.shortName ?? '',
-                    style: Get.textTheme.bodyLarge?.copyWith(color: context.buttonColor),
+                    style: Get.context!.textTheme.bodyLarge?.copyWith(
+                      color: context.buttonColor,
+                    ),
                   ),
                 ),
                 IconButton(
@@ -140,7 +161,10 @@ class _FastLineChartState extends State<FastLineChart> {
                   interval: 30,
                   dateFormat: DateFormat('HH:mm'),
                   labelRotation: -90,
-                  majorGridLines: MajorGridLines(color: context.isDark ? Colors.white12 : Colors.black12, width: 0.5),
+                  majorGridLines: MajorGridLines(
+                    color: context.isDark ? Colors.white12 : Colors.black12,
+                    width: 0.5,
+                  ),
                   labelStyle: TextStyle(color: context.textColor),
                 ),
                 primaryYAxis: NumericAxis(
@@ -150,8 +174,14 @@ class _FastLineChartState extends State<FastLineChart> {
                   opposedPosition: true,
                   edgeLabelPlacement: EdgeLabelPlacement.shift,
                   numberFormat: NumberFormat("##0.00"),
-                  majorGridLines: MajorGridLines(color: context.isDark ? Colors.white12 : Colors.black12, width: 0.5),
-                  minorGridLines: MinorGridLines(color: Colors.grey.alphaSafe(0.08), width: 0.5),
+                  majorGridLines: MajorGridLines(
+                    color: context.isDark ? Colors.white12 : Colors.black12,
+                    width: 0.5,
+                  ),
+                  minorGridLines: MinorGridLines(
+                    color: Colors.grey.alphaSafe(0.08),
+                    width: 0.5,
+                  ),
                   labelStyle: TextStyle(color: context.textColor, fontSize: 11),
                 ),
 

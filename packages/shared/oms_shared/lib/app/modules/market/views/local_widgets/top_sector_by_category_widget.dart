@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
@@ -57,18 +57,30 @@ class TopSectorByCategoryWidget extends StatelessWidget {
                     labelRotation: -90,
                     interval: 1,
                     minimum: -0.5,
-                    maximum: homeCon.shownMarket.chartDataShareType.isNotEmpty ? homeCon.shownMarket.chartDataShareType.length - 0.5 : null,
-                    majorGridLines: MajorGridLines(width: 0.5, color: Colors.grey.withAlpha(77)),
+                    maximum: homeCon.shownMarket.chartDataShareType.isNotEmpty
+                        ? homeCon.shownMarket.chartDataShareType.length - 0.5
+                        : null,
+                    majorGridLines: MajorGridLines(
+                      width: 0.5,
+                      color: Colors.grey.withAlpha(77),
+                    ),
                     labelPlacement: LabelPlacement.onTicks,
                     labelIntersectAction: AxisLabelIntersectAction.rotate90,
                     labelAlignment: LabelAlignment.center,
                   ),
-                  zoomPanBehavior: ZoomPanBehavior(enablePanning: true, enablePinching: true, zoomMode: ZoomMode.xy),
+                  zoomPanBehavior: ZoomPanBehavior(
+                    enablePanning: true,
+                    enablePinching: true,
+                    zoomMode: ZoomMode.xy,
+                  ),
                   primaryYAxis: NumericAxis(
                     minimum: 0,
                     // 🚀 CRASH FIX: interval: 5 রিমুভ করা হয়েছে যাতে বড় ভ্যালুতে অ্যাপ ক্র্যাশ না করে
                     // 🚀 FIX: Y-অক্ষ বরাবর গ্রিড লাইন অন রাখা হয়েছে
-                    majorGridLines: MajorGridLines(width: 0.5, color: Colors.grey.withAlpha(77)),
+                    majorGridLines: MajorGridLines(
+                      width: 0.5,
+                      color: Colors.grey.withAlpha(77),
+                    ),
                   ),
                   legend: Legend(
                     isVisible: true,
@@ -77,7 +89,7 @@ class TopSectorByCategoryWidget extends StatelessWidget {
                     title: LegendTitle(
                       text: 'Top Sectors By Category',
                       alignment: ChartAlignment.center,
-                      textStyle: Get.textTheme.titleMedium?.copyWith(
+                      textStyle: Get.context!.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w500,
                         fontSize: 16,
                         color: Get.theme.textTheme.bodyLarge?.color,

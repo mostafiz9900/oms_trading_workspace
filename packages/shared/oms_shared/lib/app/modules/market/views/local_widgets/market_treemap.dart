@@ -3,11 +3,12 @@ import '../../../../core/values/colors.dart';
 import '../../../../data/models/response/market_model.dart';
 import '../../../../global_widgets/visible_get_builder.dart';
 import '../../../home/controllers/home_controller.dart';
-import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_treemap/treemap.dart';
-import 'package:get/get.dart';
-import '../../../../global_widgets/loaders/market_map_loader.dart';
 
+import 'package:material_ui/material_ui.dart';
+import 'package:syncfusion_flutter_treemap/treemap.dart';
+import 'package:getxify/getxify.dart';
+
+import '../../../../global_widgets/loaders/market_map_loader.dart';
 
 class MarketMapWidget extends StatefulWidget {
   const MarketMapWidget({super.key});
@@ -35,7 +36,10 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
         if (s.isEmpty) return 0.0;
         final d = double.tryParse(s);
         if (d != null) return d;
-        final cleaned = RegExp(r'[^0-9\.\-]').allMatches(s).map((m) => m.group(0)).join();
+        final cleaned = RegExp(r'[^0-9\.\-]')
+            .allMatches(s)
+            .map((m) => m.group(0))
+            .join();
         final d2 = double.tryParse(cleaned);
         return d2 ?? 0.0;
       }
@@ -67,7 +71,9 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
     }
   }
 
-  List<MarketModel> _buildGroupedAndSortedSourceParsed(List<MarketModel> markets) {
+  List<MarketModel> _buildGroupedAndSortedSourceParsed(
+    List<MarketModel> markets,
+  ) {
     final Map<String, List<MarketModel>> groups = {};
     for (final m in markets) {
       final sec = (m.sector ?? 'Unknown').trim();
@@ -144,7 +150,8 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
     return VisibleGetBuilder<HomeController>(
       id: 'marketList',
       builder: (homeController) {
-        if (!homeController.shownMarket.quotes.isNotEmpty || homeController.shownMarket.quotes.length < 20) {
+        if (!homeController.shownMarket.quotes.isNotEmpty ||
+            homeController.shownMarket.quotes.length < 20) {
           return MarketMapLoader(height: responsiveHeight);
         }
         final visibleList = homeController.shownMarket.quotes
@@ -153,11 +160,16 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
         if (visibleList.isEmpty) {
           return MarketMapLoader(height: responsiveHeight);
         }
-        final List<MarketModel> allSortedSource = _buildGroupedAndSortedSourceParsed(visibleList);
+        final List<MarketModel> allSortedSource =
+            _buildGroupedAndSortedSourceParsed(visibleList);
 
         final List<MarketModel> displayedSource = _selectedSector == null
             ? allSortedSource
-            : allSortedSource.where((m) => (m.sector ?? 'Unknown').trim() == _selectedSector).toList();
+            : allSortedSource
+                  .where(
+                    (m) => (m.sector ?? 'Unknown').trim() == _selectedSector,
+                  )
+                  .toList();
 
         if (displayedSource.isEmpty) {
           return SizedBox(
@@ -166,7 +178,10 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
             child: Center(
               child: Text(
                 'No data available for this sector',
-                style: TextStyle(color: context.textColor.withAlpha(179), fontSize: 14),
+                style: TextStyle(
+                  color: context.textColor.withAlpha(179),
+                  fontSize: 14,
+                ),
               ),
             ),
           );
@@ -210,9 +225,16 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
         final bool isZoomed = _selectedSector != null;
 
         return Container(
-          constraints: BoxConstraints(minHeight: responsiveHeight, maxHeight: responsiveHeight, maxWidth: screenWidth),
+          constraints: BoxConstraints(
+            minHeight: responsiveHeight,
+            maxHeight: responsiveHeight,
+            maxWidth: screenWidth,
+          ),
           margin: const EdgeInsets.symmetric(vertical: 4),
-          decoration: BoxDecoration(color: Get.theme.scaffoldBackgroundColor, borderRadius: BorderRadius.circular(0)),
+          decoration: BoxDecoration(
+            color: Get.theme.scaffoldBackgroundColor,
+            borderRadius: BorderRadius.circular(0),
+          ),
           child: Column(
             children: [
               // --- 1. Header Area ---
@@ -220,9 +242,7 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
                 height: 38,
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  decoration: BoxDecoration(
-                    color: context.tapBg,
-                  ),
+                  decoration: BoxDecoration(color: context.tapBg),
                   child: Row(
                     children: [
                       if (isZoomed)
@@ -233,19 +253,33 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
                             });
                           },
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: Get.theme.scaffoldBackgroundColor,
-                              border: Border.all(color: context.borderSideColor.withAlpha(128), width: 1.0),
+                              border: Border.all(
+                                color: context.borderSideColor.withAlpha(128),
+                                width: 1.0,
+                              ),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.arrow_back_ios_new_rounded, color: context.textColor, size: 12),
+                                Icon(
+                                  Icons.arrow_back_ios_new_rounded,
+                                  color: context.textColor,
+                                  size: 12,
+                                ),
                                 const SizedBox(width: 4),
                                 Text(
                                   'Back',
-                                  style: TextStyle(color: context.textColor, fontSize: 12, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                    color: context.textColor,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ],
                             ),
@@ -255,7 +289,7 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
                       Expanded(
                         child: Text(
                           isZoomed ? _selectedSector! : "Market Map Overview",
-                          style: Get.textTheme.titleMedium?.copyWith(
+                          style: Get.context!.textTheme.titleMedium?.copyWith(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: context.textColor,
@@ -266,7 +300,11 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
                       if (!isZoomed)
                         Row(
                           children: [
-                            Icon(Icons.touch_app_rounded, size: 12, color: context.textColor.withAlpha(153)),
+                            Icon(
+                              Icons.touch_app_rounded,
+                              size: 12,
+                              color: context.textColor.withAlpha(153),
+                            ),
                             const SizedBox(width: 4),
                             Text(
                               "Tap to zoom",
@@ -295,7 +333,9 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
                     }
 
                     return ClipRRect(
-                      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(6)),
+                      borderRadius: const BorderRadius.vertical(
+                        bottom: Radius.circular(6),
+                      ),
                       child: SfTreemap(
                         key: ValueKey(_selectedSector ?? 'ALL'),
                         dataCount: displayedSource.length,
@@ -309,50 +349,61 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
                           // 🚀 Level 0: Sector Titles
                           if (!isZoomed)
                             TreemapLevel(
-                              groupMapper: (int index) => (displayedSource[index].sector ?? 'Unknown'),
+                              groupMapper: (int index) =>
+                                  (displayedSource[index].sector ?? 'Unknown'),
                               padding: EdgeInsets.zero,
-                              color: const Color(0xFF141414), // 🚀 অরিজিনাল ডার্ক কালার ফিরে এসেছে
-                              labelBuilder: (BuildContext context, TreemapTile tile) {
-                                // Bound the label area so it cannot consume the
-                                // sector tile and leave no room for child tiles.
-                                return SizedBox(
-                                  height: 12,
-                                  child: IgnorePointer(
-                                    child: Container(
-                                      alignment: Alignment.centerLeft,
-                                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                                      child: FittedBox(
-                                        fit: BoxFit.scaleDown,
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          tile.group.toUpperCase(),
-                                          maxLines: 1,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
+                              color: const Color(
+                                0xFF141414,
+                              ), // 🚀 অরিজিনাল ডার্ক কালার ফিরে এসেছে
+                              labelBuilder:
+                                  (BuildContext context, TreemapTile tile) {
+                                    // Bound the label area so it cannot consume the
+                                    // sector tile and leave no room for child tiles.
+                                    return SizedBox(
+                                      height: 12,
+                                      child: IgnorePointer(
+                                        child: Container(
+                                          alignment: Alignment.centerLeft,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 2.0,
+                                          ),
+                                          child: FittedBox(
+                                            fit: BoxFit.scaleDown,
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              tile.group.toUpperCase(),
+                                              maxLines: 1,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                );
-                              },
+                                    );
+                                  },
                             ),
 
                           // 🚀 Level 1: Child Tiles
                           TreemapLevel(
                             groupMapper: (int index) {
                               final m = displayedSource[index];
-                              return (m.shortName?.isNotEmpty == true ? m.shortName : (m.ticker ?? 'N/A'))!;
+                              return (m.shortName?.isNotEmpty == true
+                                  ? m.shortName
+                                  : (m.ticker ?? 'N/A'))!;
                             },
                             padding: EdgeInsets.zero,
                             itemBuilder: (BuildContext context, TreemapTile tile) {
                               final idx = tile.indices[0];
                               final model = displayedSource[idx];
-                              final Color tileBgColor = sectorTileColor(model.chg);
+                              final Color tileBgColor = sectorTileColor(
+                                model.chg,
+                              );
 
-                              final String title = model.shortName?.isNotEmpty == true
+                              final String title =
+                                  model.shortName?.isNotEmpty == true
                                   ? model.shortName!
                                   : (model.ticker ?? 'N/A');
                               final double changeVal = getChgSafe(model);
@@ -365,23 +416,35 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
                                       _selectedSector = model.sector;
                                     });
                                   } else {
-                                    homeController.goBottomNabBarPage(1, model.orderBook!);
-                                    homeController.loadComanyDividentEPS('${model.shortName}');
+                                    homeController.goBottomNabBarPage(
+                                      1,
+                                      model.orderBook!,
+                                    );
+                                    homeController.loadComanyDividentEPS(
+                                      '${model.shortName}',
+                                    );
                                   }
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: tileBgColor,
-                                    border: Border.all(color: Colors.black, width: 0.5), // Custom Border
+                                    border: Border.all(
+                                      color: Colors.black,
+                                      width: 0.5,
+                                    ), // Custom Border
                                   ),
                                   child: LayoutBuilder(
                                     builder: (context, tileConstraints) {
-                                      if (tileConstraints.maxWidth < 15 || tileConstraints.maxHeight < 15) {
+                                      if (tileConstraints.maxWidth < 15 ||
+                                          tileConstraints.maxHeight < 15) {
                                         return const SizedBox.shrink();
                                       }
 
                                       return Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 2.0, vertical: 2.0),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 2.0,
+                                          vertical: 2.0,
+                                        ),
                                         child: Align(
                                           alignment: Alignment.center,
                                           child: FittedBox(
@@ -389,7 +452,8 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
                                             alignment: Alignment.center,
                                             child: Column(
                                               mainAxisSize: MainAxisSize.min,
-                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
                                               children: [
                                                 Text(
                                                   title,
@@ -398,21 +462,33 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: isZoomed
                                                         ? 14
-                                                        : (tileConstraints.maxWidth < 55 ||
-                                                                tileConstraints.maxHeight < 35
-                                                            ? 8
-                                                            : 11),
+                                                        : (tileConstraints.maxWidth <
+                                                                      55 ||
+                                                                  tileConstraints
+                                                                          .maxHeight <
+                                                                      35
+                                                              ? 8
+                                                              : 11),
                                                   ),
                                                 ),
-                                                if (isZoomed || tileConstraints.maxHeight > 25)
+                                                if (isZoomed ||
+                                                    tileConstraints.maxHeight >
+                                                        25)
                                                   Padding(
-                                                    padding: const EdgeInsets.only(top: 2.0),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                          top: 2.0,
+                                                        ),
                                                     child: Text(
                                                       chgStr,
                                                       style: TextStyle(
-                                                        color: Colors.white.withAlpha(242),
-                                                        fontSize: isZoomed ? 12 : 9.5,
-                                                        fontWeight: FontWeight.w600,
+                                                        color: Colors.white
+                                                            .withAlpha(242),
+                                                        fontSize: isZoomed
+                                                            ? 12
+                                                            : 9.5,
+                                                        fontWeight:
+                                                            FontWeight.w600,
                                                       ),
                                                     ),
                                                   ),
@@ -428,7 +504,9 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
                             },
                           ),
                         ],
-                        tooltipSettings: const TreemapTooltipSettings(color: Color(0xFF1E1E1E)),
+                        tooltipSettings: const TreemapTooltipSettings(
+                          color: Color(0xFF1E1E1E),
+                        ),
                       ),
                     );
                   },

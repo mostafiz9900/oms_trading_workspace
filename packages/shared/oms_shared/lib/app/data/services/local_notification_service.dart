@@ -4,20 +4,29 @@ import '../../core/values/app_config.dart';
 import '../../core/utils/helpers/log_helper.dart';
 
 class LocalNotificationService {
-  static final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
+  static final FlutterLocalNotificationsPlugin _notifications =
+      FlutterLocalNotificationsPlugin();
 
   static Future<void> initialize() async {
-    const AndroidInitializationSettings androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const AndroidInitializationSettings androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    const DarwinInitializationSettings iosSettings = DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
+    const DarwinInitializationSettings iosSettings =
+        DarwinInitializationSettings(
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        );
+
+    const InitializationSettings settings = InitializationSettings(
+      android: androidSettings,
+      iOS: iosSettings,
     );
 
-    const InitializationSettings settings = InitializationSettings(android: androidSettings, iOS: iosSettings);
-
-    await _notifications.initialize(settings: settings, onDidReceiveNotificationResponse: _onNotificationTap);
+    await _notifications.initialize(
+      settings: settings,
+      onDidReceiveNotificationResponse: _onNotificationTap,
+    );
   }
 
   static void _onNotificationTap(NotificationResponse response) {
@@ -34,19 +43,30 @@ class LocalNotificationService {
     required String body,
     String? payload,
   }) async {
-    final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-      '${AppConfig.houseId}_channel',
-      '${AppConfig.houseName} Notifications',
-      channelDescription: 'Notification channel for ${AppConfig.houseName} app',
-      importance: Importance.high,
-      priority: Priority.high,
-    );
+    final AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          '${AppConfig.houseId}_channel',
+          '${AppConfig.houseName} Notifications',
+          channelDescription:
+              'Notification channel for ${AppConfig.houseName} app',
+          importance: Importance.high,
+          priority: Priority.high,
+        );
 
     const DarwinNotificationDetails iosDetails = DarwinNotificationDetails();
 
-    final NotificationDetails details = NotificationDetails(android: androidDetails, iOS: iosDetails);
+    final NotificationDetails details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
 
-    await _notifications.show(id: id, title: title, body: body, notificationDetails: details, payload: payload);
+    await _notifications.show(
+      id: id,
+      title: title,
+      body: body,
+      notificationDetails: details,
+      payload: payload,
+    );
   }
 
   static Future<void> showBigImageNotification({
@@ -56,18 +76,28 @@ class LocalNotificationService {
     required String imageUrl,
     String? payload,
   }) async {
-    final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-      '${AppConfig.houseId}_image_channel',
-      '${AppConfig.houseName} Image Notifications',
-      channelDescription: 'Notification channel for images',
-      importance: Importance.high,
-      priority: Priority.high,
-    );
+    final AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          '${AppConfig.houseId}_image_channel',
+          '${AppConfig.houseName} Image Notifications',
+          channelDescription: 'Notification channel for images',
+          importance: Importance.high,
+          priority: Priority.high,
+        );
 
     const DarwinNotificationDetails iosDetails = DarwinNotificationDetails();
 
-    NotificationDetails details = NotificationDetails(android: androidDetails, iOS: iosDetails);
+    NotificationDetails details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
 
-    await _notifications.show(id: id, title: title, body: body, notificationDetails: details, payload: payload);
+    await _notifications.show(
+      id: id,
+      title: title,
+      body: body,
+      notificationDetails: details,
+      payload: payload,
+    );
   }
 }

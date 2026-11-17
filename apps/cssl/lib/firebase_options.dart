@@ -63,8 +63,7 @@ class DefaultFirebaseOptions {
     appId: '1:498276884869:ios:7ebe6f3a3af932c0b3e4ec',
     messagingSenderId: '498276884869',
     projectId: 'benemoy-c5dae',
-    databaseURL:
-        'https://benemoy-c5dae-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL: 'https://benemoy-c5dae-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'benemoy-c5dae.firebasestorage.app',
     iosBundleId: 'com.csslbd.oms.app',
   );

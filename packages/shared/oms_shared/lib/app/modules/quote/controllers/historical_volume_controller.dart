@@ -5,8 +5,8 @@ import '../../../data/repositories/market_chart_repository.dart'
     show MarketChartRepository;
 
 // lib/controllers/historical_volume_controller.dart
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/utils/helpers/log_helper.dart';

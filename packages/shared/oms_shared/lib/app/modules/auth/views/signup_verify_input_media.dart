@@ -8,10 +8,11 @@ import '../../../global_widgets/custom_button.dart';
 import '../../../global_widgets/custom_edit_text_form_field.dart';
 import '../controllers/auth_controller.dart';
 import 'login_view.dart';
+
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../onboarding/views/local_widgets/create_new_account.dart';
 
@@ -32,7 +33,10 @@ class SignupVerifyInputMedia extends GetView<AuthController> {
                   children: [
                     SvgPicture.asset(AssetsConstants.logoSvg),
                     AppSpace.spaceH30,
-                    Text("Verify UserSelf", style: Get.textTheme.titleLarge),
+                    Text(
+                      "Verify UserSelf",
+                      style: Get.context!.textTheme.titleLarge,
+                    ),
                     AppSpace.spaceH30,
                     Column(
                       mainAxisAlignment: .start,
@@ -41,13 +45,15 @@ class SignupVerifyInputMedia extends GetView<AuthController> {
                         Align(
                           child: Text(
                             "Bio Id: ${authCon.verifyBoid?.boId}",
-                            style: Get.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                            style: Get.context!.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         AppSpace.spaceH10,
                         Text(
                           "Select Media",
-                          style: Get.textTheme.titleMedium?.copyWith(
+                          style: Get.context!.textTheme.titleMedium?.copyWith(
                             color: ColorConstants.gray,
                             fontSize: AppDimens.space17,
                           ),
@@ -68,16 +74,18 @@ class SignupVerifyInputMedia extends GetView<AuthController> {
                                 child: Radio<String?>(
                                   value: authCon.media["email"],
                                   activeColor: context.buttonColor,
-                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
                                 ),
                               ),
                               Text(
                                 'Email',
-                                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                  fontSize: AppDimens.space14,
-                                  fontWeight: FontWeight.w400,
-                                  color: ColorConstants.gray,
-                                ),
+                                style: Theme.of(context).textTheme.titleSmall
+                                    ?.copyWith(
+                                      fontSize: AppDimens.space14,
+                                      fontWeight: FontWeight.w400,
+                                      color: ColorConstants.gray,
+                                    ),
                               ),
                             ],
                           ),
@@ -97,16 +105,18 @@ class SignupVerifyInputMedia extends GetView<AuthController> {
                                 child: Radio<String?>(
                                   value: authCon.media["mobile"],
                                   activeColor: context.buttonColor,
-                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
                                 ),
                               ),
                               Text(
                                 'Mobile',
-                                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                  fontSize: AppDimens.space14,
-                                  fontWeight: FontWeight.w400,
-                                  color: ColorConstants.gray,
-                                ),
+                                style: Theme.of(context).textTheme.titleSmall
+                                    ?.copyWith(
+                                      fontSize: AppDimens.space14,
+                                      fontWeight: FontWeight.w400,
+                                      color: ColorConstants.gray,
+                                    ),
                               ),
                             ],
                           ),
@@ -126,49 +136,81 @@ class SignupVerifyInputMedia extends GetView<AuthController> {
                                       children: [
                                         Text(
                                           "Available ${authCon.selectedMedia}",
-                                          style: Get.textTheme.titleMedium?.copyWith(
-                                            color: ColorConstants.gray,
-                                            fontSize: AppDimens.space17,
-                                          ),
+                                          style: Get
+                                              .context!
+                                              .textTheme
+                                              .titleMedium
+                                              ?.copyWith(
+                                                color: ColorConstants.gray,
+                                                fontSize: AppDimens.space17,
+                                              ),
                                         ),
-                                        authCon.selectMediaLoading == true || authCon.selectMediaInfo == null
+                                        authCon.selectMediaLoading == true ||
+                                                authCon.selectMediaInfo == null
                                             ? Container()
                                             : Column(
-                                                children: List.generate(authCon.selectMediaInfo!.mediaData!.length, (
-                                                  index,
-                                                ) {
-                                                  String? model = authCon.selectMediaInfo!.mediaData!.elementAt(index);
-                                                  return InkWell(
-                                                    onTap: () {
-                                                      authCon.setSelectedAvailableEmail(model);
-                                                    },
-                                                    child: Row(
-                                                      mainAxisAlignment: .start,
-                                                      children: [
-                                                        RadioGroup<String?>(
-                                                          groupValue: authCon.selectedAvailablePhoneOrEmail,
-                                                          onChanged: (value) {
-                                                            authCon.setSelectedAvailableEmail(value);
-                                                          },
-                                                          child: Radio<String?>(
-                                                            value: model,
-                                                            activeColor: context.buttonColor,
-                                                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                children: List.generate(
+                                                  authCon
+                                                      .selectMediaInfo!
+                                                      .mediaData!
+                                                      .length,
+                                                  (index) {
+                                                    String? model = authCon
+                                                        .selectMediaInfo!
+                                                        .mediaData!
+                                                        .elementAt(index);
+                                                    return InkWell(
+                                                      onTap: () {
+                                                        authCon
+                                                            .setSelectedAvailableEmail(
+                                                              model,
+                                                            );
+                                                      },
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            .start,
+                                                        children: [
+                                                          RadioGroup<String?>(
+                                                            groupValue: authCon
+                                                                .selectedAvailablePhoneOrEmail,
+                                                            onChanged: (value) {
+                                                              authCon
+                                                                  .setSelectedAvailableEmail(
+                                                                    value,
+                                                                  );
+                                                            },
+                                                            child: Radio<String?>(
+                                                              value: model,
+                                                              activeColor: context
+                                                                  .buttonColor,
+                                                              materialTapTargetSize:
+                                                                  MaterialTapTargetSize
+                                                                      .shrinkWrap,
+                                                            ),
                                                           ),
-                                                        ),
-                                                        Text(
-                                                          model,
-                                                          maxLines: 1,
-                                                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                                            fontSize: AppDimens.space14,
-                                                            fontWeight: FontWeight.w400,
-                                                            color: ColorConstants.gray,
+                                                          Text(
+                                                            model,
+                                                            maxLines: 1,
+                                                            style: Theme.of(context)
+                                                                .textTheme
+                                                                .titleSmall
+                                                                ?.copyWith(
+                                                                  fontSize:
+                                                                      AppDimens
+                                                                          .space14,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  color:
+                                                                      ColorConstants
+                                                                          .gray,
+                                                                ),
                                                           ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  );
-                                                }),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
                                               ),
                                       ],
                                     ),
@@ -181,16 +223,22 @@ class SignupVerifyInputMedia extends GetView<AuthController> {
                                       children: [
                                         Text(
                                           "Add New ${authCon.selectedMedia}",
-                                          style: Get.textTheme.titleMedium?.copyWith(
-                                            color: ColorConstants.gray,
-                                            fontSize: AppDimens.space17,
-                                          ),
+                                          style: Get
+                                              .context!
+                                              .textTheme
+                                              .titleMedium
+                                              ?.copyWith(
+                                                color: ColorConstants.gray,
+                                                fontSize: AppDimens.space17,
+                                              ),
                                         ),
                                         AppSpace.spaceH10,
                                         CustomEditTextFormField(
-                                          hintText: 'Enter ${authCon.selectedMedia}',
+                                          hintText:
+                                              'Enter ${authCon.selectedMedia}',
                                           onChanged: (value) {
-                                            authCon.setClearSelectedAvailableEmail();
+                                            authCon
+                                                .setClearSelectedAvailableEmail();
                                           },
                                         ),
                                       ],

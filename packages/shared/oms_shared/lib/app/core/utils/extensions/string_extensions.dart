@@ -1,6 +1,3 @@
-
-
-
 extension ExtendedString on String {
   bool get isValidName {
     return !contains(RegExp(r'[0–9]'));

@@ -6,10 +6,12 @@ import '../../../../core/values/space.dart';
 import '../../../../data/models/response/time_sales_model.dart';
 import '../../../../global_widgets/visible_get_builder.dart';
 import '../../../home/controllers/home_controller.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
+
 import 'time_sales_sort.dart';
 
 // --- Your widget (full updated state class) ---
@@ -33,12 +35,19 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
   @override
   void initState() {
     super.initState();
-    _zoomPanBehavior = ZoomPanBehavior(enablePanning: true, enablePinching: true, zoomMode: ZoomMode.x);
+    _zoomPanBehavior = ZoomPanBehavior(
+      enablePanning: true,
+      enablePinching: true,
+      zoomMode: ZoomMode.x,
+    );
 
     _trackballBehavior = TrackballBehavior(
       enable: true,
       activationMode: ActivationMode.singleTap,
-      tooltipSettings: const InteractiveTooltip(enable: true, format: 'point.x : point.y'),
+      tooltipSettings: const InteractiveTooltip(
+        enable: true,
+        format: 'point.x : point.y',
+      ),
     );
   }
 
@@ -58,7 +67,10 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
     }
   }
 
-  List<_PricePoint> _downsampleIfNeeded(List<_PricePoint> pts, {int threshold = 1500}) {
+  List<_PricePoint> _downsampleIfNeeded(
+    List<_PricePoint> pts, {
+    int threshold = 1500,
+  }) {
     if (pts.length <= threshold) return pts;
     final step = (pts.length / threshold).ceil();
     final res = <_PricePoint>[];
@@ -73,11 +85,23 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
     final raw = List<TimeAndSalesModel>.from(homeCont.shownMarket.timeAndSales);
     if (raw.isEmpty) return [];
     sortTimeSalesByKey(raw, (t) => _parseTst(t.tst), (a, b) => a.compareTo(b));
-    final pts = raw.map((e) => _PricePoint(xDate: _parseTst(e.tst), y: e.p ?? 0.0, volume: e.v ?? 0)).toList();
+    final pts = raw
+        .map(
+          (e) => _PricePoint(
+            xDate: _parseTst(e.tst),
+            y: e.p ?? 0.0,
+            volume: e.v ?? 0,
+          ),
+        )
+        .toList();
     return _downsampleIfNeeded(pts, threshold: 2000);
   }
 
-  List<_VolBucket> _aggregateVolumeBuckets(List<TimeAndSalesModel> raw, int bucketSeconds, {int keepLast = 300}) {
+  List<_VolBucket> _aggregateVolumeBuckets(
+    List<TimeAndSalesModel> raw,
+    int bucketSeconds, {
+    int keepLast = 300,
+  }) {
     if (raw.isEmpty) return [];
     sortTimeSalesByKey(raw, (t) => _parseTst(t.tst), (a, b) => a.compareTo(b));
 
@@ -85,7 +109,8 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
     for (final t in raw) {
       final dt = _parseTst(t.tst);
       final epoch = dt.millisecondsSinceEpoch;
-      final bucketStartEpoch = (epoch ~/ (bucketSeconds * 1000)) * (bucketSeconds * 1000);
+      final bucketStartEpoch =
+          (epoch ~/ (bucketSeconds * 1000)) * (bucketSeconds * 1000);
       final key = bucketStartEpoch;
       final price = t.p ?? 0.0;
       final vol = (t.v ?? 0);
@@ -113,8 +138,10 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
     return list;
   }
 
-  double _alignFloor(double value, double step) => (value / step).floorToDouble() * step;
-  double _alignCeil(double value, double step) => (value / step).ceilToDouble() * step;
+  double _alignFloor(double value, double step) =>
+      (value / step).floorToDouble() * step;
+  double _alignCeil(double value, double step) =>
+      (value / step).ceilToDouble() * step;
 
   @override
   Widget build(BuildContext context) {
@@ -122,17 +149,31 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
       id: 'timeAndSales',
       builder: (_) {
         final pricePts = _buildPricePoints();
-        if (pricePts.isEmpty) return const Center(child: CircularProgressIndicator());
+        if (pricePts.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-        final rawTicks = List<TimeAndSalesModel>.from(homeCont.shownMarket.timeAndSales);
-        final volBuckets = _aggregateVolumeBuckets(rawTicks, bucketSeconds, keepLast: maxBuckets);
+        final rawTicks = List<TimeAndSalesModel>.from(
+          homeCont.shownMarket.timeAndSales,
+        );
+        final volBuckets = _aggregateVolumeBuckets(
+          rawTicks,
+          bucketSeconds,
+          keepLast: maxBuckets,
+        );
 
         final volSeriesData = <_VolPoint>[];
         for (int i = 0; i < volBuckets.length; i++) {
           final b = volBuckets[i];
           final prevClose = (i > 0) ? volBuckets[i - 1].close : b.open;
           volSeriesData.add(
-            _VolPoint(time: b.start, volume: b.volume, open: b.open, close: b.close, previousClose: prevClose),
+            _VolPoint(
+              time: b.start,
+              volume: b.volume,
+              open: b.open,
+              close: b.close,
+              previousClose: prevClose,
+            ),
           );
         }
 
@@ -154,7 +195,9 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
         final paddedMaxForLabel = alignedMax + step;
 
         final volYs = volSeriesData.map((e) => e.volume).toList();
-        double volMax = volYs.isEmpty ? 1.0 : volYs.reduce((a, b) => a > b ? a : b);
+        double volMax = volYs.isEmpty
+            ? 1.0
+            : volYs.reduce((a, b) => a > b ? a : b);
         final volAxisMax = (volMax * 1.12).ceilToDouble();
 
         final upColor = ColorConstants.upColor;
@@ -165,8 +208,16 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
         volSeriesData.sort((a, b) => a.time.compareTo(b.time));
 
         final volMidPoints = volSeriesData.map((p) {
-          final mid = p.time.add(Duration(seconds: (bucketSeconds / 2).floor()));
-          return _VolPoint(time: mid, volume: p.volume, open: p.open, close: p.close, previousClose: p.previousClose);
+          final mid = p.time.add(
+            Duration(seconds: (bucketSeconds / 2).floor()),
+          );
+          return _VolPoint(
+            time: mid,
+            volume: p.volume,
+            open: p.open,
+            close: p.close,
+            previousClose: p.previousClose,
+          );
         }).toList();
 
         return ListView(
@@ -178,7 +229,9 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
                 Expanded(
                   child: Text(
                     homeCont.marketData.shortName ?? '',
-                    style: Get.textTheme.bodyLarge?.copyWith(color: context.buttonColor),
+                    style: Get.context!.textTheme.bodyLarge?.copyWith(
+                      color: context.buttonColor,
+                    ),
                   ),
                 ),
 
@@ -188,7 +241,9 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
                 TextButton(
                   onPressed: () => setState(() => _show1D = true),
                   style: TextButton.styleFrom(
-                    backgroundColor: _show1D ? context.buttonColor.withAlpha(38) : Colors.transparent,
+                    backgroundColor: _show1D
+                        ? context.buttonColor.withAlpha(38)
+                        : Colors.transparent,
                     minimumSize: const Size(44, 32),
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                   ),
@@ -205,7 +260,9 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
                 TextButton(
                   onPressed: () => setState(() => _show1D = false),
                   style: TextButton.styleFrom(
-                    backgroundColor: !_show1D ? context.buttonColor.withAlpha(38) : Colors.transparent,
+                    backgroundColor: !_show1D
+                        ? context.buttonColor.withAlpha(38)
+                        : Colors.transparent,
                     minimumSize: const Size(44, 32),
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                   ),
@@ -213,7 +270,9 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
                     '1Y',
                     style: TextStyle(
                       color: !_show1D ? context.buttonColor : Colors.grey,
-                      fontWeight: !_show1D ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: !_show1D
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                     ),
                   ),
                 ),
@@ -237,8 +296,14 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
                     interval: bucketSeconds.toDouble(),
                     dateFormat: DateFormat('HH:mm'),
                     labelRotation: -45,
-                    majorGridLines: MajorGridLines(color: context.isDark ? Colors.white12 : Colors.black12, width: 0.5),
-                    labelStyle: TextStyle(color: context.textColor, fontSize: 11),
+                    majorGridLines: MajorGridLines(
+                      color: context.isDark ? Colors.white12 : Colors.black12,
+                      width: 0.5,
+                    ),
+                    labelStyle: TextStyle(
+                      color: context.textColor,
+                      fontSize: 11,
+                    ),
                     edgeLabelPlacement: EdgeLabelPlacement.shift,
                   ),
                   primaryYAxis: NumericAxis(
@@ -248,9 +313,18 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
                     opposedPosition: true,
                     edgeLabelPlacement: EdgeLabelPlacement.shift,
                     numberFormat: NumberFormat("##0.0"),
-                    majorGridLines: MajorGridLines(color: context.isDark ? Colors.white12 : Colors.black12, width: 0.5),
-                    minorGridLines: MinorGridLines(color: Colors.grey.alphaSafe(0.08), width: 0.5),
-                    labelStyle: TextStyle(color: context.textColor, fontSize: 11),
+                    majorGridLines: MajorGridLines(
+                      color: context.isDark ? Colors.white12 : Colors.black12,
+                      width: 0.5,
+                    ),
+                    minorGridLines: MinorGridLines(
+                      color: Colors.grey.alphaSafe(0.08),
+                      width: 0.5,
+                    ),
+                    labelStyle: TextStyle(
+                      color: context.textColor,
+                      fontSize: 11,
+                    ),
                   ),
                   axes: <ChartAxis>[
                     NumericAxis(
@@ -261,7 +335,10 @@ class _FastLineWithBarChartState extends State<FastLineWithBarChart> {
                       interval: (volAxisMax / 16).ceilToDouble(),
                       numberFormat: NumberFormat.compact(),
                       majorGridLines: MajorGridLines(color: Colors.transparent),
-                      labelStyle: TextStyle(color: context.textColor, fontSize: 11),
+                      labelStyle: TextStyle(
+                        color: context.textColor,
+                        fontSize: 11,
+                      ),
                     ),
                   ],
                   series: <CartesianSeries>[
@@ -352,7 +429,11 @@ class VolumePieByDirection extends StatelessWidget {
     }
   }
 
-  List<_VolBucket> _aggregateBuckets(List<TimeAndSalesModel> raw, int bucketSeconds, {int keepLast = 300}) {
+  List<_VolBucket> _aggregateBuckets(
+    List<TimeAndSalesModel> raw,
+    int bucketSeconds, {
+    int keepLast = 300,
+  }) {
     if (raw.isEmpty) return [];
     sortTimeSalesByKey<DateTime?>(raw, (t) => _tryParseTst(t.tst), (ta, tb) {
       if (ta == null && tb == null) return 0;
@@ -366,7 +447,8 @@ class VolumePieByDirection extends StatelessWidget {
       final dt = _tryParseTst(t.tst);
       if (dt == null) continue;
       final epoch = dt.millisecondsSinceEpoch;
-      final bucketStartEpoch = (epoch ~/ (bucketSeconds * 1000)) * (bucketSeconds * 1000);
+      final bucketStartEpoch =
+          (epoch ~/ (bucketSeconds * 1000)) * (bucketSeconds * 1000);
       final key = bucketStartEpoch;
       final price = t.p ?? 0.0;
       final vol = (t.v ?? 0);
@@ -398,13 +480,25 @@ class VolumePieByDirection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Builder(
       builder: (_) {
-        final raw = List<TimeAndSalesModel>.from(homeCont.shownMarket.timeAndSales);
+        final raw = List<TimeAndSalesModel>.from(
+          homeCont.shownMarket.timeAndSales,
+        );
         if (raw.isEmpty) {
-          return Center(child: Text('No trades', style: Get.textTheme.bodyLarge));
+          return Center(
+            child: Text('No trades', style: Get.context!.textTheme.bodyLarge),
+          );
         }
 
-        final buckets = _aggregateBuckets(raw, bucketSeconds, keepLast: maxBuckets);
-        if (buckets.isEmpty) return Center(child: Text('No buckets', style: Get.textTheme.bodyLarge));
+        final buckets = _aggregateBuckets(
+          raw,
+          bucketSeconds,
+          keepLast: maxBuckets,
+        );
+        if (buckets.isEmpty) {
+          return Center(
+            child: Text('No buckets', style: Get.context!.textTheme.bodyLarge),
+          );
+        }
 
         // Sum volumes into categories based on bucket close vs previous close
         double upVol = 0.0, downVol = 0.0, equalVol = 0.0;
@@ -422,19 +516,41 @@ class VolumePieByDirection extends StatelessWidget {
 
         final total = upVol + downVol + equalVol;
         if (total <= 0) {
-          return Center(child: Text('No volume', style: Theme.of(context).textTheme.bodyLarge));
+          return Center(
+            child: Text(
+              'No volume',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          );
         }
 
         final slices = <_PieSlice>[];
-        if (upVol > 0) slices.add(_PieSlice(category: 'Up', value: upVol, color: upColor));
-        if (downVol > 0) slices.add(_PieSlice(category: 'Down', value: downVol, color: downColor));
-        if (equalVol > 0) slices.add(_PieSlice(category: 'Equal', value: equalVol, color: equalColor));
+        if (upVol > 0) {
+          slices.add(_PieSlice(category: 'Up', value: upVol, color: upColor));
+        }
+        if (downVol > 0) {
+          slices.add(
+            _PieSlice(category: 'Down', value: downVol, color: downColor),
+          );
+        }
+        if (equalVol > 0) {
+          slices.add(
+            _PieSlice(category: 'Equal', value: equalVol, color: equalColor),
+          );
+        }
 
         return SizedBox(
           height: 260,
           child: SfCircularChart(
-            legend: Legend(isVisible: true, overflowMode: LegendItemOverflowMode.wrap, position: LegendPosition.bottom),
-            tooltipBehavior: TooltipBehavior(enable: true, format: 'point.x : point.y'),
+            legend: Legend(
+              isVisible: true,
+              overflowMode: LegendItemOverflowMode.wrap,
+              position: LegendPosition.bottom,
+            ),
+            tooltipBehavior: TooltipBehavior(
+              enable: true,
+              format: 'point.x : point.y',
+            ),
             series: <CircularSeries>[
               DoughnutSeries<_PieSlice, String>(
                 dataSource: slices,

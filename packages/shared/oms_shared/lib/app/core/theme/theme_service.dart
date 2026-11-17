@@ -1,6 +1,7 @@
 import '../values/storage.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 import 'package:get_storage/get_storage.dart';
 
 class ThemeServices extends GetxService {

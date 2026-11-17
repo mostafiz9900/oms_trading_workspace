@@ -5,8 +5,9 @@ import '../../../core/utils/helpers/log_helper.dart';
 import '../../../core/values/space.dart';
 import '../../../data/models/response/user_order.dart';
 import '../../../global_widgets/custom_app_bar.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 class OrderDetailsView extends StatelessWidget {
   const OrderDetailsView({super.key, required this.userOrder});
@@ -37,11 +38,16 @@ class OrderDetailsView extends StatelessWidget {
   Widget build(BuildContext context) {
     printLog('OrderDetailsView :: ${userOrder.toJson()}');
 
-    Divider dividerWidget = Divider(height: 1, color: context.dividerColor.withAlpha(128));
+    Divider dividerWidget = Divider(
+      height: 1,
+      color: context.dividerColor.withAlpha(128),
+    );
 
     // Side Color
     String side = userOrder.side ?? "";
-    Color sideColor = side.toUpperCase() == 'BUY' ? HexColor("#22C665") : HexColor("#F70042");
+    Color sideColor = side.toUpperCase() == 'BUY'
+        ? HexColor("#22C665")
+        : HexColor("#F70042");
 
     return SafeArea(
       child: Scaffold(
@@ -59,71 +65,126 @@ class OrderDetailsView extends StatelessWidget {
               AppSpace.spaceH10,
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: context.cardColor,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(width: 1, color: context.borderSideColor.withAlpha(128)),
+                  border: Border.all(
+                    width: 1,
+                    color: context.borderSideColor.withAlpha(128),
+                  ),
                 ),
                 child: Column(
                   children: [
-                    _TitleAndValueRowWidget(title: 'Instrument', value: userOrder.name ?? ''),
+                    _TitleAndValueRowWidget(
+                      title: 'Instrument',
+                      value: userOrder.name ?? '',
+                    ),
                     AppSpace.spaceH10, dividerWidget, AppSpace.spaceH10,
 
-                    _TitleAndValueRowWidget(title: 'Client A/C', value: userOrder.clientCode ?? ''),
+                    _TitleAndValueRowWidget(
+                      title: 'Client A/C',
+                      value: userOrder.clientCode ?? '',
+                    ),
                     AppSpace.spaceH10, dividerWidget, AppSpace.spaceH10,
 
-                    _TitleAndValueRowWidget(title: 'Side', value: side, valueColor: sideColor),
+                    _TitleAndValueRowWidget(
+                      title: 'Side',
+                      value: side,
+                      valueColor: sideColor,
+                    ),
                     AppSpace.spaceH10, dividerWidget, AppSpace.spaceH10,
 
-                    _TitleAndValueRowWidget(title: 'Order Type', value: userOrder.ordType ?? ""),
+                    _TitleAndValueRowWidget(
+                      title: 'Order Type',
+                      value: userOrder.ordType ?? "",
+                    ),
                     AppSpace.spaceH10, dividerWidget, AppSpace.spaceH10,
 
-                    _TitleAndValueRowWidget(title: 'Total Qty', value: '${userOrder.sentQty ?? 0}'),
+                    _TitleAndValueRowWidget(
+                      title: 'Total Qty',
+                      value: '${userOrder.sentQty ?? 0}',
+                    ),
                     AppSpace.spaceH10, dividerWidget, AppSpace.spaceH10,
 
-                    _TitleAndValueRowWidget(title: 'Executed Qty', value: '${userOrder.cumQty ?? 0}'),
+                    _TitleAndValueRowWidget(
+                      title: 'Executed Qty',
+                      value: '${userOrder.cumQty ?? 0}',
+                    ),
                     AppSpace.spaceH10, dividerWidget, AppSpace.spaceH10,
 
-                    _TitleAndValueRowWidget(title: 'Leaves Qty', value: '${userOrder.leavesQty ?? 0}'),
+                    _TitleAndValueRowWidget(
+                      title: 'Leaves Qty',
+                      value: '${userOrder.leavesQty ?? 0}',
+                    ),
                     AppSpace.spaceH10, dividerWidget, AppSpace.spaceH10,
 
-                    _TitleAndValueRowWidget(title: 'Remaining Qty', value: '${userOrder.remainingQty ?? 0}'),
+                    _TitleAndValueRowWidget(
+                      title: 'Remaining Qty',
+                      value: '${userOrder.remainingQty ?? 0}',
+                    ),
                     AppSpace.spaceH10, dividerWidget, AppSpace.spaceH10,
 
-                    _TitleAndValueRowWidget(title: 'Execution%', value: userOrder.execution ?? ""),
+                    _TitleAndValueRowWidget(
+                      title: 'Execution%',
+                      value: userOrder.execution ?? "",
+                    ),
                     AppSpace.spaceH10, dividerWidget, AppSpace.spaceH10,
 
-                    _TitleAndValueRowWidget(title: 'Limit Price', value: '${userOrder.limit ?? 0.0}'),
+                    _TitleAndValueRowWidget(
+                      title: 'Limit Price',
+                      value: '${userOrder.limit ?? 0.0}',
+                    ),
                     AppSpace.spaceH10, dividerWidget, AppSpace.spaceH10,
 
-                    _TitleAndValueRowWidget(title: 'Avg Exec. Price', value: '${userOrder.avgPx ?? 0.0}'),
+                    _TitleAndValueRowWidget(
+                      title: 'Avg Exec. Price',
+                      value: '${userOrder.avgPx ?? 0.0}',
+                    ),
                     AppSpace.spaceH10, dividerWidget, AppSpace.spaceH10,
 
-                    _TitleAndValueRowWidget(title: 'Gross Amount', value: '${userOrder.grossTradeAmt ?? 0.0}'),
+                    _TitleAndValueRowWidget(
+                      title: 'Gross Amount',
+                      value: '${userOrder.grossTradeAmt ?? 0.0}',
+                    ),
                     AppSpace.spaceH10, dividerWidget, AppSpace.spaceH10,
 
                     _TitleAndValueRowWidget(
                       title: 'Order Status',
                       value: userOrder.orderStatus ?? "",
-                      valueColor: _getStatusColor(userOrder.orderStatus, context),
+                      valueColor: _getStatusColor(
+                        userOrder.orderStatus,
+                        context,
+                      ),
                     ),
                     AppSpace.spaceH10, dividerWidget, AppSpace.spaceH10,
 
-                    _TitleAndValueRowWidget(title: 'Status', value: userOrder.status ?? ""),
+                    _TitleAndValueRowWidget(
+                      title: 'Status',
+                      value: userOrder.status ?? "",
+                    ),
                     AppSpace.spaceH10, dividerWidget, AppSpace.spaceH10,
 
                     _TitleAndValueRowWidget(
                       title: 'Reason',
                       value: userOrder.rejectionReason ?? "N/A",
-                      valueColor: userOrder.rejectionReason != null ? HexColor("#F70042") : null,
+                      valueColor: userOrder.rejectionReason != null
+                          ? HexColor("#F70042")
+                          : null,
                     ),
                     AppSpace.spaceH10, dividerWidget, AppSpace.spaceH10,
 
                     // 🚀 টাইম ফরম্যাটিং অ্যাপ্লাই করা হলো
                     _TitleAndValueRowWidget(
                       title: 'Time',
-                      value: Helpers.convertTimestampToLocalTime(userOrder.transactTime) ?? '',
+                      value:
+                          Helpers.convertTimestampToLocalTime(
+                            userOrder.transactTime,
+                          ) ??
+                          '',
                       valueFontSize: 13,
                     ),
                     AppSpace.spaceH10,
@@ -161,7 +222,7 @@ class _TitleAndValueRowWidget extends StatelessWidget {
         Text(
           title,
           textAlign: TextAlign.left,
-          style: Get.textTheme.bodyMedium?.copyWith(
+          style: Get.context!.textTheme.bodyMedium?.copyWith(
             fontSize: 13,
             fontWeight: FontWeight.w400,
             color: context.textColor.withAlpha(179),
@@ -172,7 +233,7 @@ class _TitleAndValueRowWidget extends StatelessWidget {
           child: Text(
             value,
             textAlign: TextAlign.right,
-            style: Get.textTheme.bodyMedium?.copyWith(
+            style: Get.context!.textTheme.bodyMedium?.copyWith(
               fontSize: valueFontSize ?? 15,
               fontWeight: FontWeight.w600,
               color: valueColor ?? context.textColor,

@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/values/dimens.dart';
@@ -27,7 +27,7 @@ class CreateNewAccount extends StatelessWidget {
       child: RichText(
         text: TextSpan(
           text: titleOne ?? "",
-          style: Get.textTheme.titleSmall!.copyWith(
+          style: Get.context!.textTheme.titleSmall!.copyWith(
             color: context.textColor,
             fontSize: AppDimens.fontSizeMedium,
             fontWeight: FontWeight.normal,
@@ -36,7 +36,7 @@ class CreateNewAccount extends StatelessWidget {
             TextSpan(
               recognizer: recognizer,
               text: titleTwo ?? ' Already have an account? ',
-              style: Get.textTheme.titleSmall!.copyWith(
+              style: Get.context!.textTheme.titleSmall!.copyWith(
                 color: context.textColor,
                 fontSize: AppDimens.fontSizeMedium,
                 fontWeight: FontWeight.normal,

@@ -5,9 +5,8 @@ import '../../../../core/values/space.dart';
 import '../../../global_search/controllers/global_search_controller.dart';
 import '../../../home/controllers/home_controller.dart';
 
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 class BankPercentageWidget extends StatelessWidget {
   const BankPercentageWidget({super.key, required this.homeController});
@@ -38,7 +37,7 @@ class BankPercentageWidget extends StatelessWidget {
                   RichText(
                     text: TextSpan(
                       text: homeController.marketData.fullName ?? "",
-                      style: Get.textTheme.bodySmall?.copyWith(
+                      style: Get.context!.textTheme.bodySmall?.copyWith(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                         color: ColorConstants.success,
@@ -67,7 +66,7 @@ class BankPercentageWidget extends StatelessWidget {
                     text: TextSpan(
                       text:
                           "Vol: ${NumberFormatter.croreFormat(homeController.marketData.val)},",
-                      style: Get.textTheme.bodySmall?.copyWith(
+                      style: Get.context!.textTheme.bodySmall?.copyWith(
                         fontSize: 11,
                         color: context.textColor,
                       ),

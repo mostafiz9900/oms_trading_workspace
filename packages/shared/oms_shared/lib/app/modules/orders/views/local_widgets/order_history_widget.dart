@@ -1,6 +1,6 @@
 import 'package:oms_shared/app/modules/orders/views/order_details_view.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/utils/helpers/app_helper.dart';
@@ -24,7 +24,11 @@ class OrderHistoryWidget extends StatelessWidget {
   final bool isActionViewExpanded;
   final VoidCallback onToggleView;
 
-  const OrderHistoryWidget({super.key, required this.isActionViewExpanded, required this.onToggleView});
+  const OrderHistoryWidget({
+    super.key,
+    required this.isActionViewExpanded,
+    required this.onToggleView,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,121 +37,161 @@ class OrderHistoryWidget extends StatelessWidget {
     return Obx(() {
       final selectedExchange = ExchangeService.current;
       return GetBuilder<HomeController>(
-      id: AppConstants.orderList,
-      builder: (homeCotByOrder) {
-        if (homeCotByOrder.isLoadingUserOrder) {
-          return const OrderListLoader();
-        }
+        id: AppConstants.orderList,
+        builder: (homeCotByOrder) {
+          if (homeCotByOrder.isLoadingUserOrder) {
+            return const OrderListLoader();
+          }
 
-        List<UserOrder?> orders = List.from(homeCotByOrder.userOrder.data ?? []);
+          List<UserOrder?> orders = List.from(
+            homeCotByOrder.userOrder.data ?? [],
+          );
 
-        if (AppConfig.hasBothExchanges) {
-          orders = orders
-              .where((order) => order != null && homeCotByOrder.exchangeOfOrder(order) == selectedExchange)
-              .toList();
-        }
+          if (AppConfig.hasBothExchanges) {
+            orders = orders
+                .where(
+                  (order) =>
+                      order != null &&
+                      homeCotByOrder.exchangeOfOrder(order) == selectedExchange,
+                )
+                .toList();
+          }
 
-        if (homeCotByOrder.selectedInstrument != 'All') {
-          orders = orders.where((o) => o?.name == homeCotByOrder.selectedInstrument).toList();
-        }
+          if (homeCotByOrder.selectedInstrument != 'All') {
+            orders = orders
+                .where((o) => o?.name == homeCotByOrder.selectedInstrument)
+                .toList();
+          }
 
-        bool isAsc = homeCotByOrder.isAscendingOrderList;
-        orders.sort((a, b) {
-          String timeA = a?.transactTime ?? '';
-          String timeB = b?.transactTime ?? '';
-          return isAsc ? timeA.compareTo(timeB) : timeB.compareTo(timeA);
-        });
+          bool isAsc = homeCotByOrder.isAscendingOrderList;
+          orders.sort((a, b) {
+            String timeA = a?.transactTime ?? '';
+            String timeB = b?.transactTime ?? '';
+            return isAsc ? timeA.compareTo(timeB) : timeB.compareTo(timeA);
+          });
 
-        return Column(
-          children: [
-            //  Sorting & View Toggle Header
-            Padding(
-              padding: const .symmetric(horizontal: 10, vertical: 4),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Total Orders: ${orders.length}',
-                    style: Get.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
-                  ),
-                  Row(
-                    children: [
-                      // 👈 View Toggle Button
-                      InkWell(
-                        onTap: onToggleView,
-                        borderRadius: BorderRadius.circular(6),
-                        child: Container(
-                          padding: const .symmetric(horizontal: 6, vertical: 4),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: hexToColor("#DFDFDF")),
-                            borderRadius: BorderRadius.circular(6),
-                            color: isActionViewExpanded ? context.buttonColor.withAlpha(26) : Colors.transparent,
-                          ),
-                          child: Icon(
-                            isActionViewExpanded ? Icons.splitscreen : Icons.menu_open,
-                            size: 16,
-                            color: isActionViewExpanded ? context.buttonColor : context.textColor,
-                          ),
-                        ),
+          return Column(
+            children: [
+              //  Sorting & View Toggle Header
+              Padding(
+                padding: const .symmetric(horizontal: 10, vertical: 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Total Orders: ${orders.length}',
+                      style: Get.context!.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
                       ),
-                      const SizedBox(width: 8),
-                      // 👈 Sort Button
-                      InkWell(
-                        onTap: () {
-                          homeCotByOrder.isAscendingOrderList = !(homeCotByOrder.isAscendingOrderList);
-                          homeCotByOrder.update([AppConstants.orderList]);
-                        },
-                        borderRadius: BorderRadius.circular(6),
-                        child: Container(
-                          padding: const .symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: hexToColor("#DFDFDF")),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.sort, size: 14, color: context.textColor),
-                              const SizedBox(width: 4),
-                              Text(
-                                isAsc ? 'Asc' : 'Des',
-                                style: Get.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w400),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            //  Main ListView
-            Expanded(
-              child: orders.isEmpty
-                  ? const Center(child: Text('No orders found'))
-                  : ListView.builder(
-                      itemCount: orders.length,
-                      itemBuilder: (context, index) {
-                        UserOrder? order = orders[index];
-                        if (order == null) return const SizedBox();
-
-                        double total = (order.sentQty ?? 0) * (order.limit ?? 0).toDouble();
-                        String totalFormatted = total.toStringAsFixed(1);
-
-                        //  Render Original OR New Row based on state
-                        if (!isActionViewExpanded) {
-                          return _buildOriginalRow(context, order, homeCotByOrder, totalFormatted);
-                        } else {
-                          return _buildNewRow(context, order, homeCotByOrder, totalFormatted);
-                        }
-                      },
                     ),
-            ),
-          ],
-        );
-      },
-    );
+                    Row(
+                      children: [
+                        // 👈 View Toggle Button
+                        InkWell(
+                          onTap: onToggleView,
+                          borderRadius: BorderRadius.circular(6),
+                          child: Container(
+                            padding: const .symmetric(
+                              horizontal: 6,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: hexToColor("#DFDFDF")),
+                              borderRadius: BorderRadius.circular(6),
+                              color: isActionViewExpanded
+                                  ? context.buttonColor.withAlpha(26)
+                                  : Colors.transparent,
+                            ),
+                            child: Icon(
+                              isActionViewExpanded
+                                  ? Icons.splitscreen
+                                  : Icons.menu_open,
+                              size: 16,
+                              color: isActionViewExpanded
+                                  ? context.buttonColor
+                                  : context.textColor,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        // 👈 Sort Button
+                        InkWell(
+                          onTap: () {
+                            homeCotByOrder.isAscendingOrderList =
+                                !(homeCotByOrder.isAscendingOrderList);
+                            homeCotByOrder.update([AppConstants.orderList]);
+                          },
+                          borderRadius: BorderRadius.circular(6),
+                          child: Container(
+                            padding: const .symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: hexToColor("#DFDFDF")),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.sort,
+                                  size: 14,
+                                  color: context.textColor,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  isAsc ? 'Asc' : 'Des',
+                                  style: Get.context!.textTheme.bodySmall
+                                      ?.copyWith(fontWeight: FontWeight.w400),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              //  Main ListView
+              Expanded(
+                child: orders.isEmpty
+                    ? const Center(child: Text('No orders found'))
+                    : ListView.builder(
+                        itemCount: orders.length,
+                        itemBuilder: (context, index) {
+                          UserOrder? order = orders[index];
+                          if (order == null) return const SizedBox();
+
+                          double total =
+                              (order.sentQty ?? 0) *
+                              (order.limit ?? 0).toDouble();
+                          String totalFormatted = total.toStringAsFixed(1);
+
+                          //  Render Original OR New Row based on state
+                          if (!isActionViewExpanded) {
+                            return _buildOriginalRow(
+                              context,
+                              order,
+                              homeCotByOrder,
+                              totalFormatted,
+                            );
+                          } else {
+                            return _buildNewRow(
+                              context,
+                              order,
+                              homeCotByOrder,
+                              totalFormatted,
+                            );
+                          }
+                        },
+                      ),
+              ),
+            ],
+          );
+        },
+      );
     });
   }
 
@@ -179,28 +223,36 @@ class OrderHistoryWidget extends StatelessWidget {
                   Text(
                     order.name ?? "",
                     maxLines: 1,
-                    style: Get.textTheme.titleLarge?.copyWith(
+                    style: Get.context!.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
                       color: context.textColor,
                     ),
                   ),
                   Text(
-                    Helpers.convertTimestampToLocalTime(order.transactTime) ?? '',
-                    style: Get.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w400, fontSize: 12),
+                    Helpers.convertTimestampToLocalTime(order.transactTime) ??
+                        '',
+                    style: Get.context!.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 12,
+                    ),
                   ),
                   RichText(
                     text: TextSpan(
                       text: order.side ?? "",
-                      style: Get.textTheme.bodyLarge?.copyWith(
+                      style: Get.context!.textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                         fontSize: 12,
-                        color: order.side == "BUY" ? ColorConstants.success : ColorConstants.error,
+                        color: order.side == "BUY"
+                            ? ColorConstants.success
+                            : ColorConstants.error,
                       ),
                       children: [
                         TextSpan(
-                          text: order.ordType == null ? "" : ' (${order.ordType ?? ""})',
-                          style: Get.textTheme.bodyLarge?.copyWith(
+                          text: order.ordType == null
+                              ? ""
+                              : ' (${order.ordType ?? ""})',
+                          style: Get.context!.textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.w500,
                             fontSize: 12,
                             color: context.textColor,
@@ -223,7 +275,7 @@ class OrderHistoryWidget extends StatelessWidget {
               children: [
                 Text(
                   '${order.sentQty ?? ""}',
-                  style: Get.textTheme.titleLarge?.copyWith(
+                  style: Get.context!.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w700,
                     fontSize: 12,
                     color: context.buttonColor,
@@ -231,11 +283,17 @@ class OrderHistoryWidget extends StatelessWidget {
                 ),
                 Text(
                   '${order.limit ?? ""}',
-                  style: Get.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500, fontSize: 12),
+                  style: Get.context!.textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
+                  ),
                 ),
                 Text(
                   '${order.remainingQty ?? ""}',
-                  style: Get.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500, fontSize: 12),
+                  style: Get.context!.textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
+                  ),
                 ),
               ],
             ),
@@ -249,10 +307,13 @@ class OrderHistoryWidget extends StatelessWidget {
               children: [
                 Container(
                   padding: const .symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(color: ColorConstants.error, borderRadius: BorderRadius.circular(7)),
+                  decoration: BoxDecoration(
+                    color: ColorConstants.error,
+                    borderRadius: BorderRadius.circular(7),
+                  ),
                   child: Text(
                     order.status ?? "",
-                    style: Get.textTheme.titleLarge?.copyWith(
+                    style: Get.context!.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w400,
                       fontSize: 10,
                       color: ColorConstants.white,
@@ -262,11 +323,14 @@ class OrderHistoryWidget extends StatelessWidget {
                 AppSpace.spaceH8,
                 Container(
                   padding: const .symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(color: ColorConstants.success, borderRadius: BorderRadius.circular(7)),
+                  decoration: BoxDecoration(
+                    color: ColorConstants.success,
+                    borderRadius: BorderRadius.circular(7),
+                  ),
                   child: Text(
                     order.orderStatus ?? "",
                     maxLines: 2,
-                    style: Get.textTheme.titleLarge?.copyWith(
+                    style: Get.context!.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w400,
                       fontSize: 10,
                       color: ColorConstants.white,
@@ -281,7 +345,10 @@ class OrderHistoryWidget extends StatelessWidget {
               ? const SizedBox(width: 28)
               : SizedBox(
                   width: 28,
-                  child: _Original3DotMenu(order: order, homeCotByOrder: homeCotByOrder),
+                  child: _Original3DotMenu(
+                    order: order,
+                    homeCotByOrder: homeCotByOrder,
+                  ),
                 ),
           AppSpace.spaceW4,
         ],
@@ -292,14 +359,21 @@ class OrderHistoryWidget extends StatelessWidget {
   // ----------------------------------------------------------------------
   //  New Row Widget (Flex 4, 3, 3 with Status Check & Action Wrap)[cite: 9]
   // ----------------------------------------------------------------------
-  Widget _buildNewRow(BuildContext context, UserOrder order, HomeController homeCotByOrder, String totalFormatted) {
+  Widget _buildNewRow(
+    BuildContext context,
+    UserOrder order,
+    HomeController homeCotByOrder,
+    String totalFormatted,
+  ) {
     bool isExpired = order.status?.trim().toLowerCase() == 'expired';
 
     return Container(
       margin: const .symmetric(vertical: 4, horizontal: 4),
       padding: const .symmetric(vertical: 8, horizontal: 8),
       decoration: BoxDecoration(
-        color: order.side == "BUY" ? Colors.greenAccent.withAlpha(10) : Colors.redAccent.withAlpha(10),
+        color: order.side == "BUY"
+            ? Colors.greenAccent.withAlpha(10)
+            : Colors.redAccent.withAlpha(10),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: context.borderSideColor.withAlpha(102)),
       ),
@@ -319,7 +393,7 @@ class OrderHistoryWidget extends StatelessWidget {
                       Text(
                         order.name ?? "",
                         maxLines: 1,
-                        style: Get.textTheme.titleLarge?.copyWith(
+                        style: Get.context!.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
                           color: context.textColor,
@@ -327,22 +401,32 @@ class OrderHistoryWidget extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        Helpers.convertTimestampToLocalTime(order.transactTime) ?? '',
-                        style: Get.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w400, fontSize: 11),
+                        Helpers.convertTimestampToLocalTime(
+                              order.transactTime,
+                            ) ??
+                            '',
+                        style: Get.context!.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 11,
+                        ),
                       ),
                       const SizedBox(height: 2),
                       RichText(
                         text: TextSpan(
                           text: order.side ?? "",
-                          style: Get.textTheme.bodyLarge?.copyWith(
+                          style: Get.context!.textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.w700,
                             fontSize: 12,
-                            color: order.side == "BUY" ? ColorConstants.success : ColorConstants.error,
+                            color: order.side == "BUY"
+                                ? ColorConstants.success
+                                : ColorConstants.error,
                           ),
                           children: [
                             TextSpan(
-                              text: order.ordType == null ? "" : ' (${order.ordType ?? ""})',
-                              style: Get.textTheme.bodyLarge?.copyWith(
+                              text: order.ordType == null
+                                  ? ""
+                                  : ' (${order.ordType ?? ""})',
+                              style: Get.context!.textTheme.bodyLarge?.copyWith(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 11,
                                 color: context.textColor.withAlpha(179),
@@ -363,7 +447,7 @@ class OrderHistoryWidget extends StatelessWidget {
                     children: [
                       Text(
                         '${order.sentQty ?? ""}', //exequite qty = cumQty, price =limit,terget qty = sentQty,
-                        style: Get.textTheme.titleLarge?.copyWith(
+                        style: Get.context!.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w700,
                           fontSize: 13,
                           color: context.buttonColor,
@@ -372,12 +456,15 @@ class OrderHistoryWidget extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         '${order.limit ?? ""}',
-                        style: Get.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500, fontSize: 12),
+                        style: Get.context!.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
+                        ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         "${order.remainingQty}",
-                        style: Get.textTheme.bodyLarge?.copyWith(
+                        style: Get.context!.textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.w600,
                           fontSize: 11,
                           color: context.textColor.withAlpha(204),
@@ -395,10 +482,11 @@ class OrderHistoryWidget extends StatelessWidget {
                     children: [
                       Text(
                         order.status ?? "",
-                        style: Get.textTheme.titleLarge?.copyWith(
+                        style: Get.context!.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w800,
                           fontSize: 12,
-                          color: ColorConstants.error, // 👈 Old UI Error/Status Color
+                          color: ColorConstants
+                              .error, // 👈 Old UI Error/Status Color
                         ),
                       ),
                       const SizedBox(height: 6),
@@ -406,10 +494,11 @@ class OrderHistoryWidget extends StatelessWidget {
                         order.orderStatus ?? "",
                         maxLines: 2,
                         textAlign: TextAlign.right,
-                        style: Get.textTheme.titleLarge?.copyWith(
+                        style: Get.context!.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w700,
                           fontSize: 11,
-                          color: ColorConstants.success, // 👈 Old UI Success/Status Color
+                          color: ColorConstants
+                              .success, // 👈 Old UI Success/Status Color
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -417,10 +506,12 @@ class OrderHistoryWidget extends StatelessWidget {
                         order.execution ?? "",
                         maxLines: 2,
                         textAlign: TextAlign.right,
-                        style: Get.textTheme.titleLarge?.copyWith(
+                        style: Get.context!.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w700,
                           fontSize: 11,
-                          color: order.side == "BUY" ? ColorConstants.success : ColorConstants.error,
+                          color: order.side == "BUY"
+                              ? ColorConstants.success
+                              : ColorConstants.error,
                         ),
                       ),
                     ],
@@ -431,10 +522,16 @@ class OrderHistoryWidget extends StatelessWidget {
           ),
 
           if (!isExpired) ...[
-            const Padding(padding: .symmetric(vertical: 8), child: Divider(height: 1, thickness: 0.6)),
+            const Padding(
+              padding: .symmetric(vertical: 8),
+              child: Divider(height: 1, thickness: 0.6),
+            ),
             SizedBox(
               width: double.infinity,
-              child: _OrderActionWrapWidget(order: order, homeCotByOrder: homeCotByOrder),
+              child: _OrderActionWrapWidget(
+                order: order,
+                homeCotByOrder: homeCotByOrder,
+              ),
             ),
           ],
         ],
@@ -468,14 +565,21 @@ class _Original3DotMenu extends StatelessWidget {
 
         showMenu(
           context: context,
-          position: RelativeRect.fromLTRB(position.dx + 20, position.dy + 20, 0, 0),
+          position: RelativeRect.fromLTRB(
+            position.dx + 20,
+            position.dy + 20,
+            0,
+            0,
+          ),
           shadowColor: Colors.red,
           color: ColorConstants.primaryColor,
           items: [
             if (!status.contains('Terminated') && !status.contains('Done')) ...[
               _buildMenuItem(0, Icons.edit, 'Modify', () {
                 if (!homeCotByOrder.canActOnOrder(order)) {
-                  Helpers.snackbarForErorr2(bodyText: homeCotByOrder.orderOnOtherExchangeMessage(order));
+                  Helpers.snackbarForErorr2(
+                    bodyText: homeCotByOrder.orderOnOtherExchangeMessage(order),
+                  );
                 } else if (order.side == 'BUY' || order.side == 'SELL') {
                   Get.back();
                   showOrderFormDialog(order);
@@ -490,7 +594,10 @@ class _Original3DotMenu extends StatelessWidget {
                       title: 'Cancel Order',
                       message: 'Are you sure you want to cancel this order?',
                       onConfirm: () {
-                        homeCotByOrder.orderCancelSubmitted('ORDER_CANCEL_REQUEST', order);
+                        homeCotByOrder.orderCancelSubmitted(
+                          'ORDER_CANCEL_REQUEST',
+                          order,
+                        );
                       },
                     ),
                   );
@@ -505,7 +612,10 @@ class _Original3DotMenu extends StatelessWidget {
                     message: 'Are you sure?',
                     onConfirm: () {
                       Get.back();
-                      homeCotByOrder.orderDuplicateSubmitted(ActionsType.ORDER, order: order);
+                      homeCotByOrder.orderDuplicateSubmitted(
+                        ActionsType.ORDER,
+                        order: order,
+                      );
                     },
                   ),
                 );
@@ -525,7 +635,10 @@ class _Original3DotMenu extends StatelessWidget {
                       'Price : ৳${order.limit ?? 0.0}',
                   onConfirm: () {
                     Get.back();
-                    homeCotByOrder.orderStatusChangeConfirmSubmitted(ActionsType.ORDER_STATUS, order);
+                    homeCotByOrder.orderStatusChangeConfirmSubmitted(
+                      ActionsType.ORDER_STATUS,
+                      order,
+                    );
                   },
                 ),
               );
@@ -542,7 +655,12 @@ class _Original3DotMenu extends StatelessWidget {
     );
   }
 
-  PopupMenuItem<int> _buildMenuItem(int value, IconData icon, String text, VoidCallback onTap) {
+  PopupMenuItem<int> _buildMenuItem(
+    int value,
+    IconData icon,
+    String text,
+    VoidCallback onTap,
+  ) {
     return PopupMenuItem<int>(
       value: value,
       onTap: onTap,
@@ -550,7 +668,12 @@ class _Original3DotMenu extends StatelessWidget {
         children: [
           Icon(icon, size: 22),
           const SizedBox(width: 12),
-          Text(text, style: Get.textTheme.bodyMedium!.copyWith(color: Colors.white)),
+          Text(
+            text,
+            style: Get.context!.textTheme.bodyMedium!.copyWith(
+              color: Colors.white,
+            ),
+          ),
         ],
       ),
     );
@@ -564,7 +687,10 @@ class _OrderActionWrapWidget extends StatelessWidget {
   final UserOrder order;
   final HomeController homeCotByOrder;
 
-  const _OrderActionWrapWidget({required this.order, required this.homeCotByOrder});
+  const _OrderActionWrapWidget({
+    required this.order,
+    required this.homeCotByOrder,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -593,7 +719,9 @@ class _OrderActionWrapWidget extends StatelessWidget {
             color: Colors.blueAccent,
             onTap: () {
               if (!homeCotByOrder.canActOnOrder(order)) {
-                Helpers.snackbarForErorr2(bodyText: homeCotByOrder.orderOnOtherExchangeMessage(order));
+                Helpers.snackbarForErorr2(
+                  bodyText: homeCotByOrder.orderOnOtherExchangeMessage(order),
+                );
               } else if (order.side == 'BUY' || order.side == 'SELL') {
                 showOrderFormDialog(order);
               }
@@ -611,7 +739,10 @@ class _OrderActionWrapWidget extends StatelessWidget {
                 child: ConfirmDialog(
                   title: 'Cancel Order',
                   message: 'Are you sure you want to cancel this order?',
-                  onConfirm: () => homeCotByOrder.orderCancelSubmitted('ORDER_CANCEL_REQUEST', order),
+                  onConfirm: () => homeCotByOrder.orderCancelSubmitted(
+                    'ORDER_CANCEL_REQUEST',
+                    order,
+                  ),
                 ),
               );
             },
@@ -630,7 +761,10 @@ class _OrderActionWrapWidget extends StatelessWidget {
                   message: 'Are you sure you want to duplicate?',
                   onConfirm: () {
                     Get.back();
-                    homeCotByOrder.orderDuplicateSubmitted(ActionsType.ORDER, order: order);
+                    homeCotByOrder.orderDuplicateSubmitted(
+                      ActionsType.ORDER,
+                      order: order,
+                    );
                   },
                 ),
               );
@@ -654,7 +788,10 @@ class _OrderActionWrapWidget extends StatelessWidget {
                     'Price : ৳${order.limit ?? 0.0}',
                 onConfirm: () {
                   Get.back();
-                  homeCotByOrder.orderStatusChangeConfirmSubmitted(ActionsType.ORDER_STATUS, order);
+                  homeCotByOrder.orderStatusChangeConfirmSubmitted(
+                    ActionsType.ORDER_STATUS,
+                    order,
+                  );
                 },
               ),
             );
@@ -680,7 +817,12 @@ class _ActionChip extends StatelessWidget {
   final Color color;
   final VoidCallback onTap;
 
-  const _ActionChip({required this.icon, required this.label, required this.color, required this.onTap});
+  const _ActionChip({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -701,7 +843,11 @@ class _ActionChip extends StatelessWidget {
             const SizedBox(width: 3),
             Text(
               label,
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: color),
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
             ),
           ],
         ),

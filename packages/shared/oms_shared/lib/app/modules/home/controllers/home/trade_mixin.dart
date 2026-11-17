@@ -124,7 +124,7 @@ mixin TradeMixin on HomeState {
             },
             child: Text(
               "Buy",
-              style: Get.textTheme.bodyLarge!.copyWith(
+              style: Get.context!.textTheme.bodyLarge!.copyWith(
                 color: ColorConstants.white,
               ),
             ),
@@ -141,7 +141,7 @@ mixin TradeMixin on HomeState {
             },
             child: Text(
               "Sell",
-              style: Get.textTheme.bodyLarge!.copyWith(
+              style: Get.context!.textTheme.bodyLarge!.copyWith(
                 color: ColorConstants.white,
               ),
             ),

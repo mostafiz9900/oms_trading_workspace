@@ -1,5 +1,5 @@
 import 'package:broker_config/broker_config.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import 'exchange_service.dart';
 import 'storage_service.dart';

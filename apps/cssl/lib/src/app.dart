@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:get/get.dart';
+// ignore_for_file: deprecated_member_use
 
-import 'package:oms_shared/app/app_binding.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart' as legacy show Material, MaterialType;
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:getxify/getxify.dart';
+
 import 'package:oms_shared/app/core/theme/app_theme.dart';
 import 'package:oms_shared/app/core/theme/theme_service.dart';
 import 'package:oms_shared/app/core/values/app_config.dart';
@@ -22,8 +24,6 @@ class App extends StatelessWidget {
       title: AppConfig.house.displayName,
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
-      initialBinding: AppBinding(),
-      smartManagement: SmartManagement.keepFactory,
       translations: LocalizationService(),
       locale: LocalizationService.parseLocale(AppConfig.house.defaultLocale),
       fallbackLocale: LocalizationService.fallbackLocale,
@@ -45,7 +45,12 @@ class App extends StatelessWidget {
           data: mediaQuery.copyWith(
             textScaler: TextScaler.linear(1.0), // <-- fixed text size
           ),
-          child: EasyLoading.init()(context, child),
+          child: MaterialUiCompatibilityBridge(
+            child: legacy.Material(
+              type: legacy.MaterialType.transparency,
+              child: EasyLoading.init()(context, child),
+            ),
+          ),
         );
       },
     );

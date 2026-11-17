@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../core/utils/extensions/app_context.dart';
@@ -8,13 +8,20 @@ class DistributionChartLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseColor = context.isDark ? Colors.grey.shade800 : Colors.grey.shade300;
-    final highlightColor = context.isDark ? Colors.grey.shade700 : Colors.grey.shade100;
+    final baseColor = context.isDark
+        ? Colors.grey.shade800
+        : Colors.grey.shade300;
+    final highlightColor = context.isDark
+        ? Colors.grey.shade700
+        : Colors.grey.shade100;
 
     return Container(
       margin: const EdgeInsets.all(10),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: context.cardColor, borderRadius: BorderRadius.circular(6)),
+      decoration: BoxDecoration(
+        color: context.cardColor,
+        borderRadius: BorderRadius.circular(6),
+      ),
       child: Column(
         children: [
           Shimmer.fromColors(
@@ -35,7 +42,10 @@ class DistributionChartLoader extends StatelessWidget {
                   return Container(
                     width: 22,
                     height: 120.0 + (index * 15) % 100,
-                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(6)),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
                   );
                 }),
               ),

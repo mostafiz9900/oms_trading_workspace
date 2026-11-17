@@ -1,7 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 import '../controllers/app_network_controller.dart';
 
@@ -25,7 +25,8 @@ class AppNetworkView extends GetView<AppNetworkController> {
           ElevatedButton(
             onPressed: () {
               // Simulate connectivity change (for demonstration purposes)
-              var result = controller.connectivityResult == ConnectivityResult.none
+              var result =
+                  controller.connectivityResult == ConnectivityResult.none
                   ? ConnectivityResult.wifi
                   : ConnectivityResult.none;
               controller.updateConnectivityResult(result);

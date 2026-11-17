@@ -1,18 +1,20 @@
 import 'dart:io';
 
 import '../helpers/app_helper.dart';
+
 import 'package:connectivity_plus/connectivity_plus.dart' as connectivity;
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 
 class NetworkUtil {
   static Future<bool> checkNetworkConnectivity2() async {
-    var connectivityResult = await (connectivity.Connectivity().checkConnectivity());
+    var connectivityResult = await (connectivity.Connectivity()
+        .checkConnectivity());
     return connectivityResult.contains(connectivity.ConnectivityResult.none);
   }
 
   static Future<bool> isConnected() async {
-    final List<connectivity.ConnectivityResult> connectivityResult = await (connectivity.Connectivity()
-        .checkConnectivity());
+    final List<connectivity.ConnectivityResult> connectivityResult =
+        await (connectivity.Connectivity().checkConnectivity());
     return !connectivityResult.contains(connectivity.ConnectivityResult.none);
   }
 
@@ -27,7 +29,9 @@ class NetworkUtil {
 
   static void networkErrorMessage() {
     if (!Get.isSnackbarOpen) {
-      Helpers.snackbarForErorr(bodyText: 'Sorry, there is no internet connection. Please connect and try again');
+      Helpers.snackbarForErorr(
+        bodyText: 'Sorry, there is no internet connection. Please connect and try again',
+      );
     }
   }
 }

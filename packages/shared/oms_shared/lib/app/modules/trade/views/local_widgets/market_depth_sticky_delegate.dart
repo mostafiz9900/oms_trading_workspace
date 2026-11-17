@@ -4,8 +4,10 @@ import '../../../../core/values/colors.dart';
 import '../../../../core/values/dimens.dart';
 import '../../../home/controllers/home_controller.dart';
 
-import 'package:flutter/material.dart';
-import '../../../../data/models/response/market_depth_model.dart' show MarketDepthModel;
+import 'package:material_ui/material_ui.dart';
+
+import '../../../../data/models/response/market_depth_model.dart'
+    show MarketDepthModel;
 
 import '../../../quote/views/local_widgets/market_depth_single_widget.dart';
 
@@ -25,7 +27,8 @@ class MarketDepthStickyDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    if (homeController.shownMarket.buys.isEmpty && homeController.shownMarket.sells.isEmpty) {
+    if (homeController.shownMarket.buys.isEmpty &&
+        homeController.shownMarket.sells.isEmpty) {
       return const SizedBox.shrink();
     }
     return Container(

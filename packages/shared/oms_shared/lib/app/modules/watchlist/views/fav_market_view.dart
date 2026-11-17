@@ -10,14 +10,16 @@ import '../../../global_widgets/custom_button.dart';
 import '../../../global_widgets/custom_drawer.dart';
 import '../../../global_widgets/shared_market_components.dart';
 import '../../home/controllers/home_controller.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 import '../../../global_widgets/empty_widget.dart';
 import '../../../global_widgets/appbar_right_search_tap.dart';
 import '../../../global_widgets/loaders/watchlist_loader.dart';
 import '../../../global_widgets/exchange/exchange_switcher.dart';
+
 // আপনার MarketModelExtensions ইম্পোর্ট করে নিবেন
 
 class FavMarketView extends StatefulWidget {
@@ -54,7 +56,10 @@ class _FavMarketViewState extends State<FavMarketView> {
           children: [
             // DSE | CSE; shows only for houses on both exchanges.
             const ExchangeSwitcher(padding: EdgeInsets.only(right: 8)),
-            CommonWidget.buySell(context: context, onTap: () => Get.find<HomeController>().changeCurrentIndex(5)),
+            CommonWidget.buySell(
+              context: context,
+              onTap: () => Get.find<HomeController>().changeCurrentIndex(5),
+            ),
             AppbarRightSearchTapWidget(),
           ],
         ),
@@ -69,9 +74,17 @@ class _FavMarketViewState extends State<FavMarketView> {
             children: [
               CommonHorizontalTabList(
                 items: homeCon.favCatList.map((e) => e.name ?? "").toList(),
-                selectedItem: homeCon.favCatList.firstWhereOrNull((e) => e.id == homeCon.selectedTableId)?.name ?? "",
+                selectedItem:
+                    homeCon.favCatList
+                        .firstWhereOrNull(
+                          (e) => e.id == homeCon.selectedTableId,
+                        )
+                        ?.name ??
+                    "",
                 onSelected: (val) {
-                  final table = homeCon.favCatList.firstWhereOrNull((e) => e.name == val);
+                  final table = homeCon.favCatList.firstWhereOrNull(
+                    (e) => e.name == val,
+                  );
                   if (table != null) homeCon.selectTable(table.id ?? 0);
                 },
               ),
@@ -97,10 +110,15 @@ class _FavMarketViewState extends State<FavMarketView> {
                 child: homeCon.loadingFav
                     ? const WatchlistLoader()
                     : homeCon.favMarketParseList.isEmpty
-                    ? const Center(child: EmptyWidget(title: "No favorite items yet"))
+                    ? const Center(
+                        child: EmptyWidget(title: "No favorite items yet"),
+                      )
                     : ListView.builder(
                         itemCount: homeCon.favMarketParseList.length,
-                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 4,
+                          vertical: 6,
+                        ),
                         itemBuilder: (context, index) {
                           final item = homeCon.favMarketParseList[index];
                           return SharedMarketListItem(
@@ -112,11 +130,12 @@ class _FavMarketViewState extends State<FavMarketView> {
                               homeCon.loadComanyDividentEPS(item.shortName!);
                               FocusScope.of(context).unfocus();
                             },
-                            onLongPress: () => MarketDialogHelper.showBuySellDialog(
-                              context: context,
-                              orderBookId: item.orderBook!,
-                              shortName: item.shortName ?? "",
-                            ),
+                            onLongPress: () =>
+                                MarketDialogHelper.showBuySellDialog(
+                                  context: context,
+                                  orderBookId: item.orderBook!,
+                                  shortName: item.shortName ?? "",
+                                ),
                             onFavoriteTap: () {
                               // 🚀 এখানে ফেভারিট রিমুভ করার লজিক
                               Helpers.openCustomAlertDialog(() {
@@ -140,12 +159,18 @@ class _FavMarketViewState extends State<FavMarketView> {
             fontSize: 15,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 10,
+                ),
                 child: Container(
                   height: 105,
-                  width: Get.width,
+                  width: Get.context!.width,
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(6), color: context.tapBg),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6),
+                    color: context.tapBg,
+                  ),
                   child: TextFormField(
                     controller: homeController.watchlistTextEditField,
                     maxLines: 10,
@@ -156,7 +181,12 @@ class _FavMarketViewState extends State<FavMarketView> {
                       enabledBorder: InputBorder.none,
                       errorBorder: InputBorder.none,
                       disabledBorder: InputBorder.none,
-                      contentPadding: EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
+                      contentPadding: EdgeInsets.only(
+                        left: 15,
+                        bottom: 11,
+                        top: 11,
+                        right: 15,
+                      ),
                       hintText: "Name ..",
                       hintStyle: TextStyle(fontSize: 12),
                     ),
@@ -188,14 +218,21 @@ class _FavMarketViewState extends State<FavMarketView> {
                                   child: SizedBox(
                                     height: 30,
                                     width: 30,
-                                    child: CircularProgressIndicator(color: Colors.red),
+                                    child: CircularProgressIndicator(
+                                      color: Colors.red,
+                                    ),
                                   ),
                                 )
                               : CustomButton(
                                   isLoading: logic.isCreateFavCat,
                                   onPressed: () {
-                                    if (homeController.watchlistTextEditField.text.isEmpty) {
-                                      Helpers.snackbarForErorr2(bodyText: 'Please enter a name');
+                                    if (homeController
+                                        .watchlistTextEditField
+                                        .text
+                                        .isEmpty) {
+                                      Helpers.snackbarForErorr2(
+                                        bodyText: 'Please enter a name',
+                                      );
                                     } else {
                                       homeController.createFavCategory();
                                     }
@@ -223,12 +260,18 @@ class _FavMarketViewState extends State<FavMarketView> {
             fontSize: 15,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 10,
+                ),
                 child: Container(
                   height: 105,
-                  width: Get.width,
+                  width: Get.context!.width,
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(6), color: context.tapBg),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6),
+                    color: context.tapBg,
+                  ),
                   child: TextFormField(
                     controller: homeController.watchlistTextEditField,
                     maxLines: 10,
@@ -239,7 +282,12 @@ class _FavMarketViewState extends State<FavMarketView> {
                       enabledBorder: InputBorder.none,
                       errorBorder: InputBorder.none,
                       disabledBorder: InputBorder.none,
-                      contentPadding: EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
+                      contentPadding: EdgeInsets.only(
+                        left: 15,
+                        bottom: 11,
+                        top: 11,
+                        right: 15,
+                      ),
                       hintText: "DSES ..",
                       hintStyle: TextStyle(fontSize: 12),
                     ),
@@ -271,14 +319,21 @@ class _FavMarketViewState extends State<FavMarketView> {
                                   child: SizedBox(
                                     height: 30,
                                     width: 30,
-                                    child: CircularProgressIndicator(color: Colors.red),
+                                    child: CircularProgressIndicator(
+                                      color: Colors.red,
+                                    ),
                                   ),
                                 )
                               : CustomButton(
                                   isLoading: logic.isCreateFavCat,
                                   onPressed: () {
-                                    if (homeController.watchlistTextEditField.text.isEmpty) {
-                                      Helpers.snackbarForErorr2(bodyText: 'Please enter a name');
+                                    if (homeController
+                                        .watchlistTextEditField
+                                        .text
+                                        .isEmpty) {
+                                      Helpers.snackbarForErorr2(
+                                        bodyText: 'Please enter a name',
+                                      );
                                     } else {
                                       homeController.updateFavTableName();
                                     }
@@ -316,7 +371,13 @@ class FavMarketFAB extends StatelessWidget {
   final void Function()? onDelete;
   final void Function()? goTo;
 
-  const FavMarketFAB({super.key, this.onCreate, this.onRename, this.onDelete, this.goTo});
+  const FavMarketFAB({
+    super.key,
+    this.onCreate,
+    this.onRename,
+    this.onDelete,
+    this.goTo,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -326,10 +387,26 @@ class FavMarketFAB extends StatelessWidget {
       backgroundColor: ColorConstants.secondaryColorLight,
       iconTheme: IconThemeData(color: Colors.white),
       children: [
-        SpeedDialChild(child: const Icon(Icons.create), label: 'Create', onTap: onCreate),
-        SpeedDialChild(child: const Icon(Icons.drive_file_rename_outline), label: 'Rename', onTap: onRename),
-        SpeedDialChild(child: const Icon(Icons.delete), label: 'Delete', onTap: onDelete),
-        SpeedDialChild(child: const Icon(Icons.list), label: 'Watch List', onTap: goTo),
+        SpeedDialChild(
+          child: const Icon(Icons.create),
+          label: 'Create',
+          onTap: onCreate,
+        ),
+        SpeedDialChild(
+          child: const Icon(Icons.drive_file_rename_outline),
+          label: 'Rename',
+          onTap: onRename,
+        ),
+        SpeedDialChild(
+          child: const Icon(Icons.delete),
+          label: 'Delete',
+          onTap: onDelete,
+        ),
+        SpeedDialChild(
+          child: const Icon(Icons.list),
+          label: 'Watch List',
+          onTap: goTo,
+        ),
       ],
     );
   }

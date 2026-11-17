@@ -1,6 +1,6 @@
 import 'package:broker_config/broker_config.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../core/utils/extensions/app_context.dart';
 import '../../core/values/app_config.dart';

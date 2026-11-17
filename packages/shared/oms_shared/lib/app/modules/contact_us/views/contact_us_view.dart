@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 
 import '../../../core/utils/extensions/app_context.dart';
 import '../../../core/values/app_config.dart';
@@ -11,7 +11,6 @@ class ContactUsView extends GetView<ContactUsController> {
 
   @override
   Widget build(BuildContext context) {
-
     final bool isDark = context.isDark;
 
     return Scaffold(
@@ -28,7 +27,7 @@ class ContactUsView extends GetView<ContactUsController> {
           children: [
             Text(
               "How can we help you?",
-              style: Get.textTheme.titleLarge?.copyWith(
+              style: Get.context!.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w800,
                 color: context.textColor,
                 fontSize: 22,
@@ -41,7 +40,11 @@ class ContactUsView extends GetView<ContactUsController> {
               child: Text(
                 "Have questions about your trades, account, or the market? Our team at ${AppConfig.houseName} is here to assist you.",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: context.textColor.withAlpha(153), height: 1.5),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: context.textColor.withAlpha(153),
+                  height: 1.5,
+                ),
               ),
             ),
             const SizedBox(height: 32),
@@ -58,7 +61,10 @@ class ContactUsView extends GetView<ContactUsController> {
               actionText: "Call",
               isDark: isDark,
               onTap: () => controller.makePhoneCall(controller.contactNumber),
-              onCopy: () => controller.copyToClipboard(controller.contactNumber, 'Phone number'),
+              onCopy: () => controller.copyToClipboard(
+                controller.contactNumber,
+                'Phone number',
+              ),
             ),
             const SizedBox(height: 8),
 
@@ -69,9 +75,12 @@ class ContactUsView extends GetView<ContactUsController> {
               subtitle: controller.contactWhatsApp, //  Variable
               actionText: "Chat",
               isDark: isDark,
-              onTap: () => controller.launchWhatsApp(controller.contactWhatsApp),
-              onCopy: () =>
-                  controller.copyToClipboard(controller.contactWhatsApp, 'WhatsApp number'),
+              onTap: () =>
+                  controller.launchWhatsApp(controller.contactWhatsApp),
+              onCopy: () => controller.copyToClipboard(
+                controller.contactWhatsApp,
+                'WhatsApp number',
+              ),
             ),
             const SizedBox(height: 8),
 
@@ -83,7 +92,10 @@ class ContactUsView extends GetView<ContactUsController> {
               actionText: "Email",
               isDark: isDark,
               onTap: () => controller.launchEmail(controller.supportEmail),
-              onCopy: () => controller.copyToClipboard(controller.supportEmail, 'Email address'),
+              onCopy: () => controller.copyToClipboard(
+                controller.supportEmail,
+                'Email address',
+              ),
             ),
 
             const SizedBox(height: 24),
@@ -100,7 +112,10 @@ class ContactUsView extends GetView<ContactUsController> {
               actionText: "Map",
               isDark: isDark,
               onTap: () => controller.launchMap(),
-              onCopy: () => controller.copyToClipboard(controller.officeAddressFull, 'Address'),
+              onCopy: () => controller.copyToClipboard(
+                controller.officeAddressFull,
+                'Address',
+              ),
             ),
             const SizedBox(height: 8),
 
@@ -112,7 +127,10 @@ class ContactUsView extends GetView<ContactUsController> {
               actionText: "Visit",
               isDark: isDark,
               onTap: () => controller.launchWebsite(),
-              onCopy: () => controller.copyToClipboard(controller.websiteUrl, 'Website link'),
+              onCopy: () => controller.copyToClipboard(
+                controller.websiteUrl,
+                'Website link',
+              ),
             ),
 
             const SizedBox(height: 24),
@@ -129,7 +147,10 @@ class ContactUsView extends GetView<ContactUsController> {
               actionText: "Share",
               isDark: isDark,
               onTap: () => controller.shareAndroidApp(),
-              onCopy: () => controller.copyToClipboard(controller.androidLink, 'Android app link'),
+              onCopy: () => controller.copyToClipboard(
+                controller.androidLink,
+                'Android app link',
+              ),
             ),
             const SizedBox(height: 8),
 
@@ -141,7 +162,10 @@ class ContactUsView extends GetView<ContactUsController> {
               actionText: "Share",
               isDark: isDark,
               onTap: () => controller.shareIosApp(),
-              onCopy: () => controller.copyToClipboard(controller.iosLink, 'iOS app link'),
+              onCopy: () => controller.copyToClipboard(
+                controller.iosLink,
+                'iOS app link',
+              ),
             ),
             const SizedBox(height: 32),
 
@@ -149,15 +173,24 @@ class ContactUsView extends GetView<ContactUsController> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withAlpha(13) : Colors.grey.shade100,
+                color: isDark
+                    ? Colors.white.withAlpha(13)
+                    : Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(color: context.textColor.withAlpha(13), shape: BoxShape.circle),
-                    child: Icon(Icons.access_time_filled_rounded, color: Colors.grey.shade500, size: 24),
+                    decoration: BoxDecoration(
+                      color: context.textColor.withAlpha(13),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.access_time_filled_rounded,
+                      color: Colors.grey.shade500,
+                      size: 24,
+                    ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -166,12 +199,19 @@ class ContactUsView extends GetView<ContactUsController> {
                       children: [
                         Text(
                           "Trading Hours",
-                          style: TextStyle(fontWeight: FontWeight.w700, color: context.textColor, fontSize: 13),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: context.textColor,
+                            fontSize: 13,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           controller.tradingHours,
-                          style: TextStyle(color: context.textColor.withAlpha(153), fontSize: 12),
+                          style: TextStyle(
+                            color: context.textColor.withAlpha(153),
+                            fontSize: 12,
+                          ),
                         ),
                       ],
                     ),
@@ -244,15 +284,26 @@ class _ContactCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF161A33) : Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: isDark ? Colors.white.withAlpha(13) : Colors.grey.shade200),
-          boxShadow: [BoxShadow(color: Colors.black.withAlpha(5), blurRadius: 8, offset: const Offset(0, 2))],
+          border: Border.all(
+            color: isDark ? Colors.white.withAlpha(13) : Colors.grey.shade200,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(5),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           children: [
             // Left Icon
             Container(
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(color: iconColor.withAlpha(26), shape: BoxShape.circle),
+              decoration: BoxDecoration(
+                color: iconColor.withAlpha(26),
+                shape: BoxShape.circle,
+              ),
               child: Icon(icon, color: iconColor, size: 22),
             ),
             const SizedBox(width: 16),
@@ -275,7 +326,8 @@ class _ContactCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12.5,
                       height: 1.4,
-                      color: Theme.of(context).textTheme.bodyMedium?.color?.withAlpha(153),
+                      color: Theme.of(context).textTheme.bodyMedium?.color
+                          ?.withAlpha(153),
                     ),
                   ),
                 ],
@@ -293,20 +345,36 @@ class _ContactCard extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white.withAlpha(13) : Colors.grey.shade100,
+                        color: isDark
+                            ? Colors.white.withAlpha(13)
+                            : Colors.grey.shade100,
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(Icons.copy_rounded, size: 16, color: context.textColor.withAlpha(153)),
+                      child: Icon(
+                        Icons.copy_rounded,
+                        size: 16,
+                        color: context.textColor.withAlpha(153),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
                 ],
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                  decoration: BoxDecoration(color: iconColor.withAlpha(26), borderRadius: BorderRadius.circular(20)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: iconColor.withAlpha(26),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                   child: Text(
                     actionText,
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: iconColor),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: iconColor,
+                    ),
                   ),
                 ),
               ],

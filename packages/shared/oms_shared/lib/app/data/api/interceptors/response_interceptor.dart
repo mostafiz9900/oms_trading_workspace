@@ -1,19 +1,22 @@
-import 'dart:async';
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
-import 'package:flutter/material.dart';
-
-import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/request/request.dart';
 import '../../../core/utils/helpers/log_helper.dart';
 
-FutureOr<dynamic> responseInterceptor(Request request, Response response) async {
-  printLog('Response received for ${request.url}: ${response.statusCode}');
+void responseInterceptor(Response<dynamic> response) {
+  printLog(
+    'Response received for ${response.requestOptions.uri}: ${response.statusCode}',
+  );
   responseLogger(response);
-
-  return response;
 }
 
-void responseLogger(Response response) {
-  debugPrint('Status Code: ${response.statusCode}\n');
-  debugPrint('Data: ${response.bodyString?.toString() ?? ''}');
+void responseErrorInterceptor(DioException error) {
+  printLog(
+    'Request failed for ${error.requestOptions.uri}: '
+    '${error.response?.statusCode ?? error.message}',
+  );
+}
+
+void responseLogger(Response<dynamic> response) {
+  debugPrint('Status Code: ${response.statusCode}');
 }

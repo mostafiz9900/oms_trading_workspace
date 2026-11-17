@@ -24,7 +24,8 @@ help: ## Show available commands
 
 setup: ## First time / after pulling: pinned Flutter for IDE + all dependencies
 	fvm use --skip-pub-get --force
-	$(DART) run melos bootstrap
+	$(DART) pub global activate melos 8.10.1
+	$(DART) pub global run melos bootstrap
 
 apps: ## List broker-house apps
 	@ls apps
@@ -61,7 +62,7 @@ deploy-ios: ## Release to TestFlight from this Mac (CI does this on push to prod
 check: analyze test validate ## Analyze, test and validate everything
 
 analyze: ## Static analysis (every package strict: any issue fails)
-	$(DART) run melos run analyze
+	$(DART) pub global run melos run analyze
 
 test: ## Run all tests (unit + widget/UI tests)
 	cd packages/core/broker_config && $(DART) test

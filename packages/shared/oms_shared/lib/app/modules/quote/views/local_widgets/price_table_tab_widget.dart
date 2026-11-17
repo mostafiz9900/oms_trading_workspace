@@ -1,7 +1,7 @@
 // lib/screens/price_table_screen.dart
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:getxify/getxify.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 
 import '../../../../core/utils/extensions/app_context.dart';
@@ -17,7 +17,9 @@ class PriceTableTabWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!Get.isRegistered<HistoricalVolumeController>()) {
-      Get.put(HistoricalVolumeController(repository: Get.find<HomeRepository>()));
+      Get.put(
+        HistoricalVolumeController(repository: Get.find<HomeRepository>()),
+      );
     }
     return GetBuilder<HistoricalVolumeController>(
       builder: (controller) {
@@ -127,7 +129,7 @@ class PriceTableTabWidget extends StatelessWidget {
               width: double.infinity,
             ),
             dropdownStyleData: DropdownStyleData(
-              maxHeight: Get.height * 0.8,
+              maxHeight: Get.context!.height * 0.8,
               decoration: BoxDecoration(
                 color: ctx.cardColor,
                 borderRadius: BorderRadius.circular(8),
@@ -241,7 +243,7 @@ class PriceTableTabWidget extends StatelessWidget {
     BuildContext context,
     HistoricalVolumeController controller,
   ) {
-    double colW = ((Get.width - 100) / 5).clamp(50.0, 100.0);
+    double colW = ((Get.context!.width - 100) / 5).clamp(50.0, 100.0);
     return HorizontalDataTable(
       leftHandSideColumnWidth: 100,
       rightHandSideColumnWidth: colW * 5,
@@ -288,7 +290,7 @@ class PriceTableTabWidget extends StatelessWidget {
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 13,
-          color: Get.textTheme.bodyMedium?.color,
+          color: Get.context!.textTheme.bodyMedium?.color,
         ),
       ),
     );

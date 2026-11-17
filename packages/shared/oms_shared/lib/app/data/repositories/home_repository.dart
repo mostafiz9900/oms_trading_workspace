@@ -234,7 +234,7 @@ class HomeRepository
 
     try {
       if (res.statusCode == 200) {
-        //  ১. GetConnect অটোমেটিক JSON কে Map এ কনভার্ট করে ফেলে
+        // Dio decodes JSON responses to maps when the server sends JSON content.
         var responseData = res.body['data'];
         printLog('getWithdrawList data :: $responseData');
 

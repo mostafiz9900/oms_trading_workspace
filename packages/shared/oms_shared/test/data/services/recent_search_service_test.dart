@@ -1,6 +1,6 @@
 import 'package:broker_config/broker_config.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:getxify/getxify.dart';
 import 'package:oms_shared/app/data/services/exchange_service.dart';
 import 'package:oms_shared/app/data/services/recent_search_service.dart';
 import 'package:oms_shared/app/data/services/storage_service.dart';
@@ -42,7 +42,11 @@ void main() {
     service.addToRecentSearch(101); // DSE
 
     exchange.select(StockExchange.cse);
-    expect(service.recentOrderBookIds, isEmpty, reason: '101 may be another stock on CSE');
+    expect(
+      service.recentOrderBookIds,
+      isEmpty,
+      reason: '101 may be another stock on CSE',
+    );
     service.addToRecentSearch(7);
     expect(service.recentOrderBookIds, [7]);
 
