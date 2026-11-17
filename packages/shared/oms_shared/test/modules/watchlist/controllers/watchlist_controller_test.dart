@@ -29,6 +29,38 @@ const _gp = MarketModel(
   group: 'PUBLIC',
   board: 'Main Board',
 );
+const _sme = MarketModel(
+  orderBook: 754555,
+  shortName: 'MEGHNA',
+  group: 'SPUBLIC',
+  board: 'Small Cap Board',
+  marketType: 'Public',
+  shareType: 'S',
+);
+const _smeSpot = MarketModel(
+  orderBook: 754556,
+  shortName: 'ORYZAAGRO',
+  group: 'SPUBLIC',
+  board: 'Small Cap Board',
+  marketType: 'Spot',
+  shareType: 'S',
+);
+const _smeBuyIn = MarketModel(
+  orderBook: 754557,
+  shortName: 'SME_BUYIN',
+  group: 'SBUYIN',
+  board: 'Small Cap Board',
+  marketType: 'Spot',
+  shareType: 'S',
+);
+const _smeBlock = MarketModel(
+  orderBook: 754558,
+  shortName: 'SME_BLOCK',
+  group: 'SBLOCK',
+  board: 'Small Cap Board',
+  marketType: 'Public',
+  shareType: 'S',
+);
 
 void main() {
   late List<FakeChannel> sockets;
@@ -98,6 +130,26 @@ void main() {
     expect(shown(watch), ['GP']);
     expect(watch.filteredItems.single.orderBook, 254555);
     expect(watch.filteredItems.single.orderBook, isA<int>());
+    await finish(tester);
+  });
+
+  testWidgets('Board, Type and Category filters match live SME fields', (
+    tester,
+  ) async {
+    final watch = await start(tester, ExchangeMode.dseOnly);
+    home.marketList.assignAll([_gp, _sme, _smeSpot, _smeBuyIn, _smeBlock]);
+
+    watch.updateBoardFilter('SME');
+    expect(shown(watch), ['MEGHNA', 'ORYZAAGRO']);
+
+    watch.updateMarketTypeFilter('Public');
+    expect(shown(watch), ['MEGHNA']);
+
+    watch.updateMarketTypeFilter('Spot');
+    expect(shown(watch), ['ORYZAAGRO']);
+
+    watch.updateShareTypeFilter('S');
+    expect(shown(watch), ['ORYZAAGRO']);
     await finish(tester);
   });
 

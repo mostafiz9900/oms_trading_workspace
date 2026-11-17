@@ -11,6 +11,8 @@ import '../../../data/services/exchange_service.dart';
 import '../../home/controllers/home_controller.dart';
 
 class WatchListController extends GetxController {
+  static final RegExp _filterValueSeparators = RegExp(r'[^a-z0-9]');
+
   final HomeController homeCon = Get.find<HomeController>();
 
   // --- UI State ---
@@ -140,6 +142,17 @@ class WatchListController extends GetxController {
         : homeCon.marketListAll;
   }
 
+  String _normalizeFilterValue(String? value) =>
+      (value ?? '').trim().toLowerCase().replaceAll(_filterValueSeparators, '');
+
+  bool _isSmallCapPublicQuote(MarketModel item) =>
+      _normalizeFilterValue(item.board) == 'smallcapboard' &&
+      _normalizeFilterValue(item.group) == 'spublic';
+
+  bool _isMainBoardPublicQuote(MarketModel item) =>
+      _normalizeFilterValue(item.board) == 'mainboard' &&
+      _normalizeFilterValue(item.group) == 'public';
+
   void _generateFilteredList() {
     final sourceList = _sourceList;
     if (sourceList.isEmpty) {
@@ -149,20 +162,17 @@ class WatchListController extends GetxController {
     }
     isLoading = false;
 
-    // Main Board & PUBLIC Group Filter
+    // Keep only the public quote rows on the supported boards. The live DSE
+    // feed uses SPUBLIC for SME, while SBUYIN and SBLOCK are separate groups.
     List<MarketModel> results = sourceList
-        .where(
-          (m) =>
-              m.group == "PUBLIC" &&
-              (m.board == "Main Board" || m.board == "Small Cap Board"),
-        )
+        .where((m) => _isMainBoardPublicQuote(m) || _isSmallCapPublicQuote(m))
         .toList();
 
     if (selectedBoard != 'All') {
       if (selectedBoard == 'Main') {
-        results = results.where((m) => m.board == "Main Board").toList();
+        results = results.where(_isMainBoardPublicQuote).toList();
       } else if (selectedBoard == 'SME') {
-        results = results.where((m) => m.board == "Small Cap Board").toList();
+        results = results.where(_isSmallCapPublicQuote).toList();
       }
     }
 
@@ -170,10 +180,8 @@ class WatchListController extends GetxController {
       results = results
           .where(
             (m) =>
-                (m.marketType ?? "").toLowerCase() ==
-                    selectedMarketType.toLowerCase() ||
-                (m.group ?? "").toLowerCase() ==
-                    selectedMarketType.toLowerCase(),
+                _normalizeFilterValue(m.marketType) ==
+                _normalizeFilterValue(selectedMarketType),
           )
           .toList();
     }
@@ -182,8 +190,8 @@ class WatchListController extends GetxController {
       results = results
           .where(
             (m) =>
-                (m.shareType ?? "").toUpperCase() ==
-                selectedShareType.toUpperCase(),
+                _normalizeFilterValue(m.shareType) ==
+                _normalizeFilterValue(selectedShareType),
           )
           .toList();
     }
