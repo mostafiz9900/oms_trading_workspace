@@ -23,7 +23,7 @@ class HomeBinding extends Binding {
     Get.lazyPut<PasswordResetController>(
       () => PasswordResetController(Get.find()),
     );
-    Get.lazyPut<CompaniesController>(() => CompaniesController());
+    Get.lazyPut<CompaniesController>(() => CompaniesController(), fenix: true);
     // Register HistoricalVolumeController with dependency injection
     Get.lazyPut<HistoricalVolumeController>(
       () => HistoricalVolumeController(repository: Get.find<HomeRepository>()),

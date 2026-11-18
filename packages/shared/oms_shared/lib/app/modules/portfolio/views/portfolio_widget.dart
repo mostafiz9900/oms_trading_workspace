@@ -8,6 +8,7 @@ import '../../../global_widgets/common_widget.dart';
 import '../../../global_widgets/custom_app_bar.dart';
 import '../../../global_widgets/custom_drawer.dart';
 import '../../../global_widgets/exchange/exchange_switcher.dart';
+import '../../../data/services/exchange_service.dart';
 import '../../home/controllers/home_controller.dart';
 import 'local_widgets/account_summary_tab_widget.dart';
 import '../../../global_widgets/appbar_right_search_tap.dart';
@@ -45,7 +46,10 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
         right: Row(
           children: [
             // DSE | CSE; shows only for houses on both exchanges.
-            const ExchangeSwitcher(padding: EdgeInsets.only(right: 8)),
+            const ExchangeSwitcher(
+              padding: EdgeInsets.only(right: 8),
+              scope: ExchangeScope.portfolio,
+            ),
             CommonWidget.buySell(
               context: context,
               onTap: () => Get.find<HomeController>().changeCurrentIndex(5),

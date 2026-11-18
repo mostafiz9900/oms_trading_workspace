@@ -13,12 +13,18 @@ void main() {
   setUp(clearTestStorage);
   tearDown(Get.reset);
 
-  Future<ExchangeService> pump(WidgetTester tester, ExchangeMode mode) async {
+  Future<ExchangeService> pump(
+    WidgetTester tester,
+    ExchangeMode mode, {
+    ExchangeScope scope = ExchangeScope.quoteTrade,
+  }) async {
     initTestAppConfig(exchangeMode: mode);
     final service = Get.put(ExchangeService());
     await tester.pumpWidget(
       GetMaterialApp(
-        home: Scaffold(appBar: AppBar(actions: const [ExchangeSwitcher()])),
+        home: Scaffold(
+          appBar: AppBar(actions: [ExchangeSwitcher(scope: scope)]),
+        ),
       ),
     );
     // GetXify schedules its root onReady callback on the next event turn.
@@ -82,12 +88,16 @@ void main() {
   testWidgets('tapping CSE selects it and slides the highlight', (
     tester,
   ) async {
-    final service = await pump(tester, ExchangeMode.dseAndCse);
+    final service = await pump(
+      tester,
+      ExchangeMode.dseAndCse,
+      scope: ExchangeScope.watchlist,
+    );
 
     await tester.tap(find.byKey(const ValueKey('exchange_cse')));
     await tester.pumpAndSettle();
 
-    expect(service.selected.value, StockExchange.cse);
+    expect(service.exchangeFor(ExchangeScope.watchlist), StockExchange.cse);
     expect(
       highlightX(tester),
       tester.getCenter(find.byKey(const ValueKey('exchange_cse'))).dx,
@@ -95,7 +105,7 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('exchange_dse')));
     await tester.pumpAndSettle();
-    expect(service.selected.value, StockExchange.dse);
+    expect(service.exchangeFor(ExchangeScope.watchlist), StockExchange.dse);
   });
 
   testWidgets('tapping the selected side changes nothing', (tester) async {
@@ -108,5 +118,56 @@ void main() {
 
     expect(changes, 0, reason: 'no needless socket reload');
     worker.dispose();
+  });
+
+  testWidgets('a page-scoped switch leaves Quote/Trade unchanged', (
+    tester,
+  ) async {
+    final service = await pump(
+      tester,
+      ExchangeMode.dseAndCse,
+      scope: ExchangeScope.watchlist,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('exchange_cse')));
+    await tester.pumpAndSettle();
+
+    expect(service.exchangeFor(ExchangeScope.watchlist), StockExchange.cse);
+    expect(service.exchangeFor(ExchangeScope.quoteTrade), StockExchange.dse);
+  });
+
+  testWidgets('Quote/Trade cannot switch without confirming the same item', (
+    tester,
+  ) async {
+    final service = await pump(tester, ExchangeMode.dseAndCse);
+
+    await tester.tap(find.byKey(const ValueKey('exchange_cse')));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(service.exchangeFor(ExchangeScope.quoteTrade), StockExchange.dse);
+    expect(find.text('Same item not found'), findsOneWidget);
+    await tester.tap(find.text('OK'));
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('shows progress while Quote/Trade availability is checked', (
+    tester,
+  ) async {
+    final service = await pump(tester, ExchangeMode.dseAndCse);
+
+    await tester.tap(find.byKey(const ValueKey('exchange_cse')));
+    await tester.pump();
+
+    expect(find.byKey(const ValueKey('exchange_loading_CSE')), findsOneWidget);
+    expect(service.exchangeFor(ExchangeScope.quoteTrade), StockExchange.dse);
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('Same item not found'), findsOneWidget);
+
+    await tester.tap(find.text('OK'));
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('exchange_loading_CSE')), findsNothing);
+    expect(service.exchangeFor(ExchangeScope.quoteTrade), StockExchange.dse);
   });
 }

@@ -13,6 +13,7 @@ import 'package:getxify/getxify.dart';
 
 import '../../../global_widgets/appbar_right_search_tap.dart';
 import '../../../global_widgets/exchange/exchange_switcher.dart';
+import '../../../data/services/exchange_service.dart';
 import '../controllers/top_share_controller.dart';
 import '../../../global_widgets/loaders/watchlist_loader.dart';
 
@@ -32,7 +33,7 @@ class TopShareView extends GetView<TopShareController> {
           mainAxisSize: MainAxisSize.min,
           children: [
             // DSE | CSE; shows only for houses on both exchanges.
-            const ExchangeSwitcher(),
+            const ExchangeSwitcher(scope: ExchangeScope.topShare),
             AppbarRightSearchTapWidget(shouldPop: true),
           ],
         ),
@@ -100,6 +101,7 @@ class TopShareView extends GetView<TopShareController> {
                             Get.find<HomeController>().goBottomNabBarPage(
                               1,
                               latestModel.orderBook!,
+                              sourceScope: ExchangeScope.topShare,
                             );
                             Get.find<HomeController>().loadComanyDividentEPS(
                               '${latestModel.shortName}',

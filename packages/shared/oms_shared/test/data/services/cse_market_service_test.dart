@@ -86,6 +86,22 @@ void main() {
       await finish(tester);
     });
 
+    testWidgets('Watchlist CSE scope opens only the market feed', (
+      tester,
+    ) async {
+      final service = await start(tester, ExchangeMode.dseAndCse);
+      Get.find<ExchangeService>().select(
+        StockExchange.cse,
+        scope: ExchangeScope.watchlist,
+      );
+      await tester.pump();
+
+      expect(service.isOpen, isTrue);
+      expect(sockets.map((socket) => socket.uri.toString()), [_cseUrl]);
+      expect(ExchangeService.current, StockExchange.dse);
+      await finish(tester);
+    });
+
     testWidgets('CSE selected: its own socket on the CSE URL, quotes filled', (
       tester,
     ) async {

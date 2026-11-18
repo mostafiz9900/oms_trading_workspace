@@ -40,6 +40,36 @@ void main() {
       service.select(StockExchange.cse);
       expect(ExchangeService.current, StockExchange.cse);
     });
+
+    test('page scopes are independent; Quote and Trade share one scope', () {
+      final service = Get.put(ExchangeService());
+
+      service.select(StockExchange.cse, scope: ExchangeScope.watchlist);
+      expect(service.exchangeFor(ExchangeScope.watchlist), StockExchange.cse);
+      expect(service.exchangeFor(ExchangeScope.quoteTrade), StockExchange.dse);
+
+      service.select(StockExchange.cse, scope: ExchangeScope.quoteTrade);
+      expect(service.exchangeFor(ExchangeScope.quoteTrade), StockExchange.cse);
+      expect(service.exchangeFor(ExchangeScope.market), StockExchange.dse);
+      expect(ExchangeService.current, StockExchange.cse);
+    });
+
+    test('each page scope persists its own exchange', () async {
+      final service = ExchangeService();
+      service.select(StockExchange.cse, scope: ExchangeScope.portfolio);
+      await Future<void>.delayed(Duration.zero);
+
+      expect(
+        StorageService.readSync<String>(
+          '${StorageConstants.selectedExchange}_portfolio',
+        ),
+        'cse',
+      );
+      expect(
+        StorageService.readSync<String>(StorageConstants.selectedExchange),
+        isNull,
+      );
+    });
   });
 
   group('house on one exchange', () {
@@ -60,6 +90,23 @@ void main() {
       initTestAppConfig();
       expect(ExchangeService().selected.value, StockExchange.dse);
     });
+
+    test(
+      'new page scopes start on DSE even if legacy Quote/Trade saved CSE',
+      () async {
+        initTestAppConfig(exchangeMode: ExchangeMode.dseAndCse);
+        await StorageService.save(StorageConstants.selectedExchange, 'cse');
+        final service = ExchangeService();
+
+        expect(
+          service.exchangeFor(ExchangeScope.quoteTrade),
+          StockExchange.cse,
+        );
+        expect(service.exchangeFor(ExchangeScope.market), StockExchange.dse);
+        expect(service.exchangeFor(ExchangeScope.watchlist), StockExchange.dse);
+        expect(service.exchangeFor(ExchangeScope.favorites), StockExchange.dse);
+      },
+    );
   });
 
   test('without a registered service, current is the house default', () {

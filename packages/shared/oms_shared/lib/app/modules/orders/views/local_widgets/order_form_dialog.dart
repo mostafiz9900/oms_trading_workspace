@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:getxify/getxify.dart';
+import 'package:broker_config/broker_config.dart' show StockExchange;
 
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/utils/extensions/string_extensions.dart';
@@ -9,6 +10,7 @@ import '../../../../core/values/dimens.dart';
 import '../../../../core/values/space.dart';
 import '../../../../data/enums/app_enum.dart';
 import '../../../../data/models/response/user_order.dart';
+import '../../../../data/services/exchange_service.dart';
 import '../../../../global_widgets/custom_dropdown.dart';
 import '../../../home/controllers/home_controller.dart';
 
@@ -31,6 +33,7 @@ class _OrderModifyDialog extends StatefulWidget {
 }
 
 class _OrderModifyDialogState extends State<_OrderModifyDialog> {
+  bool _hasQuantityError = false;
   late final TextEditingController _priceController;
 
   // The dialog's own fields: the Trade page (kept mounted under the dialog)
@@ -65,6 +68,32 @@ class _OrderModifyDialogState extends State<_OrderModifyDialog> {
     _qtyController.dispose();
     _minQtyController.dispose();
     super.dispose();
+  }
+
+  String? get _quantityErrorMessage {
+    if (ExchangeService.current != StockExchange.cse) return null;
+    final disclosedQty = int.tryParse(_disclosedQtyController.text) ?? 0;
+    if (disclosedQty <= 0) return null;
+
+    final quantity = int.tryParse(_qtyController.text);
+    if (quantity == null || quantity < disclosedQty) {
+      return 'Qty. cannot be less than Disclosed Qty. ($disclosedQty)';
+    }
+    return null;
+  }
+
+  void _clearQuantityError() {
+    if (_hasQuantityError) setState(() => _hasQuantityError = false);
+  }
+
+  void _showQuantityError(String message) {
+    setState(() => _hasQuantityError = true);
+    Get.snackbar(
+      'Invalid Quantity',
+      message,
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
   }
 
   @override
@@ -183,6 +212,7 @@ class _OrderModifyDialogState extends State<_OrderModifyDialog> {
                               child: TextFormField(
                                 controller: _disclosedQtyController,
                                 keyboardType: TextInputType.number,
+                                onChanged: (_) => _clearQuantityError(),
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly,
                                 ],
@@ -241,10 +271,14 @@ class _OrderModifyDialogState extends State<_OrderModifyDialog> {
                               decoration: BoxDecoration(
                                 color: context.tapBg,
                                 borderRadius: BorderRadius.circular(6),
+                                border: _hasQuantityError
+                                    ? Border.all(color: Colors.red)
+                                    : null,
                               ),
                               child: TextFormField(
                                 controller: _qtyController,
                                 keyboardType: TextInputType.number,
+                                onChanged: (_) => _clearQuantityError(),
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly,
                                 ],
@@ -470,6 +504,13 @@ class _OrderModifyDialogState extends State<_OrderModifyDialog> {
                           AppSpace.spaceW10,
                           ElevatedButton(
                             onPressed: () {
+                              final quantityError = _quantityErrorMessage;
+                              if (quantityError != null) {
+                                _showQuantityError(quantityError);
+                                return;
+                              }
+                              _clearQuantityError();
+
                               var orderConfirm = isBuy
                                   ? SideType2.BUY
                                   : SideType2.SELL;

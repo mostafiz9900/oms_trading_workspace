@@ -28,6 +28,7 @@ import '../../../data/models/request/add_fav_item_request.dart'
 import '../../../global_widgets/empty_widget.dart';
 import '../../../global_widgets/loaders/watchlist_loader.dart';
 import '../../../global_widgets/exchange/exchange_switcher.dart';
+import '../../../data/services/exchange_service.dart';
 
 class WatchListWidget extends StatefulWidget {
   const WatchListWidget({super.key});
@@ -66,7 +67,10 @@ class _WatchListWidgetState extends State<WatchListWidget> {
               child: Row(
                 children: [
                   // DSE | CSE; shows only for houses on both exchanges.
-                  const ExchangeSwitcher(padding: EdgeInsets.only(right: 8)),
+                  const ExchangeSwitcher(
+                    padding: EdgeInsets.only(right: 8),
+                    scope: ExchangeScope.watchlist,
+                  ),
                   InkWell(
                     onTap: () async {
                       if (await StorageService.read(StorageConstants.token) ==
@@ -312,6 +316,7 @@ class _WatchListWidgetState extends State<WatchListWidget> {
                                         controller.homeCon.goBottomNabBarPage(
                                           1,
                                           model.orderBook!,
+                                          sourceScope: ExchangeScope.watchlist,
                                         );
                                         FocusManager.instance.primaryFocus
                                             ?.unfocus();
@@ -362,6 +367,7 @@ class _WatchListWidgetState extends State<WatchListWidget> {
                                         controller.homeCon.goBottomNabBarPage(
                                           1,
                                           model.orderBook!,
+                                          sourceScope: ExchangeScope.watchlist,
                                         );
                                         FocusManager.instance.primaryFocus
                                             ?.unfocus();

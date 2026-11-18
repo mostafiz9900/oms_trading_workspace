@@ -164,7 +164,10 @@ void main() {
       await sends(tester, 'DSEX');
       index.selectSn('DS30');
 
-      Get.find<ExchangeService>().select(StockExchange.cse);
+      Get.find<ExchangeService>().select(
+        StockExchange.cse,
+        scope: ExchangeScope.market,
+      );
       await tester.pump();
 
       expect(index.selectedSn, 'CASPI');
@@ -177,9 +180,9 @@ void main() {
       final index = await start(tester, ExchangeMode.dseAndCse);
       final exchange = Get.find<ExchangeService>();
 
-      exchange.select(StockExchange.cse);
+      exchange.select(StockExchange.cse, scope: ExchangeScope.market);
       await tester.pump();
-      exchange.select(StockExchange.dse);
+      exchange.select(StockExchange.dse, scope: ExchangeScope.market);
       await tester.pump();
 
       expect(index.selectedSn, 'DSEX');

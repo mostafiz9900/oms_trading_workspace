@@ -11,6 +11,7 @@ import '../../../data/models/response/index_model.dart';
 import '../../../global_widgets/custom_app_bar.dart';
 import '../../../global_widgets/custom_drawer.dart';
 import '../../../global_widgets/exchange/exchange_switcher.dart';
+import '../../../data/services/exchange_service.dart';
 import '../../global_search/controllers/global_search_controller.dart';
 import '../../home/controllers/home_controller.dart';
 import '../../../routes/app_routes.dart';
@@ -22,7 +23,6 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import 'local_widgets/home_pie_chart.dart';
-import 'local_widgets/sector_horizontal_list.dart';
 import 'local_widgets/top_sector_by_category_widget.dart';
 import 'local_widgets/top_sector_by_gainer_widget.dart';
 
@@ -75,7 +75,7 @@ class _MarketWidgetState extends State<MarketWidget> {
                     return Row(
                       children: [
                         // DSE | CSE; shows only for houses on both exchanges.
-                        const ExchangeSwitcher(),
+                        const ExchangeSwitcher(scope: ExchangeScope.market),
                         NotificationIcon(
                           notificationCount: 0, //homeNotifyCont.news.length,
                           onTap: () {

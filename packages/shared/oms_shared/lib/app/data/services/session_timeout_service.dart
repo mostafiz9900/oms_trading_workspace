@@ -131,6 +131,8 @@ class SessionTimeoutService extends GetxService with WidgetsBindingObserver {
     StorageService.remove(StorageConstants.userInfo);
     StorageService.remove(StorageConstants.orderBookId);
     StorageService.remove('${StorageConstants.orderBookId}_cse');
+    StorageService.remove(StorageConstants.selectedQuoteOrderBookDse);
+    StorageService.remove(StorageConstants.selectedQuoteOrderBookCse);
     StorageService.remove(SessionTimeoutConfig.backgroundedAtStorageKey);
     FocusManager.instance.primaryFocus?.unfocus();
     Get.offAllNamed(Routes.LOGIN);

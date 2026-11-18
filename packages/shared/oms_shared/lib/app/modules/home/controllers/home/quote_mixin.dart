@@ -60,51 +60,76 @@ mixin QuoteMixin on HomeState {
 
   @override
   Future<void> markerInfo() async {
+    // An explicit saved/search selection supersedes any pending exchange
+    // reselection waiting for the previous venue's feed.
+    _quoteInstrumentAfterSwitch = null;
     final MarketIdentifier orderBook =
         await StorageService.read(_selectedOrderBookKey) ?? 0;
-    // Stocks of the shown exchange (on DSE: marketList, as before).
     final marketList = shownMarket.quotes;
 
-    if (marketList.isEmpty) {
-      update(['marketList', "trade_ticker_data"]);
+    if (orderBook == 0 || marketList.isEmpty) {
+      _clearSelectedInstrument();
       return;
     }
 
-    // ১. প্রথমে নির্ধারণ করুন কোন marketData সিলেক্ট হবে
-    if (orderBook == 0) {
-      marketData = marketList.first;
-    } else {
-      marketData = marketList.firstWhere(
-        (c) => c.orderBook == orderBook,
-        // যদি সেভ করা orderBook লিস্টে না থাকে, তাহলে ডিফল্ট হিসেবে প্রথম আইটেম নিয়ে নিবে
-        orElse: () => marketList.first,
-      );
+    // Restore only the saved item for this exchange; never choose index 0 as
+    // a fallback when there is no saved or matching selection.
+    final selected = marketList.firstWhereOrNull(
+      (quote) => quote.orderBook == orderBook,
+    );
+    if (selected == null) {
+      _clearSelectedInstrument();
+      return;
     }
+    marketData = selected;
 
-    // ২. এবার নির্বাচিত marketData এর ডাটাগুলো ফেচ করুন এবং লোকাল স্টোরেজ আপডেট করুন
-    if (marketData.orderBook != null) {
-      await StorageService.save(_selectedOrderBookKey, marketData.orderBook);
+    await StorageService.save(_selectedOrderBookKey, marketData.orderBook);
+    _sendMarketDepthPayload(AppConstants.subscribe, marketData.orderBook!);
+    loadComanyDividentEPS('${marketData.shortName}');
 
-      // এই মেথডগুলো সব কন্ডিশনেই কল হতে হবে যেন অ্যাপ স্টার্টেই ডাটা লোড হয়
-      _sendMarketDepthPayload(AppConstants.subscribe, marketData.orderBook!);
-      loadComanyDividentEPS('${marketData.shortName}');
-    }
-
-    // ৩. UI আপডেট করুন
     update(['marketList', 'trade_ticker_data']);
+    update(['selectedInstrument']);
+    update(['trade_root']);
   }
 
-  /// Symbol shown on Quote when the user switched DSE/CSE; picked again from
-  /// the new exchange's feed (order book ids can differ between exchanges).
-  String? _quoteSymbolAfterSwitch;
-  Timer? _quoteSwitchFallback;
+  void _clearSelectedInstrument() {
+    marketData = MarketModel();
+    company = null;
+    dividendObj = null;
+    epsData.clear();
+    buys.clear();
+    sells.clear();
+    timeAndSales.clear();
+    timeAndSalesHistory.clear();
+    newsSingleItem.clear();
+    update(['marketList', 'trade_ticker_data', 'market_depth']);
+    update(['trade_root']);
+    update(['selectedInstrument']);
+  }
+
+  /// Restores a saved item only after it arrives in the selected feed. If
+  /// there is no saved item, Details/Trade stay empty for an explicit search.
+  @override
+  Future<void> restoreSelectedInstrumentIfAvailable() async {
+    if (marketData.orderBook != null ||
+        (currentIndex != 1 && currentIndex != 5)) {
+      return;
+    }
+    final savedOrderBook = await StorageService.read(_selectedOrderBookKey);
+    if (savedOrderBook == null || savedOrderBook == 0) return;
+    if (shownMarket.quotes.any((quote) => quote.orderBook == savedOrderBook)) {
+      await markerInfo();
+    }
+  }
+
+  /// Listing shown before a successful Details/Trade exchange switch.
+  MarketModel? _quoteInstrumentAfterSwitch;
 
   @override
-  bool get _quoteReselectPending => _quoteSymbolAfterSwitch != null;
+  bool get _quoteReselectPending => _quoteInstrumentAfterSwitch != null;
 
-  /// How long to wait for the same symbol on the new exchange before showing
-  /// its first stock instead.
-  static const quoteSwitchFallback = Duration(seconds: 5);
+  /// Lets the favorites page settle after an exchange switch.
+  static const exchangeViewStabilityWindow = Duration(seconds: 5);
 
   /// DSE/CSE switch: drops the old stock's depth and time & sales. The stock
   /// itself stays selected (Trade uses it) until the new feed has it.
@@ -118,48 +143,38 @@ mixin QuoteMixin on HomeState {
     } else if (CseMarketService.isShown) {
       _sendDseDepthPayload(AppConstants.unsubscribe, orderBook);
     } // back on DSE: the CSE depth socket closed with CseMarketService
-    buys.clear();
-    sells.clear();
-    timeAndSales.clear();
-    timeAndSalesHistory.clear();
-    newsSingleItem.clear();
-    _quoteSymbolAfterSwitch = marketData.shortName ?? '';
-    _quoteSwitchFallback?.cancel();
-    _quoteSwitchFallback = Timer(
-      quoteSwitchFallback,
-      () => _pickQuoteAfterSwitch(force: true),
-    );
-    update(['marketList', 'trade_ticker_data', 'market_depth']);
+    _quoteInstrumentAfterSwitch = marketData;
+    _clearSelectedInstrument();
   }
 
-  /// Called on every market list flush: after a switch, selects the same
-  /// symbol once the new feed has it.
+  /// Called on feed flushes to reselect the same listing or restore the saved
+  /// selection. No unrelated first-row fallback is allowed.
   @override
-  Future<void> _selectQuoteAfterExchangeSwitch() =>
-      _pickQuoteAfterSwitch(force: false);
+  Future<void> _selectQuoteAfterExchangeSwitch() async {
+    if (_quoteInstrumentAfterSwitch != null) {
+      await _pickQuoteAfterSwitch();
+    } else {
+      await restoreSelectedInstrumentIfAvailable();
+    }
+  }
 
   /// The CSE feed (CseMarketService) flushed while shown: what a DSE list
   /// flush does for the stock and favourites after a switch.
   @override
   void onShownFeedFlushed() {
     _selectQuoteAfterExchangeSwitch();
-    _rebuildFavAfterExchangeSwitch();
-    // Open search screen: results from the CSE feed.
-    if (Get.isRegistered<GlobalSearchController>()) {
-      Get.find<GlobalSearchController>().syncLiveData();
-    }
   }
 
-  /// With [force], falls back to the new exchange's first stock.
-  Future<void> _pickQuoteAfterSwitch({required bool force}) async {
-    final symbol = _quoteSymbolAfterSwitch;
+  /// Finds the exact listing in the new exchange. It never picks an unrelated
+  /// first item if the same ISIN and board are unavailable.
+  Future<void> _pickQuoteAfterSwitch() async {
+    final source = _quoteInstrumentAfterSwitch;
     final marketList = shownMarket.quotes;
-    if (symbol == null || isClosed || marketList.isEmpty) return;
-    final match = marketList.firstWhereOrNull((m) => m.shortName == symbol);
-    if (match == null && !force) return;
-    _quoteSymbolAfterSwitch = null;
-    _quoteSwitchFallback?.cancel();
-    await StorageService.save(_selectedOrderBookKey, match?.orderBook ?? 0);
+    if (source == null || isClosed || marketList.isEmpty) return;
+    final match = MarketListingMatcher.findSameListing(source, marketList);
+    if (match == null || match.orderBook == null) return;
+    _quoteInstrumentAfterSwitch = null;
+    await StorageService.save(_selectedOrderBookKey, match.orderBook);
     await markerInfo(); // selects it, subscribes depth, loads company
     // On Trade, show the new stock's price, as opening Trade does.
     if (currentIndex == 5) {

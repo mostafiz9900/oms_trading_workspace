@@ -48,7 +48,7 @@
 
 #### Tooling — `get` CLI and FVM
 - **What Happens**: `get` fails with "dart: command not found" because Flutter comes from FVM.
-- **How to Avoid**: put `~/fvm/versions/3.47.6/bin` on PATH before running `get`.
+- **How to Avoid**: put `~/fvm/versions/3.50.0/bin` on PATH before running `get`.
 - **Discovered**: 2026-10-11
 
 #### Exchange — only Market, Watch List, Top Share, Quote, Trade, Orders, Global Search, Favourites and Sector details follow the DSE/CSE switch (so far)

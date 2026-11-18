@@ -16,7 +16,7 @@ class RecentSearchService extends GetxService {
 
   /// Recent order book ids of the selected exchange, newest first.
   List<MarketIdentifier> get recentOrderBookIds =>
-      _recentByExchange[ExchangeService.current]!;
+      _recentByExchange[ExchangeService.currentFor(ExchangeScope.search)]!;
 
   /// DSE keeps the original key, so searches saved before CSE stay.
   static String storageKey(StockExchange exchange) => switch (exchange) {
@@ -51,11 +51,16 @@ class RecentSearchService extends GetxService {
       recent.removeLast();
     }
 
-    StorageService.save(storageKey(ExchangeService.current), recent);
+    StorageService.save(
+      storageKey(ExchangeService.currentFor(ExchangeScope.search)),
+      recent,
+    );
   }
 
   void clearRecentSearches() {
     recentOrderBookIds.clear();
-    StorageService.remove(storageKey(ExchangeService.current));
+    StorageService.remove(
+      storageKey(ExchangeService.currentFor(ExchangeScope.search)),
+    );
   }
 }

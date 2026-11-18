@@ -65,10 +65,18 @@ mixin MarketFeedMixin on HomeState {
       _selectQuoteAfterExchangeSwitch();
       _rebuildFavAfterExchangeSwitch();
 
+      if (ExchangeService.currentFor(ExchangeScope.portfolio) ==
+              StockExchange.dse &&
+          Get.isRegistered<PositionController>()) {
+        Get.find<PositionController>().update();
+      }
+
       if (Get.isRegistered<WatchListController>()) {
         Get.find<WatchListController>().applyFilters();
       }
-      if (Get.isRegistered<GlobalSearchController>()) {
+      if (ExchangeService.currentFor(ExchangeScope.search) ==
+              StockExchange.dse &&
+          Get.isRegistered<GlobalSearchController>()) {
         Get.find<GlobalSearchController>().syncLiveData();
       }
 

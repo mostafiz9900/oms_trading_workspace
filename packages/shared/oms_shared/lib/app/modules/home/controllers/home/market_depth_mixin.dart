@@ -63,6 +63,10 @@ mixin MarketDepthMixin on HomeState {
   @override
   Future<void> manageMarketDepth(MarketIdentifier newOrderBookId) async {
     printLog('newOrderBookId:: $newOrderBookId');
+    if (newOrderBookId == 0) {
+      await markerInfo();
+      return;
+    }
     final MarketIdentifier oldOrderBookId =
         await StorageService.read(_selectedOrderBookKey) ?? 0;
     printLog('old order book id:: $oldOrderBookId');

@@ -9,6 +9,7 @@ import '../core/utils/helpers/app_helper.dart';
 import '../core/values/colors.dart';
 import '../data/enums/app_enum.dart';
 import '../data/models/response/market_model.dart';
+import '../data/services/exchange_service.dart';
 import '../modules/home/controllers/home_controller.dart';
 
 import '../data/models/request/add_fav_item_request.dart'
@@ -65,6 +66,7 @@ class MarketDialogHelper {
     required BuildContext context,
     required MarketIdentifier orderBookId,
     required String shortName,
+    ExchangeScope sourceScope = ExchangeScope.quoteTrade,
   }) {
     final homeCon = Get.find<HomeController>();
 
@@ -79,7 +81,11 @@ class MarketDialogHelper {
               backgroundColor: const Color(0xFF22C665),
             ),
             onPressed: () {
-              homeCon.goBottomNabBarPage(5, orderBookId);
+              homeCon.goBottomNabBarPage(
+                5,
+                orderBookId,
+                sourceScope: sourceScope,
+              );
               homeCon.setBuySellActive(SideType2.BUY);
               homeCon.loadComanyDividentEPS(shortName);
               Get.back();
@@ -97,7 +103,11 @@ class MarketDialogHelper {
               backgroundColor: const Color(0xFFF70042),
             ),
             onPressed: () {
-              homeCon.goBottomNabBarPage(5, orderBookId);
+              homeCon.goBottomNabBarPage(
+                5,
+                orderBookId,
+                sourceScope: sourceScope,
+              );
               homeCon.setBuySellActive(SideType2.SELL);
               homeCon.loadComanyDividentEPS(shortName);
               Get.back();

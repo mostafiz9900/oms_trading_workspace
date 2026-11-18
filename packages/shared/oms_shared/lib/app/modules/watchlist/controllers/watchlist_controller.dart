@@ -41,15 +41,22 @@ class WatchListController extends GetxController {
   /// CSE feed. Otherwise from HomeController's feed, as before.
   bool get showsCse =>
       AppConfig.hasBothExchanges &&
-      ExchangeService.current == StockExchange.cse;
+      ExchangeService.currentFor(ExchangeScope.watchlist) == StockExchange.cse;
 
   Worker? _cseWorker;
+  Worker? _exchangeWorker;
 
   @override
   void onInit() {
     super.onInit();
     searchController.addListener(_onSearchChanged);
     _generateFilteredList();
+    if (Get.isRegistered<ExchangeService>()) {
+      _exchangeWorker = ever(
+        Get.find<ExchangeService>().selection(ExchangeScope.watchlist),
+        (_) => applyFilters(),
+      );
+    }
     final cse = _cse;
     if (cse != null) {
       _cseWorker = ever<List<MarketModel>>(cse.quotes, (_) {
@@ -72,6 +79,7 @@ class WatchListController extends GetxController {
   @override
   void onClose() {
     _cseWorker?.dispose();
+    _exchangeWorker?.dispose();
     searchController.removeListener(_onSearchChanged);
     searchController.dispose();
     scrollController.dispose();

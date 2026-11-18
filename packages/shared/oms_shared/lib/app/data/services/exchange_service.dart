@@ -5,41 +5,92 @@ import '../../core/values/app_config.dart';
 import '../../core/values/storage.dart';
 import 'storage_service.dart';
 
-/// The exchange whose market data the app shows (DSE or CSE).
-///
-/// A house on one exchange always stays on it. A house on both starts on the
-/// exchange chosen last time (or [AppConfig.defaultExchange]) and changes it
-/// with [select]; market screens listen to [selected].
+/// Exchange selections are independent per screen scope, except Quote and
+/// Trade, which share one selection because they operate on the same stock.
+enum ExchangeScope {
+  quoteTrade,
+  market,
+  watchlist,
+  favorites,
+  portfolio,
+  topShare,
+  search,
+}
+
 class ExchangeService extends GetxService {
-  ExchangeService() : selected = _restore().obs;
+  ExchangeService() : _selectedByScope = _restoreSelections();
 
-  final Rx<StockExchange> selected;
+  final Map<ExchangeScope, Rx<StockExchange>> _selectedByScope;
 
-  /// Exchange of the running app, also before the service is registered
-  /// (tests, background isolates): then the house default.
+  /// Backward-compatible Quote/Trade selection for order and detail logic.
+  Rx<StockExchange> get selected => selection(ExchangeScope.quoteTrade);
+
+  Rx<StockExchange> selection(ExchangeScope scope) => _selectedByScope[scope]!;
+
+  Iterable<Rx<StockExchange>> get selections => _selectedByScope.values;
+
+  StockExchange exchangeFor(ExchangeScope scope) => selection(scope).value;
+
+  bool get cseIsSelectedByAnyScope => _selectedByScope.values.any(
+    (exchange) => exchange.value == StockExchange.cse,
+  );
+
+  /// Exchange of the running trading context, also before registration.
   static StockExchange get current => Get.isRegistered<ExchangeService>()
-      ? Get.find<ExchangeService>().selected.value
+      ? Get.find<ExchangeService>().exchangeFor(ExchangeScope.quoteTrade)
+      : AppConfig.defaultExchange;
+
+  static StockExchange currentFor(ExchangeScope scope) =>
+      Get.isRegistered<ExchangeService>()
+      ? Get.find<ExchangeService>().exchangeFor(scope)
       : AppConfig.defaultExchange;
 
   List<StockExchange> get available =>
       AppConfig.exchanges.toList()..sort((a, b) => a.index.compareTo(b.index));
 
-  /// Switches to [exchange] and remembers it. Ignored when the house does not
-  /// trade on it or it is already selected.
-  void select(StockExchange exchange) {
+  /// Changes just [scope]. Quote and Trade use the same [quoteTrade] scope.
+  void select(
+    StockExchange exchange, {
+    ExchangeScope scope = ExchangeScope.quoteTrade,
+  }) {
     if (!AppConfig.exchanges.contains(exchange)) return;
+    final selected = selection(scope);
     if (selected.value == exchange) return;
     selected.value = exchange;
-    StorageService.save(StorageConstants.selectedExchange, exchange.name);
+    StorageService.save(_storageKey(scope), exchange.name);
   }
 
-  static StockExchange _restore() {
-    final saved = StorageService.readSync<String>(
-      StorageConstants.selectedExchange,
-    );
+  static String _storageKey(ExchangeScope scope) =>
+      scope == ExchangeScope.quoteTrade
+      ? StorageConstants.selectedExchange
+      : '${StorageConstants.selectedExchange}_${scope.name}';
+
+  static Map<ExchangeScope, Rx<StockExchange>> _restoreSelections() {
+    final selections = <ExchangeScope, Rx<StockExchange>>{};
+    for (final scope in ExchangeScope.values) {
+      final hasScopedValue =
+          StorageService.readSync<String>(_storageKey(scope)) != null;
+      final exchange = _restore(scope);
+      selections[scope] = exchange.obs;
+      if (scope != ExchangeScope.quoteTrade && !hasScopedValue) {
+        // New independent page scopes start on DSE, regardless of the legacy
+        // global Quote/Trade choice, and stay independent after restart.
+        StorageService.save(_storageKey(scope), exchange.name);
+      }
+    }
+    return selections;
+  }
+
+  static StockExchange _restore(ExchangeScope scope) {
+    final scopedSaved = StorageService.readSync<String>(_storageKey(scope));
+    final saved =
+        scopedSaved ??
+        (scope == ExchangeScope.quoteTrade
+            ? StorageService.readSync<String>(StorageConstants.selectedExchange)
+            : null);
     for (final exchange in AppConfig.exchanges) {
       if (exchange.name == saved) return exchange;
     }
-    return AppConfig.defaultExchange;
+    return AppConfig.hasDse ? StockExchange.dse : AppConfig.defaultExchange;
   }
 }

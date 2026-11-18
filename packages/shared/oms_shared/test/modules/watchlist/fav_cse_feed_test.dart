@@ -66,7 +66,7 @@ void main() {
     await tester.pump();
     home.marketList.add(_dseGp);
     home.marketListAll.add(_dseGp);
-    await StorageService.save(StorageConstants.orderBookId, 101);
+    await StorageService.save(StorageConstants.selectedQuoteOrderBookDse, 101);
     await home.markerInfo();
   }
 
@@ -88,8 +88,9 @@ void main() {
     // the CSE feed only.
     home.favMarketData = [FavMarketResponse(ticker: 'CSESTOCK', oderBook: '9')];
 
-    exchange.select(StockExchange.cse);
+    exchange.select(StockExchange.cse, scope: ExchangeScope.favorites);
     await tester.pump();
+    expect(exchange.exchangeFor(ExchangeScope.quoteTrade), StockExchange.dse);
     await cseSends(
       tester,
       '{"ob": 9, "sn": "CSESTOCK", "t": "CSESTOCK", "g": "PUBLIC", '

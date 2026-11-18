@@ -305,7 +305,7 @@ class PositionController extends GetxController {
   MarketModel getMarketData(String? isin) {
     if (isin == null) return MarketModel();
     try {
-      return homeCont.shownMarket.quotes.firstWhere(
+      return homeCont.portfolioFeed.quotes.firstWhere(
         (market) =>
             market.isinCode?.trim() == isin.trim() && market.group == 'PUBLIC',
         orElse: () => MarketModel(),

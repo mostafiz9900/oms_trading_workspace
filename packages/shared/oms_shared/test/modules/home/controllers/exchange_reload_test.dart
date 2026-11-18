@@ -5,21 +5,22 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:getxify/getxify.dart';
 import 'package:oms_shared/app/core/utils/extensions/market_model_extensions.dart';
+import 'package:oms_shared/app/core/values/app_config.dart';
 import 'package:oms_shared/app/data/models/marquee_holder.dart';
 import 'package:oms_shared/app/data/models/response/fav_market_response.dart';
 import 'package:oms_shared/app/data/models/response/market_model.dart';
 import 'package:oms_shared/app/data/repositories/home_repository.dart';
 import 'package:oms_shared/app/data/repositories/market_chart_repository.dart';
 import 'package:oms_shared/app/data/services/exchange_service.dart';
+import 'package:oms_shared/app/data/services/cse_market_service.dart';
 import 'package:oms_shared/app/data/services/market_socket_service.dart';
-import 'package:oms_shared/app/data/services/recent_search_service.dart';
 import 'package:oms_shared/app/data/services/socket_db_service.dart';
-import 'package:oms_shared/app/modules/global_search/controllers/global_search_controller.dart';
 import 'package:oms_shared/app/modules/home/controllers/home_controller.dart';
 import 'package:oms_shared/app/modules/market/controllers/companies_controller.dart';
 import 'package:oms_shared/app/modules/market/controllers/market_index_controller.dart';
 import 'package:oms_shared/app/modules/portfolio/controllers/position_controller.dart';
 import 'package:oms_shared/app/modules/quote/controllers/historical_volume_controller.dart';
+import 'package:oms_shared/app/global_widgets/exchange/exchange_switcher.dart';
 
 import '../../../helpers/fake_socket.dart';
 import '../../../helpers/fake_storage.dart';
@@ -85,6 +86,8 @@ void main() {
   Future<HomeController> startHome(
     WidgetTester tester, {
     bool observeSectorSummary = false,
+    bool registerCseFeed = false,
+    bool showQuoteTradeSwitcher = false,
   }) async {
     final rootContent = ValueNotifier<Widget>(const Scaffold());
     await tester.pumpWidget(
@@ -108,6 +111,7 @@ void main() {
         onlineChanges: const Stream.empty(),
       ),
     );
+    if (registerCseFeed) Get.put(CseMarketService());
     final home = HomeController(homeRepository: repo);
     if (observeSectorSummary) {
       sectorSummaryBuilds = 0;
@@ -121,6 +125,15 @@ void main() {
       );
       await tester.pump(const Duration(milliseconds: 1));
     }
+    if (showQuoteTradeSwitcher) {
+      Get.put<HomeController>(home);
+      rootContent.value = Scaffold(
+        appBar: AppBar(
+          actions: [const ExchangeSwitcher(scope: ExchangeScope.quoteTrade)],
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 1));
+    }
     return home;
   }
 
@@ -128,10 +141,92 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump(const Duration(milliseconds: 1));
     Get.delete<WebSocketService>(force: true);
-    // Lets the switch windows (Quote fallback, favourites) run out.
-    await tester.pump(QuoteMixin.quoteSwitchFallback);
+    // Let page-scoped feed work settle before cleanup.
+    await tester.pump(QuoteMixin.exchangeViewStabilityWindow);
     await tester.pump(HomeController.fieldsDisposeDelay);
   }
+
+  Future<void> prepareQuoteSwitchToDse(
+    WidgetTester tester, {
+    required String targetIsin,
+    required String targetBoard,
+  }) async {
+    final home = await startHome(
+      tester,
+      registerCseFeed: true,
+      showQuoteTradeSwitcher: true,
+    );
+    await tester.pump();
+    for (final socket in sockets) {
+      socket.open();
+    }
+    await tester.pump();
+
+    final dseMarket = sockets.firstWhere(
+      (socket) => socket.uri.toString() == AppConfig.marketUrl,
+    );
+    dseMarket.serverSends(
+      '{"ob": 254555, "sn": "DSE_STOCK", "t": "DSE_STOCK", '
+      '"ic": "$targetIsin", "b": "$targetBoard", "g": "PUBLIC"}',
+    );
+    await tester.pump(const Duration(milliseconds: 20));
+
+    Get.find<ExchangeService>().select(StockExchange.cse);
+    await tester.pump(const Duration(milliseconds: 20));
+    home.marketData = const MarketModel(
+      orderBook: 'CSE_101001462',
+      shortName: 'SURV23',
+      ticker: 'SURV23',
+      isinCode: 'BD000SURV234',
+      board: 'Main Board',
+    );
+    await tester.pump(const Duration(milliseconds: 20));
+  }
+
+  testWidgets('Quote/Trade stays on CSE when the ISIN+board is absent on DSE', (
+    tester,
+  ) async {
+    await prepareQuoteSwitchToDse(
+      tester,
+      targetIsin: 'BD000OTHER0001',
+      targetBoard: 'Main Board',
+    );
+
+    await tester.tap(find.byKey(const ValueKey('exchange_dse')));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(
+      Get.find<ExchangeService>().exchangeFor(ExchangeScope.quoteTrade),
+      StockExchange.cse,
+    );
+    expect(find.text('Same item not found'), findsOneWidget);
+    expect(find.byKey(const ValueKey('exchange_loading_DSE')), findsOneWidget);
+
+    await tester.tap(find.text('OK'));
+    await tester.pump(const Duration(milliseconds: 300));
+    await finish(tester);
+  });
+
+  testWidgets('Quote/Trade switches when DSE store has the same ISIN+board', (
+    tester,
+  ) async {
+    await prepareQuoteSwitchToDse(
+      tester,
+      targetIsin: 'BD000-SURV234',
+      targetBoard: ' main-board ',
+    );
+
+    await tester.tap(find.byKey(const ValueKey('exchange_dse')));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(
+      Get.find<ExchangeService>().exchangeFor(ExchangeScope.quoteTrade),
+      StockExchange.dse,
+    );
+    expect(find.text('Same item not found'), findsNothing);
+    expect(find.byKey(const ValueKey('exchange_loading_DSE')), findsNothing);
+    await finish(tester);
+  });
 
   testWidgets('switching to CSE reconnects the market feed to the CSE URL '
       'and drops the DSE quotes', (tester) async {
@@ -166,22 +261,19 @@ void main() {
     await finish(tester);
   });
 
-  testWidgets('open search screen drops the old exchange results', (
+  testWidgets('Quote/Trade exchange changes do not change Search scope', (
     tester,
   ) async {
     final home = await startHome(tester);
     Get.put<HomeController>(home);
-    Get.put(RecentSearchService());
-    const gp = MarketModel(orderBook: 101, shortName: 'GP', group: 'PUBLIC');
-    home.marketList.add(gp);
-    final search = Get.put(GlobalSearchController());
-    expect(search.filteredItems, [gp]);
 
     Get.find<ExchangeService>().select(StockExchange.cse);
     home.reloadMarketForExchange();
     await tester.pump();
 
-    expect(search.filteredItems, isEmpty);
+    final exchanges = Get.find<ExchangeService>();
+    expect(exchanges.exchangeFor(ExchangeScope.search), StockExchange.dse);
+    expect(exchanges.exchangeFor(ExchangeScope.quoteTrade), StockExchange.cse);
     await finish(tester);
   });
 
@@ -203,7 +295,12 @@ void main() {
     // GP is order book 101 on DSE; on CSE order book 101 is another stock.
     Future<HomeController> onGpThenSwitch(WidgetTester tester) async {
       final home = await startHome(tester);
-      home.marketData = const MarketModel(orderBook: 101, shortName: 'GP');
+      home.marketData = const MarketModel(
+        orderBook: 101,
+        shortName: 'GP',
+        isinCode: 'BD0001GP0001',
+        board: 'Main Board',
+      );
       Get.find<ExchangeService>().select(StockExchange.cse);
       home.reloadMarketForExchange();
       await tester.pump();
@@ -214,18 +311,21 @@ void main() {
 
     Future<void> cseSends(WidgetTester tester, int ob, String name) async {
       sockets.last.serverSends(
-        '{"ob": $ob, "sn": "$name", "g": "PUBLIC", "b": "Main Board"}',
+        '{"ob": $ob, "sn": "$name", '
+        '"ic": "${name == 'GP' ? 'BD0001GP0001' : 'BD0001OTHER0001'}", '
+        '"g": "PUBLIC", "b": "Main Board"}',
       );
       await tester.pump(const Duration(milliseconds: 600));
     }
 
-    testWidgets('keeps the stock (Trade uses it) until the new feed has it', (
+    testWidgets('keeps Details empty until the same ISIN+board arrives', (
       tester,
     ) async {
       final home = await onGpThenSwitch(tester);
-      expect(home.marketData.orderBook, 101);
+      expect(home.marketData.orderBook, isNull);
 
       await cseSends(tester, 101, 'SQURPHARMA');
+      expect(home.marketData.orderBook, isNull);
       await cseSends(tester, 7, 'GP');
       await tester.pump(const Duration(milliseconds: 600));
 
@@ -240,7 +340,12 @@ void main() {
       final home = await startHome(tester);
       home.tradPriceTextEditField = TextEditingController(text: '999.00');
       home.currentIndex = 5;
-      home.marketData = const MarketModel(orderBook: 101, shortName: 'GP');
+      home.marketData = const MarketModel(
+        orderBook: 101,
+        shortName: 'GP',
+        isinCode: 'BD0001GP0001',
+        board: 'Main Board',
+      );
       Get.find<ExchangeService>().select(StockExchange.cse);
       home.reloadMarketForExchange();
       await tester.pump();
@@ -258,17 +363,17 @@ void main() {
       await finish(tester);
     });
 
-    testWidgets('symbol not on the new exchange: its first stock after '
-        'the fallback', (tester) async {
+    testWidgets('stock absent on the new exchange stays unselected', (
+      tester,
+    ) async {
       final home = await onGpThenSwitch(tester);
 
       await cseSends(tester, 5, 'BATBC');
-      expect(home.marketData.shortName, 'GP', reason: 'still waiting');
+      expect(home.marketData.orderBook, isNull);
 
-      await tester.pump(QuoteMixin.quoteSwitchFallback);
+      await tester.pump(QuoteMixin.exchangeViewStabilityWindow);
 
-      expect(home.marketData.shortName, 'BATBC');
-      expect(home.marketData.orderBook, 5);
+      expect(home.marketData.orderBook, isNull);
       await finish(tester);
     });
   });
@@ -296,7 +401,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 600));
     }
 
-    testWidgets('favourites drop the old prices and re-match the new feed', (
+    testWidgets('Quote/Trade switch does not clear Favorites data', (
       tester,
     ) async {
       final home = await startHome(tester);
@@ -308,12 +413,17 @@ void main() {
 
       expect(
         home.favMarketParseList,
-        isEmpty,
-        reason: 'no old-exchange prices',
+        isNotEmpty,
+        reason: 'Favorites has its own exchange selection',
       );
 
-      await cseSends(tester, {'ob': 7, 'sn': 'GP', 't': 'GP'});
-      expect(home.favMarketParseList.single.orderBook, 7);
+      await cseSends(tester, {
+        'ob': 7,
+        'sn': 'GP',
+        't': 'GP',
+        'ic': 'BD0001GP0001',
+      });
+      expect(home.favMarketParseList.single.reference, 300);
       await finish(tester);
     });
 
@@ -322,7 +432,7 @@ void main() {
       final home = await startHome(tester);
       home.favMarketData = [FavMarketResponse(ticker: 'GP', oderBook: '7')];
       await switchToCse(tester, home);
-      await tester.pump(QuoteMixin.quoteSwitchFallback);
+      await tester.pump(QuoteMixin.exchangeViewStabilityWindow);
       const snapshot = MarketModel(orderBook: 7, ticker: 'GP', reference: 300);
       home.favMarketParseList = [snapshot]; // as getFavMarketData sets it
 
@@ -341,16 +451,21 @@ void main() {
       ) as _CountingPositions;
       await switchToCse(tester, home);
 
-      await cseSends(tester, {'ob': 7, 'sn': 'GP', 't': 'GP'});
+      await cseSends(tester, {
+        'ob': 7,
+        'sn': 'GP',
+        't': 'GP',
+        'ic': 'BD0001GP0001',
+      });
       expect(positions.redraws, greaterThan(0), reason: 'CSE prices shown');
 
-      await tester.pump(QuoteMixin.quoteSwitchFallback);
+      await tester.pump(QuoteMixin.exchangeViewStabilityWindow);
       final afterWindow = positions.redraws;
       await cseSends(tester, {'ob': 8, 'sn': 'BATBC', 't': 'BATBC'});
       expect(
         positions.redraws,
-        afterWindow,
-        reason: 'as before outside a switch',
+        greaterThan(afterWindow),
+        reason: 'Portfolio keeps refreshing from its own DSE feed',
       );
       await finish(tester);
     });
@@ -401,11 +516,21 @@ void main() {
       final history = Get.put<HistoricalVolumeController>(
         _RecordingHistory(),
       ) as _RecordingHistory;
-      home.marketData = const MarketModel(orderBook: 101, shortName: 'GP');
+      home.marketData = const MarketModel(
+        orderBook: 101,
+        shortName: 'GP',
+        isinCode: 'BD0001GP0001',
+        board: 'Main Board',
+      );
       home.currentTabIndexQuote = 3;
       await switchToCse(tester, home);
 
-      await cseSends(tester, {'ob': 7, 'sn': 'GP', 't': 'GP'});
+      await cseSends(tester, {
+        'ob': 7,
+        'sn': 'GP',
+        't': 'GP',
+        'ic': 'BD0001GP0001',
+      });
       await tester.pump(const Duration(milliseconds: 600));
 
       expect(history.loads, ['GP#7']);
@@ -439,7 +564,12 @@ void main() {
         s.open();
       }
       await tester.pump();
-      home.marketData = const MarketModel(orderBook: 101, shortName: 'GP');
+      home.marketData = const MarketModel(
+        orderBook: 101,
+        shortName: 'GP',
+        isinCode: 'BD0001GP0001',
+        board: 'Main Board',
+      );
       return home;
     }
 
@@ -466,7 +596,8 @@ void main() {
       );
 
       socketAt('wss://cse.test/market').serverSends(
-        '{"ob": 7, "sn": "GP", "t": "GP", "g": "PUBLIC", "b": "Main Board"}',
+        '{"ob": 7, "sn": "GP", "t": "GP", "ic": "BD0001GP0001", '
+        '"g": "PUBLIC", "b": "Main Board"}',
       );
       await tester.pump(const Duration(milliseconds: 600));
 

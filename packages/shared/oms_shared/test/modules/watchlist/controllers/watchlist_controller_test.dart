@@ -158,7 +158,7 @@ void main() {
     (tester) async {
       final watch = await start(tester, ExchangeMode.dseAndCse);
 
-      Get.find<ExchangeService>().select(StockExchange.cse);
+      Get.find<ExchangeService>().select(StockExchange.cse, scope: ExchangeScope.watchlist);
       await tester.pump();
       expect(shown(watch), isEmpty, reason: 'no DSE stocks under CSE');
       expect(watch.isLoading, isTrue);
@@ -180,14 +180,14 @@ void main() {
   testWidgets('back to DSE: the DSE feed again', (tester) async {
     final watch = await start(tester, ExchangeMode.dseAndCse);
     final exchange = Get.find<ExchangeService>();
-    exchange.select(StockExchange.cse);
+    exchange.select(StockExchange.cse, scope: ExchangeScope.watchlist);
     await tester.pump();
     await cseSends(
       tester,
       '{"ob": "CSE_101001462", "sn": "SQURPHARMA", "g": "PUBLIC", "b": "Main Board"}',
     );
 
-    exchange.select(StockExchange.dse);
+    exchange.select(StockExchange.dse, scope: ExchangeScope.watchlist);
     await tester.pump();
     home.marketList.assignAll([_gp]); // DSE feed (re)filled
     watch.applyFilters();
@@ -229,18 +229,23 @@ void main() {
       });
     }
 
-    testWidgets('DSE and CSE: DSE fields on DSE, the CSE service on CSE', (
+    testWidgets('Watchlist exchange changes do not change Quote/Trade feed', (
       tester,
     ) async {
-      await start(tester, ExchangeMode.dseAndCse);
+      final watch = await start(tester, ExchangeMode.dseAndCse);
       expect(identical(home.shownMarket.quotes, home.marketList), isTrue);
 
-      Get.find<ExchangeService>().select(StockExchange.cse);
+      Get.find<ExchangeService>().select(StockExchange.cse, scope: ExchangeScope.watchlist);
       await tester.pump();
-      expect(home.shownMarket, same(Get.find<CseMarketService>()));
+      expect(watch.showsCse, isTrue);
+      expect(identical(home.shownMarket.quotes, home.marketList), isTrue);
 
-      Get.find<ExchangeService>().select(StockExchange.dse);
+      Get.find<ExchangeService>().select(
+        StockExchange.dse,
+        scope: ExchangeScope.watchlist,
+      );
       await tester.pump();
+      expect(watch.showsCse, isFalse);
       expect(identical(home.shownMarket.quotes, home.marketList), isTrue);
       await finish(tester);
     });

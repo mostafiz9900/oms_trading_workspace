@@ -50,16 +50,16 @@ class CallNowWidget extends ConsumerWidget {
             ),
             Obx(() {
               return Text(
-                homeCon.shownMarket.session.value == ''
+                homeCon.marketOverviewFeed.session.value == ''
                     ? ""
-                    : homeCon.shownMarket.session.value
+                    : homeCon.marketOverviewFeed.session.value
                           .split('_')
                           .join(' ')
                           .toCapitalize(),
                 style: Get.context!.textTheme.bodyMedium?.copyWith(
-                  color: homeCon.shownMarket.session.value == ''
+                  color: homeCon.marketOverviewFeed.session.value == ''
                       ? ColorConstants.white
-                      : homeCon.shownMarket.session.value
+                      : homeCon.marketOverviewFeed.session.value
                                 .split('_')
                                 .join(' ')
                                 .toCapitalize() ==

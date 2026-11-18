@@ -8,7 +8,9 @@ abstract class HomeState extends SuperController {
 
   final MarketSocketService marketService = Get.find<MarketSocketService>();
 
-  final CompaniesController companiesController =
+  // CompaniesController owns Dio clients and may be recreated by GetX after a
+  // route lifecycle. Resolve it on use so Home never keeps a disposed instance.
+  CompaniesController get companiesController =>
       Get.find<CompaniesController>();
 
   final WebSocketService _webSocketService = WebSocketService.instance;
@@ -125,6 +127,7 @@ abstract class HomeState extends SuperController {
 
   /// Listens to the DSE/CSE selection (see [reloadMarketForExchange]).
   Worker? _exchangeWorker;
+  final List<Worker> _scopeExchangeWorkers = [];
 
   int _priceCents = 0;
 
@@ -392,11 +395,15 @@ abstract class HomeState extends SuperController {
   void userBalance();
   void _handleUserBalanceMessage(dynamic message);
   void loadComanyDividentEPS(String shortName);
-  void goBottomNabBarPage(int index, MarketIdentifier orderBookId);
+  void goBottomNabBarPage(
+    int index,
+    MarketIdentifier orderBookId, {
+    ExchangeScope sourceScope = ExchangeScope.quoteTrade,
+  });
   Future<void> markerInfo();
+  Future<void> restoreSelectedInstrumentIfAvailable();
   void _resetQuoteForExchange();
   bool get _quoteReselectPending;
-  void _resetFavForExchange();
   void _rebuildFavAfterExchangeSwitch();
   void onShownFeedFlushed();
   Future<void> _selectQuoteAfterExchangeSwitch();
@@ -412,11 +419,12 @@ abstract class HomeState extends SuperController {
   bool get _cseFeedApart =>
       AppConfig.hasBothExchanges && Get.isRegistered<CseMarketService>();
 
-  /// Storage key of the stock selected on Quote for the shown exchange
-  /// (order book ids differ between exchanges). DSE keeps the old key.
+  /// Explicitly selected Quote/Trade stock, stored independently by exchange.
+  /// The old orderBookId keys are intentionally not read: they could have
+  /// been written by the previous index-0 auto-selection behavior.
   String get _selectedOrderBookKey => CseMarketService.isShown
-      ? '${StorageConstants.orderBookId}_cse'
-      : StorageConstants.orderBookId;
+      ? StorageConstants.selectedQuoteOrderBookCse
+      : StorageConstants.selectedQuoteOrderBookDse;
 
   /// The feed the market screens show: CSE (its own service) while a house
   /// on both exchanges has CSE selected, else this controller's DSE feed.
@@ -424,6 +432,35 @@ abstract class HomeState extends SuperController {
       CseMarketService.isShown && Get.isRegistered<CseMarketService>()
       ? Get.find<CseMarketService>()
       : _dseFeedView;
+
+  /// Feed selected by a page scope. Quote and Trade share [shownMarket];
+  /// other screens read their own independent exchange selection.
+  MarketFeedView marketFeedFor(ExchangeScope scope) =>
+      CseMarketService.isShownFor(scope) && Get.isRegistered<CseMarketService>()
+      ? Get.find<CseMarketService>()
+      : _dseFeedView;
+
+  /// Feed that owns [exchange]'s quotes, regardless of which exchange any
+  /// page currently displays. Used to validate Quote/Trade switches.
+  MarketFeedView? marketFeedForExchange(StockExchange exchange) {
+    if (exchange == StockExchange.cse) {
+      return Get.isRegistered<CseMarketService>()
+          ? Get.find<CseMarketService>()
+          : null;
+    }
+    return _dseFeedView;
+  }
+
+  /// Checks the DSE tick store directly so validation does not depend on the
+  /// throttled UI quote-list flush.
+  bool dseStoreHasListing(MarketModel source) =>
+      MarketListingMatcher.findSameListing(source, _marketTickStore.quotes) !=
+      null;
+
+  MarketFeedView get marketOverviewFeed => marketFeedFor(ExchangeScope.market);
+  MarketFeedView get favoritesFeed => marketFeedFor(ExchangeScope.favorites);
+  MarketFeedView get portfolioFeed => marketFeedFor(ExchangeScope.portfolio);
+  MarketFeedView get searchFeed => marketFeedFor(ExchangeScope.search);
 
   late final MarketFeedView _dseFeedView = _HomeFeedView(this);
 }

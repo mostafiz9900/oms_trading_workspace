@@ -85,7 +85,7 @@ void main() {
     final controller = start();
     controller.setActiveSector('Food');
 
-    exchange.select(StockExchange.cse);
+    exchange.select(StockExchange.cse, scope: ExchangeScope.topShare);
     await tester.pump();
 
     expect(controller.marketFeedSortList, isEmpty);
@@ -101,7 +101,7 @@ void main() {
   ) async {
     await setUpFeeds(tester);
     final controller = start();
-    exchange.select(StockExchange.cse);
+    exchange.select(StockExchange.cse, scope: ExchangeScope.topShare);
     await tester.pump();
 
     // One flush with a non-PUBLIC row too (the list is built once).
@@ -124,7 +124,7 @@ void main() {
   ) async {
     await setUpFeeds(tester);
     final controller = start();
-    exchange.select(StockExchange.cse);
+    exchange.select(StockExchange.cse, scope: ExchangeScope.topShare);
     await tester.pump();
     await cseSends(tester, squrPharma);
 
@@ -139,11 +139,11 @@ void main() {
   testWidgets('back to DSE: the DSE list again', (tester) async {
     await setUpFeeds(tester);
     final controller = start();
-    exchange.select(StockExchange.cse);
+    exchange.select(StockExchange.cse, scope: ExchangeScope.topShare);
     await tester.pump();
     await cseSends(tester, squrPharma);
 
-    exchange.select(StockExchange.dse);
+    exchange.select(StockExchange.dse, scope: ExchangeScope.topShare);
     await tester.pump();
     market.marketFeedList.assignAll(dseRows); // DSE feed flushes
 
@@ -158,7 +158,7 @@ void main() {
     await setUpFeeds(tester);
     final controller = Get.put(TopShareController())
       ..setActiveTopMenuTopShare('Gainer');
-    exchange.select(StockExchange.cse);
+    exchange.select(StockExchange.cse, scope: ExchangeScope.topShare);
     await tester.pump();
 
     // CSE sends close = reference; the change is in the last price.
@@ -183,7 +183,7 @@ void main() {
   ) async {
     await setUpFeeds(tester);
     final controller = start();
-    exchange.select(StockExchange.cse);
+    exchange.select(StockExchange.cse, scope: ExchangeScope.topShare);
     await tester.pump();
 
     await tester.pump(TopShareController.exchangeLoadTimeout);

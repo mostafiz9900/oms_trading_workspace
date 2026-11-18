@@ -226,6 +226,59 @@ void main() {
     await tester.pumpAndSettle();
   });
 
+  testWidgets('CSE modify rejects Qty below Disclosed Qty', (tester) async {
+    setTestNetwork('none');
+    await openDialog(tester);
+    final dialogHeight = tester.getSize(find.byType(AlertDialog)).height;
+
+    await tester.enterText(dialogField('Qty.'), '2');
+    await tester.pump();
+    await tester.tap(find.text('Submit'));
+    await tester.pump();
+    expect(home.qtyTextEditField.text, '7');
+    expect(find.byType(AlertDialog), findsOneWidget);
+    expect(
+      find.text('Qty. cannot be less than Disclosed Qty. (3)'),
+      findsOneWidget,
+    );
+    expect(tester.getSize(find.byType(AlertDialog)).height, dialogHeight);
+    expect(tester.takeException(), isNull);
+
+    await tester.enterText(dialogField('Qty.'), '3');
+    await tester.pump();
+
+    Get.closeAllSnackbars();
+    await tester.pump();
+    await tester.tap(find.text('Submit'));
+    expect(home.qtyTextEditField.text, '3');
+    for (var i = 0; i < 40; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    Get.closeAllSnackbars();
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('DSE modify keeps existing Qty behavior', (tester) async {
+    setTestNetwork('none');
+    Get.find<ExchangeService>().select(StockExchange.dse);
+    await openDialog(tester);
+
+    await tester.enterText(dialogField('Qty.'), '2');
+    await tester.pump();
+    expect(
+      find.text('Qty. cannot be less than Disclosed Qty. (3)'),
+      findsNothing,
+    );
+
+    await tester.tap(find.text('Submit'));
+    expect(home.qtyTextEditField.text, '2');
+    for (var i = 0; i < 40; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    Get.closeAllSnackbars();
+    await tester.pumpAndSettle();
+  });
+
   testWidgets('Cancel still clears the Trade page fields', (tester) async {
     await openDialog(tester);
     await tester.tap(find.text('Cancel'));

@@ -34,6 +34,8 @@ import '../../../data/models/response/sector_data_model.dart'
 import '../../../data/models/response/market_tick_message.dart'
     show MarketTickKind, MarketTickMessage;
 import '../../../data/services/market_tick_store.dart' show MarketTickStore;
+import '../../../data/services/market_listing_matcher.dart'
+    show MarketListingMatcher;
 
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -143,10 +145,19 @@ class HomeController extends HomeState
     super.onInit();
     // DSE/CSE switch: reload the market feed of the chosen exchange.
     if (Get.isRegistered<ExchangeService>()) {
-      _exchangeWorker = ever(
-        Get.find<ExchangeService>().selected,
-        (_) => reloadMarketForExchange(),
-      );
+      final exchangeService = Get.find<ExchangeService>();
+      _exchangeWorker = ever(exchangeService.selected, (_) {
+        reloadMarketForExchange();
+      });
+      for (final scope in ExchangeScope.values.where(
+        (scope) => scope != ExchangeScope.quoteTrade,
+      )) {
+        _scopeExchangeWorkers.add(
+          ever(exchangeService.selection(scope), (_) {
+            _onScopedExchangeChanged(scope);
+          }),
+        );
+      }
     }
     printLog('home repository :: ${homeRepository.hashCode}');
     if (Get.arguments != null) {
@@ -191,6 +202,9 @@ class HomeController extends HomeState
   @override
   void onClose() {
     _exchangeWorker?.dispose();
+    for (final worker in _scopeExchangeWorkers) {
+      worker.dispose();
+    }
     _marketUpdateTimer?.cancel();
     _indexUpdateTimer?.cancel();
     _orderResponseTimer?.cancel();
@@ -213,6 +227,48 @@ class HomeController extends HomeState
     });
 
     super.onClose();
+  }
+
+  void _onScopedExchangeChanged(ExchangeScope scope) {
+    switch (scope) {
+      case ExchangeScope.quoteTrade:
+        break;
+      case ExchangeScope.market:
+        update([
+          'marketList',
+          'marquee',
+          'marketListByGainer',
+          'marketListByShareType',
+          'sectorListUpdate',
+          'sectorSummary',
+          'distributionChartUpdate',
+        ]);
+        break;
+      case ExchangeScope.watchlist:
+        if (Get.isRegistered<WatchListController>()) {
+          Get.find<WatchListController>().applyFilters();
+        }
+        break;
+      case ExchangeScope.favorites:
+        onFavoritesExchangeChanged();
+        break;
+      case ExchangeScope.portfolio:
+        if (Get.isRegistered<PositionController>()) {
+          Get.find<PositionController>().update();
+        }
+        break;
+      case ExchangeScope.topShare:
+        break;
+      case ExchangeScope.search:
+        onSearchFeedFlushed();
+        break;
+    }
+  }
+
+  void onSearchFeedFlushed() {
+    if (Get.isRegistered<GlobalSearchController>()) {
+      Get.find<GlobalSearchController>().syncLiveData();
+    }
   }
 
   // Toggle sorting order

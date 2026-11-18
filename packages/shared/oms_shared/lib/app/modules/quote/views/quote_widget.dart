@@ -13,6 +13,8 @@ import 'package:getxify/getxify.dart';
 
 import '../../../global_widgets/appbar_right_search_tap.dart';
 import '../../../global_widgets/exchange/exchange_switcher.dart';
+import '../../../global_widgets/select_instrument_empty_state.dart';
+import '../../../data/services/exchange_service.dart';
 import 'local_widgets/price_table_tab_widget.dart';
 import 'local_widgets/time_sales_tab_widget.dart';
 
@@ -34,26 +36,38 @@ class _QuoteWidgetState extends State<QuoteWidget> {
     return Scaffold(
       key: scaffoldKey,
       drawer: CustomDrawer(),
-      appBar: CustomAppBar(
-        titleText: '${homeController.marketData.shortName}',
-        titleFontSize: 16,
-        isBackButtonIcon: true,
-        backButtonOnClick: () => homeController.changeCurrentIndex(0),
-
-        right: Row(
-          children: [
-            // DSE | CSE; shows only for houses on both exchanges.
-            const ExchangeSwitcher(padding: EdgeInsets.only(right: 8)),
-            CommonWidget.buySell(
-              context: context,
-              onTap: () => Get.find<HomeController>().changeCurrentIndex(5),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: GetBuilder<HomeController>(
+          id: 'selectedInstrument',
+          builder: (controller) => CustomAppBar(
+            titleText: controller.marketData.shortName ?? 'Select stock',
+            titleFontSize: 16,
+            isBackButtonIcon: true,
+            backButtonOnClick: () => homeController.changeCurrentIndex(0),
+            right: Row(
+              children: [
+                const ExchangeSwitcher(
+                  padding: EdgeInsets.only(right: 8),
+                  scope: ExchangeScope.quoteTrade,
+                ),
+                CommonWidget.buySell(
+                  context: context,
+                  onTap: () => homeController.changeCurrentIndex(5),
+                ),
+                const AppbarRightSearchTapWidget(targetIndex: 1),
+                AppSpace.spaceW4,
+              ],
             ),
-            AppbarRightSearchTapWidget(),
-            AppSpace.spaceW4,
-          ],
+          ),
         ),
       ),
-      body: const _CustomTabWidget(),
+      body: GetBuilder<HomeController>(
+        id: 'selectedInstrument',
+        builder: (controller) => controller.marketData.orderBook == null
+            ? const SelectInstrumentEmptyState(targetIndex: 1)
+            : const _CustomTabWidget(),
+      ),
     );
   }
 }

@@ -18,6 +18,7 @@ import '../../home/controllers/home_controller.dart';
 import '../../top_share/views/live_value_blinker.dart';
 import '../../../global_widgets/loaders/watchlist_loader.dart';
 import '../../../global_widgets/exchange/exchange_switcher.dart';
+import '../../../data/services/exchange_service.dart';
 
 class GlobalSearchScreen extends HookWidget {
   const GlobalSearchScreen({super.key});
@@ -564,7 +565,10 @@ class GlobalSearchScreen extends HookWidget {
           child: Row(
             children: [
               // DSE | CSE; shows only for houses on both exchanges.
-              const ExchangeSwitcher(padding: EdgeInsets.only(right: 8)),
+              const ExchangeSwitcher(
+                padding: EdgeInsets.only(right: 8),
+                scope: ExchangeScope.search,
+              ),
               Expanded(
                 child: Container(
                   height: 40,
@@ -699,7 +703,7 @@ class GlobalSearchScreen extends HookWidget {
 
               // Loading State
               if (controller.filteredItems.isEmpty &&
-                  Get.find<HomeController>().shownMarket.quotes.isEmpty)
+                  Get.find<HomeController>().searchFeed.quotes.isEmpty)
                 const Expanded(
                   child: WatchlistLoader(), // 🚀 সাধারণ স্পিনারের বদলে প্রিমিয়াম শিমার লোডার
                 )

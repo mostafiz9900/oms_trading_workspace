@@ -6,6 +6,8 @@ import '../../../data/models/response/market_model.dart';
 import '../views/global_search_view.dart';
 import '../../home/controllers/home_controller.dart';
 import '../../../data/services/recent_search_service.dart';
+import '../../../data/services/cse_market_service.dart';
+import '../../../data/services/exchange_service.dart';
 
 class GlobalSearchController extends GetxController {
   List<MarketModel> filteredItems = [];
@@ -25,10 +27,13 @@ class GlobalSearchController extends GetxController {
 
   // মেইন লাইভ ডাটা (stocks of the shown exchange; on DSE: marketList)
   List<MarketModel> get _validHomeData {
-    final rawList = Get.find<HomeController>().shownMarket.quotes
+    final rawList = Get.find<HomeController>().searchFeed.quotes
         .cast<MarketModel>();
     return rawList.where((m) => m.group == "PUBLIC").toList();
   }
+
+  Worker? _exchangeWorker;
+  Worker? _cseWorker;
 
   List<MarketModel> get recentSearches {
     List<MarketModel> liveRecentItems = [];
@@ -45,6 +50,29 @@ class GlobalSearchController extends GetxController {
   void onInit() {
     super.onInit();
     syncLiveData();
+    if (Get.isRegistered<ExchangeService>()) {
+      _exchangeWorker = ever(
+        Get.find<ExchangeService>().selection(ExchangeScope.search),
+        (_) => syncLiveData(),
+      );
+    }
+    if (Get.isRegistered<CseMarketService>()) {
+      _cseWorker = ever<List<MarketModel>>(
+        Get.find<CseMarketService>().quotes,
+        (_) {
+          if (CseMarketService.isShownFor(ExchangeScope.search)) {
+            syncLiveData();
+          }
+        },
+      );
+    }
+  }
+
+  @override
+  void onClose() {
+    _exchangeWorker?.dispose();
+    _cseWorker?.dispose();
+    super.onClose();
   }
 
   void syncLiveData() {
@@ -152,6 +180,15 @@ class SearchHelper {
       ],
     );
 
+    if (selectedItem is MarketModel && Get.isRegistered<ExchangeService>()) {
+      final exchange = Get.find<ExchangeService>().exchangeFor(
+        ExchangeScope.search,
+      );
+      Get.find<ExchangeService>().select(
+        exchange,
+        scope: ExchangeScope.quoteTrade,
+      );
+    }
     return selectedItem as MarketModel?;
   }
 }

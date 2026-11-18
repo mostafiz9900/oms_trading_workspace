@@ -21,7 +21,8 @@ class TopShareController extends GetxController {
 
   /// Stocks of the selected exchange: the CSE feed (its own service) while
   /// a house on both exchanges has CSE selected, else the DSE feed, as before.
-  List<MarketModel> get marketFeedList => CseMarketService.isShown
+  List<MarketModel> get marketFeedList =>
+      CseMarketService.isShownFor(ExchangeScope.topShare)
       ? _topShareRows(_cse?.quotes ?? const [])
       : marketService.marketFeedList;
 
@@ -89,17 +90,18 @@ class TopShareController extends GetxController {
     pageLoad = false;
     update();
 
-    // DSE/CSE switch: HomeController clears the market feed and reconnects;
-    // the list is rebuilt from the new exchange's first feed.
+    // Top Share owns an independent exchange selection.
     if (Get.isRegistered<ExchangeService>()) {
       _exchangeWorker = ever(
-        Get.find<ExchangeService>().selected,
+        Get.find<ExchangeService>().selection(ExchangeScope.topShare),
         (_) => reloadForExchange(),
       );
       _feedWorker = ever<List<MarketModel>>(marketService.marketFeedList, (
         feed,
       ) {
-        if (!CseMarketService.isShown) _onFeedAfterExchangeSwitch(feed);
+        if (!CseMarketService.isShownFor(ExchangeScope.topShare)) {
+          _onFeedAfterExchangeSwitch(feed);
+        }
       });
       final cse = _cse;
       if (cse != null) {
@@ -142,7 +144,7 @@ class TopShareController extends GetxController {
   /// CSE feed flushed: build the list after a switch, else refresh the rows
   /// shown in place (as DSE rows are refreshed per tick).
   void _onCseFeed() {
-    if (!CseMarketService.isShown) return;
+    if (!CseMarketService.isShownFor(ExchangeScope.topShare)) return;
     final rows = marketFeedList;
     if (_waitingForExchangeFeed) {
       _onFeedAfterExchangeSwitch(rows);
@@ -202,7 +204,7 @@ class TopShareController extends GetxController {
 
   void updateSingleRowFromService(MarketModel updatedModel) {
     // DSE ticks; CSE rows are refreshed from the CSE feed (_onCseFeed).
-    if (CseMarketService.isShown) return;
+    if (CseMarketService.isShownFor(ExchangeScope.topShare)) return;
     int sortIndex = marketFeedSortList.indexWhere(
       (e) => e.orderBook == updatedModel.orderBook,
     );

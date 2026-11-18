@@ -38,6 +38,7 @@ const _gp = MarketModel(
   orderBook: 101,
   shortName: 'GP',
   ticker: 'GP',
+  isinCode: 'BD0001GP0001',
   group: 'PUBLIC',
   board: 'Main Board',
   val: 10,
@@ -122,7 +123,7 @@ void main() {
       {'sector': 'Telecom'},
     ];
     home.currentSession.value = 'CONTINUOUS';
-    await StorageService.save(StorageConstants.orderBookId, 101);
+    await StorageService.save(StorageConstants.selectedQuoteOrderBookDse, 101);
     await home.markerInfo();
   }
 
@@ -180,7 +181,7 @@ void main() {
     exchange.select(StockExchange.cse);
     await tester.pump();
     Get.find<CseMarketService>().onMessage(
-      '{"ob": 7, "sn": "GP", "t": "GP", "g": "PUBLIC", "b": "Main Board"}',
+      '{"ob": 7, "sn": "GP", "t": "GP", "ic": "BD0001GP0001", "g": "PUBLIC", "b": "Main Board"}',
     );
     await tester.pump(CseMarketService.flushInterval);
     expect(home.marketData.orderBook, 7, reason: 'Quote on CSE GP');
@@ -243,7 +244,7 @@ void main() {
       final cseDepth = at(_cseDepthUrl).single..open();
       await tester.pump();
       Get.find<CseMarketService>().onMessage(
-        '{"ob": 7, "sn": "GP", "t": "GP", "g": "PUBLIC", "b": "Main Board"}',
+        '{"ob": 7, "sn": "GP", "t": "GP", "ic": "BD0001GP0001", "g": "PUBLIC", "b": "Main Board"}',
       );
       await tester.pump(CseMarketService.flushInterval);
 
@@ -332,7 +333,7 @@ void main() {
       final cseTs = at(_cseTsUrl).single..open();
       await tester.pump();
       Get.find<CseMarketService>().onMessage(
-        '{"ob": 7, "sn": "GP", "t": "GP", "g": "PUBLIC", "b": "Main Board"}',
+        '{"ob": 7, "sn": "GP", "t": "GP", "ic": "BD0001GP0001", "g": "PUBLIC", "b": "Main Board"}',
       );
       await tester.pump(CseMarketService.flushInterval);
 
@@ -392,7 +393,7 @@ void main() {
       await tester.pump();
       if (to == StockExchange.cse) {
         Get.find<CseMarketService>().onMessage(
-          '{"ob": 7, "sn": "GP", "t": "GP", "g": "PUBLIC", "b": "Main Board"}',
+          '{"ob": 7, "sn": "GP", "t": "GP", "ic": "BD0001GP0001", "g": "PUBLIC", "b": "Main Board"}',
         );
         await tester.pump(CseMarketService.flushInterval);
         await tester.pump();

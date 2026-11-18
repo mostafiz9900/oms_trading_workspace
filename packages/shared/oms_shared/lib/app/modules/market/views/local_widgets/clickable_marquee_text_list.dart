@@ -205,8 +205,8 @@ class _ClickableMarqueeTextListState extends State<ClickableMarqueeTextList>
 
   @override
   Widget build(BuildContext context) {
-    return widget.homeCon.shownMarket.marqueeList == [] ||
-            widget.homeCon.shownMarket.marqueeList.isEmpty
+    return widget.homeCon.marketOverviewFeed.marqueeList == [] ||
+            widget.homeCon.marketOverviewFeed.marqueeList.isEmpty
         ? SizedBox.shrink()
         : RepaintBoundary(
             child: SizedBox(
@@ -214,10 +214,11 @@ class _ClickableMarqueeTextListState extends State<ClickableMarqueeTextList>
               child: ListView.builder(
                 controller: _scrollController,
                 scrollDirection: Axis.horizontal,
-                itemCount: widget.homeCon.shownMarket.marqueeList.length,
+                itemCount: widget.homeCon.marketOverviewFeed.marqueeList.length,
                 // marqueeList is kept sorted by shortName in the controller.
-                itemBuilder: (_, index) =>
-                    _buildItem(widget.homeCon.shownMarket.marqueeList[index]),
+                itemBuilder: (_, index) => _buildItem(
+                  widget.homeCon.marketOverviewFeed.marqueeList[index],
+                ),
               ),
             ),
           );

@@ -289,7 +289,6 @@ mixin HomeSocketMixin on HomeState {
       update([AppConstants.orderList]);
     }
     _resetQuoteForExchange();
-    _resetFavForExchange();
     if (_cseFeedApart) {
       update([
         'marketList',
@@ -301,11 +300,8 @@ mixin HomeSocketMixin on HomeState {
         'distributionChartUpdate',
       ]);
       _followStockDetailsFeeds();
-      if (Get.isRegistered<WatchListController>()) {
-        Get.find<WatchListController>().applyFilters();
-      }
-      // Stock, favourites and search from the shown feed right away (on
-      // CSE they follow as its first quotes arrive).
+      // Quote/Trade use the same feed and selection. Other page scopes are
+      // intentionally independent and are not reset by this change.
       onShownFeedFlushed();
       return;
     }
@@ -334,14 +330,6 @@ mixin HomeSocketMixin on HomeState {
     marqueeList.clear();
     _initializeMarketWebSocket();
     _followStockDetailsFeeds();
-    if (Get.isRegistered<WatchListController>()) {
-      Get.find<WatchListController>().applyFilters();
-    }
-    // Open search screen: drop the old exchange's results (and its recent
-    // list); refilled as the new feed arrives.
-    if (Get.isRegistered<GlobalSearchController>()) {
-      Get.find<GlobalSearchController>().syncLiveData();
-    }
   }
 
   /// Stock details (depth, time & sales) follow when the exchange has its

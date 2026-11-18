@@ -1,6 +1,7 @@
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/values/colors.dart';
 import '../../../../data/models/response/market_model.dart';
+import '../../../../data/services/exchange_service.dart';
 import '../../../../global_widgets/visible_get_builder.dart';
 import '../../../home/controllers/home_controller.dart';
 
@@ -150,11 +151,11 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
     return VisibleGetBuilder<HomeController>(
       id: 'marketList',
       builder: (homeController) {
-        if (!homeController.shownMarket.quotes.isNotEmpty ||
-            homeController.shownMarket.quotes.length < 20) {
+        if (!homeController.marketOverviewFeed.quotes.isNotEmpty ||
+            homeController.marketOverviewFeed.quotes.length < 20) {
           return MarketMapLoader(height: responsiveHeight);
         }
-        final visibleList = homeController.shownMarket.quotes
+        final visibleList = homeController.marketOverviewFeed.quotes
             .where((m) => m.group == "PUBLIC" && m.board == "Main Board")
             .toList();
         if (visibleList.isEmpty) {
@@ -419,6 +420,7 @@ class _MarketMapWidgetState extends State<MarketMapWidget> {
                                     homeController.goBottomNabBarPage(
                                       1,
                                       model.orderBook!,
+                                      sourceScope: ExchangeScope.market,
                                     );
                                     homeController.loadComanyDividentEPS(
                                       '${model.shortName}',

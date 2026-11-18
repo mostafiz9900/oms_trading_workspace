@@ -21,6 +21,8 @@ import 'package:getxify/getxify.dart';
 
 import '../../../global_widgets/appbar_right_search_tap.dart';
 import '../../../global_widgets/exchange/exchange_switcher.dart';
+import '../../../global_widgets/select_instrument_empty_state.dart';
+import '../../../data/services/exchange_service.dart';
 import 'local_widgets/trade_client_code_widget.dart';
 import 'local_widgets/bank_percentage_widget.dart';
 import 'local_widgets/market_depth_sticky_delegate.dart';
@@ -46,500 +48,551 @@ class TradeWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // DSE | CSE; shows only for houses on both exchanges.
-                const ExchangeSwitcher(),
-                AppbarRightSearchTapWidget(),
+                const ExchangeSwitcher(scope: ExchangeScope.quoteTrade),
+                const AppbarRightSearchTapWidget(targetIndex: 5),
               ],
             ),
           ),
-          body: GestureDetector(
-            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-            behavior: HitTestBehavior.translucent,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              child: CustomScrollView(
-                physics: const BouncingScrollPhysics(),
-                slivers: [
-                  // ==========================================
-                  //  TOP SECTION
-                  // ==========================================
-                  SliverToBoxAdapter(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const TradeClientCodeWidget(),
-                        AppSpace.spaceH6,
-                        // শুধুমাত্র সকেটের রিয়েল-টাইম ডেটা আসলে এটি আপডেট হবে
-                        VisibleGetBuilder<HomeController>(
-                          id: 'trade_ticker_data',
-                          builder: (tickerCon) =>
-                              BankPercentageWidget(homeController: tickerCon),
-                        ),
-                        AppSpace.spaceH6,
-                      ],
+          body: homeCon.marketData.orderBook == null
+              ? const SelectInstrumentEmptyState(targetIndex: 5)
+              : GestureDetector(
+                  onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+                  behavior: HitTestBehavior.translucent,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 6,
                     ),
-                  ),
-
-                  // ==========================================
-                  //  STICKY MARKET DEPTH SECTION
-                  // ==========================================
-                  VisibleGetBuilder<HomeController>(
-                    id: 'market_depth',
-                    builder: (depthCon) {
-                      return SliverPersistentHeader(
-                        pinned: true,
-                        delegate: MarketDepthStickyDelegate(
-                          homeController: depthCon,
-                          backgroundColor: Get.theme.scaffoldBackgroundColor,
-                        ),
-                      );
-                    },
-                  ),
-
-                  // ==========================================
-                  //  BOTTOM FORM SECTION
-                  // ==========================================
-                  SliverToBoxAdapter(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        //  Buy / Sell Tabs (Isolated ID)
-                        GetBuilder<HomeController>(
-                          id: 'buy_sell_tab',
-                          builder: (con) => Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 6),
-                            child: Row(
-                              children: [
-                                buildBuySellTab(
-                                  context,
-                                  "Buy",
-                                  con.buySellTabActive == SideType2.BUY,
-                                  HexColor("#22C665"),
-                                  () => con.setBuySellActive(SideType2.BUY),
-                                ),
-                                buildBuySellTab(
-                                  context,
-                                  "Sell",
-                                  con.buySellTabActive == SideType2.SELL,
-                                  HexColor("#F70042"),
-                                  () => con.setBuySellActive(SideType2.SELL),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        AppSpace.spaceH8,
-                        GetBuilder<HomeController>(
-                          id: 'trade_dropdowns',
-                          builder: (con) => Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 6),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Flexible(
-                                  child: OrderTypeDropdownListWidget(
-                                    height: AppDimens.space44,
-                                    valueChanged: (String? value) {
-                                      con.changeOrderType(value!);
-                                    },
-                                    selectedValueNotifier:
-                                        ValueNotifier<String?>(
-                                          con.selectOrderType,
-                                        ),
-                                  ),
-                                ),
-                                AppSpace.spaceW8,
-                                Flexible(
-                                  child: Container(
-                                    height: AppDimens.space44,
-                                    decoration: BoxDecoration(
-                                      color: context.tapBg,
-                                    ),
-                                    child: TypeDropdownListWidget(
-                                      valueChanged: (String? value) {
-                                        con.changeType(value!);
-                                      },
-                                      value: con.selectType,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        AppSpace.spaceH8,
-
-                        //  Disclosed & Validity TextFields
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 6),
-                          child: Row(
+                    child: CustomScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      slivers: [
+                        // ==========================================
+                        //  TOP SECTION
+                        // ==========================================
+                        SliverToBoxAdapter(
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: AppDimens.space15,
-                                  ),
-                                  alignment: Alignment.centerLeft,
-                                  height: AppDimens.space44,
-                                  decoration: BoxDecoration(
-                                    color: context.tapBg,
-                                  ),
-                                  child: TextFormField(
-                                    controller:
-                                        homeCon.disclosedQtyTextEditField,
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: <TextInputFormatter>[
-                                      FilteringTextInputFormatter.digitsOnly,
-                                    ],
-                                    decoration: InputDecoration(
-                                      isCollapsed: true,
-                                      hintText: 'Disclosed Qty.',
-                                      border: InputBorder.none,
-                                      hintStyle: TextStyle(
-                                        fontSize: 14.0,
-                                        color: context.textColor.alphaSafe(
-                                          0.50,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                              const TradeClientCodeWidget(),
+                              AppSpace.spaceH6,
+                              // শুধুমাত্র সকেটের রিয়েল-টাইম ডেটা আসলে এটি আপডেট হবে
+                              VisibleGetBuilder<HomeController>(
+                                id: 'trade_ticker_data',
+                                builder: (tickerCon) => BankPercentageWidget(
+                                  homeController: tickerCon,
                                 ),
                               ),
-                              AppSpace.spaceW8,
-                              Expanded(
-                                child: GetBuilder<HomeController>(
-                                  id: 'trade_dropdowns',
-                                  builder: (con) => Container(
-                                    height: AppDimens.space44,
-                                    decoration: BoxDecoration(
-                                      color: context.tapBg,
-                                    ),
-                                    child: ValidityDropdownListWidget(
-                                      height: AppDimens.space44,
-                                      valueChanged: (String? value) {
-                                        con.changeValidity(value!);
-                                      },
-                                      value: con.selectValidity,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              AppSpace.spaceH6,
                             ],
                           ),
                         ),
-                        AppSpace.spaceH8,
-                        //  Qty & Min Qty TextFields
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 6),
-                          child: Row(
+
+                        // ==========================================
+                        //  STICKY MARKET DEPTH SECTION
+                        // ==========================================
+                        VisibleGetBuilder<HomeController>(
+                          id: 'market_depth',
+                          builder: (depthCon) {
+                            return SliverPersistentHeader(
+                              pinned: true,
+                              delegate: MarketDepthStickyDelegate(
+                                homeController: depthCon,
+                                backgroundColor:
+                                    Get.theme.scaffoldBackgroundColor,
+                              ),
+                            );
+                          },
+                        ),
+
+                        // ==========================================
+                        //  BOTTOM FORM SECTION
+                        // ==========================================
+                        SliverToBoxAdapter(
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: Container(
+                              //  Buy / Sell Tabs (Isolated ID)
+                              GetBuilder<HomeController>(
+                                id: 'buy_sell_tab',
+                                builder: (con) => Padding(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: AppDimens.space15,
+                                    horizontal: 6,
                                   ),
-                                  alignment: Alignment.centerLeft,
-                                  height: AppDimens.space40,
-                                  decoration: BoxDecoration(
-                                    color: context.tapBg,
-                                  ),
-                                  child: TextFormField(
-                                    controller: homeCon.qtyTextEditField,
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: <TextInputFormatter>[
-                                      FilteringTextInputFormatter.digitsOnly,
-                                    ],
-                                    decoration: InputDecoration(
-                                      isCollapsed: true,
-                                      hintText: 'Qty.',
-                                      border: InputBorder.none,
-                                      hintStyle: TextStyle(
-                                        fontSize: 14.0,
-                                        color: context.textColor.alphaSafe(
-                                          0.50,
+                                  child: Row(
+                                    children: [
+                                      buildBuySellTab(
+                                        context,
+                                        "Buy",
+                                        con.buySellTabActive == SideType2.BUY,
+                                        HexColor("#22C665"),
+                                        () =>
+                                            con.setBuySellActive(SideType2.BUY),
+                                      ),
+                                      buildBuySellTab(
+                                        context,
+                                        "Sell",
+                                        con.buySellTabActive == SideType2.SELL,
+                                        HexColor("#F70042"),
+                                        () => con.setBuySellActive(
+                                          SideType2.SELL,
                                         ),
                                       ),
-                                    ),
+                                    ],
                                   ),
                                 ),
                               ),
-                              AppSpace.spaceW8,
-                              Expanded(
-                                child: Container(
+                              AppSpace.spaceH8,
+                              GetBuilder<HomeController>(
+                                id: 'trade_dropdowns',
+                                builder: (con) => Padding(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: AppDimens.space6,
+                                    horizontal: 6,
                                   ),
-                                  alignment: Alignment.centerLeft,
-                                  height: AppDimens.space40,
-                                  decoration: BoxDecoration(
-                                    color: context.tapBg,
-                                  ),
-                                  child: TextFormField(
-                                    controller: homeCon.minQtyTextEditField,
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: <TextInputFormatter>[
-                                      FilteringTextInputFormatter.digitsOnly,
-                                    ],
-                                    decoration: InputDecoration(
-                                      isCollapsed: true,
-                                      hintText: 'Min Qty.',
-                                      border: InputBorder.none,
-                                      hintStyle: TextStyle(
-                                        fontSize: 14.0,
-                                        color: context.textColor.alphaSafe(
-                                          0.50,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Flexible(
+                                        child: OrderTypeDropdownListWidget(
+                                          height: AppDimens.space44,
+                                          valueChanged: (String? value) {
+                                            con.changeOrderType(value!);
+                                          },
+                                          selectedValueNotifier:
+                                              ValueNotifier<String?>(
+                                                con.selectOrderType,
+                                              ),
                                         ),
                                       ),
-                                    ),
+                                      AppSpace.spaceW8,
+                                      Flexible(
+                                        child: Container(
+                                          height: AppDimens.space44,
+                                          decoration: BoxDecoration(
+                                            color: context.tapBg,
+                                          ),
+                                          child: TypeDropdownListWidget(
+                                            valueChanged: (String? value) {
+                                              con.changeType(value!);
+                                            },
+                                            value: con.selectType,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        AppSpace.spaceH8,
-                        //  Quick Add Quantity Buttons
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 6),
-                          child: Row(
-                            children: [
-                              for (final value in quickValues)
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 4,
-                                    ),
-                                    child: InkWell(
-                                      onTap: () =>
-                                          homeCon.updateQuantity(value),
-                                      borderRadius: BorderRadius.circular(8),
+                              AppSpace.spaceH8,
+
+                              //  Disclosed & Validity TextFields
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
                                       child: Container(
-                                        height: 33,
-                                        alignment: Alignment.center,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: AppDimens.space15,
+                                        ),
+                                        alignment: Alignment.centerLeft,
+                                        height: AppDimens.space44,
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                          border: Border.all(
-                                            color: context.borderColor,
-                                            width: 1.2,
+                                          color: context.tapBg,
+                                        ),
+                                        child: TextFormField(
+                                          controller:
+                                              homeCon.disclosedQtyTextEditField,
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: <TextInputFormatter>[
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
+                                          ],
+                                          decoration: InputDecoration(
+                                            isCollapsed: true,
+                                            hintText: 'Disclosed Qty.',
+                                            border: InputBorder.none,
+                                            hintStyle: TextStyle(
+                                              fontSize: 14.0,
+                                              color: context.textColor
+                                                  .alphaSafe(0.50),
+                                            ),
                                           ),
                                         ),
-                                        child: Text(
-                                          value,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 16,
+                                      ),
+                                    ),
+                                    AppSpace.spaceW8,
+                                    Expanded(
+                                      child: GetBuilder<HomeController>(
+                                        id: 'trade_dropdowns',
+                                        builder: (con) => Container(
+                                          height: AppDimens.space44,
+                                          decoration: BoxDecoration(
+                                            color: context.tapBg,
+                                          ),
+                                          child: ValidityDropdownListWidget(
+                                            height: AppDimens.space44,
+                                            valueChanged: (String? value) {
+                                              con.changeValidity(value!);
+                                            },
+                                            value: con.selectValidity,
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                        AppSpace.spaceH8,
-
-                        //  Trading Price Field
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 6),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Flexible(
-                                child: InkWell(
-                                  onTap: () => homeCon.decrementTradValue(),
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    height: AppDimens.space44,
-                                    decoration: BoxDecoration(
-                                      color: context.tapBg,
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        bottom: 12,
-                                      ),
-                                      child: Icon(
-                                        Icons.minimize,
-                                        weight: 700,
-                                        size: AppDimens.space20,
-                                        color: context.textColor,
-                                      ),
-                                    ),
-                                  ),
+                                  ],
                                 ),
                               ),
-                              AppSpace.spaceW8,
-                              Flexible(
-                                flex: 2,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: AppDimens.space6,
-                                  ),
-                                  alignment: Alignment.center,
-                                  height: AppDimens.space44,
-                                  decoration: BoxDecoration(
-                                    color: context.tapBg,
-                                  ),
-                                  child: TextFormField(
-                                    controller: homeCon.tradPriceTextEditField,
-                                    textAlignVertical: TextAlignVertical.center,
-                                    textAlign: TextAlign.center,
-                                    textInputAction: TextInputAction.done,
-                                    focusNode: homeCon.tradePriceFocusNode,
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
-                                        RegExp(r'^\d+\.?\d?'),
-                                      ),
-                                    ],
-                                    keyboardType:
-                                        const TextInputType.numberWithOptions(
-                                          decimal: true,
+                              AppSpace.spaceH8,
+                              //  Qty & Min Qty TextFields
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: AppDimens.space15,
                                         ),
-                                    onChanged: (String value) =>
-                                        homeCon.onChanged(value),
-                                    decoration: const InputDecoration(
-                                      isCollapsed: true,
-                                      contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 5,
-                                        vertical: 0,
+                                        alignment: Alignment.centerLeft,
+                                        height: AppDimens.space40,
+                                        decoration: BoxDecoration(
+                                          color: context.tapBg,
+                                        ),
+                                        child: TextFormField(
+                                          controller: homeCon.qtyTextEditField,
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: <TextInputFormatter>[
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
+                                          ],
+                                          decoration: InputDecoration(
+                                            isCollapsed: true,
+                                            hintText: 'Qty.',
+                                            border: InputBorder.none,
+                                            hintStyle: TextStyle(
+                                              fontSize: 14.0,
+                                              color: context.textColor
+                                                  .alphaSafe(0.50),
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                      border: InputBorder.none,
-                                      hintText: "0.0",
                                     ),
-                                    style: Get.context!.textTheme.titleLarge
+                                    AppSpace.spaceW8,
+                                    Expanded(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: AppDimens.space6,
+                                        ),
+                                        alignment: Alignment.centerLeft,
+                                        height: AppDimens.space40,
+                                        decoration: BoxDecoration(
+                                          color: context.tapBg,
+                                        ),
+                                        child: TextFormField(
+                                          controller:
+                                              homeCon.minQtyTextEditField,
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: <TextInputFormatter>[
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
+                                          ],
+                                          decoration: InputDecoration(
+                                            isCollapsed: true,
+                                            hintText: 'Min Qty.',
+                                            border: InputBorder.none,
+                                            hintStyle: TextStyle(
+                                              fontSize: 14.0,
+                                              color: context.textColor
+                                                  .alphaSafe(0.50),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              AppSpace.spaceH8,
+                              //  Quick Add Quantity Buttons
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                ),
+                                child: Row(
+                                  children: [
+                                    for (final value in quickValues)
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 4,
+                                          ),
+                                          child: InkWell(
+                                            onTap: () =>
+                                                homeCon.updateQuantity(value),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                            child: Container(
+                                              height: 33,
+                                              alignment: Alignment.center,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                border: Border.all(
+                                                  color: context.borderColor,
+                                                  width: 1.2,
+                                                ),
+                                              ),
+                                              child: Text(
+                                                value,
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              AppSpace.spaceH8,
+
+                              //  Trading Price Field
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Flexible(
+                                      child: InkWell(
+                                        onTap: () =>
+                                            homeCon.decrementTradValue(),
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          height: AppDimens.space44,
+                                          decoration: BoxDecoration(
+                                            color: context.tapBg,
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                              bottom: 12,
+                                            ),
+                                            child: Icon(
+                                              Icons.minimize,
+                                              weight: 700,
+                                              size: AppDimens.space20,
+                                              color: context.textColor,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    AppSpace.spaceW8,
+                                    Flexible(
+                                      flex: 2,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: AppDimens.space6,
+                                        ),
+                                        alignment: Alignment.center,
+                                        height: AppDimens.space44,
+                                        decoration: BoxDecoration(
+                                          color: context.tapBg,
+                                        ),
+                                        child: TextFormField(
+                                          controller:
+                                              homeCon.tradPriceTextEditField,
+                                          textAlignVertical:
+                                              TextAlignVertical.center,
+                                          textAlign: TextAlign.center,
+                                          textInputAction: TextInputAction.done,
+                                          focusNode:
+                                              homeCon.tradePriceFocusNode,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.allow(
+                                              RegExp(r'^\d+\.?\d?'),
+                                            ),
+                                          ],
+                                          keyboardType:
+                                              const TextInputType.numberWithOptions(
+                                                decimal: true,
+                                              ),
+                                          onChanged: (String value) =>
+                                              homeCon.onChanged(value),
+                                          decoration: const InputDecoration(
+                                            isCollapsed: true,
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                  horizontal: 5,
+                                                  vertical: 0,
+                                                ),
+                                            border: InputBorder.none,
+                                            hintText: "0.0",
+                                          ),
+                                          style: Get
+                                              .context!
+                                              .textTheme
+                                              .titleLarge
+                                              ?.copyWith(
+                                                fontSize: AppDimens.space16,
+                                                fontWeight: FontWeight.w500,
+                                                color: context.textColor,
+                                              ),
+                                        ),
+                                      ),
+                                    ),
+                                    AppSpace.spaceW8,
+                                    Flexible(
+                                      child: InkWell(
+                                        onTap: () =>
+                                            homeCon.incrementTradValue(),
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          height: AppDimens.space44,
+                                          decoration: BoxDecoration(
+                                            color: context.tapBg,
+                                          ),
+                                          child: Icon(
+                                            Icons.add,
+                                            weight: 700,
+                                            size: AppDimens.space20,
+                                            color: context.textColor,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              AppSpace.spaceH6,
+
+                              //  Total Value Display (Isolated ID to stop UI Lag)
+                              GetBuilder<HomeController>(
+                                id: 'total_amount_update',
+                                builder: (con) => Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                  ),
+                                  child: Text(
+                                    "Value: ${NumberFormatter.bdFormat(con.totalAmount)} BDT",
+                                    style: Get.context!.textTheme.bodyMedium
                                         ?.copyWith(
                                           fontSize: AppDimens.space16,
-                                          fontWeight: FontWeight.w500,
                                           color: context.textColor,
                                         ),
                                   ),
                                 ),
                               ),
-                              AppSpace.spaceW8,
-                              Flexible(
-                                child: InkWell(
-                                  onTap: () => homeCon.incrementTradValue(),
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    height: AppDimens.space44,
-                                    decoration: BoxDecoration(
-                                      color: context.tapBg,
-                                    ),
-                                    child: Icon(
-                                      Icons.add,
-                                      weight: 700,
-                                      size: AppDimens.space20,
-                                      color: context.textColor,
-                                    ),
-                                  ),
+                              AppSpace.spaceH6,
+
+                              //  Submit Button
+                              GetBuilder<HomeController>(
+                                id: 'buy_sell_tab',
+                                builder: (con) => CustomButton(
+                                  fontSize: AppDimens.space20,
+                                  fontWeight: FontWeight.w700,
+                                  height: AppDimens.space48,
+                                  backgroundColor:
+                                      con.buySellTabActive == SideType2.BUY
+                                      ? HexColor("#22C665")
+                                      : HexColor("#F70042"),
+                                  onPressed: () async {
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
+                                    if (con.selectOrderType == null) {
+                                      Helpers.snackbarForErorr2(
+                                        bodyText: 'Select order type',
+                                      );
+                                    } else if (con.selectType == null) {
+                                      Helpers.snackbarForErorr2(
+                                        bodyText: 'Select type',
+                                      );
+                                    } else if (con.selectValidity == null) {
+                                      Helpers.snackbarForErorr2(
+                                        bodyText: 'Select validity',
+                                      );
+                                    } else if (con
+                                        .qtyTextEditField
+                                        .text
+                                        .isEmpty) {
+                                      Helpers.snackbarForErorr2(
+                                        bodyText: 'Input qty',
+                                      );
+                                    } else if (con
+                                        .tradPriceTextEditField
+                                        .text
+                                        .isEmpty) {
+                                      Helpers.snackbarForErorr2(
+                                        bodyText: 'Input price',
+                                      );
+                                    } else {
+                                      final orderConfirmData =
+                                          OrderConfirmHolder(
+                                            sideType: con.buySellTabActive,
+                                            marketData: con.marketData,
+                                            orderType: con.selectOrderType,
+                                            type: con.selectType,
+                                            validity: con.selectValidity,
+                                            qty: con.qtyTextEditField.text,
+                                            disclosedQty:
+                                                con
+                                                    .disclosedQtyTextEditField
+                                                    .text
+                                                    .isEmpty
+                                                ? "0"
+                                                : con
+                                                      .disclosedQtyTextEditField
+                                                      .text,
+                                            minQty:
+                                                con
+                                                    .minQtyTextEditField
+                                                    .text
+                                                    .isEmpty
+                                                ? '0'
+                                                : con.minQtyTextEditField.text,
+                                            price: double.parse(
+                                              con.tradPriceTextEditField.text,
+                                            ),
+                                          );
+                                      Get.to(
+                                        () => TradeConfirmOrders(
+                                          orderConfirm: orderConfirmData,
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  title: con.buySellTabActive == SideType2.BUY
+                                      ? "Buy"
+                                      : "Sell",
                                 ),
                               ),
+                              const SizedBox(height: 100),
                             ],
                           ),
                         ),
-                        AppSpace.spaceH6,
-
-                        //  Total Value Display (Isolated ID to stop UI Lag)
-                        GetBuilder<HomeController>(
-                          id: 'total_amount_update',
-                          builder: (con) => Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Text(
-                              "Value: ${NumberFormatter.bdFormat(con.totalAmount)} BDT",
-                              style: Get.context!.textTheme.bodyMedium
-                                  ?.copyWith(
-                                    fontSize: AppDimens.space16,
-                                    color: context.textColor,
-                                  ),
-                            ),
-                          ),
-                        ),
-                        AppSpace.spaceH6,
-
-                        //  Submit Button
-                        GetBuilder<HomeController>(
-                          id: 'buy_sell_tab',
-                          builder: (con) => CustomButton(
-                            fontSize: AppDimens.space20,
-                            fontWeight: FontWeight.w700,
-                            height: AppDimens.space48,
-                            backgroundColor:
-                                con.buySellTabActive == SideType2.BUY
-                                ? HexColor("#22C665")
-                                : HexColor("#F70042"),
-                            onPressed: () async {
-                              FocusManager.instance.primaryFocus?.unfocus();
-                              if (con.selectOrderType == null) {
-                                Helpers.snackbarForErorr2(
-                                  bodyText: 'Select order type',
-                                );
-                              } else if (con.selectType == null) {
-                                Helpers.snackbarForErorr2(
-                                  bodyText: 'Select type',
-                                );
-                              } else if (con.selectValidity == null) {
-                                Helpers.snackbarForErorr2(
-                                  bodyText: 'Select validity',
-                                );
-                              } else if (con.qtyTextEditField.text.isEmpty) {
-                                Helpers.snackbarForErorr2(
-                                  bodyText: 'Input qty',
-                                );
-                              } else if (con
-                                  .tradPriceTextEditField
-                                  .text
-                                  .isEmpty) {
-                                Helpers.snackbarForErorr2(
-                                  bodyText: 'Input price',
-                                );
-                              } else {
-                                final orderConfirmData = OrderConfirmHolder(
-                                  sideType: con.buySellTabActive,
-                                  marketData: con.marketData,
-                                  orderType: con.selectOrderType,
-                                  type: con.selectType,
-                                  validity: con.selectValidity,
-                                  qty: con.qtyTextEditField.text,
-                                  disclosedQty:
-                                      con.disclosedQtyTextEditField.text.isEmpty
-                                      ? "0"
-                                      : con.disclosedQtyTextEditField.text,
-                                  minQty: con.minQtyTextEditField.text.isEmpty
-                                      ? '0'
-                                      : con.minQtyTextEditField.text,
-                                  price: double.parse(
-                                    con.tradPriceTextEditField.text,
-                                  ),
-                                );
-                                Get.to(
-                                  () => TradeConfirmOrders(
-                                    orderConfirm: orderConfirmData,
-                                  ),
-                                );
-                              }
-                            },
-                            title: con.buySellTabActive == SideType2.BUY
-                                ? "Buy"
-                                : "Sell",
-                          ),
-                        ),
-                        const SizedBox(height: 100),
                       ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
+                ),
         );
       },
     );

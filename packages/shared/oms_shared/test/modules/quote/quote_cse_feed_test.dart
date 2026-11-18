@@ -27,12 +27,13 @@ class _FakeHomeRepository implements HomeRepository {
 const _dseGp = MarketModel(
   orderBook: 101,
   shortName: 'GP',
+  isinCode: 'BD0001GP0001',
   group: 'PUBLIC',
   board: 'Main Board',
 );
 const _cseGp =
-    '{"ob": 7, "sn": "GP", "g": "PUBLIC", "b": "Main Board", "lp": 250}';
-const _cseKey = '${StorageConstants.orderBookId}_cse';
+    '{"ob": 7, "sn": "GP", "ic": "BD0001GP0001", "g": "PUBLIC", "b": "Main Board", "lp": 250}';
+const _cseKey = StorageConstants.selectedQuoteOrderBookCse;
 
 void main() {
   late HomeController home;
@@ -67,7 +68,7 @@ void main() {
     await tester.pump();
     home.marketList.add(_dseGp);
     home.marketListAll.add(_dseGp);
-    await StorageService.save(StorageConstants.orderBookId, 101);
+    await StorageService.save(StorageConstants.selectedQuoteOrderBookDse, 101);
     await home.markerInfo();
   }
 
@@ -81,14 +82,36 @@ void main() {
     await tester.pump(const Duration(seconds: 6));
   }
 
-  testWidgets('DSE: Quote stock from the DSE feed, saved under the old key', (
+  testWidgets('DSE: Quote stock from the DSE feed, saved under the DSE key', (
     tester,
   ) async {
     await start(tester, ExchangeMode.dseAndCse);
 
     expect(home.marketData.orderBook, 101);
-    expect(await StorageService.read(StorageConstants.orderBookId), 101);
+    expect(
+      await StorageService.read(StorageConstants.selectedQuoteOrderBookDse),
+      101,
+    );
     expect(await StorageService.read(_cseKey), isNull);
+    await finish(tester);
+  });
+
+  testWidgets('no saved stock leaves Quote unselected without saving index 0', (
+    tester,
+  ) async {
+    await start(tester, ExchangeMode.dseAndCse);
+    // A pre-v2 value may be the old auto-selected index-0 instrument.
+    StorageService.remove(StorageConstants.selectedQuoteOrderBookDse);
+    await StorageService.save(StorageConstants.orderBookId, 101);
+    home.marketData = MarketModel();
+
+    await home.markerInfo();
+
+    expect(home.marketData.orderBook, isNull);
+    expect(
+      await StorageService.read(StorageConstants.selectedQuoteOrderBookDse),
+      isNull,
+    );
     await finish(tester);
   });
 
@@ -99,7 +122,7 @@ void main() {
 
     exchange.select(StockExchange.cse);
     await tester.pump();
-    expect(home.marketData.orderBook, 101, reason: 'kept until CSE has it');
+    expect(home.marketData.orderBook, isNull, reason: 'wait for the CSE match');
 
     await cseSends(tester, _cseGp);
 
@@ -107,7 +130,7 @@ void main() {
     expect(home.marketData.last, 250);
     expect(await StorageService.read(_cseKey), 7);
     expect(
-      await StorageService.read(StorageConstants.orderBookId),
+      await StorageService.read(StorageConstants.selectedQuoteOrderBookDse),
       101,
       reason: 'the DSE stock is not overwritten by the CSE id',
     );
@@ -129,7 +152,10 @@ void main() {
 
     expect(home.marketData.orderBook, 101);
     expect(identical(home.shownMarket.quotes, home.marketList), isTrue);
-    expect(await StorageService.read(StorageConstants.orderBookId), 101);
+    expect(
+      await StorageService.read(StorageConstants.selectedQuoteOrderBookDse),
+      101,
+    );
     await finish(tester);
   });
 

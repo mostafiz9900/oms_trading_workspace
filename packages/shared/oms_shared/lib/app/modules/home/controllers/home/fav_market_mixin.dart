@@ -132,7 +132,7 @@ mixin FavMarketMixin on HomeState {
       if (res?.success == true) {
         favMarketData = res!.data!;
         favMarketParseList = parseFavMarketList(
-          marketList: shownMarket.quotes,
+          marketList: favoritesFeed.quotes,
           favMarketData: favMarketData,
         );
         loadingFav = false;
@@ -232,14 +232,20 @@ mixin FavMarketMixin on HomeState {
   /// Otherwise they stay a snapshot, as before.
   Timer? _favRebuildWindow;
 
-  /// DSE/CSE switch: the shown favourites carry the old exchange's prices.
-  /// Favourites are saved by (ticker, order book), so on the other exchange
-  /// they only match where both are the same.
-  @override
-  void _resetFavForExchange() {
+  void onFavoritesExchangeChanged() {
     favMarketParseList = [];
     _favRebuildWindow?.cancel();
-    _favRebuildWindow = Timer(QuoteMixin.quoteSwitchFallback, () {});
+    _favRebuildWindow = Timer(QuoteMixin.exchangeViewStabilityWindow, () {});
+    _rebuildFavAfterExchangeSwitch();
+    _redrawFavIfShown();
+  }
+
+  void onFavoritesFeedFlushed() {
+    if (_favRebuildWindow?.isActive != true) return;
+    favMarketParseList = parseFavMarketList(
+      marketList: favoritesFeed.quotes,
+      favMarketData: favMarketData,
+    );
     _redrawFavIfShown();
   }
 
@@ -257,15 +263,10 @@ mixin FavMarketMixin on HomeState {
   void _rebuildFavAfterExchangeSwitch() {
     if (_favRebuildWindow?.isActive != true) return;
     favMarketParseList = parseFavMarketList(
-      marketList: shownMarket.quotes,
+      marketList: favoritesFeed.quotes,
       favMarketData: favMarketData,
     );
     _redrawFavIfShown();
-    // Holdings are valued from the selected exchange's feed; redraw them as
-    // it fills (on DSE they redraw on their own updates, as before).
-    if (Get.isRegistered<PositionController>()) {
-      Get.find<PositionController>().update();
-    }
   }
 
   @override

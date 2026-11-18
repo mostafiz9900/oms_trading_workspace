@@ -75,6 +75,7 @@ mixin HomeNavigationMixin on HomeState {
     } else if (index == 1) {
       printLog('change tab index $index');
       currentIndex = index;
+      await restoreSelectedInstrumentIfAvailable();
     } else if (index == 2) {
       currentIndex = index;
     } else if (index == 3) {
@@ -96,6 +97,7 @@ mixin HomeNavigationMixin on HomeState {
         Helpers.showLoginRequiredDialog();
       } else {
         currentIndex = index;
+        await restoreSelectedInstrumentIfAvailable();
         tradPriceTextEditField.text = (marketData.activePrice.toStringAsFixed(
           2,
         ));
@@ -127,9 +129,7 @@ mixin HomeNavigationMixin on HomeState {
       printLog('change tab index $index');
       currentIndex = index;
       currentTabIndexQuote = 0;
-      if (marketData.orderBook == null) {
-        await markerInfo();
-      }
+      await restoreSelectedInstrumentIfAvailable();
       loadTabData(1);
     } else if (index == 2) {
       currentIndex = index;
@@ -161,9 +161,7 @@ mixin HomeNavigationMixin on HomeState {
         Helpers.showLoginRequiredDialog();
       } else {
         currentIndex = index;
-        if (marketData.orderBook == null) {
-          await markerInfo();
-        }
+        await restoreSelectedInstrumentIfAvailable();
         tradPriceTextEditField.text = (marketData.activePrice.toStringAsFixed(
           2,
         ));
@@ -177,8 +175,21 @@ mixin HomeNavigationMixin on HomeState {
   }
 
   @override
-  void goBottomNabBarPage(int index, MarketIdentifier orderBookId) async {
+  void goBottomNabBarPage(
+    int index,
+    MarketIdentifier orderBookId, {
+    ExchangeScope sourceScope = ExchangeScope.quoteTrade,
+  }) async {
     printLog('index nab bar :: $index');
+    if ((index == 1 || index == 5) &&
+        sourceScope != ExchangeScope.quoteTrade &&
+        Get.isRegistered<ExchangeService>()) {
+      final exchange = Get.find<ExchangeService>();
+      exchange.select(
+        exchange.exchangeFor(sourceScope),
+        scope: ExchangeScope.quoteTrade,
+      );
+    }
     previousIndex = currentIndex;
 
     try {

@@ -66,7 +66,7 @@ void main() {
     await tester.pump();
     home.marketList.add(_dseGp);
     home.marketListAll.add(_dseGp);
-    await StorageService.save(StorageConstants.orderBookId, 101);
+    await StorageService.save(StorageConstants.selectedQuoteOrderBookDse, 101);
     await home.markerInfo();
   }
 
@@ -102,8 +102,9 @@ void main() {
     await start(tester, ExchangeMode.dseAndCse);
     final search = await openSearch();
 
-    exchange.select(StockExchange.cse);
+    exchange.select(StockExchange.cse, scope: ExchangeScope.search);
     await tester.pump();
+    expect(exchange.exchangeFor(ExchangeScope.quoteTrade), StockExchange.dse);
     expect(results(search), isEmpty, reason: 'no DSE stocks under CSE');
 
     await cseSends(
@@ -121,14 +122,14 @@ void main() {
     await start(tester, ExchangeMode.dseAndCse);
     final search = await openSearch();
     search.addToRecent(_dseGp);
-    exchange.select(StockExchange.cse);
+    exchange.select(StockExchange.cse, scope: ExchangeScope.search);
     await tester.pump();
     await cseSends(
       tester,
       '{"ob": 9, "sn": "CSESTOCK", "g": "PUBLIC", "b": "Main Board"}',
     );
 
-    exchange.select(StockExchange.dse);
+    exchange.select(StockExchange.dse, scope: ExchangeScope.search);
     await tester.pump();
     home.marketList.assignAll([_dseGp]); // DSE feed flushes
     search.syncLiveData();

@@ -60,23 +60,18 @@ class CompaniesController extends GetxController {
         }
         // ৩. ফ্যালব্যাক কেস: যদি কোনো কারণে অন্য ফরম্যাটে আসে, ডাইনামিক হ্যান্ডলিং
         else {
-          try {
-            // যদি বডি অলরেডি ম্যাপের মতো বিহেভ করে কিন্তু টাইপ এক্সপ্লিসিট না থাকে
-            companies = CompaniesModel.fromJson(
-              Map<String, dynamic>.from(response.data),
-            );
-            return companies;
-          } catch (e) {
-            error =
-                'Parsing Error: Unexpected data format (${response.data.runtimeType})';
-            printLog('error::: $error');
-          }
+          // Preserve the underlying parser error so its JSON field is visible.
+          companies = CompaniesModel.fromJson(
+            Map<String, dynamic>.from(response.data),
+          );
+          return companies;
         }
       } else {
         error = 'Error: ${response.statusCode} ${response.statusMessage ?? ''}';
       }
-    } on Exception catch (e) {
-      error = 'Exception: $e';
+    } catch (e, stackTrace) {
+      error = 'getCompanies parsing/request error: $e';
+      printLog('$error\n$stackTrace');
     } finally {
       isLoading = false;
       printLog('error::: $error');

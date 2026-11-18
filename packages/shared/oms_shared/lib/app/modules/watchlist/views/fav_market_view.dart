@@ -19,6 +19,7 @@ import '../../../global_widgets/empty_widget.dart';
 import '../../../global_widgets/appbar_right_search_tap.dart';
 import '../../../global_widgets/loaders/watchlist_loader.dart';
 import '../../../global_widgets/exchange/exchange_switcher.dart';
+import '../../../data/services/exchange_service.dart';
 
 // আপনার MarketModelExtensions ইম্পোর্ট করে নিবেন
 
@@ -55,7 +56,10 @@ class _FavMarketViewState extends State<FavMarketView> {
         right: Row(
           children: [
             // DSE | CSE; shows only for houses on both exchanges.
-            const ExchangeSwitcher(padding: EdgeInsets.only(right: 8)),
+            const ExchangeSwitcher(
+              padding: EdgeInsets.only(right: 8),
+              scope: ExchangeScope.favorites,
+            ),
             CommonWidget.buySell(
               context: context,
               onTap: () => Get.find<HomeController>().changeCurrentIndex(5),
@@ -126,7 +130,11 @@ class _FavMarketViewState extends State<FavMarketView> {
                             index: index,
                             viewMode: homeCon.favCurrentViewMode,
                             onTap: () {
-                              homeCon.goBottomNabBarPage(1, item.orderBook!);
+                              homeCon.goBottomNabBarPage(
+                                1,
+                                item.orderBook!,
+                                sourceScope: ExchangeScope.favorites,
+                              );
                               homeCon.loadComanyDividentEPS(item.shortName!);
                               FocusScope.of(context).unfocus();
                             },
@@ -135,6 +143,7 @@ class _FavMarketViewState extends State<FavMarketView> {
                                   context: context,
                                   orderBookId: item.orderBook!,
                                   shortName: item.shortName ?? "",
+                                  sourceScope: ExchangeScope.favorites,
                                 ),
                             onFavoriteTap: () {
                               // 🚀 এখানে ফেভারিট রিমুভ করার লজিক

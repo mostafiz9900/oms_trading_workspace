@@ -7,6 +7,7 @@ import 'package:getxify/getxify.dart';
 import '../../core/utils/helpers/log_helper.dart';
 import '../../core/values/app_config.dart';
 import '../../modules/home/controllers/home_controller.dart';
+import '../../modules/portfolio/controllers/position_controller.dart';
 import '../models/marquee_holder.dart';
 import '../models/response/market_depth_model.dart';
 import '../models/response/market_model.dart';
@@ -32,10 +33,12 @@ import 'socket_db_service.dart';
 class CseMarketService extends GetxService implements MarketFeedView {
   /// A house on both exchanges with CSE selected: screens show this feed.
   /// False while the service is not registered (nothing to show).
-  static bool get isShown =>
+  static bool get isShown => isShownFor(ExchangeScope.quoteTrade);
+
+  static bool isShownFor(ExchangeScope scope) =>
       Get.isRegistered<CseMarketService>() &&
       AppConfig.hasBothExchanges &&
-      ExchangeService.current == StockExchange.cse;
+      ExchangeService.currentFor(scope) == StockExchange.cse;
 
   /// Latest CSE quote of every order book, refreshed at most every
   /// [flushInterval].
@@ -99,8 +102,9 @@ class CseMarketService extends GetxService implements MarketFeedView {
 
   final MarketTickStore _store = MarketTickStore();
   Timer? _pendingFlush;
-  Worker? _exchangeWorker;
+  final List<Worker> _exchangeWorkers = [];
   bool _open = false;
+  bool _detailsOpen = false;
 
   bool get isOpen => _open;
 
@@ -111,12 +115,24 @@ class CseMarketService extends GetxService implements MarketFeedView {
       return;
     }
     final exchange = Get.find<ExchangeService>();
-    _exchangeWorker = ever(exchange.selected, _follow);
-    _follow(exchange.selected.value);
+    for (final selection in exchange.selections) {
+      _exchangeWorkers.add(ever(selection, (_) => _syncConnection(exchange)));
+    }
+    _syncConnection(exchange);
   }
 
-  void _follow(StockExchange exchange) =>
-      exchange == StockExchange.cse ? _connect() : _close();
+  void _syncConnection(ExchangeService exchange) {
+    if (exchange.cseIsSelectedByAnyScope) {
+      _connect();
+    } else {
+      _close();
+    }
+    if (exchange.exchangeFor(ExchangeScope.quoteTrade) == StockExchange.cse) {
+      _connectDetails();
+    } else {
+      _closeDetails();
+    }
+  }
 
   void _connect() {
     if (_open) return;
@@ -130,6 +146,12 @@ class CseMarketService extends GetxService implements MarketFeedView {
       onConnected: () => printLog('✅ CSE market socket connected'),
       onError: (error) => printLog('⚠️ CSE market socket error: $error'),
     );
+  }
+
+  /// Opens depth and time-sales sockets only for the shared Quote/Trade scope.
+  void _connectDetails() {
+    if (_detailsOpen) return;
+    _detailsOpen = true;
     if (hasDepthFeed) {
       WebSocketService.instance.connect(
         socketId: AppConfig.cseMarketDepthSocketId,
@@ -157,6 +179,51 @@ class CseMarketService extends GetxService implements MarketFeedView {
     }
   }
 
+  /// Opens the CSE feed briefly when needed and waits for the selected
+  /// instrument to appear in the initial stream. On failure, closes the
+  /// temporary connection so a rejected exchange switch leaves DSE running
+  /// exactly as before.
+  Future<bool> hasQuoteForSwitch(
+    bool Function(MarketModel quote) matches, {
+    Duration timeout = const Duration(seconds: 8),
+    Duration initialFeedWindow = const Duration(seconds: 3),
+  }) async {
+    if (_store.quotes.any(matches)) return true;
+
+    final wasOpen = _open;
+    _connect();
+    final result = Completer<bool>();
+    Timer? noMatchTimer;
+    final timeoutTimer = Timer(timeout, () {
+      if (!result.isCompleted) result.complete(false);
+    });
+
+    void inspect(List<MarketModel> rows) {
+      if (rows.any(matches)) {
+        if (!result.isCompleted) result.complete(true);
+        return;
+      }
+      if (rows.isNotEmpty) {
+        noMatchTimer ??= Timer(initialFeedWindow, () {
+          if (!result.isCompleted) result.complete(false);
+        });
+      }
+    }
+
+    final subscription = quotes.listen(inspect);
+    inspect(quotes.toList());
+    final found = await result.future;
+    await subscription.cancel();
+    timeoutTimer.cancel();
+    noMatchTimer?.cancel();
+
+    final cseStillSelected =
+        Get.isRegistered<ExchangeService>() &&
+        Get.find<ExchangeService>().cseIsSelectedByAnyScope;
+    if (!found && !wasOpen && !cseStillSelected) _close();
+    return found;
+  }
+
   /// Subscribes [tp] (`tsm`, `tsb`, `news_hist`) of [orderBook], as
   /// HomeController.subscribeTimeAndSales does on the DSE socket.
   void subscribeTimeSales(String tp, String tid, String orderBook) {
@@ -171,7 +238,7 @@ class CseMarketService extends GetxService implements MarketFeedView {
   }
 
   void _sendTimeSales(String body) {
-    if (!_open || !AppConfig.hasCseTimeSalesFeed) return;
+    if (!_detailsOpen || !AppConfig.hasCseTimeSalesFeed) return;
     WebSocketService.instance.sendMessage(
       AppConfig.cseNewsTimeSalesSocketId,
       body,
@@ -262,7 +329,7 @@ class CseMarketService extends GetxService implements MarketFeedView {
   }
 
   void _sendDepth(String type, MarketIdentifier orderBook) {
-    if (!_open || !hasDepthFeed) return;
+    if (!_detailsOpen || !hasDepthFeed) return;
     WebSocketService.instance.sendMessage(
       AppConfig.cseMarketDepthSocketId,
       jsonEncode({'type': type, 'ob': orderBook}),
@@ -310,16 +377,13 @@ class CseMarketService extends GetxService implements MarketFeedView {
   /// HomeController closes the DSE ones (battery). Quotes and depth are kept,
   /// as the DSE lists are; [resume] connects again.
   void suspend() {
-    if (!_open) return;
+    if (!_open && !_detailsOpen) return;
     _open = false;
     _suspended = true;
     _pendingFlush?.cancel();
     _pendingFlush = null;
-    _timeSalesRedraw?.cancel();
-    _timeSalesRedraw = null;
     WebSocketService.instance.disconnect(AppConfig.cseMarketSocketId);
-    WebSocketService.instance.disconnect(AppConfig.cseMarketDepthSocketId);
-    WebSocketService.instance.disconnect(AppConfig.cseNewsTimeSalesSocketId);
+    _closeDetails(clearData: false);
   }
 
   /// App resumed / HomeController connected again: reconnects if CSE is still
@@ -327,25 +391,21 @@ class CseMarketService extends GetxService implements MarketFeedView {
   void resume() {
     if (!_suspended) return;
     _suspended = false;
-    if (isShown) _connect();
+    final exchange = Get.isRegistered<ExchangeService>()
+        ? Get.find<ExchangeService>()
+        : null;
+    if (exchange?.cseIsSelectedByAnyScope == true) _connect();
+    if (exchange?.exchangeFor(ExchangeScope.quoteTrade) == StockExchange.cse) {
+      _connectDetails();
+    }
   }
 
   void _close() {
-    if (!_open && !_suspended) return;
+    if (!_open && !_detailsOpen && !_suspended) return;
     _open = false;
     _suspended = false;
     WebSocketService.instance.disconnect(AppConfig.cseMarketSocketId);
-    WebSocketService.instance.disconnect(AppConfig.cseMarketDepthSocketId);
-    WebSocketService.instance.disconnect(AppConfig.cseNewsTimeSalesSocketId);
-    _timeSalesRedraw?.cancel();
-    _timeSalesRedraw = null;
-    _timeSalesSubscriptions.clear();
-    timeAndSales.clear();
-    timeAndSalesHistory.clear();
-    newsSingleItem.clear();
-    _depthOrderBook = null;
-    buys = [];
-    sells = [];
+    _closeDetails();
     _pendingFlush?.cancel();
     _pendingFlush = null;
     _store.clear();
@@ -361,11 +421,35 @@ class CseMarketService extends GetxService implements MarketFeedView {
     _lastAnalytics = null;
   }
 
+  void _closeDetails({bool clearData = true}) {
+    final wasOpen = _detailsOpen;
+    _detailsOpen = false;
+    if (wasOpen) {
+      WebSocketService.instance.disconnect(AppConfig.cseMarketDepthSocketId);
+      WebSocketService.instance.disconnect(AppConfig.cseNewsTimeSalesSocketId);
+    }
+    _timeSalesRedraw?.cancel();
+    _timeSalesRedraw = null;
+    if (!clearData) return;
+    _timeSalesSubscriptions.clear();
+    timeAndSales.clear();
+    timeAndSalesHistory.clear();
+    newsSingleItem.clear();
+    _depthOrderBook = null;
+    buys = [];
+    sells = [];
+  }
+
   /// Pull-to-refresh: drop the quotes and connect again.
   void reconnect() {
     if (!_open) return;
     _close();
-    _connect();
+    final exchange = Get.isRegistered<ExchangeService>()
+        ? Get.find<ExchangeService>()
+        : null;
+    if (exchange?.cseIsSelectedByAnyScope == true) {
+      _syncConnection(exchange!);
+    }
   }
 
   /// One message of the CSE market socket (same format as the DSE feed).
@@ -455,24 +539,35 @@ class CseMarketService extends GetxService implements MarketFeedView {
   /// The market screens are GetBuilders of HomeController; redraw them while
   /// they show this feed.
   void _redrawMarketScreens({required bool analytics}) {
-    if (!isShown || !Get.isRegistered<HomeController>()) return;
-    final home = Get.find<HomeController>()..onShownFeedFlushed();
-    home.update([
-      'marketList',
-      'marquee',
-      if (analytics) ...[
-        'marketListByGainer',
-        'marketListByShareType',
-        'sectorListUpdate',
-        'sectorSummary',
-        'distributionChartUpdate',
-      ],
-    ]);
+    if (!Get.isRegistered<HomeController>()) return;
+    final home = Get.find<HomeController>();
+    if (isShown) home.onShownFeedFlushed();
+    if (isShownFor(ExchangeScope.favorites)) home.onFavoritesFeedFlushed();
+    if (isShownFor(ExchangeScope.portfolio) &&
+        Get.isRegistered<PositionController>()) {
+      Get.find<PositionController>().update();
+    }
+    if (isShownFor(ExchangeScope.search)) home.onSearchFeedFlushed();
+    if (isShownFor(ExchangeScope.market)) {
+      home.update([
+        'marketList',
+        'marquee',
+        if (analytics) ...[
+          'marketListByGainer',
+          'marketListByShareType',
+          'sectorListUpdate',
+          'sectorSummary',
+          'distributionChartUpdate',
+        ],
+      ]);
+    }
   }
 
   @override
   void onClose() {
-    _exchangeWorker?.dispose();
+    for (final worker in _exchangeWorkers) {
+      worker.dispose();
+    }
     _close();
     super.onClose();
   }

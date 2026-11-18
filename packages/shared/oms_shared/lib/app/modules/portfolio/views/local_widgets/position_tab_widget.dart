@@ -8,6 +8,7 @@ import '../../../../core/utils/extensions/market_model_extensions.dart';
 import '../../../../core/utils/helpers/formatter_helper.dart';
 import '../../../../core/utils/helpers/hex_color.dart';
 import '../../../../data/models/response/market_model.dart';
+import '../../../../data/services/exchange_service.dart';
 import '../../../../global_widgets/custom_loader.dart';
 import '../../../../global_widgets/shared_market_components.dart';
 import '../../../../global_widgets/visible_get_builder.dart';
@@ -675,6 +676,7 @@ class _Pro2LineHorizontalTable extends StatelessWidget {
           Get.find<HomeController>().goBottomNabBarPage(
             5,
             marketData.orderBook!,
+            sourceScope: ExchangeScope.portfolio,
           );
           Get.find<HomeController>().tradPriceTextEditField.text =
               (marketData.last?.toStringAsFixed(2) ?? '0.00');

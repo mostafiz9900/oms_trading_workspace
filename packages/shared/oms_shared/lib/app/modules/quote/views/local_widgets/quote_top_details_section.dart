@@ -357,6 +357,8 @@ class _DetailedStatsWrap extends StatelessWidget {
     final double q3Nocfps = cData?.fundamentals?.nocfps?.q3 ?? 0.0;
     final double epsTTM = epsQ1 + epsQ2 + epsQ3 + epsAnn;
     final double peTtm = cData?.fundamentals?.peTtm ?? 0.0;
+    final funcamental = cData?.fundamentals;
+
     return BetterResponsiveWrap(
       minItemWidth: 60,
       children: [
@@ -451,50 +453,50 @@ class _DetailedStatsWrap extends StatelessWidget {
 
         QuoteUIHelper.buildPerformanceItem(
           context,
-          'EPS Ann-',
+          'EPS Ann-${funcamental?.eps?.annYear ?? ""}',
           epsAnn.toStringAsFixed(2),
         ),
         QuoteUIHelper.buildPerformanceItem(
           context,
-          'EPS Q1-2024',
+          'EPS Q1-${funcamental?.eps?.q1Year ?? ""}',
           epsQ1.toStringAsFixed(2),
         ),
         QuoteUIHelper.buildPerformanceItem(
           context,
-          'EPS Q2-2024',
+          'EPS Q2-${funcamental?.eps?.q2Year ?? ""}',
           epsQ2.toStringAsFixed(2),
         ),
         QuoteUIHelper.buildPerformanceItem(
           context,
-          'EPS Q3-2024',
+          'EPS Q3-${funcamental?.eps?.q3Year ?? ""}',
           epsQ3.toStringAsFixed(2),
         ),
 
         QuoteUIHelper.buildPerformanceItem(
           context,
-          'Div-2024',
+          'Div-${funcamental?.divYear ?? ""}',
           '$divident% csh',
         ),
 
         QuoteUIHelper.buildPerformanceItem(
           context,
-          'NOCFPS Ann-2024',
+          'NOCFPS Ann-${funcamental?.nocfps?.annYear ?? ""}',
           '$annNocfps% csh',
         ),
         QuoteUIHelper.buildPerformanceItem(context, 'NOCFPS Q1-2024', '0% csh'),
         QuoteUIHelper.buildPerformanceItem(
           context,
-          'NOCFPS Q2-6mnth-',
+          'NOCFPS Q2-6mnth',
           '$q2Nocfps% csh',
         ),
         QuoteUIHelper.buildPerformanceItem(
           context,
-          'NOCFPS Q3-9mnth-',
+          'NOCFPS Q3-9mnth',
           '${q3Nocfps.toStringAsFixed(2)}% csh',
         ),
         QuoteUIHelper.buildPerformanceItem(
           context,
-          'Div Yield 2024',
+          'Div Yield ${funcamental?.nocfps?.annYear ?? ""}',
           '${divYield.toStringAsFixed(2)}% csh',
         ),
       ],
@@ -515,12 +517,12 @@ class _DividendInfo extends StatelessWidget {
         _buildDateText(
           context,
           "Last AGM:",
-          homeCon.dividendObj?.fiscalYear?.agmDate?.yyyDDmm ?? 'N/A',
+          homeCon.company?.fundamentals?.lastAgm ?? 'N/A',
         ),
         _buildDateText(
           context,
           "Record date:",
-          homeCon.dividendObj?.recordDates?.general?.yyyDDmm ?? 'N/A',
+          homeCon.company?.fundamentals?.recordDate?.ddMMyy ?? 'N/A',
         ),
       ],
     );
@@ -562,7 +564,7 @@ class _ShareholdingInfo extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Share Holding as on (30,sep 25)',
+          'Share Holding as on (${sData?.asOnDate ?? 'N/A'})',
           style: Get.context!.textTheme.bodyMedium?.copyWith(
             color: HexColor('#A8A8AA'),
           ),
@@ -576,31 +578,39 @@ class _ShareholdingInfo extends StatelessWidget {
               context,
               'Director:',
               '${NumberFormatter.bdFormat(sData?.director ?? 0.0)}%',
-              '0.0cr',
+              sData?.sharesCr?.director != null
+                  ? '${sData?.sharesCr?.director}cr'
+                  : "",
             ),
             QuoteUIHelper.build4Item(
               context,
               'Govt:',
               '${NumberFormatter.bdFormat(sData?.govt ?? 0.0)}%',
-              '0.0cr',
+              sData?.sharesCr?.govt != null ? '${sData?.sharesCr?.govt}cr' : "",
             ),
             QuoteUIHelper.build4Item(
               context,
               'Institute:',
               '${NumberFormatter.bdFormat(sData?.institute ?? 0.0)}%',
-              '0.0cr',
+              sData?.sharesCr?.institute != null
+                  ? '${sData?.sharesCr?.institute}cr'
+                  : "",
             ),
             QuoteUIHelper.build4Item(
               context,
               'Foreign:',
               '${NumberFormatter.bdFormat(sData?.foreign ?? 0.0)}%',
-              '0.0cr',
+              sData?.sharesCr?.foreign != null
+                  ? '${sData?.sharesCr?.foreign}cr'
+                  : "",
             ),
             QuoteUIHelper.build4Item(
               context,
               'Public:',
               '${NumberFormatter.bdFormat(sData?.public ?? 0.0)}%',
-              '0.0cr',
+              sData?.sharesCr?.public != null
+                  ? '${sData?.sharesCr?.public}cr'
+                  : "",
             ),
           ],
         ),

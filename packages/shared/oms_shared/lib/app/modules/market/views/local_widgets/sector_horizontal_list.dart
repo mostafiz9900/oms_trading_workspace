@@ -4,6 +4,7 @@ import 'package:getxify/getxify.dart';
 import '../../../../global_widgets/empty_widget.dart';
 import '../../../../global_widgets/appbar_right_search_tap.dart';
 import '../../../../global_widgets/exchange/exchange_switcher.dart';
+import '../../../../data/services/exchange_service.dart';
 import '../../../../global_widgets/responsive_wrap_widget.dart';
 import '../../../../core/utils/extensions/app_context.dart';
 import '../../../../core/utils/helpers/formatter_helper.dart';
@@ -26,7 +27,7 @@ class ProSectorHorizontalList extends StatelessWidget {
     return VisibleGetBuilder<HomeController>(
       id: 'sectorSummary',
       builder: (homeCon) {
-        final sectorList = homeCon.shownMarket.sectorSummaryList;
+        final sectorList = homeCon.marketOverviewFeed.sectorSummaryList;
 
         if (sectorList.isEmpty) return const SizedBox.shrink();
 
@@ -61,7 +62,11 @@ class ProSectorHorizontalList extends StatelessWidget {
                       () => SectorDetailsView(sectorName: sector.sectorName),
                     ) as MarketModel?;
                     if (model != null) {
-                      homeCon.goBottomNabBarPage(1, model.orderBook!);
+                      homeCon.goBottomNabBarPage(
+                        1,
+                        model.orderBook!,
+                        sourceScope: ExchangeScope.market,
+                      );
                       homeCon.loadComanyDividentEPS(model.shortName ?? "");
                     }
                   },
@@ -180,7 +185,7 @@ class SectorDetailsView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             // DSE | CSE; shows only for houses on both exchanges.
-            const ExchangeSwitcher(),
+            const ExchangeSwitcher(scope: ExchangeScope.market),
             AppbarRightSearchTapWidget(shouldPop: true),
           ],
         ),
@@ -188,7 +193,7 @@ class SectorDetailsView extends StatelessWidget {
       body: GetBuilder<HomeController>(
         id: 'sectorSummary',
         builder: (homeCon) {
-          final sectorList = homeCon.shownMarket.sectorSummaryList
+          final sectorList = homeCon.marketOverviewFeed.sectorSummaryList
               .where((s) => s.sectorName == sectorName)
               .toList();
           if (sectorList.isEmpty) {

@@ -31,9 +31,13 @@ class LiveIndexController extends GetxController {
   // ================= State Variables =================
   List<IndexModel> indexList = <IndexModel>[];
   List<IndexCandleModel> indexCandleList = <IndexCandleModel>[];
-  String selectedSn = defaultIndexFor(ExchangeService.current);
+  String selectedSn = defaultIndexFor(
+    ExchangeService.currentFor(ExchangeScope.market),
+  );
   String selectedChartParam = "1D";
-  IndexModel? newArr = IndexModel(sn: defaultIndexFor(ExchangeService.current));
+  IndexModel? newArr = IndexModel(
+    sn: defaultIndexFor(ExchangeService.currentFor(ExchangeScope.market)),
+  );
 
   /// Main indices of each exchange, in list order; the first is selected at
   /// start. CSE names are those CSE publishes; if its feed uses others, the
@@ -153,7 +157,7 @@ class LiveIndexController extends GetxController {
     // DSE/CSE switch: reload the indices of the chosen exchange.
     if (Get.isRegistered<ExchangeService>()) {
       _exchangeWorker = ever(
-        Get.find<ExchangeService>().selected,
+        Get.find<ExchangeService>().selection(ExchangeScope.market),
         (_) => reloadIndexForExchange(),
       );
     }
@@ -166,7 +170,9 @@ class LiveIndexController extends GetxController {
     indexList.clear();
     // Each exchange has its own indices: start on its main one, without the
     // old exchange's chart.
-    selectedSn = defaultIndexFor(ExchangeService.current);
+    selectedSn = defaultIndexFor(
+      ExchangeService.currentFor(ExchangeScope.market),
+    );
     _userPickedIndex = false;
     indexCandleList.clear();
     newArr = IndexModel(sn: selectedSn);
@@ -231,7 +237,8 @@ class LiveIndexController extends GetxController {
   /// feed actually sends (the first listed one present, else the first
   /// index received). DSE keeps DSEX as before.
   void _followCseFeed(List<String> baseIndices) {
-    if (ExchangeService.current != StockExchange.cse || _userPickedIndex) {
+    if (ExchangeService.currentFor(ExchangeScope.market) != StockExchange.cse ||
+        _userPickedIndex) {
       return;
     }
     final present = visibleIndexList.map((e) => e.sn!).toList();
@@ -332,7 +339,9 @@ class LiveIndexController extends GetxController {
 
   // ================= Socket Connection & Handler =================
   void _initializeIndexWebSocket() {
-    final url = AppConfig.indexUrlFor(ExchangeService.current);
+    final url = AppConfig.indexUrlFor(
+      ExchangeService.currentFor(ExchangeScope.market),
+    );
     if (url.isEmpty || url == 'null') return;
 
     _webSocketService.connect(
@@ -355,11 +364,15 @@ class LiveIndexController extends GetxController {
       }
 
       if (messageType == null) {
-        final baseIndices = baseIndicesByExchange[ExchangeService.current]!;
+        final baseIndices =
+            baseIndicesByExchange[ExchangeService.currentFor(
+              ExchangeScope.market,
+            )]!;
         var index = IndexModel.fromJson(jsonResponse);
         // CSE shows only its main indices (its feed also sends sectors, test
         // and DSE names). DSE keeps every index as before.
-        if (ExchangeService.current == StockExchange.cse &&
+        if (ExchangeService.currentFor(ExchangeScope.market) ==
+                StockExchange.cse &&
             !baseIndices.contains(index.sn)) {
           return;
         }
