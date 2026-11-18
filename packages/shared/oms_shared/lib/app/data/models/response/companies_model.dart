@@ -42,6 +42,43 @@ double? _doubleField(Map<String, dynamic> json, String key, String modelField) {
   );
 }
 
+Map<String, double?>? _growthField(Map<String, dynamic> json) {
+  final value = json['growth'];
+  if (value == null) return null;
+  if (value is! Map) {
+    throw FormatException(
+      'CompaniesModel.growth (JSON "growth") expected an object, '
+      'got ${value.runtimeType}: $value.',
+    );
+  }
+
+  return value.map<String, double?>((key, item) {
+    if (key is! String) {
+      throw FormatException(
+        'CompaniesModel.growth expected string keys, got ${key.runtimeType}.',
+      );
+    }
+    if (item == null) return MapEntry(key, null);
+    if (item is num) return MapEntry(key, item.toDouble());
+    if (item is String) {
+      final parsed = double.tryParse(item);
+      if (parsed != null) return MapEntry(key, parsed);
+    }
+    throw FormatException(
+      'CompaniesModel.growth.$key expected a number or null, '
+      'got ${item.runtimeType}: $item.',
+    );
+  });
+}
+
+String? _formatDate(DateTime? date) {
+  if (date == null) return null;
+  final year = date.year.toString().padLeft(4, '0');
+  final month = date.month.toString().padLeft(2, '0');
+  final day = date.day.toString().padLeft(2, '0');
+  return '$year-$month-$day';
+}
+
 DateTime? _dateField(Map<String, dynamic> json, String key, String modelField) {
   final value = json[key];
   if (value == null) return null;
@@ -71,9 +108,9 @@ DateTime? _dateField(Map<String, dynamic> json, String key, String modelField) {
   final dayFirst = RegExp(r'^(\d{2})-(\d{2})-(\d{4})$')
       .firstMatch(normalizedValue);
   if (dayFirst != null) {
-    final day = int.parse(dayFirst.group(1)!);
-    final month = int.parse(dayFirst.group(2)!);
-    final year = int.parse(dayFirst.group(3)!);
+    final day = int.parse(dayFirst.group(1) ?? '0');
+    final month = int.parse(dayFirst.group(2) ?? '0');
+    final year = int.parse(dayFirst.group(3) ?? '0');
     final parsed = DateTime(year, month, day);
     if (parsed.year == year && parsed.month == month && parsed.day == day) {
       return parsed;
@@ -90,7 +127,7 @@ DateTime? _dateField(Map<String, dynamic> json, String key, String modelField) {
 class CompaniesModel {
   final String? companyName;
   final Fundamentals? fundamentals;
-  final Map<String, double>? growth;
+  final Map<String, double?>? growth;
   final ShareHolding? shareHolding;
   final String? symbol;
 
@@ -105,7 +142,7 @@ class CompaniesModel {
   CompaniesModel copyWith({
     String? companyName,
     Fundamentals? fundamentals,
-    Map<String, double>? growth,
+    Map<String, double?>? growth,
     ShareHolding? shareHolding,
     String? symbol,
   }) => CompaniesModel(
@@ -121,8 +158,7 @@ class CompaniesModel {
     fundamentals: json["fundamentals"] == null
         ? null
         : Fundamentals.fromJson(json["fundamentals"]),
-    growth: Map.from(json["growth"]!)
-        .map((k, v) => MapEntry<String, double>(k, v?.toDouble())),
+    growth: _growthField(json),
     shareHolding: json["share_holding"] == null
         ? null
         : ShareHolding.fromJson(json["share_holding"]),
@@ -132,7 +168,9 @@ class CompaniesModel {
   Map<String, dynamic> toJson() => {
     "company_name": companyName,
     "fundamentals": fundamentals?.toJson(),
-    "growth": Map.from(growth!).map((k, v) => MapEntry<String, dynamic>(k, v)),
+    "growth": growth?.map(
+      (key, value) => MapEntry<String, dynamic>(key, value),
+    ),
     "share_holding": shareHolding?.toJson(),
     "symbol": symbol,
   };
@@ -324,9 +362,7 @@ class Fundamentals {
     "q1_year": q1Year,
     "q2_year": q2Year,
     "q3_year": q3Year,
-    "record_date": recordDate == null
-        ? null
-        : "${recordDate!.year.toString().padLeft(4, '0')}-${recordDate!.month.toString().padLeft(2, '0')}-${recordDate!.day.toString().padLeft(2, '0')}",
+    "record_date": _formatDate(recordDate),
     "sector": sector,
     "stock_dividend": stockDividend,
     "ttl_share": ttlShare,

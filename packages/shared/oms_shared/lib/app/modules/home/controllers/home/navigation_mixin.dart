@@ -54,8 +54,14 @@ mixin HomeNavigationMixin on HomeState {
     printLog("CurrentIndex before: $currentIndex");
     printLog("Tapped index: $index");
 
-    // একই ট্যাবে আবার ক্লিক করলে কিছুই হবে না
-    if (currentIndex == index) return;
+    // Reopening Details while it is empty should take the user straight to
+    // stock search, including when Details is already the active tab.
+    if (currentIndex == index) {
+      if (index == 1 || index == 5) {
+        await _openQuoteSearchIfEmpty(targetIndex: index);
+      }
+      return;
+    }
 
     if (index >= 3) {
       if (await StorageService.read(StorageConstants.token) == null) {
@@ -76,6 +82,8 @@ mixin HomeNavigationMixin on HomeState {
       printLog('change tab index $index');
       currentIndex = index;
       await restoreSelectedInstrumentIfAvailable();
+      update();
+      await _openQuoteSearchIfEmpty(targetIndex: 1);
     } else if (index == 2) {
       currentIndex = index;
     } else if (index == 3) {
@@ -101,9 +109,18 @@ mixin HomeNavigationMixin on HomeState {
         tradPriceTextEditField.text = (marketData.activePrice.toStringAsFixed(
           2,
         ));
+        update();
+        await _openQuoteSearchIfEmpty(targetIndex: 5);
       }
     }
     update();
+  }
+
+  Future<void> _openQuoteSearchIfEmpty({required int targetIndex}) async {
+    if (marketData.orderBook != null) return;
+    final result = await SearchHelper.open();
+    if (result?.orderBook == null || result?.shortName == null) return;
+    goBottomNabBarPage(targetIndex, result!.orderBook!);
   }
 
   bool goBack() {
