@@ -35,7 +35,9 @@ class OrderHistoryWidget extends StatelessWidget {
     // The portfolio's DSE/CSE switch changes an Rx value. Observe it here so
     // this kept-alive tab filters again even when its controller isn't updated.
     return Obx(() {
-      final selectedExchange = ExchangeService.current;
+      final selectedExchange = ExchangeService.currentFor(
+        ExchangeScope.portfolio,
+      );
       return GetBuilder<HomeController>(
         id: AppConstants.orderList,
         builder: (homeCotByOrder) {
@@ -576,13 +578,19 @@ class _Original3DotMenu extends StatelessWidget {
           items: [
             if (!status.contains('Terminated') && !status.contains('Done')) ...[
               _buildMenuItem(0, Icons.edit, 'Modify', () {
-                if (!homeCotByOrder.canActOnOrder(order)) {
+                if (!homeCotByOrder.canActOnOrder(
+                  order,
+                  scope: ExchangeScope.portfolio,
+                )) {
                   Helpers.snackbarForErorr2(
-                    bodyText: homeCotByOrder.orderOnOtherExchangeMessage(order),
+                    bodyText: homeCotByOrder.orderOnOtherExchangeMessage(
+                      order,
+                      scope: ExchangeScope.portfolio,
+                    ),
                   );
                 } else if (order.side == 'BUY' || order.side == 'SELL') {
                   Get.back();
-                  showOrderFormDialog(order);
+                  showOrderFormDialog(order, scope: ExchangeScope.portfolio);
                 }
               }),
               if (!orderStatus.contains('CANCELED'))
@@ -597,6 +605,7 @@ class _Original3DotMenu extends StatelessWidget {
                         homeCotByOrder.orderCancelSubmitted(
                           'ORDER_CANCEL_REQUEST',
                           order,
+                          scope: ExchangeScope.portfolio,
                         );
                       },
                     ),
@@ -615,6 +624,7 @@ class _Original3DotMenu extends StatelessWidget {
                       homeCotByOrder.orderDuplicateSubmitted(
                         ActionsType.ORDER,
                         order: order,
+                        scope: ExchangeScope.portfolio,
                       );
                     },
                   ),
@@ -638,6 +648,7 @@ class _Original3DotMenu extends StatelessWidget {
                     homeCotByOrder.orderStatusChangeConfirmSubmitted(
                       ActionsType.ORDER_STATUS,
                       order,
+                      scope: ExchangeScope.portfolio,
                     );
                   },
                 ),
@@ -718,12 +729,18 @@ class _OrderActionWrapWidget extends StatelessWidget {
             label: 'Modify',
             color: Colors.blueAccent,
             onTap: () {
-              if (!homeCotByOrder.canActOnOrder(order)) {
+              if (!homeCotByOrder.canActOnOrder(
+                order,
+                scope: ExchangeScope.portfolio,
+              )) {
                 Helpers.snackbarForErorr2(
-                  bodyText: homeCotByOrder.orderOnOtherExchangeMessage(order),
+                  bodyText: homeCotByOrder.orderOnOtherExchangeMessage(
+                    order,
+                    scope: ExchangeScope.portfolio,
+                  ),
                 );
               } else if (order.side == 'BUY' || order.side == 'SELL') {
-                showOrderFormDialog(order);
+                showOrderFormDialog(order, scope: ExchangeScope.portfolio);
               }
             },
           ),
@@ -742,6 +759,7 @@ class _OrderActionWrapWidget extends StatelessWidget {
                   onConfirm: () => homeCotByOrder.orderCancelSubmitted(
                     'ORDER_CANCEL_REQUEST',
                     order,
+                    scope: ExchangeScope.portfolio,
                   ),
                 ),
               );
@@ -764,6 +782,7 @@ class _OrderActionWrapWidget extends StatelessWidget {
                     homeCotByOrder.orderDuplicateSubmitted(
                       ActionsType.ORDER,
                       order: order,
+                      scope: ExchangeScope.portfolio,
                     );
                   },
                 ),

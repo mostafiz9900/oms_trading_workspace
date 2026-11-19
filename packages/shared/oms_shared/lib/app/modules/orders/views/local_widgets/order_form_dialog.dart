@@ -19,14 +19,24 @@ const _orderModifyDialogId = 'order_modify_dialog';
 // ----------------------------------------------------------------------
 //  Restored Function: showOrderFormDialog
 // ----------------------------------------------------------------------
-void showOrderFormDialog(UserOrder order) {
-  Get.dialog(_OrderModifyDialog(order: order), barrierDismissible: false);
+void showOrderFormDialog(
+  UserOrder order, {
+  ExchangeScope scope = ExchangeScope.quoteTrade,
+}) {
+  Get.dialog(
+    _OrderModifyDialog(order: order, scope: scope),
+    barrierDismissible: false,
+  );
 }
 
 class _OrderModifyDialog extends StatefulWidget {
-  const _OrderModifyDialog({required this.order});
+  const _OrderModifyDialog({
+    required this.order,
+    this.scope = ExchangeScope.quoteTrade,
+  });
 
   final UserOrder order;
+  final ExchangeScope scope;
 
   @override
   State<_OrderModifyDialog> createState() => _OrderModifyDialogState();
@@ -71,7 +81,9 @@ class _OrderModifyDialogState extends State<_OrderModifyDialog> {
   }
 
   String? get _quantityErrorMessage {
-    if (ExchangeService.current != StockExchange.cse) return null;
+    if (ExchangeService.currentFor(widget.scope) != StockExchange.cse) {
+      return null;
+    }
     final disclosedQty = int.tryParse(_disclosedQtyController.text) ?? 0;
     if (disclosedQty <= 0) return null;
 
@@ -527,6 +539,7 @@ class _OrderModifyDialogState extends State<_OrderModifyDialog> {
                                 orderConfirm,
                                 ActionsType.REPLACE_ORDER,
                                 order: order,
+                                scope: widget.scope,
                               );
                             },
                             style: ElevatedButton.styleFrom(

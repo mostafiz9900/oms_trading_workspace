@@ -293,12 +293,18 @@ abstract class HomeState extends SuperController {
   /// Modify / cancel / duplicate / status of [order] are sent only while its
   /// exchange is selected: the stock is looked up in the selected feed and
   /// order book ids repeat between exchanges. Single-exchange houses: always.
-  bool canActOnOrder(UserOrder order) =>
+  bool canActOnOrder(
+    UserOrder order, {
+    ExchangeScope scope = ExchangeScope.quoteTrade,
+  }) =>
       !AppConfig.hasBothExchanges ||
-      exchangeOfOrder(order) == ExchangeService.current;
+      exchangeOfOrder(order) == ExchangeService.currentFor(scope);
 
   /// Shown when [order] is on the exchange that is not selected.
-  String orderOnOtherExchangeMessage(UserOrder order) {
+  String orderOnOtherExchangeMessage(
+    UserOrder order, {
+    ExchangeScope scope = ExchangeScope.quoteTrade,
+  }) {
     final name = exchangeOfOrder(order).name.toUpperCase();
     return 'This order is on $name. Switch to $name to modify, cancel or '
         'duplicate it.';
@@ -308,14 +314,27 @@ abstract class HomeState extends SuperController {
   /// both, as in the web trader.
   String get orderExchange => ExchangeService.current.name.toUpperCase();
 
+  String orderExchangeFor(ExchangeScope scope) =>
+      ExchangeService.currentFor(scope).name.toUpperCase();
+
   bool get _isCseOrder => ExchangeService.current == StockExchange.cse;
+
+  bool isCseOrderFor(ExchangeScope scope) =>
+      ExchangeService.currentFor(scope) == StockExchange.cse;
 
   /// `cse_trader_code` of an order request: the user's code on CSE, else null.
   String? get orderCseTraderCode =>
       _isCseOrder ? userInfo.userDetail?.cseTraderCode : null;
 
+  String? orderCseTraderCodeFor(ExchangeScope scope) =>
+      isCseOrderFor(scope) ? userInfo.userDetail?.cseTraderCode : null;
+
   /// Session of the selected exchange's feed (CSE has its own).
   String get orderSession => CseMarketService.isShown
+      ? Get.find<CseMarketService>().session.value
+      : currentSession.value;
+
+  String orderSessionFor(ExchangeScope scope) => isCseOrderFor(scope)
       ? Get.find<CseMarketService>().session.value
       : currentSession.value;
 
@@ -324,8 +343,10 @@ abstract class HomeState extends SuperController {
 
   /// A CSE order needs the user's CSE trader code; without it nothing is sent
   /// and the user is told why. True when the order must stop here.
-  bool _blockCseOrderWithoutTraderCode() {
-    if (!_isCseOrder) return false;
+  bool _blockCseOrderWithoutTraderCode({
+    ExchangeScope scope = ExchangeScope.quoteTrade,
+  }) {
+    if (!isCseOrderFor(scope)) return false;
     final code = userInfo.userDetail?.cseTraderCode;
     if (code != null && code.isNotEmpty) return false;
     _showOrderAlert('Order not sent', cseTraderCodeMissingMessage);

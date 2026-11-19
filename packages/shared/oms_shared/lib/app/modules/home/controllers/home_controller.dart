@@ -256,6 +256,10 @@ class HomeController extends HomeState
         if (Get.isRegistered<PositionController>()) {
           Get.find<PositionController>().update();
         }
+        if (selectedInstrument != 'All') {
+          selectedInstrument = 'All';
+        }
+        update([AppConstants.orderList]);
         break;
       case ExchangeScope.topShare:
         break;

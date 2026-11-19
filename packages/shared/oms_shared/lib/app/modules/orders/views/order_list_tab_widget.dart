@@ -39,13 +39,12 @@ class _OrderListTabWidgetState extends State<OrderListTabWidget>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // 👈 Required for KeepAlive
+    super.build(context);
     return Column(
       children: [
         const _ClientCodeWidget(),
         AppSpace.spaceH8,
 
-        //  Dynamic Title: Shows Original OR New Header based on state
         isActionViewExpanded
             ? const _NewItemTitleWidget()
             : const _OriginalItemTitleWidget(),
@@ -204,7 +203,7 @@ class _ClientCodeWidget extends ConsumerWidget {
                       .where(
                         (order) =>
                             homeCotByOrder.exchangeOfOrder(order) ==
-                            ExchangeService.current,
+                            ExchangeService.currentFor(ExchangeScope.portfolio),
                       )
                       .toList();
                 }
